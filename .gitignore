@@ -1,0 +1,11 @@
+# virtual env
+.venv/
+
+# data relevant dirs
+pre_validation/data
+pre_validation/embeddings
+pre_validation/results
+pre_validation/processed
+
+data/
+intent_schema
