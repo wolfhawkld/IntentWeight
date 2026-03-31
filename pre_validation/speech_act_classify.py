@@ -159,35 +159,77 @@ class ZeroShotClassifier:
         # 这样可以避免后面的类型覆盖前面类型
         
         # DECLARATIVE: 宣告性语句
-        declarative_patterns = ["i hereby", "i declare", "i pronounce", "i sentence", 
-                                "i appoint", "i resign", "you are fired", "is now in effect",
-                                "i certify", "is now repealed", "我宣布", "任命", "我辞职"]
+        declarative_patterns = [
+            # 英文
+            "i hereby", "i declare", "i pronounce", "i sentence", 
+            "i appoint", "i resign", "you are fired", "is now in effect",
+            "i certify", "is now repealed",
+            # 中文 - 宣告类（正式用语）
+            "我宣布", "我任命", "我辞职", "我开除", "我判决", "我宣告",
+            "即日起", "正式生效", "我认定", "我解除", "我撤销",
+            "任命为", "免去", "批准", "不准", "驳回",
+        ]
         for pattern in declarative_patterns:
             if pattern in query_lower:
                 return SpeechActResult(text=query, speech_act="L_DECLARATIVE", 
                                        confidence=0.9, reason="declarative pattern matched")
         
         # EXPRESSIVE: 表达性语句
-        expressive_patterns = ["thank", "thanks", "sorry", "apologize", "appreciate",
-                               "congratulation", "i'm happy", "i'm grateful", "i regret",
-                               "i'm disappointed", "wonderful", "great news", "谢谢", "抱歉"]
+        expressive_patterns = [
+            # 英文
+            "thank", "thanks", "sorry", "apologize", "appreciate",
+            "congratulation", "i'm happy", "i'm grateful", "i regret",
+            "i'm disappointed", "wonderful", "great news",
+            # 中文 - 感谢类
+            "谢谢", "感谢", "多谢", "谢了", "辛苦了", "麻烦你了", "劳驾了",
+            "谢谢你", "感谢你", "太感谢", "非常感谢",
+            # 中文 - 道歉类
+            "抱歉", "对不起", "不好意思", "惭愧", "我错了", "是我的错",
+            "打扰了", "冒昧", "失礼",
+            # 中文 - 赞美/情绪类
+            "太好了", "真棒", "厉害", "不错", "很好", "精彩", "太棒了",
+            "高兴", "开心", "激动", "欣慰",
+            # 中文 - 负面情绪
+            "糟糕", "烦人", "讨厌", "可惜", "遗憾", "失望", "难过", "伤心",
+        ]
         for pattern in expressive_patterns:
             if pattern in query_lower:
                 return SpeechActResult(text=query, speech_act="L_EXPRESSIVE",
                                        confidence=0.9, reason="expressive pattern matched")
         
         # COMMISSIVE: 承诺性语句
-        commissive_patterns = ["i will", "i promise", "i guarantee", "i commit",
-                               "i assure", "i'll", "我会", "保证", "承诺"]
+        commissive_patterns = [
+            # 英文
+            "i will", "i promise", "i guarantee", "i commit",
+            "i assure", "i'll",
+            # 中文 - 承诺类
+            "我会", "我保证", "我承诺", "一定", "没问题", "放心",
+            "必定", "肯定", "务必", "我会的", "包在我身上",
+            "答应你", "我答应", "我确定", "我一定",
+        ]
         for pattern in commissive_patterns:
             if pattern in query_lower:
                 return SpeechActResult(text=query, speech_act="L_COMMISSIVE",
                                        confidence=0.9, reason="commissive pattern matched")
         
         # DIRECTIVE: 指令性语句
-        directive_patterns = ["please", "can you", "could you", "help me", "how do i",
-                              "how can i", "i need to", "i want to", "book me",
-                              "tell me", "请", "帮我", "怎么做"]
+        directive_patterns = [
+            # 英文
+            "please", "can you", "could you", "help me", "how do i",
+            "how can i", "i need to", "i want to", "book me",
+            "tell me",
+            # 中文 - 请求类（礼貌）
+            "请", "麻烦", "劳驾", "请问", "请教",
+            # 中文 - 请求类（常用）
+            "能不能", "可不可以", "帮我看", "帮我查", "帮我办",
+            "帮帮我", "帮我看看", "麻烦帮我", "请问一下",
+            # 中文 - 请求类（直接）
+            "我要", "我想", "帮我", "给我", "让我",
+            "能不能帮我", "可以帮我", "帮我处理", "帮我解决",
+            # 中文 - 疑问求助
+            "怎么", "如何", "怎么办", "怎么做", "怎样",
+            "想问一下", "有个问题", "想请教",
+        ]
         for pattern in directive_patterns:
             if pattern in query_lower:
                 return SpeechActResult(text=query, speech_act="L_DIRECTIVE",

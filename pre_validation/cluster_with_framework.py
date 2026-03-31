@@ -288,25 +288,38 @@ class ClusterFrameworkMapper:
         """
         保存分析结果
         """
+        def convert_numpy(obj):
+            """转换 numpy 类型为 Python 原生类型"""
+            if isinstance(obj, dict):
+                return {k: convert_numpy(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_numpy(v) for v in obj]
+            elif isinstance(obj, (np.integer, np.int64, np.int32)):
+                return int(obj)
+            elif isinstance(obj, (np.floating, np.float64, np.float32)):
+                return float(obj)
+            else:
+                return obj
+        
         output_data = {
             "metadata": {
                 "embeddings_file": str(Path(self.embeddings_path).name),
-                "min_cluster_size": self.clusterer.min_cluster_size if hasattr(self, 'clusterer') else None,
-                "min_samples": self.clusterer.min_samples if hasattr(self, 'clusterer') else None,
+                "min_cluster_size": int(self.clusterer.min_cluster_size) if hasattr(self, 'clusterer') else None,
+                "min_samples": int(self.clusterer.min_samples) if hasattr(self, 'clusterer') else None,
                 "total_samples": len(self.samples)
             },
-            "metrics": metrics,
-            "clusters": [
+            "metrics": convert_numpy(metrics),
+            "clusters": convert_numpy([
                 {
-                    "cluster_id": a.cluster_id,
-                    "size": a.size,
+                    "cluster_id": int(a.cluster_id),
+                    "size": int(a.size),
                     "dominant_speech_act": a.dominant_speech_act,
-                    "purity": a.purity,
+                    "purity": float(a.purity),
                     "speech_act_distribution": a.speech_act_distribution,
                     "samples": a.samples
                 }
                 for a in analyses
-            ]
+            ])
         }
         
         with open(output_path, 'w', encoding='utf-8') as f:
@@ -317,7 +330,7 @@ class ClusterFrameworkMapper:
 
 def main():
     parser = argparse.ArgumentParser(description="聚类 + Speech Act 框架映射分析")
-    parser.add_argument("--dataset", required=True, choices=["banking77", "clinc150"],
+    parser.add_argument("--dataset", required=True, choices=["banking77", "clinc150", "dailydialog", "cmid"],
                        help="数据集名称")
     parser.add_argument("--min_cluster_size", type=int, default=10,
                        help="HDBSCAN 最小簇大小")
@@ -330,7 +343,15 @@ def main():
     # 确定文件路径
     base_dir = Path(__file__).parent
     embeddings_path = base_dir / "embeddings" / f"{args.dataset}_embeddings.npy"
-    processed_path = base_dir / "processed" / f"{args.dataset}_processed.json"
+    
+    # 不同数据集的 processed 文件位置不同
+    if args.dataset == "dailydialog":
+        processed_path = base_dir / "data" / "dailydialog" / "processed_dailydialog.json"
+    elif args.dataset == "cmid":
+        processed_path = base_dir / "data" / "cmid" / "cmid_processed.json"
+    else:
+        processed_path = base_dir / "processed" / f"{args.dataset}_processed.json"
+    
     speech_act_path = base_dir / "results" / f"speech_act_{args.dataset}.json"
     
     # 检查文件存在
@@ -367,6 +388,21 @@ def main():
     
     # 评估融合效果
     metrics = mapper.evaluate_fusion(analyses)
+    
+    # 转换 numpy 类型为 Python原生类型
+    def convert_types(obj):
+        if isinstance(obj, dict):
+            return {k: convert_types(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_types(v) for v in obj]
+        elif isinstance(obj, (np.integer, np.int64)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64)):
+            return float(obj)
+        else:
+            return obj
+    
+    metrics = convert_types(metrics)
     
     # 生成报告
     report = mapper.generate_report(analyses, metrics)

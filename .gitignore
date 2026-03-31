@@ -9,3 +9,7 @@ pre_validation/processed
 
 data/
 intent_schema
+
+# Python dir
+*__pycache__*
+
