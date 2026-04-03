@@ -1,0 +1,1744 @@
+[
+  {
+    "session_id": "s001",
+    "scenario": "positive_explicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 41,
+            "copy_action": true,
+            "scroll_depth": 0.960848017815501,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "PE多少算合理？",
+        "answer": "PE高可能意味着：1) 市场预期高增长；2) 股价被高估；需结合行业对比判断。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 58,
+            "copy_action": true,
+            "scroll_depth": 0.740654570284555,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.9,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.183738",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s002",
+    "scenario": "positive_explicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 28,
+            "copy_action": true,
+            "scroll_depth": 0.7360445168011943,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "市盈率高好还是低好？",
+        "answer": "PE低可能说明：1) 价值低估；2) 增长预期低；传统行业PE通常较低。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 39,
+            "copy_action": true,
+            "scroll_depth": 0.804466314005172,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.9,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184177",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s003",
+    "scenario": "positive_explicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 38,
+            "copy_action": true,
+            "scroll_depth": 0.7359471315527022,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "市盈率高好还是低好？",
+        "answer": "PE低可能说明：1) 价值低估；2) 增长预期低；传统行业PE通常较低。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 43,
+            "copy_action": true,
+            "scroll_depth": 0.9499480892290001,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.9,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184215",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s004",
+    "scenario": "positive_explicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 50,
+            "copy_action": true,
+            "scroll_depth": 0.9583091741810961,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "PE太高说明什么？",
+        "answer": "PE高可能意味着：1) 市场预期高增长；2) 股价被高估；需结合行业对比判断。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 30,
+            "copy_action": true,
+            "scroll_depth": 0.924859957003,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.9,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184245",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s005",
+    "scenario": "positive_explicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 32,
+            "copy_action": true,
+            "scroll_depth": 0.8543677254600042,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "PE太高说明什么？",
+        "answer": "PE低可能说明：1) 价值低估；2) 增长预期低；传统行业PE通常较低。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 40,
+            "copy_action": true,
+            "scroll_depth": 0.7904053798800331,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.9,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184256",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s006",
+    "scenario": "positive_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 39,
+            "copy_action": true,
+            "scroll_depth": 0.8839072129865834,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184263",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s007",
+    "scenario": "positive_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 39,
+            "copy_action": true,
+            "scroll_depth": 0.8748330693876643,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184270",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s008",
+    "scenario": "positive_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 37,
+            "copy_action": true,
+            "scroll_depth": 0.8380785808160881,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184280",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s009",
+    "scenario": "positive_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 51,
+            "copy_action": true,
+            "scroll_depth": 0.9853967250899737,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184285",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s010",
+    "scenario": "positive_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 25,
+            "copy_action": true,
+            "scroll_depth": 0.9408954589235534,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184291",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s011",
+    "scenario": "positive_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 55,
+            "copy_action": true,
+            "scroll_depth": 0.9409469888920073,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184300",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s012",
+    "scenario": "positive_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 32,
+            "copy_action": true,
+            "scroll_depth": 0.8515853588182127,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184306",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s013",
+    "scenario": "negative_explicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "dislike",
+          "implicit": {
+            "dwell_time": 7,
+            "copy_action": false,
+            "scroll_depth": 0.3484531347723224,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.2,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184316",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s014",
+    "scenario": "negative_explicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 3,
+            "copy_action": false,
+            "scroll_depth": 0.27267501647468023,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.2,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184321",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s015",
+    "scenario": "negative_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 10,
+            "copy_action": false,
+            "scroll_depth": 0.38728996511642233,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.3,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184327",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s016",
+    "scenario": "negative_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "dislike",
+          "implicit": {
+            "dwell_time": 4,
+            "copy_action": false,
+            "scroll_depth": 0.20473439060753124,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.3,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184333",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s017",
+    "scenario": "negative_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "dislike",
+          "implicit": {
+            "dwell_time": 10,
+            "copy_action": false,
+            "scroll_depth": 0.2502140074346046,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.3,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184341",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s018",
+    "scenario": "negative_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "correct",
+          "implicit": {
+            "dwell_time": 4,
+            "copy_action": false,
+            "scroll_depth": 0.24872614796011866,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.3,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184346",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s019",
+    "scenario": "negative_implicit",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 3,
+            "copy_action": false,
+            "scroll_depth": 0.3544173952242582,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.3,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184359",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s020",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 18,
+            "copy_action": false,
+            "scroll_depth": 0.6462406055217094,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184366",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s021",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 15,
+            "copy_action": false,
+            "scroll_depth": 0.5218965126340607,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184371",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s022",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 16,
+            "copy_action": false,
+            "scroll_depth": 0.5557108964681196,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184376",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s023",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 11,
+            "copy_action": false,
+            "scroll_depth": 0.5666950420914367,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184384",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s024",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 15,
+            "copy_action": false,
+            "scroll_depth": 0.5832309097063694,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184394",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s025",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 20,
+            "copy_action": false,
+            "scroll_depth": 0.6807332686498526,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184399",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s026",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 17,
+            "copy_action": false,
+            "scroll_depth": 0.6939794481612416,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184404",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s027",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 14,
+            "copy_action": false,
+            "scroll_depth": 0.5166766577415594,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184409",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s028",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 16,
+            "copy_action": false,
+            "scroll_depth": 0.6360108887566509,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184414",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s029",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 20,
+            "copy_action": false,
+            "scroll_depth": 0.6725250912131224,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184422",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s030",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 18,
+            "copy_action": false,
+            "scroll_depth": 0.6407844174018584,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184427",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s031",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 16,
+            "copy_action": false,
+            "scroll_depth": 0.5756159810473159,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184435",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s032",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 12,
+            "copy_action": false,
+            "scroll_depth": 0.5741052856921013,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184440",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s033",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 19,
+            "copy_action": false,
+            "scroll_depth": 0.6505367929715826,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184445",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s034",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 11,
+            "copy_action": false,
+            "scroll_depth": 0.5399655773636248,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184453",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s035",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 20,
+            "copy_action": false,
+            "scroll_depth": 0.5198672419902185,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184458",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s036",
+    "scenario": "sparse_feedback",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 19,
+            "copy_action": false,
+            "scroll_depth": 0.5957077692266839,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.5,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184463",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s037",
+    "scenario": "confused_user",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 42,
+            "copy_action": false,
+            "scroll_depth": 0.49943201658795805,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184468",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s038",
+    "scenario": "confused_user",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 45,
+            "copy_action": false,
+            "scroll_depth": 0.5100413634129832,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184476",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s039",
+    "scenario": "confused_user",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 83,
+            "copy_action": false,
+            "scroll_depth": 0.49068375908604267,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184481",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s040",
+    "scenario": "confused_user",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 65,
+            "copy_action": false,
+            "scroll_depth": 0.41954965624584994,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184489",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s041",
+    "scenario": "confused_user",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 69,
+            "copy_action": false,
+            "scroll_depth": 0.42674755450474694,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184494",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s042",
+    "scenario": "follow_up_deepen",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 38,
+            "copy_action": true,
+            "scroll_depth": 0.963136898571409,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "那PE和PB有什么区别？能详细说说吗？",
+        "answer": "PE低可能说明：1) 价值低估；2) 增长预期低；传统行业PE通常较低。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 37,
+            "copy_action": true,
+            "scroll_depth": 0.8898891207351216,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.7,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184502",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s043",
+    "scenario": "follow_up_deepen",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 49,
+            "copy_action": true,
+            "scroll_depth": 0.9771492028345012,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "那PE和PB有什么区别？能详细说说吗？",
+        "answer": "PE高可能意味着：1) 市场预期高增长；2) 股价被高估；需结合行业对比判断。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 38,
+            "copy_action": true,
+            "scroll_depth": 0.9767616780837879,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.7,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184510",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s044",
+    "scenario": "follow_up_deepen",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "怎么计算市盈率？",
+        "answer": "PE计算公式：当前股价 ÷ 最近12个月每股净利润。反映投资回收年限。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 41,
+            "copy_action": true,
+            "scroll_depth": 0.9884368833717215,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "那PE和PB有什么区别？能详细说说吗？",
+        "answer": "PE高可能意味着：1) 市场预期高增长；2) 股价被高估；需结合行业对比判断。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 35,
+            "copy_action": true,
+            "scroll_depth": 0.7893733651049819,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.7,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184523",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s045",
+    "scenario": "follow_up_deepen",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "like",
+          "implicit": {
+            "dwell_time": 58,
+            "copy_action": true,
+            "scroll_depth": 0.8929134047918952,
+            "bounce": false
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "那PE和PB有什么区别？能详细说说吗？",
+        "answer": "PE低可能说明：1) 价值低估；2) 增长预期低；传统行业PE通常较低。",
+        "intent_cluster": "pe_interpretation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 22,
+            "copy_action": true,
+            "scroll_depth": 0.9402365730374026,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.7,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184531",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s046",
+    "scenario": "follow_up_redirect",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "dislike",
+          "implicit": {
+            "dwell_time": 5,
+            "copy_action": false,
+            "scroll_depth": 0.3910177178673845,
+            "bounce": true
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "算了，我想问下怎么开户？",
+        "answer": "市净率(PB) = 股价 / 每股净资产。PB<1可能意味着股价低于净资产价值。",
+        "intent_cluster": "pb_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 14,
+            "copy_action": false,
+            "scroll_depth": 0.6283587594977479,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184538",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s047",
+    "scenario": "follow_up_redirect",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "dislike",
+          "implicit": {
+            "dwell_time": 3,
+            "copy_action": false,
+            "scroll_depth": 0.25201811804777263,
+            "bounce": true
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "算了，我想问下怎么开户？",
+        "answer": "市净率(PB) = 股价 / 每股净资产。PB<1可能意味着股价低于净资产价值。",
+        "intent_cluster": "pb_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 11,
+            "copy_action": false,
+            "scroll_depth": 0.6312063512482842,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184548",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s048",
+    "scenario": "intent_correct",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 58,
+            "copy_action": true,
+            "scroll_depth": 0.9365786101028488,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.8,
+      "intent_accuracy": [
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184554",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s049",
+    "scenario": "intent_wrong",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "市盈率怎么算？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "correct",
+          "implicit": {
+            "dwell_time": 7,
+            "copy_action": false,
+            "scroll_depth": 0.3446049105118371,
+            "bounce": true
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.3,
+      "intent_accuracy": [
+        false
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184560",
+      "user_type": "professional"
+    }
+  },
+  {
+    "session_id": "s050",
+    "scenario": "follow_up_redirect",
+    "turns": [
+      {
+        "turn_id": 1,
+        "query": "PE公式是什么？",
+        "answer": "市盈率(PE) = 股价 / 每股收益(EPS)。例如，股价50元，EPS5元，则PE=10倍。",
+        "intent_cluster": "pe_calculation",
+        "user_actions": {
+          "explicit": "dislike",
+          "implicit": {
+            "dwell_time": 10,
+            "copy_action": false,
+            "scroll_depth": 0.43910395562774784,
+            "bounce": true
+          }
+        }
+      },
+      {
+        "turn_id": 2,
+        "query": "算了，我想问下怎么开户？",
+        "answer": "市净率(PB) = 股价 / 每股净资产。PB<1可能意味着股价低于净资产价值。",
+        "intent_cluster": "pb_calculation",
+        "user_actions": {
+          "explicit": null,
+          "implicit": {
+            "dwell_time": 19,
+            "copy_action": false,
+            "scroll_depth": 0.5824011305560708,
+            "bounce": false
+          }
+        }
+      }
+    ],
+    "ground_truth": {
+      "satisfaction": 0.4,
+      "intent_accuracy": [
+        true,
+        true
+      ]
+    },
+    "metadata": {
+      "generated_at": "2026-04-03T14:54:24.184573",
+      "user_type": "professional"
+    }
+  }
+]

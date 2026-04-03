@@ -1,0 +1,425 @@
+{
+  "summary": {
+    "total_samples": 8991,
+    "classified": 6310,
+    "unclassifiable": 2681,
+    "boundary_cases": 821,
+    "closure_rate": 70.18,
+    "avg_confidence": 0.657
+  },
+  "distribution": {
+    "UNCLASSIFIABLE": 2681,
+    "L_ASSERTIVE": 4199,
+    "L_DIRECTIVE": 1714,
+    "L_COMMISSIVE": 183,
+    "L_EXPRESSIVE": 214
+  },
+  "distribution_percent": {
+    "UNCLASSIFIABLE": 29.82,
+    "L_ASSERTIVE": 46.7,
+    "L_DIRECTIVE": 19.06,
+    "L_COMMISSIVE": 2.04,
+    "L_EXPRESSIVE": 2.38
+  },
+  "by_source": {
+    "BANKING77": {
+      "total": 3000,
+      "unclassifiable": 599,
+      "boundary": 883
+    },
+    "CLINC150": {
+      "total": 2991,
+      "unclassifiable": 684,
+      "boundary": 1024
+    },
+    "DailyDialog": {
+      "total": 3000,
+      "unclassifiable": 1398,
+      "boundary": 1595
+    }
+  },
+  "unclassifiable_samples": [
+    {
+      "text": "I placed a cash deposit in my account but I can't see it yet.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Use credit card to transfer money",
+      "source": "BANKING77"
+    },
+    {
+      "text": "After I deposited my cash, I still don't see it in my account.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "How long does it take for a card to arrive?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "my google pay seems to be acting up.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I would like it if I could get an item refunded",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I have to transfer something to China as fast as I can. How long will it take to arrive in China?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I lost my card",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can I change my PIN in Austria?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I attemped a transfer and it didn't go through.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I forgot my phone at the hotel, so I can't access the app.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Cannot access my top up.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Will my GPB update my salary",
+      "source": "BANKING77"
+    },
+    {
+      "text": "In exchange for top ups will you take fees?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I made a check deposit but the cash hasn't arrived in my account yet.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can i add a new currency to my account?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "It appears my card expires next month, can I order a new one?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "My transfer seems to be too expensive.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can I change my card PIN?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I am still waiting for a money transfer to process.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I'd like to delete my account.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "can I link a card of yours I already have?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I tired but an unable to activate my card.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Do international transfers take longer?? I made a transfer from France 2 days ago but it's still not",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I have not seen any changes in my account balance(s) after making a transfer.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Do you charge for sending out more cards?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I tried to top up my account and it didn't work",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Will I be sent a new card before mine expires?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can my account be topped up by my friends?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can I tell if my top off didn't work? It doesn't seem to have.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I don't live in the UK. Can I still get a card?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "My top up doesn't work",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Get an item refund",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I deposited a cheque a week ago but have yet to receive the cash.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "How long will it take for the transfer to reach my account?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can I change my pin at a cash machine?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can I purchase extra non-virtual cards?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Can I already use my account although the identity verification has not passed yet?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I'd rather get a Mastercard",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Still waiting on a refund.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "How long does it take to process transfers from Europe?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I am seeing in the App a payment that its not mine",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Do you charge anything for topping up?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "How long do top-ups take to go through",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I can't remember my passcode.",
+      "source": "BANKING77"
+    },
+    {
+      "text": "I have an outgoing transfer",
+      "source": "BANKING77"
+    },
+    {
+      "text": "My payment has been cancelled",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Does a US transfer take long",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Do you work in Greece?",
+      "source": "BANKING77"
+    },
+    {
+      "text": "Unknown direct deposit",
+      "source": "BANKING77"
+    }
+  ],
+  "boundary_samples": [
+    {
+      "text": "please add bananas to my shopping list unless i already did",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "I am very dissatisfied with the services that you are providing. I want to cancel my account.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.545,
+      "source": "BANKING77"
+    },
+    {
+      "text": "i need to know this song's name",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.571,
+      "source": "CLINC150"
+    },
+    {
+      "text": "tell me when i'll need new tires",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.4,
+      "source": "CLINC150"
+    },
+    {
+      "text": "Second , write your mail address correctly .",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 1.0,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "We need to take down the tree .",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 1.0,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "how do i increase the limit on my visa card",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "What cash machines will let me change my PIN?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "BANKING77"
+    },
+    {
+      "text": "I saw the weather report , and it's going to rain for the next eight days .",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 1.0,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "You've incorrectly calculated the exchange rate for my cash withdrawal",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 1.0,
+      "source": "BANKING77"
+    },
+    {
+      "text": "I want to change my pin number from an ATM. Is this possible?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.571,
+      "source": "BANKING77"
+    },
+    {
+      "text": "But Bob didn't want to play that game again .",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 1.0,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "Hopefully he will use the same exam , cause Im going to spend most of my time studying the civil war",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 1.0,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "Can you tell me what this cash withdrawal is?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "BANKING77"
+    },
+    {
+      "text": "i want to know if you are a real person or an ai",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.571,
+      "source": "CLINC150"
+    },
+    {
+      "text": "when do i need to change my motor oil again",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.571,
+      "source": "CLINC150"
+    },
+    {
+      "text": "If I remember correctly , it's a quiz show .",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 1.0,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "can you check to see how busy that restaurant is for dinner",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "ai is a helpful item to have in my home, thank you",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "can you whisper",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "Please update me on whether you have received the funds for the refund of the large purchase I made ",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.571,
+      "source": "BANKING77"
+    },
+    {
+      "text": "please reserve a table for 2 at lucky's under the name melissa at 7 pm",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "Then you need to introduce and describe your goods or services .",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 1.0,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "i desperately need to rollover my 401k somehow",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 1.0,
+      "source": "CLINC150"
+    },
+    {
+      "text": "I made a big purchase that I regretted and cancelled, the merchant said that my refund was submitted",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.333,
+      "source": "BANKING77"
+    },
+    {
+      "text": "i need you to push my location to cory",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 1.0,
+      "source": "CLINC150"
+    },
+    {
+      "text": "Yes , can you tell me what's my responsibility in this position ?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "DailyDialog"
+    },
+    {
+      "text": "tell me what the word bounty means",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "what would your name be",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.5,
+      "source": "CLINC150"
+    },
+    {
+      "text": "What do I need to do to transfer money into my account?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.571,
+      "source": "BANKING77"
+    }
+  ]
+}

@@ -1,0 +1,430 @@
+{
+  "metadata": {
+    "source_file": "pre_validation/data/speech_act_test.json",
+    "backend": "rule",
+    "model": null,
+    "total_samples": 50
+  },
+  "analysis": {
+    "total_samples": 50,
+    "distribution": {
+      "L_ASSERTIVE": 13,
+      "L_DIRECTIVE": 8,
+      "L_COMMISSIVE": 10,
+      "L_EXPRESSIVE": 9,
+      "L_DECLARATIVE": 10
+    },
+    "distribution_percent": {
+      "L_ASSERTIVE": 26.0,
+      "L_DIRECTIVE": 16.0,
+      "L_COMMISSIVE": 20.0,
+      "L_EXPRESSIVE": 18.0,
+      "L_DECLARATIVE": 20.0
+    },
+    "avg_confidence": 0.84,
+    "intent_mapping_sample": {
+      "L_ASSERTIVE|weather_statement": 1,
+      "L_ASSERTIVE|time_question": 1,
+      "L_ASSERTIVE|schedule_info": 1,
+      "L_ASSERTIVE|geography_fact": 1,
+      "L_ASSERTIVE|status_update": 1,
+      "L_ASSERTIVE|price_info": 1,
+      "L_ASSERTIVE|count_info": 1,
+      "L_ASSERTIVE|self_intro": 1,
+      "L_ASSERTIVE|location_info": 1,
+      "L_ASSERTIVE|scientific_fact": 1,
+      "L_DIRECTIVE|request_help": 1,
+      "L_DIRECTIVE|request_action": 1,
+      "L_DIRECTIVE|how_to": 1,
+      "L_DIRECTIVE|request_send": 1,
+      "L_DIRECTIVE|request_change": 1,
+      "L_DIRECTIVE|request_check": 1,
+      "L_DIRECTIVE|booking_request": 1,
+      "L_DIRECTIVE|information_request": 1,
+      "L_ASSERTIVE|direction_request": 1,
+      "L_ASSERTIVE|reservation_request": 1,
+      "L_COMMISSIVE|promise_deadline": 1,
+      "L_COMMISSIVE|promise_callback": 1,
+      "L_COMMISSIVE|promise_action": 1,
+      "L_COMMISSIVE|guarantee": 1,
+      "L_COMMISSIVE|promise_punctuality": 1,
+      "L_COMMISSIVE|commitment": 1,
+      "L_COMMISSIVE|promise_send": 1,
+      "L_COMMISSIVE|assurance": 1,
+      "L_COMMISSIVE|promise_followup": 1,
+      "L_COMMISSIVE|personal_commitment": 1,
+      "L_EXPRESSIVE|gratitude": 1,
+      "L_EXPRESSIVE|appreciation": 1,
+      "L_EXPRESSIVE|apology": 1,
+      "L_EXPRESSIVE|congratulation": 1,
+      "L_ASSERTIVE|happiness": 1,
+      "L_EXPRESSIVE|regret": 1,
+      "L_EXPRESSIVE|excitement": 1,
+      "L_EXPRESSIVE|apology_formal": 1,
+      "L_EXPRESSIVE|gratitude_formal": 1,
+      "L_EXPRESSIVE|disappointment": 1,
+      "L_DECLARATIVE|declare_open": 1,
+      "L_DECLARATIVE|pronounce_marriage": 1,
+      "L_DECLARATIVE|resignation": 1,
+      "L_DECLARATIVE|termination": 1,
+      "L_DECLARATIVE|appointment": 1,
+      "L_DECLARATIVE|effective_declaration": 1,
+      "L_DECLARATIVE|certification": 1,
+      "L_DECLARATIVE|bankruptcy_declaration": 1,
+      "L_DECLARATIVE|law_repeal": 1,
+      "L_DECLARATIVE|sentencing": 1
+    }
+  },
+  "results": [
+    {
+      "text": "The weather is sunny today.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "weather_statement"
+    },
+    {
+      "text": "What time is it?",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "time_question"
+    },
+    {
+      "text": "The meeting starts at 3pm.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "schedule_info"
+    },
+    {
+      "text": "Paris is the capital of France.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "geography_fact"
+    },
+    {
+      "text": "I have finished the report.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "status_update"
+    },
+    {
+      "text": "The price is $50.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "price_info"
+    },
+    {
+      "text": "There are 10 people in the room.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "count_info"
+    },
+    {
+      "text": "My name is John.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "self_intro"
+    },
+    {
+      "text": "The document is on the table.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "location_info"
+    },
+    {
+      "text": "Water boils at 100 degrees Celsius.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "scientific_fact"
+    },
+    {
+      "text": "Please help me with this task.",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "request_help"
+    },
+    {
+      "text": "Can you open the door?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "request_action"
+    },
+    {
+      "text": "How do I reset my password?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "how_to"
+    },
+    {
+      "text": "Please send me the report.",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "request_send"
+    },
+    {
+      "text": "I need to change my appointment.",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "request_change"
+    },
+    {
+      "text": "Could you check this for me?",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "request_check"
+    },
+    {
+      "text": "Book me a flight to New York.",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "booking_request"
+    },
+    {
+      "text": "Tell me about your services.",
+      "speech_act": "L_DIRECTIVE",
+      "confidence": 0.85,
+      "reason": "directive pattern matched",
+      "original_intent": "information_request"
+    },
+    {
+      "text": "Where can I find the exit?",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "direction_request"
+    },
+    {
+      "text": "I would like to make a reservation.",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "reservation_request"
+    },
+    {
+      "text": "I will finish it by tomorrow.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "promise_deadline"
+    },
+    {
+      "text": "I promise to call you back.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "promise_callback"
+    },
+    {
+      "text": "I will take care of it.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "promise_action"
+    },
+    {
+      "text": "I guarantee your satisfaction.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "guarantee"
+    },
+    {
+      "text": "I will be there on time.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "promise_punctuality"
+    },
+    {
+      "text": "I commit to completing this project.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "commitment"
+    },
+    {
+      "text": "I will send the email today.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "promise_send"
+    },
+    {
+      "text": "I assure you it won't happen again.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "assurance"
+    },
+    {
+      "text": "I'll make sure to follow up.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "promise_followup"
+    },
+    {
+      "text": "I will handle this personally.",
+      "speech_act": "L_COMMISSIVE",
+      "confidence": 0.9,
+      "reason": "commissive pattern matched",
+      "original_intent": "personal_commitment"
+    },
+    {
+      "text": "Thank you so much for your help!",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "gratitude"
+    },
+    {
+      "text": "I really appreciate your effort.",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "appreciation"
+    },
+    {
+      "text": "I'm sorry for the inconvenience.",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "apology"
+    },
+    {
+      "text": "Congratulations on your promotion!",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "congratulation"
+    },
+    {
+      "text": "I'm so happy to hear that!",
+      "speech_act": "L_ASSERTIVE",
+      "confidence": 0.7,
+      "reason": "default assertive",
+      "original_intent": "happiness"
+    },
+    {
+      "text": "I regret my decision.",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "regret"
+    },
+    {
+      "text": "That's wonderful news!",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "excitement"
+    },
+    {
+      "text": "I apologize for the delay.",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "apology_formal"
+    },
+    {
+      "text": "I'm grateful for your support.",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "gratitude_formal"
+    },
+    {
+      "text": "I'm disappointed with the result.",
+      "speech_act": "L_EXPRESSIVE",
+      "confidence": 0.9,
+      "reason": "expressive pattern matched",
+      "original_intent": "disappointment"
+    },
+    {
+      "text": "I hereby declare the meeting open.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "declare_open"
+    },
+    {
+      "text": "I pronounce you husband and wife.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "pronounce_marriage"
+    },
+    {
+      "text": "I resign from my position.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "resignation"
+    },
+    {
+      "text": "You are fired.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "termination"
+    },
+    {
+      "text": "I appoint you as the team leader.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "appointment"
+    },
+    {
+      "text": "The contract is now in effect.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "effective_declaration"
+    },
+    {
+      "text": "I hereby certify this document.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "certification"
+    },
+    {
+      "text": "I declare bankruptcy.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "bankruptcy_declaration"
+    },
+    {
+      "text": "The law is now repealed.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "law_repeal"
+    },
+    {
+      "text": "I sentence you to five years.",
+      "speech_act": "L_DECLARATIVE",
+      "confidence": 0.9,
+      "reason": "declarative pattern matched",
+      "original_intent": "sentencing"
+    }
+  ]
+}
