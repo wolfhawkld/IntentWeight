@@ -23,3 +23,13 @@ venv/
 # 临时文件
 *.log
 *.tmp
+
+# 敏感信息（绝不提交）
+.env
+.env.*
+*.pem
+*.key
+secrets/
+credentials/
+secrets.json
+config.local.*
