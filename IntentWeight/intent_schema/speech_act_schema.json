@@ -1,0 +1,161 @@
+{
+  "schema_version": "1.0",
+  "source": "Speech Act Theory (Austin 1962, Searle 1969)",
+  "description": "语言学基础层意图分类，理论完备，零样本可用",
+  "categories": [
+    {
+      "intent_id": "L_ASSERTIVE",
+      "name": "Assertive",
+      "name_zh": "陈述",
+      "definition": "陈述事实，让听者相信某事为真",
+      "direction": "Words → World",
+      "illocutionary_force": "说话者承诺所陈述内容为真",
+      "typical_expressions": [
+        "X是Y",
+        "我发现...",
+        "根据...",
+        "数据显示...",
+        "事实是..."
+      ],
+      "example_queries": [
+        "今天天气怎么样？",
+        "什么是机器学习？",
+        "公司的地址在哪里？",
+        "现在的汇率是多少？"
+      ],
+      "expected_response_type": "事实陈述或确认",
+      "sub_type_mapping": ["Factoid", "Definition", "Explanation"],
+      "felicity_conditions": [
+        "说话者相信所陈述内容为真",
+        "有足够的证据支持",
+        "听者不知道或不确定该信息"
+      ]
+    },
+    {
+      "intent_id": "L_DIRECTIVE",
+      "name": "Directive",
+      "name_zh": "指令",
+      "definition": "指令行为，希望听者执行某事",
+      "direction": "World → Words",
+      "illocutionary_force": "说话者希望听者执行某动作",
+      "typical_expressions": [
+        "请帮我...",
+        "怎么做...",
+        "如何才能...",
+        "帮我...",
+        "我需要..."
+      ],
+      "example_queries": [
+        "请帮我查询余额",
+        "如何修改密码？",
+        "怎么做才能退款？",
+        "帮我预订一张机票"
+      ],
+      "expected_response_type": "行动指导或执行确认",
+      "sub_type_mapping": ["Rules", "Resources", "Procedure", "Execute"],
+      "felicity_conditions": [
+        "说话者希望听者执行该动作",
+        "听者有能力执行该动作",
+        "听者有义务或愿意执行"
+      ]
+    },
+    {
+      "intent_id": "L_COMMISSIVE",
+      "name": "Commissive",
+      "name_zh": "承诺",
+      "definition": "承诺行为，说话者承诺未来行动",
+      "direction": "World → Words",
+      "illocutionary_force": "说话者承诺在未来执行某动作",
+      "typical_expressions": [
+        "我会...",
+        "保证...",
+        "承诺...",
+        "一定...",
+        "将..."
+      ],
+      "example_queries": [
+        "我会在明天完成",
+        "我保证不会再犯",
+        "我承诺遵守规则"
+      ],
+      "expected_response_type": "确认或记录",
+      "sub_type_mapping": ["Obtain"],
+      "felicity_conditions": [
+        "说话者意图执行该动作",
+        "说话者有能力执行",
+        "该动作尚未完成"
+      ]
+    },
+    {
+      "intent_id": "L_EXPRESSIVE",
+      "name": "Expressive",
+      "name_zh": "表达",
+      "definition": "表达行为，表达心理状态",
+      "direction": "Null",
+      "illocutionary_force": "说话者表达某种心理状态",
+      "typical_expressions": [
+        "谢谢",
+        "抱歉",
+        "太好了",
+        "遗憾...",
+        "高兴..."
+      ],
+      "example_queries": [
+        "谢谢你的帮助！",
+        "抱歉打扰了",
+        "太棒了！",
+        "我对这个结果很满意"
+      ],
+      "expected_response_type": "情感回应或确认",
+      "sub_type_mapping": ["Opinion"],
+      "felicity_conditions": [
+        "说话者确实有该心理状态",
+        "存在引发该状态的事由"
+      ]
+    },
+    {
+      "intent_id": "L_DECLARATIVE",
+      "name": "Declarative",
+      "name_zh": "宣告",
+      "definition": "宣告行为，通过言语改变世界状态",
+      "direction": "World ↔ Words",
+      "illocutionary_force": "说话者通过言语本身改变世界状态",
+      "typical_expressions": [
+        "我宣布...",
+        "任命...",
+        "从现在起...",
+        "我辞职",
+        "会议开始"
+      ],
+      "example_queries": [
+        "我宣布会议开始",
+        "我任命你为组长",
+        "从现在起生效",
+        "我申请离职"
+      ],
+      "expected_response_type": "状态变更确认",
+      "sub_type_mapping": ["Execute (状态变更)"],
+      "felicity_conditions": [
+        "说话者有执行该宣告的权限",
+        "存在支持该宣告的制度框架",
+        "满足宣告的程序要求"
+      ]
+    }
+  ],
+  "mapping_to_task_layer": {
+    "description": "Speech Act 到任务类型层的映射",
+    "L_ASSERTIVE": ["I_FACTOID", "I_DEFINITION", "I_EXPLANATION"],
+    "L_DIRECTIVE": ["T_RULES", "T_RESOURCES", "I_PROCEDURE", "X_EXECUTE"],
+    "L_COMMISSIVE": ["X_OBTAIN"],
+    "L_EXPRESSIVE": ["I_OPINION"],
+    "L_DECLARATIVE": ["X_EXECUTE"]
+  },
+  "metadata": {
+    "created": "2026-03-28",
+    "author": "Outis",
+    "source_reference": [
+      "Austin, J.L. (1962). How to Do Things with Words",
+      "Searle, J.R. (1969). Speech Acts: An Essay in the Philosophy of Language"
+    ]
+  }
+}
