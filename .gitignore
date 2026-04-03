@@ -4,14 +4,16 @@ venv/
 
 # data relevant dirs (可重新下载/生成)
 pre_validation/datasets/
-pre_validation/data/
-pre_validation/embeddings/
-pre_validation/results/
+pre_validation/**/data/
+pre_validation/**/embeddings/
+pre_validation/**/results/
 pre_validation/processed/
 data/
 
-# 嵌入向量（大文件）
+# 嵌入向量和大模型文件（大文件）
 *.npy
+**/bandit_*.json
+**/contextual_bandit_model.json
 
 # Python
 __pycache__/

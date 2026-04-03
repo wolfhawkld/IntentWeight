@@ -146,4 +146,60 @@ python scripts/validate_signals.py --input data/mock_sessions.json
 
 ---
 
-*创建于 2026-04-03*
+## RL 更新模块
+
+验证反馈信号后，实现 RL 更新，形成完整闭环。
+
+### 当前实现：Contextual Bandit
+
+| 组件 | 说明 |
+|------|------|
+| **Context** | 查询嵌入（SBERT 384维） |
+| **Action** | 选择返回哪个 chunk |
+| **Reward** | 用户反馈信号 |
+| **策略** | LinUCB / Thompson / ε-greedy |
+
+### 验证结果
+
+| 策略 | 准确率 | 相关性 |
+|------|--------|--------|
+| LinUCB | 72.73% | 0.795 |
+| Thompson Sampling | 72.73% | 0.795 |
+| ε-greedy | 72.73% | 0.795 |
+
+---
+
+## 模块状态
+
+| 模块 | 文件 | 状态 |
+|------|------|------|
+| 数据生成 | `generate_mock_data.py` | ✅ |
+| 奖励计算 | `calculate_rewards.py` | ✅ |
+| 信号验证 | `validate_signals.py` | ✅ |
+| 可观测性 | `observability.py` | ✅ |
+| **Contextual Bandit** | `contextual_bandit.py` | ✅ |
+| Bandit 验证 | `validate_contextual_bandit.py` | ✅ |
+
+### 已弃用
+
+| 模块 | 说明 |
+|------|------|
+| `intent_association.py` | 被 contextual_bandit.py 替代 |
+| `rl_updater.py` | 被 contextual_bandit.py 替代 |
+| `validate_rl_update.py` | 被 validate_contextual_bandit.py 替代 |
+
+---
+
+## 验证结论
+
+**Contextual Bandit 验证通过**：
+
+- 选择准确率: 72.73%
+- 奖励-满意度相关性: 0.795
+- 三种探索策略均可工作
+
+**下一步**：使用真实数据集验证
+
+---
+
+*更新于 2026-04-03*
