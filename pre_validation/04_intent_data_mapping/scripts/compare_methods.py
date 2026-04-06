@@ -25,7 +25,7 @@ from datetime import datetime
 
 # 项目根目录
 PROJECT_ROOT = Path(__file__).parent.parent.parent
-RESULTS_DIR = PROJECT_ROOT / "phase2_intent_data_mapping" / "results"
+RESULTS_DIR = Path(__file__).parent.parent / "results"
 PHASE1C_DIR = PROJECT_ROOT / "pre_validation" / "03_feedback_signal"
 
 

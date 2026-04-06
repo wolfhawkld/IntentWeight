@@ -838,7 +838,7 @@ results/
 
 ---
 
-## 🆕 Phase 2: 意图-数据聚类关联验证
+## 🆕 Phase 1D: 意图-数据聚类关联验证
 
 ### 目标
 
@@ -910,7 +910,7 @@ results/
 ### 文件结构
 
 ```
-phase2_intent_data_mapping/
+pre_validation/04_intent_data_mapping/
 ├── README.md
 ├── scripts/
 │   ├── build_knowledge_base.py    # 构建知识库
@@ -930,16 +930,16 @@ cd ~/.openclaw/workspace/IntentWeight
 source .venv/bin/activate
 
 # Step 1: 构建知识库
-python phase2_intent_data_mapping/scripts/build_knowledge_base.py --dataset banking77
+python pre_validation/04_intent_data_mapping/scripts/build_knowledge_base.py --dataset banking77
 
 # Step 2: 聚类
-python phase2_intent_data_mapping/scripts/cluster_chunks.py --dataset banking77
+python pre_validation/04_intent_data_mapping/scripts/cluster_chunks.py --dataset banking77
 
 # Step 3: 评估
-python phase2_intent_data_mapping/scripts/evaluate_mapping.py --dataset banking77
+python pre_validation/04_intent_data_mapping/scripts/evaluate_mapping.py --dataset banking77
 
 # Step 4: 对比
-python phase2_intent_data_mapping/scripts/compare_methods.py --dataset banking77
+python pre_validation/04_intent_data_mapping/scripts/compare_methods.py --dataset banking77
 ```
 
 ### 成功概率更新
@@ -949,7 +949,7 @@ python phase2_intent_data_mapping/scripts/compare_methods.py --dataset banking77
 | Phase 1A: Speech Act 验证 | ✅ 完成 | 100% | - |
 | Phase 1B: 聚类融合验证 | ✅ 完成 | 90% | - |
 | Phase 1C: 反馈信号验证 | ✅ 完成 | 95% | - |
-| **Phase 2: 意图-数据关联验证** | 📋 **规划中** | **80%** | 🆕 |
+| **Phase 1D: 意图-数据关联验证** | 📋 **规划中** | **80%** | 🆕 |
 | **整体** | - | **85%** | - |
 
 ---
@@ -963,4 +963,4 @@ python phase2_intent_data_mapping/scripts/compare_methods.py --dataset banking77
 | 2026-03-29 | Phase 1B 完成 | 4 数据集聚类验证 |
 | 2026-04-03 | Phase 1C 完成 | 反馈信号 + Bandit 验证（模拟数据） |
 | 2026-04-05 | Phase 1C 完成 | 真实数据集验证成功 |
-| **2026-04-07** | **Phase 2 启动** | **意图-数据聚类关联验证** |
+| **2026-04-07** | **Phase 1D 启动** | **意图-数据聚类关联验证** |
