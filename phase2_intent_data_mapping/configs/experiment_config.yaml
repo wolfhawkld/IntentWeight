@@ -1,0 +1,79 @@
+# Phase 2 实验配置
+
+# 数据集配置
+datasets:
+  banking77:
+    name: "BANKING77"
+    train_samples: 9003
+    test_samples: 3080
+    intent_classes: 77
+    embedding_file: "banking77_embeddings.npy"
+    processed_file: "banking77_processed.json"
+  
+  clinc150:
+    name: "CLINC150"
+    train_samples: 22500
+    test_samples: 1350
+    intent_classes: 150
+    embedding_file: "clinc150_embeddings.npy"
+    processed_file: "clinc150_processed.json"
+
+# 聚类配置
+clustering:
+  method: "hdbscan"
+  params:
+    min_cluster_size: 10
+    min_samples: 5
+    metric: "euclidean"
+  cache_dir: "results/clusters"
+
+# 检索配置
+retrieval:
+  # 语义检索
+  semantic:
+    top_k: 10
+    metric: "cosine"
+  
+  # 簇筛选
+  cluster_filter:
+    top_n_clusters: 3  # 召回 Top-N 簇
+    min_cluster_size: 5
+  
+  # Bandit 精排
+  bandit:
+    enabled: true
+    exploration: "linucb"
+    alpha: 1.0
+
+# 评估配置
+evaluation:
+  metrics:
+    - "cluster_recall"      # 簇召回率
+    - "top_k_accuracy"      # Top-K 准确率
+    - "mrr"                 # Mean Reciprocal Rank
+    - "filter_efficiency"   # 筛选效率
+  
+  top_k_values: [1, 3, 5, 10]
+
+# 对比实验配置
+comparison:
+  methods:
+    - name: "pure_semantic"
+      description: "纯语义检索（无筛选）"
+      cluster_filter: false
+      bandit: false
+    
+    - name: "cluster_only"
+      description: "纯簇筛选"
+      cluster_filter: true
+      bandit: false
+    
+    - name: "fusion"
+      description: "簇筛选 + Bandit 精排"
+      cluster_filter: true
+      bandit: true
+
+# 输出配置
+output:
+  results_dir: "results"
+  log_level: "INFO"
