@@ -160,7 +160,7 @@ def save_cluster_results(cluster_info: Dict, dataset: str):
 def main():
     parser = argparse.ArgumentParser(description="Chunk 聚类")
     parser.add_argument("--dataset", type=str, required=True,
-                        choices=["banking77", "clinc150", "cmid"],
+                        choices=["banking77", "clinc150", "cmid", "cmid_fine"],
                         help="数据集名称")
     parser.add_argument("--min_cluster_size", type=int, default=10,
                         help="最小簇大小")
