@@ -131,7 +131,7 @@ def save_comparison(comparison: Dict, dataset: str):
 def main():
     parser = argparse.ArgumentParser(description="对比实验")
     parser.add_argument("--dataset", type=str, required=True,
-                        choices=["banking77", "clinc150"],
+                        choices=["banking77", "clinc150", "cmid"],
                         help="数据集名称")
     args = parser.parse_args()
     

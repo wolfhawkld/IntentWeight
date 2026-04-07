@@ -317,7 +317,7 @@ def save_evaluation_results(results: Dict, dataset: str):
 def main():
     parser = argparse.ArgumentParser(description="评估意图-簇关联")
     parser.add_argument("--dataset", type=str, required=True,
-                        choices=["banking77", "clinc150"],
+                        choices=["banking77", "clinc150", "cmid"],
                         help="数据集名称")
     parser.add_argument("--top_n_clusters", type=int, default=3,
                         help="召回 Top-N 簇")

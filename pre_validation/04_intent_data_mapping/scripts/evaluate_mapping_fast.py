@@ -186,7 +186,7 @@ def evaluate_retrieval(test_embeddings, train_embeddings, test_queries,
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", required=True, choices=["banking77", "clinc150"])
+    parser.add_argument("--dataset", required=True, choices=["banking77", "clinc150", "cmid"])
     parser.add_argument("--top_n_clusters", type=int, default=3)
     args = parser.parse_args()
     
