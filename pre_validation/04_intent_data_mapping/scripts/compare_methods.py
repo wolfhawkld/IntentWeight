@@ -23,8 +23,8 @@ from pathlib import Path
 from typing import Dict, List
 from datetime import datetime
 
-# 项目根目录
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+# 项目根目录 (scripts -> 04 -> pre_validation -> IntentWeight)
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 RESULTS_DIR = Path(__file__).parent.parent / "results"
 PHASE1C_DIR = PROJECT_ROOT / "pre_validation" / "03_feedback_signal"
 

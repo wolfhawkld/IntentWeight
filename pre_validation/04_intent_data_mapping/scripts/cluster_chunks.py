@@ -20,8 +20,8 @@ from pathlib import Path
 from typing import Dict, List
 from collections import defaultdict
 
-# 项目根目录
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+# 项目根目录 (scripts -> 04 -> pre_validation -> IntentWeight)
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 RESULTS_DIR = Path(__file__).parent.parent / "results"
 
 

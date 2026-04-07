@@ -22,8 +22,8 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 from collections import defaultdict
 
-# 项目根目录
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+# 项目根目录 (scripts -> 04 -> pre_validation -> IntentWeight)
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 RESULTS_DIR = Path(__file__).parent.parent / "results"
 
 
@@ -232,7 +232,7 @@ def evaluate_semantic_retrieval(
     top_k_hits = {k: 0 for k in [1, 3, 5, 10]}
     mrr_sum = 0.0
     
-    for i, query in enumerate(test_queries["queries"]:
+    for i, query in enumerate(test_queries["queries"]):
         query_intent = query["intent"]
         query_emb = test_embeddings[i:i+1]
         

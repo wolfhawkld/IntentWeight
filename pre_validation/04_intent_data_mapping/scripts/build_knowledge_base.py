@@ -19,8 +19,8 @@ import numpy as np
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-# 项目根目录
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+# 项目根目录 (scripts -> 04 -> pre_validation -> IntentWeight)
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 PRE_VALIDATION_DIR = PROJECT_ROOT / "pre_validation"
 RESULTS_DIR = Path(__file__).parent.parent / "results"
 
