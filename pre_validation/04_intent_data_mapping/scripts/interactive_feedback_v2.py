@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """
-交互式反馈优化验证
+交互式反馈验证 v2 - 加入语义相似度
 
-您可以直接参与验证：
-1. 输入查询
-2. 查看检索结果
-3. 给出反馈
-4. 观察优化效果
+反馈标准:
+  1 = Top-1 意图匹配 + 内容语义相似 (>0.7)
+  0 = 其他情况
 """
 
 import json
@@ -14,6 +12,7 @@ import numpy as np
 from pathlib import Path
 from collections import Counter, defaultdict
 from sklearn.model_selection import train_test_split
+from sklearn.metrics.pairwise import cosine_similarity
 import hdbscan
 
 PROJECT_ROOT = Path("/home/damon/.openclaw/workspace/IntentWeight/pre_validation")
@@ -28,7 +27,6 @@ with open(DATA_DIR / "smp2019_processed.json", "r", encoding="utf-8") as f:
 
 texts = [s["text"] for s in samples]
 labels = [s["intent"] for s in samples]
-domains = [s["domain"] for s in samples]
 
 # 划分
 train_idx, test_idx = train_test_split(range(len(samples)), test_size=0.2, random_state=42)
@@ -40,7 +38,6 @@ train_labels = [labels[i] for i in train_idx]
 test_labels = [labels[i] for i in test_idx]
 train_texts = [texts[i] for i in train_idx]
 test_texts = [texts[i] for i in test_idx]
-train_domains = [domains[i] for i in train_idx]
 
 print(f"✓ Train: {len(train_idx)}, Test: {len(test_idx)}")
 
@@ -62,14 +59,6 @@ cluster_centers = {}
 for c, indices in cluster_to_indices.items():
     center = np.mean(train_emb[indices], axis=0)
     cluster_centers[c] = center / np.linalg.norm(center)
-
-# 簇纯度
-print("\n簇分析:")
-for c, label_list in sorted(cluster_to_labels.items(), key=lambda x: -len(x[1]))[:5]:
-    counter = Counter(label_list)
-    purity = counter.most_common(1)[0][1] / len(label_list)
-    dominant = counter.most_common(1)[0][0]
-    print(f"  簇 #{c}: {len(label_list)} 样本, 主导意图: {dominant} ({purity:.0%})")
 
 # 初始化
 train_norm = train_emb / np.linalg.norm(train_emb, axis=1, keepdims=True)
@@ -98,25 +87,32 @@ def retrieve(query_emb, top_k=5, weights=None):
     candidate_emb = train_norm[candidates]
     sims = np.dot(query_emb, candidate_emb.T)[0]
     top_local = np.argsort(sims)[::-1][:top_k]
-    return [candidates[i] for i in top_local], top_clusters
+    return [candidates[i] for i in top_local], top_clusters, sims[top_local]
 
 def interactive_mode():
     """交互式验证"""
     print("\n" + "=" * 80)
-    print("交互式反馈验证")
+    print("交互式反馈验证 v2 - 语义相似度增强")
     print("=" * 80)
     print("""
-说明:
-  - 输入查询编号 (1-516) 或输入文本
-  - 系统返回 Top-3 结果
-  - 您给出反馈: 1=正确, 0=错误
-  - 观察优化效果
-  
+反馈标准 (更严格):
+─────────────────────────────
+  1 = Top-1 意图匹配 AND 语义相似度 > 0.7
+  0 = 其他所有情况
+      - Top-1 意图不匹配
+      - 意图匹配但语义不相似
+      - Top-1 错误
+
+显示内容:
+─────────────────────────────
+  - 意图匹配: ✓ 或 ✗
+  - 语义相似度: 0.XX
+  - 判断建议: 基于上述两项给出建议
+
 命令:
-  - 输入数字: 选择测试集样本
-  - 输入文本: 自定义查询
+  - 输入数字: 选择测试样本
   - 'stats': 查看统计
-  - 'test': 批量测试效果
+  - 'test': 批量测试
   - 'quit': 退出
     """)
     
@@ -128,122 +124,133 @@ def interactive_mode():
                 break
             
             elif user_input.lower() == 'stats':
-                print(f"\n当前统计:")
+                print(f"\n{'='*60}")
+                print("当前统计")
+                print("="*60)
                 print(f"  反馈数: {len(feedback_history)}")
                 pos = sum(1 for f in feedback_history if f['correct'])
                 neg = len(feedback_history) - pos
-                print(f"  正反馈: {pos}, 负反馈: {neg}")
+                print(f"  正反馈: {pos}, 负反馈: {neg} (正确率 {pos/(pos+neg)*100:.1f}%)")
                 print(f"  簇权重范围: {min(cluster_weights.values()):.2f} - {max(cluster_weights.values()):.2f}")
+                
+                # 统计各簇反馈
+                cluster_fb = defaultdict(lambda: {"pos": 0, "neg": 0})
+                for f in feedback_history:
+                    for c in f.get("clusters", []):
+                        if f["correct"]:
+                            cluster_fb[c]["pos"] += 1
+                        else:
+                            cluster_fb[c]["neg"] += 1
+                
+                print(f"\n  各簇反馈分布:")
+                for c in sorted(cluster_fb.keys()):
+                    fb = cluster_fb[c]
+                    total = fb["pos"] + fb["neg"]
+                    if total > 0:
+                        rate = fb["pos"] / total
+                        print(f"    簇 #{c}: 正反馈 {fb['pos']}, 负反馈 {fb['neg']} (正确率 {rate:.0%})")
                 
                 # 测试当前效果
                 correct = 0
                 for i, query_label in enumerate(test_labels):
                     query_emb = test_norm[i:i+1]
-                    top_indices, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
+                    top_indices, _, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
                     if train_labels[top_indices[0]] == query_label:
                         correct += 1
                 acc = correct / len(test_idx)
-                print(f"  当前 Top-1 准确率: {acc:.1%}")
+                print(f"\n  当前 Top-1 准确率: {acc:.1%}")
+                print(f"  初始准确率: 73.1%")
+                print(f"  变化: {(acc - 0.731) * 100:+.1f}%")
             
             elif user_input.lower() == 'test':
-                # 批量测试
                 print("\n批量测试中...")
                 correct = 0
                 for i, query_label in enumerate(test_labels):
                     query_emb = test_norm[i:i+1]
-                    top_indices, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
+                    top_indices, _, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
                     if train_labels[top_indices[0]] == query_label:
                         correct += 1
                 acc = correct / len(test_idx)
                 print(f"当前 Top-1 准确率: {acc:.1%}")
+                print(f"变化: {(acc - 0.731) * 100:+.1f}%")
             
             elif user_input.isdigit():
                 idx = int(user_input)
                 if 1 <= idx <= len(test_idx):
-                    idx -= 1  # 转为0索引
+                    idx -= 1
                     query_text = test_texts[idx]
                     query_label = test_labels[idx]
                     query_emb = test_norm[idx:idx+1]
                     
-                    print(f"\n查询: \"{query_text}\"")
+                    print(f"\n{'='*60}")
+                    print(f"查询 #{idx+1}")
+                    print("="*60)
+                    print(f"问题: \"{query_text}\"")
                     print(f"真实意图: {query_label}")
                     
                     # 检索
-                    top_indices, top_clusters = retrieve(query_emb, top_k=3, weights=cluster_weights)
+                    top_indices, top_clusters, top_sims = retrieve(query_emb, top_k=3, weights=cluster_weights)
                     
                     print(f"\n召回簇: {[c for c, _, _ in top_clusters]}")
                     print(f"\nTop-3 结果:")
-                    for i, idx2 in enumerate(top_indices, 1):
-                        print(f"  {i}. [{train_labels[idx2]}]")
+                    
+                    # 判断信息
+                    top1_intent = train_labels[top_indices[0]]
+                    top1_semantic = top_sims[0]
+                    intent_match = (top1_intent == query_label)
+                    
+                    for i, (idx2, sim) in enumerate(zip(top_indices, top_sims), 1):
+                        intent = train_labels[idx2]
+                        match_mark = "✓" if intent == query_label else "✗"
+                        print(f"\n  {i}. [{intent}] {match_mark}")
+                        print(f"     语义相似度: {sim:.2f}")
                         print(f"     \"{train_texts[idx2]}\"")
-                        print()
+                    
+                    # 自动判断建议
+                    print(f"\n{'='*60}")
+                    print("判断建议")
+                    print("="*60)
+                    print(f"  Top-1 意图匹配: {'✓ 是' if intent_match else '✗ 否'}")
+                    print(f"  Top-1 语义相似度: {top1_semantic:.2f} {'(>0.7 合格)' if top1_semantic > 0.7 else '(<0.7 不合格)'}")
+                    
+                    if intent_match and top1_semantic > 0.7:
+                        print(f"\n  → 建议反馈: 1 (两项都合格)")
+                    else:
+                        reasons = []
+                        if not intent_match:
+                            reasons.append("意图不匹配")
+                        if top1_semantic <= 0.7:
+                            reasons.append("语义相似度过低")
+                        print(f"\n  → 建议反馈: 0 ({', '.join(reasons)})")
                     
                     # 获取反馈
-                    fb = input("\n反馈 (1=正确, 0=错误, Enter=跳过): ").strip()
+                    fb = input("\n你的反馈 (1/0): ").strip()
                     
                     if fb == '1':
-                        # 正反馈
                         for c, _, _ in top_clusters:
                             cluster_weights[c] = min(1.5, cluster_weights[c] + 0.05)
                         feedback_history.append({
                             "query_idx": idx,
                             "correct": True,
-                            "clusters": [c for c, _, _ in top_clusters]
+                            "clusters": [c for c, _, _ in top_clusters],
+                            "intent_match": intent_match,
+                            "semantic_sim": float(top1_semantic)
                         })
-                        print("✓ 正反馈已记录，簇权重已提升")
+                        print("✓ 正反馈已记录，簇权重提升")
                         
                     elif fb == '0':
-                        # 负反馈
                         for c, _, _ in top_clusters:
-                            cluster_weights[c] = max(0.5, cluster_weights[c] - 0.05)
+                            cluster_weights[c] = max(0.5, cluster_weights[c] - 0.1)  # 负反馈惩罚更大
                         feedback_history.append({
                             "query_idx": idx,
                             "correct": False,
-                            "clusters": [c for c, _, _ in top_clusters]
+                            "clusters": [c for c, _, _ in top_clusters],
+                            "intent_match": intent_match,
+                            "semantic_sim": float(top1_semantic)
                         })
-                        print("✓ 负反馈已记录，簇权重已降低")
-                        
-                        # 提示正确意图
-                        print(f"正确意图应该是: {query_label}")
+                        print("✓ 负反馈已记录，簇权重降低")
                 else:
                     print(f"请输入 1-{len(test_idx)} 之间的数字")
-            
-            else:
-                # 文本查询
-                print(f"\n查询: \"{user_input}\"")
-                # 这里需要用BGE生成embedding，暂时用测试集中最相似的
-                query_text = user_input
-                
-                # 在测试集中找相似的
-                test_sims = []
-                for i, t in enumerate(test_texts):
-                    if len(t) > 3:
-                        # 简单字符重叠
-                        overlap = len(set(query_text) & set(t))
-                        test_sims.append((i, overlap))
-                
-                if test_sims:
-                    best_idx = max(test_sims, key=lambda x: x[1])[0]
-                    query_emb = test_norm[best_idx:best_idx+1]
-                    
-                    top_indices, top_clusters = retrieve(query_emb, top_k=3, weights=cluster_weights)
-                    
-                    print(f"\n召回簇: {[c for c, _, _ in top_clusters]}")
-                    print(f"\nTop-3 结果:")
-                    for i, idx2 in enumerate(top_indices, 1):
-                        print(f"  {i}. [{train_labels[idx2]}]")
-                        print(f"     \"{train_texts[idx2]}\"")
-                        print()
-                    
-                    fb = input("\n反馈 (1=正确, 0=错误): ").strip()
-                    if fb in ['1', '0']:
-                        if fb == '1':
-                            for c, _, _ in top_clusters:
-                                cluster_weights[c] = min(1.5, cluster_weights[c] + 0.05)
-                        else:
-                            for c, _, _ in top_clusters:
-                                cluster_weights[c] = max(0.5, cluster_weights[c] - 0.05)
-                        print("✓ 反馈已记录")
         
         except KeyboardInterrupt:
             print("\n\n退出...")
@@ -257,7 +264,7 @@ if __name__ == "__main__":
     correct = 0
     for i, query_label in enumerate(test_labels):
         query_emb = test_norm[i:i+1]
-        top_indices, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
+        top_indices, _, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
         if train_labels[top_indices[0]] == query_label:
             correct += 1
     initial_acc = correct / len(test_idx)
@@ -267,14 +274,22 @@ if __name__ == "__main__":
     interactive_mode()
     
     # 最终效果
-    print("\n最终效果:")
+    print("\n" + "=" * 80)
+    print("最终统计")
+    print("=" * 80)
     correct = 0
     for i, query_label in enumerate(test_labels):
         query_emb = test_norm[i:i+1]
-        top_indices, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
+        top_indices, _, _ = retrieve(query_emb, top_k=1, weights=cluster_weights)
         if train_labels[top_indices[0]] == query_label:
             correct += 1
     final_acc = correct / len(test_idx)
-    print(f"  最终 Top-1 准确率: {final_acc:.1%}")
-    print(f"  变化: {(final_acc - initial_acc) * 100:+.1f}%")
+    
+    pos = sum(1 for f in feedback_history if f['correct'])
+    neg = len(feedback_history) - pos
+    
     print(f"  总反馈数: {len(feedback_history)}")
+    print(f"  正反馈: {pos}, 负反馈: {neg}")
+    print(f"  初始 Top-1: {initial_acc:.1%}")
+    print(f"  最终 Top-1: {final_acc:.1%}")
+    print(f"  变化: {(final_acc - initial_acc) * 100:+.1f}%")
