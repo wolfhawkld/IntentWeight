@@ -9,14 +9,20 @@
 ## 一、数据集开源情况
 ## 1. Dataset Availability
 
-### 标准基准数据集（领域特定）
+### 核心数据集
 
 | 数据集 | 规模 | 开源 | 来源 | 许可证 | 备注 |
 |--------|------|------|------|--------|------|
-| **eManual** | 中等 | 已开源 | [RAGBench (HuggingFace)](https://huggingface.co/datasets) | CC BY 4.0 | 产品手册，最接近企业知识库场景。同时被 HypRAG 和 RAGBench 使用 |
-| **CUAD** | 510 合同, 13K+ 标注 | 已开源 | [HuggingFace: theatticusproject/cuad](https://huggingface.co/datasets/theatticusproject/cuad) | CC BY 4.0 | 法律合同，41 类条款标注。同时被 HypRAG 和 RAGBench 使用 |
-| **PubMedQA** | 1K 标注 + 61.2K 未标注 + 211.3K 自动生成 | 已开源 | [HuggingFace: qiaojin/PubMedQA](https://huggingface.co/datasets/qiaojin/PubMedQA) | MIT | 生物医学 QA，替代 CovidQA（仅 124 pairs） |
-| TechQA (可选) | 中等 | 已开源 | RAGBench 子集 | - | IBM 技术支持 QA |
+| **CUAD** | 510 合同, 13K+ 标注, 41 类 | 已开源 | [HuggingFace: theatticusproject/cuad](https://huggingface.co/datasets/theatticusproject/cuad) | CC BY 4.0 | 法律合同，检索级 GT（段落级标注） |
+| **eManual** | 中等 | 已开源 | [RAGBench (HuggingFace)](https://huggingface.co/datasets) | CC BY 4.0 | 产品手册，检索级 GT（QA-chunk 映射） |
+| **PubMedQA** | 1K 标注 + 61.2K 未标注 + 211.3K 自动生成 | 已开源 | [HuggingFace: qiaojin/PubMedQA](https://huggingface.co/datasets/qiaojin/PubMedQA) | MIT | 生物医学，规模大，MIRAGE 基准子集 |
+
+### 补充数据集
+
+| 数据集 | 规模 | 开源 | 来源 | 许可证 | 备注 |
+|--------|------|------|------|--------|------|
+| **BioASQ** | 4,721 问题, 40K+ 段落 | 已开源 | [BioASQ](http://www.bioasq.org/) | 注册获取 | 医学领域 GT 最完整（文档+snippet 双级标注） |
+| **BANKING77** | 13,083 样本, 77 intent | 已开源 | [HuggingFace: PolyAI/banking77](https://huggingface.co/datasets/PolyAI/banking77) | Apache 2.0 | 已有 Phase 1B/1D 实验数据 |
 
 ### 已有数据集
 
