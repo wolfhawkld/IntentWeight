@@ -80,17 +80,22 @@
 ## 三、GPU 资源规划
 ## 3. GPU Resource Planning
 
-### 硬件需求总结
+### 统一实验环境：A100 80GB
 
-| 任务 | GPU 类型 | 估计时间 | 备注 |
-|------|---------|---------|------|
-| 数据集 embedding 生成 (BGE-large) | A100 40GB 或 A800 | 半天 | eManual/CUAD/PubMedQA |
-| DynamicRAG (SFT + DPO) | A100 40GB | 3-5 天 | **最耗时**，Llama3-8B 训练 |
-| Online-Opt RAG 复现 | A100 40GB | 2-3 天 | 代码可能未开源，需评估 |
-| FLAIR | A100 40GB 或 API | 1-2 天 | HyQE 生成 + 反馈循环 |
-| CRAG / MBA-RAG | LLM API 即可 | 1-2 天 | 无需 GPU 训练 |
-| RAGAS 评估 (LLM-as-judge) | LLM API | 1-2 天 | 需要 API 费用 |
-| **合计** | **A100 40GB** | **约 1.5-2 周** | |
+所有实验统一在 **NVIDIA A100 80GB** 上执行，确保结果可比性和可复现性。
+
+A100 80GB 可完全覆盖所有实验需求：
+
+| 任务 | 显存需求 | 在 A100 80GB 上 | 估计时间 |
+|------|---------|----------------|---------|
+| 数据集 embedding 生成 (BGE-large) | ~2-4 GB | 非常充裕 | 半天 |
+| DynamicRAG (Llama3-8B SFT) | ~40-50 GB (full) / ~20 GB (QLoRA) | 充裕 | 2-3 天 |
+| DynamicRAG (Llama3-8B DPO) | ~40-50 GB (full) / ~20 GB (QLoRA) | 充裕 | 1-2 天 |
+| Online-Opt RAG 复现 | ~10-20 GB | 充裕 | 2-3 天 |
+| FLAIR (HyQE 生成) | ~10-20 GB | 充裕 | 1-2 天 |
+| CRAG / MBA-RAG | LLM API 即可 | 无需 GPU | 1-2 天 |
+| RAGAS 评估 (LLM-as-judge) | LLM API 即可 | 无需 GPU | 1-2 天 |
+| **合计** | | | **约 1.5-2 周** |
 
 ### 可在本地 GTX 1650 完成的工作
 
@@ -99,7 +104,7 @@
 - 我们的系统全部实验 + 消融实验
 - 小规模 embedding 生成（小 batch size）
 
-### 必须租用云 GPU 的工作
+### 必须租用云 GPU (A100 80GB) 的工作
 
 - DynamicRAG 训练（Llama3-8B SFT + DPO）
 - Online-Opt RAG 复现
@@ -108,8 +113,47 @@
 
 ---
 
-## 四、风险项
-## 4. Risk Items
+## 四、GPU 对实验结果的影响与控制
+## 4. GPU Impact on Results & Controls
+
+### 影响层面
+
+| 层面 | 影响程度 | 说明 |
+|------|---------|------|
+| **训练** | 较大 | 显存 → batch size → 训练动态 → 最终 checkpoint 不完全一致 |
+| | | 精度 (BF16/FP16/FP32) → 数值差异 |
+| **推理** | 极小 | 同一 checkpoint 在不同 GPU 上推理结果基本一致 |
+
+### 控制措施（论文中需报告）
+
+| 措施 | 做法 | 论文中的表述 |
+|------|------|-------------|
+| GPU 一致性 | 所有 baseline + 我们的系统统一在 A100 80GB 上跑 | "All experiments are conducted on a single NVIDIA A100 80GB GPU" |
+| 精度一致 | 统一 BF16（A100 原生支持） | "All models use BF16 precision" |
+| 随机种子 | 固定 seed，报告 mean ± std（跑 3-5 次） | "Results averaged over 3 runs with seeds {42, 123, 456}" |
+| 软件环境 | 统一 PyTorch 版本、CUDA 版本 | "PyTorch 2.x, CUDA 12.x" |
+
+### 计算效率对比（论文实验的加分项）
+
+这是我们方法的工程卖点之一 — 可在 Experiments 中增加一张 computational cost 对比表：
+
+| 方法 | 训练阶段 | 推理硬件 | 推理延迟 | 显存占用 |
+|------|---------|---------|---------|---------|
+| DynamicRAG | A100 × 3-5 天 (Llama3-8B SFT+DPO) | GPU | 待测 | ~40 GB |
+| Online-Opt RAG | A100 × 2-3 天 (梯度更新) | GPU | 待测 | ~10-20 GB |
+| FLAIR | A100 × 1-2 天 (HyQE 生成) | GPU / API | 待测 | ~10-20 GB |
+| MBA-RAG | DistilBERT 训练 | CPU + API | 待测 | ~1 GB |
+| CRAG | 无训练 | CPU + API | 待测 | ~1 GB |
+| **本方法** | **无训练** | **CPU** | 待测 | **< 1 GB** |
+
+> **论文中可强调**："Our method requires no GPU for either training or inference,
+> while achieving competitive or superior retrieval quality compared to methods
+> that require multi-day GPU training on 8B-parameter models."
+
+---
+
+## 五、风险项
+## 5. Risk Items
 
 | 风险 | 影响 | 缓解方案 |
 |------|------|---------|
