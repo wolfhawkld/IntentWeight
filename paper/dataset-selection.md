@@ -2,6 +2,7 @@
 # Dataset Selection
 
 **创建时间 / Created**: 2026-04-20
+**更新时间 / Updated**: 2026-04-21
 **状态 / Status**: 讨论中
 
 ---
@@ -38,13 +39,17 @@
 
 HypRAG 使用 RAGAS 基准中的 5 个领域特定数据集，评估闭域 RAG 检索质量：
 
-| 数据集 | 领域 | 特点 | 评估指标 |
-|--------|------|------|---------|
-| **CovidQA** | 生物医学 | 基于 CORD-19 语料的医学文档 QA | F / CR / AR |
-| **CUAD** | 法律合同 | 合同条款理解与检索 | F / CR / AR |
-| **eManual** | 产品手册 | 技术文档检索 | F / CR / AR |
-| **DelucionQA** | 误导信息检测 | 带噪声的 QA | F / CR / AR |
-| **ExpertQA** | 专家知识 | 跨领域专业 QA | F / CR / AR |
+| 数据集 | 领域 | 特点 | 规模 | 评估指标 |
+|--------|------|------|------|---------|
+| **CovidQA** | 生物医学 | 基于 CORD-19 语料的医学文档 QA | **仅 124 QA pairs** | F / CR / AR |
+| **CUAD** | 法律合同 | 合同条款理解与检索 | 中等 | F / CR / AR |
+| **eManual** | 产品手册 | 技术文档检索 | 中等 | F / CR / AR |
+| **DelucionQA** | 误导信息检测 | 带噪声的 QA | 中等 | F / CR / AR |
+| **ExpertQA** | 专家知识 | 跨领域专业 QA | 中等 | F / CR / AR |
+
+> **⚠️ CovidQA 规模问题**：CovidQA (Tang et al., 2020) 仅 124 个 QA pairs，
+> 扩展版 COVID-QA (Möller et al., 2020) 也仅 2,019 对。
+> 对于展示在线学习曲线，样本量可能不足。建议替换为 PubMedQA 或 RAGBench 医学子集。
 
 RAGAS 三维度指标：
 - **Faithfulness (F)**：答案是否基于检索到的内容
@@ -57,6 +62,23 @@ HypRAG 的 baselines：EucBERT, ModernBERT, GTE, Gemma 等 embedding 模型。
 1. 领域特定 RAG，非开放域 QA — 与我们的系统定位一致
 2. 在有限语料库上评估检索质量 — 匹配我们的聚类+导航场景
 3. RAGAS 指标是 RAG 评估的标准框架 — 审稿人认可度高
+
+### RAGBench (arXiv:2407.11005, 2024) — 补充参考
+
+RAGBench 是 100K 规模的跨领域 RAG 基准，覆盖 5 个行业垂直领域，配合 TRACe 评估框架：
+
+| 子集 | 领域 | 特点 |
+|------|------|------|
+| **eManual** | 产品手册 | 同 HypRAG 使用的数据集 |
+| **TechQA** | 技术支持 | IBM 技术文档 QA |
+| **CUAD** | 法律合同 | 同 HypRAG 使用的数据集 |
+| **PubMedQA / CovidQA** | 生物医学 | 医学文献，规模大于独立 CovidQA |
+| **FinQA / TAT-QA** | 金融 | 数值推理型 QA |
+
+**相比 HypRAG 数据集的优势**：
+1. 规模更大（100K），足以支撑在线学习曲线展示
+2. 与 HypRAG 有交集（eManual, CUAD），结果可间接对比
+3. 标准化评估框架 TRACe（Utility, Relevance, Adherence, Completeness）
 
 ### MBA-RAG (COLING 2025) — Bandit 方法参考
 
@@ -113,17 +135,19 @@ MBA-RAG 使用 Adaptive-RAG 的标准 QA 数据集：
 
 ### 方案：HypRAG 对齐 + 已有数据集补充
 
-**标准基准（对齐 HypRAG，领域特定）：**
+**策略：HypRAG 对齐 + RAGBench 补充 + 已有数据集**
 
-从 HypRAG 使用的 5 个 RAGAS 数据集中选取，建议：
+从 HypRAG 和 RAGBench 中选取领域特定数据集：
 
-| 数据集 | 是否选用 | 理由 |
-|--------|---------|------|
-| **CovidQA** | 推荐 | 医学领域，与 CMID 类似但质量更好 |
-| **CUAD** | 推荐 | 法律合同，文档结构化强，适合聚类 |
-| **eManual** | 推荐 | 产品手册，最接近企业知识库场景 |
-| DelucionQA | 可选 | 侧重误导检测，与我们的系统定位略偏 |
-| ExpertQA | 可选 | 跨领域专家知识 |
+| 数据集 | 来源 | 是否选用 | 理由 |
+|--------|------|---------|------|
+| **eManual** | HypRAG + RAGBench | 推荐 | 产品手册，最接近企业知识库场景 |
+| **CUAD** | HypRAG + RAGBench | 推荐 | 法律合同，文档结构化强，适合聚类 |
+| **PubMedQA** | RAGBench | 推荐 | 替代 CovidQA（规模更大），医学领域 |
+| **TechQA** | RAGBench | 可选 | IBM 技术支持，补充技术领域覆盖 |
+| CovidQA | HypRAG | 不推荐 | 仅 124 pairs，太小，不足以展示在线学习曲线 |
+| DelucionQA | HypRAG | 不推荐 | 侧重误导检测，与系统定位偏离 |
+| ExpertQA | HypRAG | 可选 | 跨领域专家知识 |
 
 **已有数据集（展示完整故事）：**
 
@@ -136,7 +160,7 @@ MBA-RAG 使用 Adaptive-RAG 的标准 QA 数据集：
 
 | 评估维度 | 数据集 | 协议 |
 |---------|--------|------|
-| **静态检索质量** | CovidQA, CUAD, eManual (+ BANKING77) | 单次检索, RAGAS 指标 (F/CR/AR) |
+| **静态检索质量** | eManual, CUAD, PubMedQA (+ BANKING77) | 单次检索, RAGAS 指标 (F/CR/AR) |
 | **自适应能力** | 同上 | 按 query 复杂度分组 |
 | **在线学习曲线** | 同上 | 多轮模拟, learning curve |
 | **聚类有效性** | BANKING77, CLINC150 | 纯度, 搜索空间缩减比 |
@@ -169,11 +193,13 @@ HypRAG 评估的是**单次检索质量（静态）**— 不同 embedding 模型
 ## 六、待确认事项
 ## 6. Open Questions
 
-1. HypRAG 的 5 个数据集中具体选哪几个？（建议 3 个：CovidQA, CUAD, eManual）
+1. ~~HypRAG 的 5 个数据集中具体选哪几个？~~ → 建议 eManual + CUAD + PubMedQA（替代 CovidQA）
 2. BANKING77/CLINC150 是否同时保留？还是只保留 BANKING77？
 3. 是否需要中文数据集？（SMP2019 vs 只用 JQ 企业数据）
 4. 在线学习的模拟轮次设计（50 轮？100 轮？）
+5. RAGBench vs HypRAG 原始数据集？（RAGBench 规模更大，但 HypRAG 结果可直接对比）
+6. 是否加入 TechQA（IBM 技术支持）作为第四个标准数据集？
 
 ---
 
-*更新时间: 2026-04-20*
+*更新时间: 2026-04-21*
