@@ -1,0 +1,4 @@
+# 数据文件不提交到 git（体积大）
+raw/
+processed/
+embeddings/
