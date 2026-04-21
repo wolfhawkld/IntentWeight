@@ -1,4 +1,34 @@
 # -*- coding: utf-8 -*-
+# Monkey-patch: 当系统 Python 缺少 _lzma C 扩展时提供 stub
+# datasets 库导入链会触发 import lzma，但实际下载不使用 lzma 压缩
+import importlib.util
+if importlib.util.find_spec("_lzma") is None:
+    import sys, types
+    _mod = types.ModuleType("_lzma")
+    _mod.LZMAError = type("LZMAError", (Exception,), {})
+    # lzma.py 需要的常量
+    for _name, _val in [
+        ("CHECK_NONE", 0), ("CHECK_CRC32", 1), ("CHECK_CRC64", 4),
+        ("CHECK_SHA256", 10), ("CHECK_ID_MAX", 15), ("CHECK_UNKNOWN", 16),
+        ("FILTER_LZMA1", 0x4000000000000021), ("FILTER_LZMA2", 0x21),
+        ("FILTER_DELTA", 0x03), ("FILTER_X86", 0x04), ("FILTER_IA64", 0x06),
+        ("FILTER_ARM", 0x07), ("FILTER_ARMTHUMB", 0x08),
+        ("FILTER_POWERPC", 0x05), ("FILTER_SPARC", 0x09),
+        ("FORMAT_AUTO", 0), ("FORMAT_XZ", 1), ("FORMAT_ALONE", 2), ("FORMAT_RAW", 3),
+        ("MF_HC3", 0x03), ("MF_HC4", 0x04), ("MF_BT2", 0x12),
+        ("MF_BT3", 0x13), ("MF_BT4", 0x14),
+        ("MODE_FAST", 1), ("MODE_NORMAL", 2),
+        ("PRESET_DEFAULT", 6), ("PRESET_EXTREME", 1 << 31),
+    ]:
+        setattr(_mod, _name, _val)
+    def _raise(*a, **kw): raise _mod.LZMAError("_lzma C extension not available")
+    _mod._encode_filter_properties = _raise
+    _mod._decode_filter_properties = _raise
+    _mod.is_check_supported = lambda cid: False
+    _mod.LZMACompressor = type("LZMACompressor", (), {"__init__": _raise})
+    _mod.LZMADecompressor = type("LZMADecompressor", (), {"__init__": _raise})
+    sys.modules["_lzma"] = _mod
+
 """
 论文实验数据集下载脚本
 Paper Experiment Dataset Download Script
@@ -37,7 +67,7 @@ def download_cuad():
     print("下载 CUAD (法律合同) ...")
     print("=" * 60)
 
-    dataset = load_dataset("theatticusproject/cuad")
+    dataset = load_dataset("theatticusproject/cuad", trust_remote_code=True)
     save_path = os.path.join(RAW_DIR, "cuad")
     dataset.save_to_disk(save_path)
 
@@ -58,7 +88,7 @@ def download_emanual():
     print("下载 eManual (产品手册, RAGBench) ...")
     print("=" * 60)
 
-    dataset = load_dataset("galileo-ai/ragbench", "emanual")
+    dataset = load_dataset("galileo-ai/ragbench", "emanual", trust_remote_code=True)
     save_path = os.path.join(RAW_DIR, "emanual")
     dataset.save_to_disk(save_path)
 
@@ -81,7 +111,7 @@ def download_pubmedqa():
     print("=" * 60)
 
     # 下载标注子集
-    labeled = load_dataset("qiaojin/PubMedQA", "pqa_labeled")
+    labeled = load_dataset("qiaojin/PubMedQA", "pqa_labeled", trust_remote_code=True)
     save_path_labeled = os.path.join(RAW_DIR, "pubmedqa_labeled")
     labeled.save_to_disk(save_path_labeled)
     print(f"  pqa_labeled: {len(labeled['train'])} 条")
@@ -89,7 +119,7 @@ def download_pubmedqa():
 
     # 下载自动生成子集（规模大，用于在线学习模拟）
     print("  下载 pqa_artificial (211K, 可能需要几分钟) ...")
-    artificial = load_dataset("qiaojin/PubMedQA", "pqa_artificial")
+    artificial = load_dataset("qiaojin/PubMedQA", "pqa_artificial", trust_remote_code=True)
     save_path_artificial = os.path.join(RAW_DIR, "pubmedqa_artificial")
     artificial.save_to_disk(save_path_artificial)
     print(f"  pqa_artificial: {len(artificial['train'])} 条")
@@ -112,7 +142,7 @@ def download_bioasq():
     print("=" * 60)
 
     try:
-        dataset = load_dataset("bigbio/bioasq_task_b", "bioasq_task_b_source")
+        dataset = load_dataset("bigbio/bioasq_task_b", "bioasq_task_b_source", trust_remote_code=True)
         save_path = os.path.join(RAW_DIR, "bioasq")
         dataset.save_to_disk(save_path)
         for split_name, split_data in dataset.items():
@@ -154,11 +184,11 @@ def download_banking77():
             except OSError:
                 # Windows/WSL 可能不支持 symlink，直接重新下载
                 print("  符号链接创建失败，重新下载...")
-                dataset = load_dataset("PolyAI/banking77")
+                dataset = load_dataset("PolyAI/banking77", trust_remote_code=True)
                 dataset.save_to_disk(link_path)
         return None
 
-    dataset = load_dataset("PolyAI/banking77")
+    dataset = load_dataset("PolyAI/banking77", trust_remote_code=True)
     save_path = os.path.join(RAW_DIR, "banking77")
     dataset.save_to_disk(save_path)
 
