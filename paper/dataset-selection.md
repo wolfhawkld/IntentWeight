@@ -118,15 +118,6 @@ MBA-RAG 使用 Adaptive-RAG 的标准 QA 数据集：
 | DailyDialog | 11,499 | 英文 | 日常对话 | 不用 | 非 RAG 场景 |
 | CMID | 12,254 | 中文 | 医疗 | 不用 | 分类体系有问题(已验证) |
 | **SMP2019** | 2,579 | 中文 | 多领域 | 待定 | 48 intent, BGE 聚类纯度 88.4% |
-| **JQ 企业数据** | 2,623 chunks | 中文 | 企业运营 | E2E 案例 | 真实场景，110 docs |
-
-### jq_kg_base 工程验证数据
-
-- 110 docs → 2,623 chunks
-- Azure 3072d + 腾讯 4096d 双平台
-- 15 clusters (Azure) / 16 clusters (腾讯)
-- PCA 方差保留 99.1%
-- 105 次反馈记录
 
 ---
 
@@ -154,7 +145,6 @@ MBA-RAG 使用 Adaptive-RAG 的标准 QA 数据集：
 | 数据集 | 用途 | 理由 |
 |--------|------|------|
 | **BANKING77** | 聚类质量 + 检索优化 | 已有完整实验数据，聚类效果最好 |
-| **JQ 企业数据** | E2E 系统验证 | 真实场景，system paper 必备 |
 
 ### 评估维度与数据集映射
 
@@ -164,7 +154,6 @@ MBA-RAG 使用 Adaptive-RAG 的标准 QA 数据集：
 | **自适应能力** | 同上 | 按 query 复杂度分组 |
 | **在线学习曲线** | 同上 | 多轮模拟, learning curve |
 | **聚类有效性** | BANKING77, CLINC150 | 纯度, 搜索空间缩减比 |
-| **端到端系统** | JQ 企业数据 | 全链路验证 |
 
 ---
 
@@ -195,7 +184,7 @@ HypRAG 评估的是**单次检索质量（静态）**— 不同 embedding 模型
 
 1. ~~HypRAG 的 5 个数据集中具体选哪几个？~~ → 建议 eManual + CUAD + PubMedQA（替代 CovidQA）
 2. BANKING77/CLINC150 是否同时保留？还是只保留 BANKING77？
-3. 是否需要中文数据集？（SMP2019 vs 只用 JQ 企业数据）
+3. 是否需要中文数据集？（SMP2019 或其他公开中文 RAG 数据集）
 4. 在线学习的模拟轮次设计（50 轮？100 轮？）
 5. RAGBench vs HypRAG 原始数据集？（RAGBench 规模更大，但 HypRAG 结果可直接对比）
 6. 是否加入 TechQA（IBM 技术支持）作为第四个标准数据集？
