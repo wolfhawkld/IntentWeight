@@ -29,6 +29,7 @@
 - **对齐同类论文**：参考 HypRAG (arXiv:2602.07739) 的数据集选取，该论文同为领域特定 RAG 检索优化
 - **可模拟在线学习**：数据集需支持将 test set 按序处理，模拟多轮用户交互和反馈
 - **跨领域验证**：覆盖多个垂直领域，证明方法的通用性
+- **具备 Ground Truth**：数据集必须有可靠的 GT 用于反馈模拟（详见第五节）
 
 ---
 
@@ -157,37 +158,123 @@ MBA-RAG 使用 Adaptive-RAG 的标准 QA 数据集：
 
 ---
 
-## 五、与 HypRAG 数据集对齐的注意事项
-## 5. Notes on Aligning with HypRAG Datasets
+## 五、Ground Truth 分析与反馈模拟策略
+## 5. Ground Truth Analysis & Feedback Simulation Strategy
 
-### 协议差异
+### 5.1 核心问题
+
+在线学习实验需要模拟用户反馈，反馈模拟的可靠性取决于 ground truth 的质量。
+不是所有数据集都有检索级 GT（哪个 chunk 该被检索），有些只有答案级 GT（正确答案是什么）。
+
+**GT 质量直接决定反馈模拟的可靠性，进而影响在线学习实验结论的可信度。**
+
+### 5.2 各候选数据集的 Ground Truth 情况
+
+| 数据集 | 检索级 GT | 答案级 GT | GT 质量 | 反馈模拟可靠性 |
+|--------|----------|----------|---------|--------------|
+| **CUAD** | **有** — 每个条款类别标注了对应段落位置 | **有** — 标注的条款文本 | 最高 | 最高 — 直接判断检索对错 |
+| **eManual (RAGBench)** | **有** — RAGBench 提供 QA + 源文档映射 | **有** — TRACe 标注 | 高 | 高 |
+| **BANKING77** | **间接** — 同 intent 的 train 样本 = 相关 chunk | **有** — intent 标签 | 中 | 中 — Phase 1D 已验证可行 |
+| **PubMedQA** | **部分** — context 是摘要，需自建检索语料库 | **有** — yes/no/maybe + 结论段 | 中低 | 中低 — 需额外构建 retrieval 任务 |
+| CLINC150 | 间接 — 同 BANKING77 | 有 — intent 标签 | 中 | 中 |
+| SMP2019 | 间接 | 有 — intent 标签 | 中 | 中 |
+
+### 5.3 三种反馈模拟策略
+
+根据数据集提供的 GT 级别，采用不同策略：
+
+**策略 A：检索级 GT（CUAD, eManual）— 最可靠**
+
+```
+检索到的 chunk ∈ GT 相关集合 → positive feedback
+检索到的 chunk ∉ GT 相关集合 → negative feedback
+```
+
+- 无歧义，直接判定
+- 反馈信号最干净
+- **主实验优先使用这类数据集**
+
+**策略 B：答案级 GT（PubMedQA, BANKING77）— 需要匹配逻辑**
+
+```
+检索到的 chunk 包含 GT answer（字符串匹配或语义匹配）→ positive
+不包含 → negative
+```
+
+- 有噪声：chunk 可能包含答案关键词但实际不相关
+- 需要设计匹配阈值
+- 适合作为补充验证
+
+**策略 C：无 GT（纯真实场景）— 用 LLM-as-judge**
+
+```
+LLM 判断检索到的 chunk 是否回答了 query → feedback score
+```
+
+- 成本最高（每次反馈需 LLM 调用）
+- 引入 LLM 评判偏差
+- 但最接近真实部署场景
+- 适合企业场景的定性分析
+
+### 5.4 各方法的反馈信号派生（统一信息源，各自转化）
+
+所有方法的反馈从**同一个 ground truth** 派生，确保信息量公平。
+静态 baseline 不接受反馈，在线 baseline 各自按自己的机制转化反馈信号。
+
+| 方法 | 接受反馈 | 反馈信号格式 | 从 GT 如何派生 |
+|------|---------|------------|--------------|
+| BM25 / Dense / Hybrid | 否 | — | — |
+| CRAG / MBA-RAG | 否 | — | 自适应但非在线学习 |
+| DynamicRAG | 是 | LLM response quality (reward) | 检索结果是否覆盖 GT answer → reward score |
+| Online-Opt RAG | 是 | binary (solved/unsolved) | answer 是否匹配 GT → 1/0 |
+| FLAIR | 是 | feedback indicators | 同上，转化为 feedback signal |
+| **本方法** | 是 | 显式+隐式+上下文（多维） | 匹配 GT → like+copy (0.8)；不匹配 → dislike (0.2)；部分匹配 → like+无copy (0.6) |
+
+**公平性保证**：
+- 所有方法从同一个 GT 获取等价信息量
+- 静态方法不接受反馈 — 这是实验要验证的："在线学习是否有价值"
+- 在线方法各自用各自的反馈格式 — 公平竞争学习效率
+
+### 5.5 对数据集优先级的影响
+
+综合 GT 质量和反馈模拟可靠性，数据集优先级调整为：
+
+| 优先级 | 数据集 | GT 质量 | 理由 |
+|--------|--------|---------|------|
+| **最高** | **CUAD** | 检索级 GT | GT 最干净，反馈模拟无歧义 |
+| **最高** | **eManual (RAGBench)** | 检索级 GT | 同上，且最接近企业知识库场景 |
+| **中** | **BANKING77** | 间接 GT | 已有实验基础，Phase 1D 验证可行 |
+| **较低** | **PubMedQA** | 答案级 GT | 需自建语料库，匹配逻辑有噪声 |
+
+> **建议**：主实验以 CUAD + eManual 为核心（GT 最可靠），BANKING77 作为补充。
+> PubMedQA 如保留，建议使用 RAGBench 的子集版本（已处理好 chunk-QA 映射）。
+
+### 5.6 与 HypRAG 评估协议的差异
 
 HypRAG 评估的是**单次检索质量（静态）**— 不同 embedding 模型在相同数据集上的检索效果。
 
 本系统的核心优势是**多轮交互后的在线学习提升**，因此评估协议需要扩展：
 
 1. **Round 0**：冷启动（关键词先验），与 HypRAG baseline 直接可比
-2. **Round 1-N**：模拟用户反馈，展示 LinUCB learning curve
+2. **Round 1-N**：模拟用户反馈（按 5.4 中的策略），展示 learning curve
 3. **收敛分析**：多少轮反馈后达到稳态
 
-### 反馈模拟策略
-
-在标准数据集上模拟用户反馈的方式：
-- 检索到的 chunk 包含 ground truth 答案 → reward = 0.8 (like + copy)
-- 检索到的 chunk 不包含答案 → reward = 0.2 (dislike)
-- 随机添加隐式信号噪声模拟真实场景
+实验讲两层故事：
+- **在线学习 vs 静态方法**：静态方法平线，在线方法上升 → "反馈学习有价值"
+- **我们 vs 其他在线方法**：都上升，但我们更快/更高 → "我们的方式更有效"
 
 ---
 
 ## 六、待确认事项
 ## 6. Open Questions
 
-1. ~~HypRAG 的 5 个数据集中具体选哪几个？~~ → 建议 eManual + CUAD + PubMedQA（替代 CovidQA）
-2. BANKING77/CLINC150 是否同时保留？还是只保留 BANKING77？
-3. 是否需要中文数据集？（SMP2019 或其他公开中文 RAG 数据集）
-4. 在线学习的模拟轮次设计（50 轮？100 轮？）
-5. RAGBench vs HypRAG 原始数据集？（RAGBench 规模更大，但 HypRAG 结果可直接对比）
-6. 是否加入 TechQA（IBM 技术支持）作为第四个标准数据集？
+1. ~~HypRAG 的 5 个数据集中具体选哪几个？~~ → 建议 CUAD + eManual 为核心，BANKING77 补充
+2. PubMedQA 是否保留？（GT 质量较低，但增加医学领域覆盖）
+3. BANKING77/CLINC150 是否同时保留？还是只保留 BANKING77？
+4. 是否需要中文数据集？（SMP2019 或其他公开中文 RAG 数据集）
+5. 在线学习的模拟轮次设计（50 轮？100 轮？）
+6. RAGBench vs HypRAG 原始数据集？（RAGBench 规模更大且有 chunk-QA 映射，但 HypRAG 结果可直接对比）
+7. 是否加入 TechQA（IBM 技术支持）作为第四个标准数据集？
 
 ---
 
