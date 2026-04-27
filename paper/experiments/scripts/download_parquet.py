@@ -62,8 +62,20 @@ PROXY = os.environ.get("HTTPS_PROXY", os.environ.get("HTTP_PROXY", "http://127.0
 
 
 def download_file(url: str, output_path: str, proxy: str = None) -> bool:
-    """使用 curl 下载文件"""
-    cmd = ["curl", "-L", "-o", output_path, "-s", "--connect-timeout", "30"]
+    """使用 curl 下载文件，支持断点续传并在 HTTP 错误时失败。
+
+    - ``-C -``: 断点续传，适合 HuggingFace 大 parquet 文件中断后继续下载
+    - ``-f``: HTTP 4xx/5xx 时返回非零状态，避免把错误页保存成 parquet
+    """
+    cmd = [
+        "curl",
+        "-L",
+        "-C", "-",
+        "-f",
+        "-o", output_path,
+        "-s",
+        "--connect-timeout", "30",
+    ]
     if proxy:
         cmd.extend(["-x", proxy])
     cmd.append(url)
@@ -111,19 +123,21 @@ def main():
         print(f"\n[{name}]")
         output_path = os.path.join(RAW_DIR, info["filename"])
         
-        # 检查是否已下载
+        # 检查是否已下载；必须先验证 parquet，有损坏文件时继续下载/续传
         if os.path.exists(output_path):
             size = os.path.getsize(output_path)
             if size > 1000:  # 至少 1KB
-                print(f"  已存在: {size / 1024 / 1024:.2f} MB")
-                verify_parquet(output_path)
-                results[name] = "已存在"
-                continue
+                print(f"  已存在: {size / 1024 / 1024:.2f} MB，开始校验...")
+                if verify_parquet(output_path):
+                    results[name] = "已存在"
+                    continue
+                print("  已存在文件校验失败，将尝试断点续传/重新下载")
         
         success = download_file(info["url"], output_path, PROXY)
-        if success:
-            verify_parquet(output_path)
+        if success and verify_parquet(output_path):
             results[name] = "成功"
+        elif success:
+            results[name] = "下载成功但校验失败"
         else:
             results[name] = "失败"
     
