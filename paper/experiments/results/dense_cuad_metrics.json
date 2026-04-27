@@ -1,0 +1,29 @@
+{
+  "batch_size": 64,
+  "dataset": "cuad",
+  "elapsed_sec": 78.099,
+  "ks": [
+    1,
+    5,
+    10
+  ],
+  "max_corpus": 10000,
+  "max_queries": 100,
+  "method": "dense",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "mrr@1": 0.013513513513513514,
+  "mrr@10": 0.013513513513513514,
+  "mrr@5": 0.013513513513513514,
+  "ndcg@1": 0.013513513513513514,
+  "ndcg@10": 0.0062654599528135626,
+  "ndcg@5": 0.00833018422471168,
+  "num_corpus_chunks": 10000,
+  "num_queries": 74,
+  "num_skipped_no_gt": 26,
+  "num_total_corpus_chunks": 675400,
+  "num_total_queries": 2550,
+  "recall@1": 0.013513513513513514,
+  "recall@10": 0.013513513513513514,
+  "recall@5": 0.013513513513513514,
+  "top_k": 10
+}

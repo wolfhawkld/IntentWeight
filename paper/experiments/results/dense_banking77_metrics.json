@@ -1,0 +1,29 @@
+{
+  "batch_size": 64,
+  "dataset": "banking77",
+  "elapsed_sec": 31.568,
+  "ks": [
+    1,
+    5,
+    10
+  ],
+  "max_corpus": null,
+  "max_queries": null,
+  "method": "dense",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "mrr@1": 0.9204545454545454,
+  "mrr@10": 0.941565914244486,
+  "mrr@5": 0.9401461038961041,
+  "ndcg@1": 0.9204545454545454,
+  "ndcg@10": 0.8797407300703027,
+  "ndcg@5": 0.8996290465746148,
+  "num_corpus_chunks": 10003,
+  "num_queries": 3080,
+  "num_skipped_no_gt": 0,
+  "num_total_corpus_chunks": 10003,
+  "num_total_queries": 3080,
+  "recall@1": 0.9204545454545454,
+  "recall@10": 0.9805194805194806,
+  "recall@5": 0.9701298701298702,
+  "top_k": 10
+}

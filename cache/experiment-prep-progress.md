@@ -224,6 +224,7 @@ PY
 - [x] Task 5: 跑数据生成验证
 - [x] Task 6: 实现 retrieval metrics
 - [x] Task 7: 实现 BM25 retrieval baseline
+- [x] Task 8: 实现 dense embedding retrieval baseline
 
 ## 进度记录
 
@@ -328,3 +329,22 @@ PY
     - CUAD sample: max_queries=100, evaluated_queries=74, skipped_no_gt=26, elapsed=148.687s, recall@1/5/10=0.0000, mrr@10=0.0000, ndcg@10=0.0000
   - 已运行回归测试：`cache/test_bm25_baseline.py`、`cache/test_retrieval_metrics.py`、`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过。
   - 已运行 `python -m py_compile paper/experiments/scripts/bm25_baseline.py cache/test_bm25_baseline.py`，语法检查通过。
+- Task 8 已完成：dense embedding retrieval baseline
+  - 新增 `cache/test_dense_baseline.py`，覆盖 embedding normalization、top-k tie 稳定排序、toy dense ranking/metrics、`max_queries`/`max_corpus` 抽样、结果文件与 summary 输出。
+  - 新增 `paper/experiments/scripts/dense_baseline.py`：
+    - 读取 `paper/experiments/data/processed/{dataset}_corpus.json` 和 `{dataset}_queries.json`
+    - 使用 SentenceTransformer 生成 dense embeddings，并统一 L2 normalize
+    - 用 exact cosine similarity (`query_embeddings @ corpus_embeddings.T`) 做 top-k retrieval
+    - 输出 `paper/experiments/results/dense_{dataset}_rankings.json`、`dense_{dataset}_metrics.json` 和 `dense_baseline_summary.csv`
+    - 支持 `--dataset`、`--model`、`--local-files-only`、`--device`、`--batch-size`、`--top-k`、`--ks`、`--max-queries`、`--max-corpus`
+  - 使用本地缓存模型：`sentence-transformers/all-MiniLM-L6-v2`，`--local-files-only --device cpu`。
+  - 全量已完成数据集 dense 结果：
+    - PubMedQA: chunks=4348, queries=1000, skipped_no_gt=0, elapsed=53.697s, recall@1=0.7090, recall@5=0.9870, recall@10=0.9930, mrr@10=0.8468, ndcg@10=0.7396
+    - Banking77: chunks=10003, queries=3080, skipped_no_gt=0, elapsed=31.568s, recall@1=0.9205, recall@5=0.9701, recall@10=0.9805, mrr@10=0.9416, ndcg@10=0.8797
+    - eManual: chunks=18812, total_queries=1318, evaluated_queries=1298, skipped_no_gt=20, elapsed=46.231s, recall@1=0.0378, recall@5=0.1988, recall@10=0.2997, mrr@10=0.1029, ndcg@10=0.0666
+  - CUAD dense 说明：
+    - CUAD full corpus=675400 chunks，CPU exact dense 全量 embedding/scoring 成本较高；Task 8 先保留 smoke/sample。
+    - 已完成可复现 sample：`.venv/bin/python paper/experiments/scripts/dense_baseline.py --dataset cuad --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10 --max-queries 100 --max-corpus 10000`
+    - CUAD sample: max_queries=100, max_corpus=10000, evaluated_queries=74, skipped_no_gt=26, elapsed=78.099s, recall@1=0.0135, recall@5=0.0135, recall@10=0.0135, mrr@10=0.0135, ndcg@10=0.0063
+  - 已运行回归测试：`cache/test_dense_baseline.py`、`cache/test_bm25_baseline.py`、`cache/test_retrieval_metrics.py`、`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过。
+  - 已运行 `python -m py_compile paper/experiments/scripts/dense_baseline.py cache/test_dense_baseline.py`，语法检查通过。
