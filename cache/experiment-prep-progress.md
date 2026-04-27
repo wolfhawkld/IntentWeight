@@ -221,7 +221,7 @@ PY
 - [x] Task 2: 新增/修复 RAGBench 预处理
 - [x] Task 3: 新增 processed 数据验证脚本
 - [x] Task 4: 更新依赖
-- [ ] Task 5: 跑数据生成验证
+- [x] Task 5: 跑数据生成验证
 
 ## 进度记录
 
@@ -274,3 +274,23 @@ PY
   - 已运行 `.venv/bin/python -m pip install -r requirements.txt`，安装成功
   - 已验证导入：`loguru`、`rank_bm25`、`faiss`、`hnswlib`、`ragas`、`intent_weight.linucb`、`intent_weight.reward` 均 OK
   - 已回归运行 Task 1/2/3/4 测试：`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过
+- Task 5 已完成：
+  - 未重新下载 raw 数据；此前已确认核心 raw parquet 均存在且可读
+  - 已重跑四个 processed 生成脚本：
+    - `.venv/bin/python paper/experiments/scripts/preprocess_pubmedqa.py`
+    - `.venv/bin/python paper/experiments/scripts/preprocess_banking77.py`
+    - `.venv/bin/python paper/experiments/scripts/preprocess_ragbench.py --dataset emanual`
+    - `.venv/bin/python paper/experiments/scripts/preprocess_ragbench.py --dataset cuad`
+  - 生成结果：
+    - PubMedQA labeled: corpus chunks 4348, queries 1000, queries with GT 1000
+    - Banking77: corpus chunks 10003, queries 3080
+    - eManual RAGBench: corpus chunks 18812, queries 1318, queries with GT 1298
+    - CUAD RAGBench: corpus chunks 675400, queries 2550, queries with GT 2056
+  - 已运行 `.venv/bin/python paper/experiments/scripts/validate_processed.py --dataset all`，结果 `ALL VALID`
+  - 验证明细：
+    - banking77: corpus 10003, queries 3080, queries_with_gt 3080, GT coverage 100.00%, missing refs 0, duplicate chunks 0
+    - cuad: corpus 675400, queries 2550, queries_with_gt 2056, GT coverage 80.63%, missing refs 0, duplicate chunks 0
+    - emanual: corpus 18812, queries 1318, queries_with_gt 1298, GT coverage 98.48%, missing refs 0, duplicate chunks 0
+    - pubmedqa: corpus 4348, queries 1000, queries_with_gt 1000, GT coverage 100.00%, missing refs 0, duplicate chunks 0
+  - 已回归运行 Task 1/2/3/4 测试：`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过
+  - 至此，本机实验准备阶段 Task 1-5 全部完成，可进入 retrieval baseline / LinUCB / 流形局部反馈实验阶段
