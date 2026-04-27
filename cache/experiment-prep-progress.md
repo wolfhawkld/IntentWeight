@@ -218,7 +218,7 @@ PY
 
 - [x] 已完成初步分析
 - [x] Task 1: 修复 `download_parquet.py`
-- [ ] Task 2: 新增/修复 RAGBench 预处理
+- [x] Task 2: 新增/修复 RAGBench 预处理
 - [ ] Task 3: 新增 processed 数据验证脚本
 - [ ] Task 4: 更新依赖
 - [ ] Task 5: 跑数据生成验证
@@ -236,3 +236,16 @@ PY
   - 已运行 `.venv/bin/python paper/experiments/scripts/download_parquet.py`，下载/验证通过
   - `pubmedqa_artificial.parquet` 已从损坏的约 4.79 MB 续传到 222.60 MB，验证为 211269 行、5 列
   - RAGBench CUAD parquet 已下载：train 1530 行、test 510 行、validation 510 行
+- Task 2 已完成：
+  - 新增 `cache/test_preprocess_ragbench.py`，覆盖 RAGBench sentence-level chunk 生成、relevant sentence key 到 `ground_truth_chunk_ids` 映射、query/corpus 元数据输出
+  - 新增 `paper/experiments/scripts/preprocess_ragbench.py`，支持：
+    - `.venv/bin/python paper/experiments/scripts/preprocess_ragbench.py --dataset emanual`
+    - `.venv/bin/python paper/experiments/scripts/preprocess_ragbench.py --dataset cuad`
+  - 已运行 `.venv/bin/python cache/test_preprocess_ragbench.py`，1 个测试通过
+  - 已运行实际预处理：
+    - eManual: corpus chunks 18812, queries 1318, queries with GT 1298
+    - CUAD: corpus chunks 675400, queries 2550, queries with GT 2056
+  - 已验证 processed 输出：
+    - eManual: `missing_gt_chunk_refs=0`
+    - CUAD: `missing_gt_chunk_refs=0`
+  - 已回归运行 `.venv/bin/python cache/test_download_parquet.py` 和 `.venv/bin/python cache/test_preprocess_ragbench.py`，全部通过
