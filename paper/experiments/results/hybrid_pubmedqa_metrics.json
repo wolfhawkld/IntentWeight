@@ -1,0 +1,31 @@
+{
+  "batch_size": 64,
+  "dataset": "pubmedqa",
+  "elapsed_sec": 63.261,
+  "fusion_depth": 100,
+  "ks": [
+    1,
+    5,
+    10
+  ],
+  "max_corpus": null,
+  "max_queries": null,
+  "method": "hybrid_rrf",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "mrr@1": 0.707,
+  "mrr@10": 0.8443412698412699,
+  "mrr@5": 0.8435,
+  "ndcg@1": 0.707,
+  "ndcg@10": 0.7230453880905247,
+  "ndcg@5": 0.6948549755090639,
+  "num_corpus_chunks": 4348,
+  "num_queries": 1000,
+  "num_skipped_no_gt": 0,
+  "num_total_corpus_chunks": 4348,
+  "num_total_queries": 1000,
+  "recall@1": 0.707,
+  "recall@10": 0.989,
+  "recall@5": 0.983,
+  "rrf_k": 60,
+  "top_k": 10
+}

@@ -225,7 +225,7 @@ PY
 - [x] Task 6: 实现 retrieval metrics
 - [x] Task 7: 实现 BM25 retrieval baseline
 - [x] Task 8: 实现 dense embedding retrieval baseline
-- [ ] Task 9: 实现 hybrid BM25 + dense retrieval baseline（尚未开始，等待 Damon 确认）
+- [x] Task 9: 实现 hybrid BM25 + dense retrieval baseline
 - [ ] Task 10: 汇总 BM25 / dense / hybrid baseline 对比表
 - [ ] Task 11: 设计并运行 LinUCB baseline / ablation 实验
 - [ ] Task 12: 实现流形局部反馈机制（FAISS/HNSW 邻域检索 + 距离加权反馈）
@@ -236,7 +236,7 @@ PY
 
 ### Task 9: Hybrid BM25 + Dense retrieval baseline
 
-状态：尚未开始，等待 Damon 确认。
+状态：已完成。
 
 目标：融合 Task 7 的 BM25 lexical signal 和 Task 8 的 dense semantic signal，形成第三个 retrieval baseline。
 
@@ -454,3 +454,21 @@ PY
     - CUAD sample: max_queries=100, max_corpus=10000, evaluated_queries=74, skipped_no_gt=26, elapsed=78.099s, recall@1=0.0135, recall@5=0.0135, recall@10=0.0135, mrr@10=0.0135, ndcg@10=0.0063
   - 已运行回归测试：`cache/test_dense_baseline.py`、`cache/test_bm25_baseline.py`、`cache/test_retrieval_metrics.py`、`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过。
   - 已运行 `python -m py_compile paper/experiments/scripts/dense_baseline.py cache/test_dense_baseline.py`，语法检查通过。
+- Task 9 已完成：hybrid BM25 + dense retrieval baseline
+  - 新增 `cache/test_hybrid_baseline.py`，覆盖 RRF 融合排序、toy hybrid ranking/metrics、`max_queries`/`max_corpus` 抽样、结果文件与 summary 输出。
+  - 新增 `paper/experiments/scripts/hybrid_baseline.py`：
+    - 复用 `bm25_baseline.py` 的 sparse BM25 排序和 `dense_baseline.py` 的 exact cosine dense 排序。
+    - 使用 Reciprocal Rank Fusion (RRF) 融合 BM25/dense 排名，默认 `rrf_k=60`，`fusion_depth=100`，避免校准 BM25 分数和 dense cosine 分数。
+    - 输出 `paper/experiments/results/hybrid_{dataset}_rankings.json`、`hybrid_{dataset}_metrics.json` 和 `hybrid_baseline_summary.csv`。
+    - 支持 `--dataset`、`--model`、`--local-files-only`、`--device`、`--batch-size`、`--top-k`、`--fusion-depth`、`--rrf-k`、`--ks`、`--max-queries`、`--max-corpus`。
+  - 使用本地缓存模型：`sentence-transformers/all-MiniLM-L6-v2`，`--local-files-only --device cpu`。
+  - 全量已完成数据集 hybrid RRF 结果：
+    - PubMedQA: chunks=4348, queries=1000, skipped_no_gt=0, elapsed=63.261s, recall@1=0.7070, recall@5=0.9830, recall@10=0.9890, mrr@10=0.8443, ndcg@10=0.7230
+    - Banking77: chunks=10003, queries=3080, skipped_no_gt=0, elapsed=55.848s, recall@1=0.9136, recall@5=0.9721, recall@10=0.9851, mrr@10=0.9394, ndcg@10=0.8504
+    - eManual: chunks=18812, total_queries=1318, evaluated_queries=1298, skipped_no_gt=20, elapsed=58.741s, recall@1=0.0501, recall@5=0.2203, recall@10=0.3552, mrr@10=0.1213, ndcg@10=0.0850
+  - CUAD hybrid 说明：
+    - CUAD full corpus=675400 chunks，CPU exact dense 全量 embedding/scoring 成本较高；Task 9 沿用 smoke/sample。
+    - 已完成可复现 sample：`.venv/bin/python paper/experiments/scripts/hybrid_baseline.py --dataset cuad --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 64 --top-k 10 --fusion-depth 100 --ks 1,5,10 --max-queries 100 --max-corpus 10000`
+    - CUAD sample: max_queries=100, max_corpus=10000, evaluated_queries=74, skipped_no_gt=26, elapsed=80.288s, recall@1=0.0000, recall@5=0.0270, recall@10=0.0405, mrr@10=0.0096, ndcg@10=0.0060
+  - 已运行回归测试：`cache/test_hybrid_baseline.py`、`cache/test_dense_baseline.py`、`cache/test_bm25_baseline.py`、`cache/test_retrieval_metrics.py`，全部通过。
+  - 已运行 `python -m py_compile paper/experiments/scripts/hybrid_baseline.py cache/test_hybrid_baseline.py`，语法检查通过。
