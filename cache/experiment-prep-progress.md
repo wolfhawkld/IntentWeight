@@ -220,7 +220,7 @@ PY
 - [x] Task 1: 修复 `download_parquet.py`
 - [x] Task 2: 新增/修复 RAGBench 预处理
 - [x] Task 3: 新增 processed 数据验证脚本
-- [ ] Task 4: 更新依赖
+- [x] Task 4: 更新依赖
 - [ ] Task 5: 跑数据生成验证
 
 ## 进度记录
@@ -263,3 +263,14 @@ PY
     - emanual: corpus 18812, queries 1318, queries_with_gt 1298, GT coverage 98.48%, missing refs 0
     - pubmedqa: corpus 4348, queries 1000, queries_with_gt 1000, GT coverage 100.00%, missing refs 0
   - 已回归运行 Task 1/2/3 测试：`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`，全部通过
+- Task 4 已完成：
+  - 新增 `cache/test_requirements.py`，覆盖 `requirements.txt` 必需依赖声明
+  - 更新 `requirements.txt`，新增：
+    - `loguru>=0.7.0`
+    - `rank-bm25>=0.2.2`
+    - `faiss-cpu>=1.8.0`
+    - `hnswlib>=0.8.0`
+    - `ragas>=0.2.0`
+  - 已运行 `.venv/bin/python -m pip install -r requirements.txt`，安装成功
+  - 已验证导入：`loguru`、`rank_bm25`、`faiss`、`hnswlib`、`ragas`、`intent_weight.linucb`、`intent_weight.reward` 均 OK
+  - 已回归运行 Task 1/2/3/4 测试：`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过
