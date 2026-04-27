@@ -318,15 +318,19 @@ PY
     - 实现 sparse inverted-index BM25，避免 `rank_bm25.get_scores()` 对 CUAD 675400 chunks 每个 query 全量扫描
     - 输出 `paper/experiments/results/bm25_{dataset}_rankings.json`、`bm25_{dataset}_metrics.json` 和 `bm25_baseline_summary.csv`
     - 支持 `--dataset`、`--top-k`、`--ks`、`--max-queries`
-  - 全量已完成数据集 BM25 结果：
-    - PubMedQA: chunks=4348, queries=1000, skipped_no_gt=0, elapsed=3.321s, recall@1=0.6910, recall@5=0.9730, recall@10=0.9770, mrr@10=0.8273, ndcg@10=0.6648
-    - Banking77: chunks=10003, queries=3080, skipped_no_gt=0, elapsed=23.559s, recall@1=0.8019, recall@5=0.9370, recall@10=0.9698, mrr@10=0.8604, ndcg@10=0.6762
-    - eManual: chunks=18812, total_queries=1318, evaluated_queries=1298, skipped_no_gt=20, elapsed=12.131s, recall@1=0.0362, recall@5=0.1579, recall@10=0.2820, mrr@10=0.0911, ndcg@10=0.0643
+  - BM25 结果统计表（CUAD 为 sample/smoke，非全量）：
+
+    | Dataset | Scope | Corpus chunks | Evaluated queries | Skipped no-GT | Recall@1 | Recall@5 | Recall@10 | MRR@10 | nDCG@10 | Elapsed |
+    | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+    | PubMedQA | full | 4348 | 1000 | 0 | 0.6910 | 0.9730 | 0.9770 | 0.8273 | 0.6648 | 3.321s |
+    | Banking77 | full | 10003 | 3080 | 0 | 0.8019 | 0.9370 | 0.9698 | 0.8604 | 0.6762 | 23.559s |
+    | eManual | full | 18812 | 1298 | 20 | 0.0362 | 0.1579 | 0.2820 | 0.0911 | 0.0643 | 12.131s |
+    | CUAD | sample: `--max-queries 100` | 675400 | 74 | 26 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 148.687s |
+
   - CUAD 全量 BM25 说明：
     - CUAD corpus=675400 chunks, total queries=2550, queries_with_gt=2056
     - 纯 Python 全量 BM25 即使改为稀疏倒排，交互命令仍在 600s 超时；保留为后续后台长跑/进一步优化项。
     - 已完成可复现 smoke/sample：`.venv/bin/python paper/experiments/scripts/bm25_baseline.py --dataset cuad --top-k 10 --ks 1,5,10 --max-queries 100`
-    - CUAD sample: max_queries=100, evaluated_queries=74, skipped_no_gt=26, elapsed=148.687s, recall@1/5/10=0.0000, mrr@10=0.0000, ndcg@10=0.0000
   - 已运行回归测试：`cache/test_bm25_baseline.py`、`cache/test_retrieval_metrics.py`、`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过。
   - 已运行 `python -m py_compile paper/experiments/scripts/bm25_baseline.py cache/test_bm25_baseline.py`，语法检查通过。
 - Task 8 已完成：dense embedding retrieval baseline
