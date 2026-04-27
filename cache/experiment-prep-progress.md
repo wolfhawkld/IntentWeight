@@ -222,6 +222,7 @@ PY
 - [x] Task 3: 新增 processed 数据验证脚本
 - [x] Task 4: 更新依赖
 - [x] Task 5: 跑数据生成验证
+- [x] Task 6: 实现 retrieval metrics
 
 ## 进度记录
 
@@ -294,3 +295,16 @@ PY
     - pubmedqa: corpus 4348, queries 1000, queries_with_gt 1000, GT coverage 100.00%, missing refs 0, duplicate chunks 0
   - 已回归运行 Task 1/2/3/4 测试：`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过
   - 至此，本机实验准备阶段 Task 1-5 全部完成，可进入 retrieval baseline / LinUCB / 流形局部反馈实验阶段
+- Task 6 已完成：retrieval metrics
+  - 新增 `cache/test_retrieval_metrics.py`，按 TDD 先验证 RED：`paper/experiments/scripts/retrieval_metrics.py` 不存在时测试失败
+  - 新增 `paper/experiments/scripts/retrieval_metrics.py`
+  - 支持指标：
+    - binary `Recall@k`: top-k 中任意 ground-truth chunk 命中即为 1
+    - `MRR@k`: top-k 内第一个相关 chunk 的 reciprocal rank
+    - `nDCG@k`: binary relevance，支持多个 ground-truth chunks
+  - `evaluate_rankings()` 默认跳过无 ground-truth 的 query；这适配 CUAD/RAGBench 中存在的 no-evidence query，避免把无法检索到正例的问题算入检索 recall
+  - 支持 CLI：
+    - `.venv/bin/python paper/experiments/scripts/retrieval_metrics.py --queries <queries.json> --rankings <rankings.json> --ks 1,5,10`
+  - 已运行 `.venv/bin/python cache/test_retrieval_metrics.py`，3 个测试通过
+  - 已运行回归测试：`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`、`cache/test_requirements.py`，全部通过
+  - 已运行 `python -m py_compile paper/experiments/scripts/retrieval_metrics.py cache/test_retrieval_metrics.py`，语法检查通过
