@@ -225,6 +225,108 @@ PY
 - [x] Task 6: 实现 retrieval metrics
 - [x] Task 7: 实现 BM25 retrieval baseline
 - [x] Task 8: 实现 dense embedding retrieval baseline
+- [ ] Task 9: 实现 hybrid BM25 + dense retrieval baseline（尚未开始，等待 Damon 确认）
+- [ ] Task 10: 汇总 BM25 / dense / hybrid baseline 对比表
+- [ ] Task 11: 设计并运行 LinUCB baseline / ablation 实验
+- [ ] Task 12: 实现流形局部反馈机制（FAISS/HNSW 邻域检索 + 距离加权反馈）
+- [ ] Task 13: 对比全局 LinUCB 与流形局部反馈效果
+- [ ] Task 14: 整理论文实验表格、结论和局限性
+
+## 后续任务规划
+
+### Task 9: Hybrid BM25 + Dense retrieval baseline
+
+状态：尚未开始，等待 Damon 确认。
+
+目标：融合 Task 7 的 BM25 lexical signal 和 Task 8 的 dense semantic signal，形成第三个 retrieval baseline。
+
+建议优先方案：Reciprocal Rank Fusion (RRF)。
+
+原因：
+
+- 不需要校准 BM25 分数和 dense cosine 分数尺度；
+- 实现简单、稳定、可复现；
+- 适合作为 hybrid baseline 的第一版。
+
+预计新增：
+
+- `cache/test_hybrid_baseline.py`
+- `paper/experiments/scripts/hybrid_baseline.py`
+- `paper/experiments/results/hybrid_baseline_summary.csv`
+- `paper/experiments/results/hybrid_{dataset}_metrics.json`
+- `paper/experiments/results/hybrid_{dataset}_rankings.json`
+
+预计运行：
+
+- PubMedQA full
+- Banking77 full
+- eManual full
+- CUAD sample/smoke（沿用 BM25/dense 的抽样约束，避免 CPU 全量超时）
+
+### Task 10: Baseline 对比汇总表
+
+目标：把 BM25、dense、hybrid 的结果统一成论文可用的表格。
+
+预计输出：
+
+- `paper/experiments/results/retrieval_baseline_comparison.csv`
+- 可选 Markdown 表格，写入本文档或实验说明文档。
+
+表格应至少包含：
+
+- dataset
+- method
+- scope/full-or-sample
+- num_corpus_chunks
+- evaluated_queries
+- skipped_no_gt
+- Recall@1/5/10
+- MRR@10
+- nDCG@10
+- elapsed_sec
+- notes，例如 CUAD sample 限制。
+
+### Task 11: LinUCB baseline / ablation 实验
+
+目标：在已有 retrieval baseline 基础上，验证当前代码中的全局 LinUCB 反馈策略。
+
+注意：当前 `intent_weight/linucb.py` 仍是全局 arm 更新，尚未实现最新设计文档中的流形局部反馈。
+
+### Task 12: 流形局部反馈实现
+
+目标：根据 `paper/feedback-simulation.md` 实现局部反馈机制。
+
+核心方向：
+
+- 使用 FAISS/HNSW 做 query/chunk/cluster 邻域检索；
+- 历史反馈按 embedding 距离加权；
+- 单 cluster 反馈向邻近 cluster 衰减传播；
+- 多轮对话内按 query embedding 距离做 feedback attention；
+- 用户信誉从全局扩展到局部/领域信誉。
+
+### Task 13: 全局 LinUCB vs 流形局部反馈对比
+
+目标：比较旧的全局 LinUCB 和新的局部流形反馈机制。
+
+重点关注：
+
+- 冷启动表现；
+- 小样本反馈后的提升速度；
+- 不同数据集上的稳定性；
+- 对 eManual / CUAD 这种困难数据集的改善幅度。
+
+### Task 14: 论文实验整理
+
+目标：把可用结果整理成论文实验部分素材。
+
+包括：
+
+- baseline 表格；
+- 消融实验；
+- 方法优势；
+- 失败案例；
+- CUAD full/sample 限制说明；
+- 后续工作。
 
 ## 进度记录
 
