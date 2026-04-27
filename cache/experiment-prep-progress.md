@@ -219,7 +219,7 @@ PY
 - [x] 已完成初步分析
 - [x] Task 1: 修复 `download_parquet.py`
 - [x] Task 2: 新增/修复 RAGBench 预处理
-- [ ] Task 3: 新增 processed 数据验证脚本
+- [x] Task 3: 新增 processed 数据验证脚本
 - [ ] Task 4: 更新依赖
 - [ ] Task 5: 跑数据生成验证
 
@@ -249,3 +249,17 @@ PY
     - eManual: `missing_gt_chunk_refs=0`
     - CUAD: `missing_gt_chunk_refs=0`
   - 已回归运行 `.venv/bin/python cache/test_download_parquet.py` 和 `.venv/bin/python cache/test_preprocess_ragbench.py`，全部通过
+- Task 3 已完成：
+  - 新增 `cache/test_validate_processed.py`，覆盖有效数据与缺失 GT chunk 引用两种情况
+  - 新增 `paper/experiments/scripts/validate_processed.py`，支持：
+    - `.venv/bin/python paper/experiments/scripts/validate_processed.py --dataset all`
+    - `.venv/bin/python paper/experiments/scripts/validate_processed.py --dataset emanual`
+    - `.venv/bin/python paper/experiments/scripts/validate_processed.py --dataset pubmedqa,banking77,emanual,cuad`
+  - 验证项包括：文件存在、JSON list 格式、corpus/query 非空、chunk_id 唯一、chunk/query 文本非空、所有 `ground_truth_chunk_ids` 均存在于 corpus、GT 覆盖率统计
+  - 已运行 `.venv/bin/python cache/test_validate_processed.py`，2 个测试通过
+  - 已运行真实 processed 数据验证：
+    - banking77: corpus 10003, queries 3080, queries_with_gt 3080, GT coverage 100.00%, missing refs 0
+    - cuad: corpus 675400, queries 2550, queries_with_gt 2056, GT coverage 80.63%, missing refs 0
+    - emanual: corpus 18812, queries 1318, queries_with_gt 1298, GT coverage 98.48%, missing refs 0
+    - pubmedqa: corpus 4348, queries 1000, queries_with_gt 1000, GT coverage 100.00%, missing refs 0
+  - 已回归运行 Task 1/2/3 测试：`cache/test_download_parquet.py`、`cache/test_preprocess_ragbench.py`、`cache/test_validate_processed.py`，全部通过
