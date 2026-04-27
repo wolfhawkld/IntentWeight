@@ -1,0 +1,25 @@
+{
+  "dataset": "pubmedqa",
+  "elapsed_sec": 3.321,
+  "ks": [
+    1,
+    5,
+    10
+  ],
+  "max_queries": null,
+  "method": "bm25",
+  "mrr@1": 0.691,
+  "mrr@10": 0.827284523809524,
+  "mrr@5": 0.8266833333333337,
+  "ndcg@1": 0.691,
+  "ndcg@10": 0.664831991717885,
+  "ndcg@5": 0.6358259161953906,
+  "num_corpus_chunks": 4348,
+  "num_queries": 1000,
+  "num_skipped_no_gt": 0,
+  "num_total_queries": 1000,
+  "recall@1": 0.691,
+  "recall@10": 0.977,
+  "recall@5": 0.973,
+  "top_k": 10
+}

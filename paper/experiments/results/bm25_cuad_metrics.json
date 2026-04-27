@@ -1,0 +1,25 @@
+{
+  "dataset": "cuad",
+  "elapsed_sec": 148.687,
+  "ks": [
+    1,
+    5,
+    10
+  ],
+  "max_queries": 100,
+  "method": "bm25",
+  "mrr@1": 0.0,
+  "mrr@10": 0.0,
+  "mrr@5": 0.0,
+  "ndcg@1": 0.0,
+  "ndcg@10": 0.0,
+  "ndcg@5": 0.0,
+  "num_corpus_chunks": 675400,
+  "num_queries": 74,
+  "num_skipped_no_gt": 26,
+  "num_total_queries": 2550,
+  "recall@1": 0.0,
+  "recall@10": 0.0,
+  "recall@5": 0.0,
+  "top_k": 10
+}
