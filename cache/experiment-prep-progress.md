@@ -226,6 +226,7 @@ PY
 - [x] Task 7: 实现 BM25 retrieval baseline
 - [x] Task 8: 实现 dense embedding retrieval baseline
 - [x] Task 9: 实现 hybrid BM25 + dense retrieval baseline
+- [ ] Task 9.5: 修正实验协议与评估口径 guardrails
 - [ ] Task 10: 汇总 BM25 / dense / hybrid baseline 对比表
 - [ ] Task 11: 设计并运行 LinUCB baseline / ablation 实验
 - [ ] Task 12: 实现流形局部反馈机制（FAISS/HNSW 邻域检索 + 距离加权反馈）
@@ -263,6 +264,50 @@ PY
 - eManual full
 - CUAD sample/smoke（沿用 BM25/dense 的抽样约束，避免 CPU 全量超时）
 
+### Task 9.5: 实验协议与评估口径修正
+
+状态：文档协议已确认，代码 guardrails 尚未实现。
+
+目标：在 Task 10 汇总表之前，先修正静态检索实验的论文口径，避免把不可比较结果放进同一主表，也为 Task 11-13 的在线学习实验预先规定无泄漏协议。
+
+必须完成：
+
+1. RAGBench split 口径：
+   - eManual/CUAD 当前 processed queries 混合 train/validation/test。
+   - baseline 评估和 summary 必须显式记录 `query_split`。
+   - 正式主表优先使用 held-out `test` query；train/validation 可用于调参、反馈流或 smoke。
+2. CUAD sample/corpus 口径：
+   - BM25/dense/hybrid 在同一 comparison group 中必须使用相同 query subset 和 corpus subset。
+   - 当前 CUAD 结果只能标为 smoke/sample，不得默默放进主表排名。
+3. Dataset task type：
+   - PubMedQA/eManual/CUAD 归为 evidence retrieval。
+   - Banking77 归为 intent retrieval proxy/domain routing。
+   - Task 10 表格必须带 `task_type`，论文结论不得把 Banking77 当作普通 evidence retrieval。
+4. Dense baseline 命名：
+   - 当前已跑结果使用 `sentence-transformers/all-MiniLM-L6-v2` CPU exact cosine。
+   - 文档和表格不得称为 BGE-large；如需 BGE/GTE，后续另跑正式结果。
+5. Comparison guardrails：
+   - Task 10 汇总器必须写出 `scope`、`query_split`、`corpus_scope`、`comparable_group`、`is_comparable`、`notes`。
+   - 同 dataset/method group 下 query/corpus/sample/model 口径不一致时，自动标为 `not_comparable` 或 `smoke_only`。
+6. PubMedQA GT caveat：
+   - 当前 PubMedQA GT 是 abstract context section-level，Recall 表示命中该问题对应论文摘要任一 context section。
+   - 不得表述为严格 answer-supporting sentence/evidence recall。
+7. 在线学习协议：
+   - Task 11-13 必须先选择并记录 prequential 或 train-feedback/test-eval 协议。
+   - 若用 prequential：每条 query 必须先评估再用反馈更新。
+   - 若用 train-feedback/test-eval：反馈流只来自 train/validation，最终报告只用 held-out test。
+   - 多随机种子时报告 mean/std。
+8. Scientific tests：
+   - 新增测试覆盖 split filtering、sample consistency、comparison guardrails、scope/notes 标注。
+   - 保留现有 ranking/metrics 工程测试，但不能把它们等同于实验有效性验证。
+
+建议实现顺序：
+
+1. 更新实验 README 和本进度文档，固定协议。
+2. 给 baseline 脚本或汇总脚本增加 split/sample metadata guardrails。
+3. 重新生成或重新标注 retrieval baseline comparison 数据。
+4. 再进入 Task 10 主表汇总。
+
 ### Task 10: Baseline 对比汇总表
 
 目标：把 BM25、dense、hybrid 的结果统一成论文可用的表格。
@@ -276,7 +321,12 @@ PY
 
 - dataset
 - method
+- task_type
 - scope/full-or-sample
+- query_split
+- corpus_scope
+- comparable_group
+- is_comparable
 - num_corpus_chunks
 - evaluated_queries
 - skipped_no_gt
@@ -472,3 +522,20 @@ PY
     - CUAD sample: max_queries=100, max_corpus=10000, evaluated_queries=74, skipped_no_gt=26, elapsed=80.288s, recall@1=0.0000, recall@5=0.0270, recall@10=0.0405, mrr@10=0.0096, ndcg@10=0.0060
   - 已运行回归测试：`cache/test_hybrid_baseline.py`、`cache/test_dense_baseline.py`、`cache/test_bm25_baseline.py`、`cache/test_retrieval_metrics.py`，全部通过。
   - 已运行 `python -m py_compile paper/experiments/scripts/hybrid_baseline.py cache/test_hybrid_baseline.py`，语法检查通过。
+- Task 9.5 已启动：实验协议与评估口径修正
+  - 背景：Task 7-9 结果工程上可复现，但论文口径需要先收紧，否则 Task 10 汇总表会把不可比较结果放进同一主表。
+  - 已确认 8 个必须修正点：
+    - RAGBench eManual/CUAD 必须显式区分 train/validation/test query split。
+    - CUAD 的 BM25/dense/hybrid sample/corpus 口径必须一致；当前结果先标为 smoke/sample。
+    - PubMedQA/eManual/CUAD 属于 evidence retrieval；Banking77 属于 intent retrieval proxy/domain routing。
+    - 当前 dense baseline 是 `sentence-transformers/all-MiniLM-L6-v2` CPU exact cosine，不是 BGE-large。
+    - Task 10 汇总器需要 `scope`、`query_split`、`corpus_scope`、`comparable_group`、`is_comparable`、`notes` guardrails。
+    - PubMedQA GT 是 abstract context section-level，不是严格 answer-supporting sentence-level evidence。
+    - Task 11-13 在线学习必须使用 prequential 或 train-feedback/test-eval 防泄漏协议。
+    - 需要新增 scientific tests 覆盖 split filtering、sample consistency、comparison guardrails、scope/notes 标注。
+  - 已更新本进度文档的 Task 9.5 规划。
+  - 已更新 `paper/experiments/README.md`：
+    - 同步当前脚本目录和 baseline 运行方式。
+    - 新增 Dataset task type、静态检索指标、split/comparability guardrails、在线学习防泄漏协议。
+    - 明确当前 CUAD 结果为 smoke/sample，当前 dense baseline 为 `all-MiniLM-L6-v2` CPU exact cosine。
+  - 下一步：根据剩余 quota/时间决定是否继续进入代码实现和测试。

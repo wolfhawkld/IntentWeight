@@ -24,6 +24,7 @@ __pycache__/
 .vscode/
 
 # 临时文件
+.codex
 *.log
 *.tmp
 *.Zone.Identifier
