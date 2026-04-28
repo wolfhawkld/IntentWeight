@@ -39,17 +39,38 @@ UCB_score = θᵀx + α√(xᵀA⁻¹x)
 奖励信号是手工规则（like=1, dislike=0, 关键词匹配），粒度粗，无法理解细微反馈。
 
 **RLHF 方案：**
-训练一个 BERT Reward Model，输入 (query, retrieved_docs, answer, user_followup)，输出预测的用户满意度 [0, 1]。
+训练一个 BERT Reward Model，输入 (query, answer, user_followup)，输出预测的用户满意度 [0, 1]。
 
-**对比：**
+**模型本质是监督学习（回归），不是 RL 训练。** 叫"Reward Model"是因为其输出被用作 LinUCB 的 reward 信号。
+**This is supervised learning (regression), not RL training.** It's called "Reward Model" because the output is used as the reward signal for LinUCB.
 
-| | 当前规则 | Reward Model |
+**具体架构 / Architecture：**
+
+```
+输入: [CLS] query [SEP] answer [SEP] user_followup [SEP]
+       ↓
+  BERT-base-chinese (110M)
+       ↓
+  [CLS] token → Linear(768, 1) → Sigmoid → [0, 1]
+```
+
+- max_length=512（输入包含 answer 文本，需要更长上下文）
+- 显存需求极低：L20 × 0.1 卡（4.8GB）即可训练
+
+**对比（含隐式信号交叉验证场景）：**
+**Comparison (including implicit signal cross-validation):**
+
+| 场景 | 当前规则 | Reward Model |
 |--|---------|-------------|
-| "这个回答还行但不够全面" | 中性 (0.5) | 轻度负面 (0.35) |
-| "谢谢，正好需要这个" | 中性 (0.5) | 强正面 (0.95) |
-| "不是这个部门的，是LC RD的" | 负面 (-0.5) | 精确负面 + 实体信息 |
+| "这个回答还行但不够全面" | 中性 (0.5) | ~0.35（偏负面） |
+| "谢谢，正好需要这个" | 中性 (0.5) | ~0.95（强正面） |
+| "不是这个部门的，是LC RD的" | 负面 (-0.5) | ~0.15（精确负面） |
+| **点赞但只看了 2 秒** | **1.0（按按钮算）** | **~0.4（怀疑误点）** |
 
-**数据需求：** 几百条带反馈的对话
+最后一行是关键进步：RM 能在模型层面交叉验证显式与隐式信号，而非依赖手工权重融合。
+The last row is the key advance: RM can cross-validate explicit vs implicit signals at the model level, rather than relying on hand-crafted weight fusion.
+
+**数据需求：** 200+ 条带反馈的真实对话
 **算力需求：** L20 训练 BERT-base，几小时
 **优先级：** ⭐⭐⭐ 中期（等数据积累）
 

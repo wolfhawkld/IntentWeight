@@ -174,6 +174,39 @@ class UserCredibility:
 **注意：领域专家可能是"正确的少数派"**，纯粹的一致性评分会压低他们。
 解决方案：支持管理员手动设置某些用户为"可信专家"（credibility=1.0 固定）。
 
+### 第四方案：Reward Model 偏差检测
+### Scheme 4: Reward Model Deviation Detection
+
+前三个方案都依赖某种外部参照（多用户共识 / LinUCB 预期 / 隐式行为矛盾）。第四方案用 **Reward Model 的预测**作为"真值代理"，不依赖多用户共识，单个用户的反馈即可判断质量。
+The first three schemes all rely on some external reference (multi-user consensus / LinUCB prediction / implicit signal contradiction). Scheme 4 uses the **Reward Model's prediction** as a "ground truth proxy" — no multi-user consensus needed, anomaly detection works for a single user.
+
+```python
+# Reward Model 预测满意度（基于 query + answer + context 的综合判断）
+predicted_satisfaction = reward_model.predict(query, answer, context)
+
+# 用户实际反馈
+actual_feedback = user_feedback  # like=1.0, dislike=0.0
+
+# 偏差 = |预测 - 实际|
+deviation = abs(predicted_satisfaction - actual_feedback)
+
+# 偏差大 → 用户反馈可能异常 → 信誉下降
+if deviation > 0.5:
+    feedback_aligned = False  # 与模型预期不一致
+```
+
+**四方案对比 / Comparison of All 4 Schemes:**
+
+| 方案 | 外部参照 | 最少用户数 | 前提条件 |
+|------|---------|----------|---------|
+| 1. 多用户共识 | 其他用户对同一内容的反馈 | ≥3 | 同内容有多用户反馈 |
+| 2. LinUCB 偏差 | LinUCB 历史预期 reward | 1 | LinUCB 已积累足够数据 |
+| 3. 隐式交叉验证 | 显式反馈与隐式行为 | 1 | 前端埋点已接入 |
+| **4. RM 偏差检测** | **RM 预测满意度** | **1** | **Reward Model 已训练** |
+
+方案 4 的优势在于：RM 综合了 query、answer、context 的语义理解来预测满意度，判断维度比前三个方案更丰富。四方案协同使用时，多数方案判定 feedback_aligned=False 即下调信誉。
+Scheme 4's advantage: the RM synthesizes semantic understanding of query, answer, and context to predict satisfaction — a richer judgment than the first three schemes. When used together, credibility decreases when the majority of schemes flag feedback_aligned=False.
+
 ---
 
 ## 4. 少量数据下的 RL 策略
