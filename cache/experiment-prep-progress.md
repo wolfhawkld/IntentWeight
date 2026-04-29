@@ -827,6 +827,36 @@ Smoke result:
     - CUAD smoke 局部结构弱，Task13.5 的小幅提升主要来自多路召回鲁棒性，不足以作为 full-corpus 结论。
     - eManual 并不是“完全没有几何信号”：nearest_cluster_hit@3=0.8923 且 context_gt_recall@10 高于 dense baseline；失败更可能在 LinUCB arm 选择、credit assignment、fusion/ranking 或 reward 对 selected cluster 的利用不足。
   - 后续任务顺序调整：
+    - Task 14.5：eManual failure analysis，比较 strict chunk-id、text-equivalent、deduplicated corpus、nearest-centroid routing、LinUCB selected cluster。
     - Task 15：trust-weighted feedback LinUCB。
     - Task 16：cost-aware soft routing。
-    - eManual failure analysis 可作为 Task15 前置消融或 Task14.5：比较 nearest-centroid cluster oracle、LinUCB selected cluster、soft fusion 三者差距。
+
+- 2026-04-29 Task 14.5 eManual failure analysis：
+  - 新增 `paper/experiments/scripts/emanual_failure_analysis.py`：
+    - 复用现有 eManual rankings，分别计算 strict chunk-id 与 text-equivalent retrieval 指标。
+    - 统计 eManual full corpus 的 exact duplicate normalized text 分布和 GT duplicate exposure。
+    - 构造 text-deduplicated eManual corpus，重跑 BM25/dense/hybrid baseline。
+    - 重跑 nearest-centroid local routing 与 GT-cluster oracle，用来区分“几何信号是否存在”和“LinUCB/fusion 是否吃到几何红利”。
+  - 新增 `cache/test_emanual_failure_analysis.py`，覆盖 text-equivalent 评估、GT 去重映射、seed-nested rankings 加载、duplicate stats。
+  - 已运行正式分析：
+    - eManual full corpus: 18812 chunks，但只有 1729 个 unique normalized texts。
+    - duplicate text groups=1571，chunks_in_duplicate_text_groups=18654，最大重复组大小=326。
+    - test GT refs=861，其中 861/861 都有 duplicate text；每个 GT text 平均重复 22.2636 次。
+    - dense strict recall@10=0.3231，但 text-equivalent recall@10=0.5615。
+    - Task13.5 soft strict recall@10=0.1436，但 text-equivalent recall@10=0.5795。
+    - deduplicated dense recall@10=0.8615，deduplicated hybrid recall@10=0.8615。
+    - nearest-centroid 3-cluster strict recall@10=0.3308，text-equivalent recall@10=0.5462。
+    - GT-cluster oracle strict recall@10=0.3308，text-equivalent recall@10=0.6615。
+    - LinUCB selected_cluster_hit_rate_mean=0.2641，cluster_local_hit_rate_mean=0.0487。
+  - 当前解释：
+    - eManual 不能作为“无流形结构”的证据；其 `record_id` 是实例级标签，不是主题/功能级语义标签。
+    - eManual strict chunk-id 指标明显受跨 record 重复文本影响，会把“同一句证据但来自另一条 record”的结果判为 miss。
+    - eManual 当前负例更准确地描述为：存在可利用几何和文本证据信号，但当前 LinUCB arm selection、fusion/ranking、credit assignment 没有把该信号稳定转化为 strict chunk-id 命中。
+    - 论文主表仍应保留 strict chunk-id 作为 guarded metric；text-equivalent 与 deduplicated results 作为 failure analysis / diagnostic appendix，不替代主结论。
+  - 论文实验设计补充：
+    - 本论文的消融实验不是附属内容，而是证明机制有效性的关键证据。
+    - 当前方法由 BM25、dense、cluster、LinUCB、feedback、fusion、guardrails 组成；只报告最终分数无法说明提升或失败来自哪个环节。
+    - 必须通过组件消融回答：dense/BM25 是召回底座还是遮蔽 LinUCB？cluster 是帮助局部导航还是造成漏召回？dense floor 是否让方法退化成 dense？feedback 是否真的改善 arm policy？
+    - 必须通过 eManual 修正型消融回答：strict chunk-id、text-equivalent、deduplicated corpus、nearest-centroid warm start、text-equivalent reward、fusion calibration 分别如何影响结果。
+    - 必须通过成本消融回答：full multi-route、confidence-gated routing、reduced dense/BM25 depth 在 recall、candidate count、context token、latency 之间的 trade-off。
+    - 因此后续 Task 15/16 不应只追求单个更高分数，而应围绕 ablation matrix 解释机制边界、适用条件和工程收益。

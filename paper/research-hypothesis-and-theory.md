@@ -138,6 +138,7 @@ For Task 11-13, the intended progression is:
 3. **Task 13**: compare global value updates against manifold-local value propagation.
 4. **Task 13.5**: replace hard cluster pruning with soft multi-route retrieval, using global dense/BM25 as a recall floor and LinUCB-selected clusters as the adaptive local-manifold route.
 5. **Task 14**: directly diagnose the manifold assumption by measuring PCA spectrum, local neighborhood purity, metadata-label alignment, nearest-cluster GT hit rates, and context-space recall retention.
+6. **Task 14.5**: isolate the eManual negative case by separating strict chunk-id recall, text-equivalent evidence recall, duplicate-text effects, and centroid-routing geometry from LinUCB policy quality.
 
 ---
 
@@ -168,6 +169,74 @@ This improves the paper argument. The manifold assumption is no longer only a
 theoretical metaphor: it is measured with independent diagnostics. At the same
 time, the diagnostics prevent overclaiming by showing where the current policy
 does not yet exploit available geometry.
+
+## Lessons From Task 14.5
+
+Task 14.5 refines the eManual interpretation. The low strict Task 13.5 score
+does not by itself falsify the manifold hypothesis.
+
+The eManual corpus has a special structure:
+
+- 18812 sentence chunks collapse to only 1729 unique normalized sentence texts;
+- all 861 test GT references have duplicate text elsewhere in the corpus;
+- each GT text appears 22.26 times on average;
+- the available `record_id` label is an instance/context-set identifier, not a
+  domain topic or function label.
+
+This means low `record_id` purity is not reliable evidence against local
+semantic geometry, and strict chunk-id recall can underestimate evidence
+retrieval. A system can retrieve the same manual sentence from another record
+and still receive zero strict credit.
+
+Task 14.5 confirms this gap:
+
+- dense recall@10 rises from 0.3231 strict chunk-id to 0.5615
+  text-equivalent;
+- Task13.5 soft recall@10 rises from 0.1436 strict chunk-id to 0.5795
+  text-equivalent;
+- deduplicated dense and hybrid recall@10 both reach 0.8615;
+- nearest-centroid 3-cluster routing reaches 0.5462 text-equivalent recall@10,
+  while LinUCB selected-cluster hit remains only 0.2641.
+
+Therefore eManual should be treated as a policy/measurement boundary case, not
+as a clean no-manifold case. The geometry contains usable evidence signal, but
+the current LinUCB arm selection, reward credit assignment, and fusion/ranking
+do not reliably turn that signal into strict chunk-id hits. In the paper, strict
+chunk-id metrics should remain the guarded main result, while text-equivalent
+and deduplicated-corpus results should be reported as diagnostic evidence.
+
+## Ablation as Core Evidence
+
+Because IntentWeight is a composite retrieval policy rather than a single
+retriever, ablation is not optional. It is the main way to turn mixed results
+into mechanism-level evidence.
+
+The final system combines BM25, dense retrieval, cluster-local retrieval,
+LinUCB, feedback, fusion, dense floors, and guardrails. A single final score
+cannot answer whether improvement comes from lexical coverage, semantic recall,
+local manifold navigation, online policy learning, or simply the dense fallback.
+It also cannot explain whether failures come from weak geometry, wrong arm
+selection, reward attribution, fusion calibration, or strict evaluation labels.
+
+The paper should therefore include ablations for:
+
+- retrieval components: dense-only, BM25-only, static hybrid, hard cluster
+  pruning, hard LinUCB, soft routing, without BM25, without cluster route, and
+  without dense floor;
+- feedback: no feedback, GT-derived feedback, noisy feedback,
+  trust-weighted feedback, and feedback-budget curves;
+- manifold diagnostics: nearest-centroid routing, LinUCB-selected clusters,
+  GT-cluster oracle, local purity, and context-recall retention;
+- eManual correction studies: strict chunk-id vs text-equivalent evaluation,
+  duplicated vs deduplicated corpus, text-equivalent reward, nearest-centroid
+  warm start, and fusion calibration;
+- cost: full multi-route retrieval, confidence-gated routing, reduced dense/BM25
+  depth, candidate count, context token count, and latency.
+
+This framing makes the central claim more defensible: the method is not a
+universal dense replacement, but an adaptive retrieval-control framework whose
+benefit depends on measurable corpus structure, feedback quality, and
+cost-quality trade-offs.
 
 ---
 

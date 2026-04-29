@@ -388,6 +388,43 @@ Outputs:
 - `paper/experiments/results/manifold_diagnostics_tables.md`
 - `paper/experiments/results/manifold_diagnostics_{dataset}.json`
 
+### Step 10: eManual failure analysis
+
+Task 14.5 isolates why eManual underperforms under strict chunk-id recall. It
+does not replace the guarded main metric. It adds diagnostics for duplicate
+manual sentences, text-equivalent evidence matching, deduplicated-corpus
+baselines, and centroid-routing upper bounds.
+
+Run:
+
+```bash
+.venv/bin/python paper/experiments/scripts/emanual_failure_analysis.py
+```
+
+Current Task 14.5 findings:
+
+| Diagnostic | Result | Interpretation |
+|------------|--------|----------------|
+| Corpus chunks vs unique texts | 18812 chunks / 1729 unique normalized texts | eManual full corpus has heavy repeated sentences |
+| GT duplicate exposure | 861/861 test GT refs have duplicate text | strict chunk-id recall can mark identical evidence text as wrong |
+| Dense strict vs text-equivalent R@10 | 0.3231 -> 0.5615 | dense retrieves more semantic evidence than strict chunk IDs show |
+| Task13.5 strict vs text-equivalent R@10 | 0.1436 -> 0.5795 | soft routing is hurt strongly by duplicate-id evaluation |
+| Deduplicated dense/hybrid R@10 | 0.8615 / 0.8615 | after collapsing duplicate texts, evidence retrieval is much easier |
+| Nearest-centroid 3-cluster R@10 | strict 0.3308 / text 0.5462 | geometry is usable; LinUCB selected-cluster policy underuses it |
+| LinUCB selected cluster hit | 0.2641 | learned arm selection is far below nearest-centroid routing |
+
+Conclusion: eManual is not evidence that the manifold assumption is absent.
+Its low strict Task13.5 score is mainly a combination of weak instance-level
+labels, heavy duplicate text across records, and a LinUCB/fusion policy that
+does not yet exploit the available centroid-routing geometry.
+
+Outputs:
+
+- `paper/experiments/results/emanual_failure_analysis.json`
+- `paper/experiments/results/emanual_failure_analysis_tables.csv`
+- `paper/experiments/results/emanual_failure_analysis_tables.md`
+- `paper/experiments/results/emanual_deduplicated_rankings.json`
+
 ---
 
 ## 统一数据格式
@@ -509,4 +546,4 @@ Task 11-13 的在线学习实验必须先选定无泄漏协议：
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-04-28*
+*更新时间: 2026-04-29*
