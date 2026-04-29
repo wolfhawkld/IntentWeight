@@ -128,6 +128,7 @@ The current experiment pipeline maps to the theory as follows:
 | Manifold-local feedback | Make feedback propagation local in semantic geometry |
 | Global vs local comparison | Test whether manifold-aware feedback improves convergence and stability |
 | Soft-routed multi-route retrieval | Combine dense/BM25 bypass with LinUCB-selected local manifold retrieval to avoid hard-pruning loss |
+| Manifold diagnostics | Directly test PCA concentration, cluster/local purity, and query-to-GT cluster routing |
 | Paper synthesis | Turn the theory and experiments into a coherent system-paper argument |
 
 For Task 11-13, the intended progression is:
@@ -136,6 +137,37 @@ For Task 11-13, the intended progression is:
 2. **Task 12**: implement manifold-local feedback using neighborhood distance, cross-arm decay, and possibly local credibility;
 3. **Task 13**: compare global value updates against manifold-local value propagation.
 4. **Task 13.5**: replace hard cluster pruning with soft multi-route retrieval, using global dense/BM25 as a recall floor and LinUCB-selected clusters as the adaptive local-manifold route.
+5. **Task 14**: directly diagnose the manifold assumption by measuring PCA spectrum, local neighborhood purity, metadata-label alignment, nearest-cluster GT hit rates, and context-space recall retention.
+
+---
+
+## Lessons From Task 14
+
+Task 14 separates the manifold hypothesis from the retrieval policy. It asks
+whether the geometry itself contains useful signal before asking whether LinUCB
+has learned to exploit that signal.
+
+The diagnostics show four different regimes:
+
+- **Banking77** has the clearest local structure: intent labels align with local
+  neighborhoods, nearest clusters almost always contain GT chunks, and
+  soft-routing performance matches or slightly exceeds dense retrieval.
+- **PubMedQA** has strong GT-cluster routing and high context-space recall
+  retention, even though document-level metadata labels are not a perfect proxy
+  for semantic neighborhoods. Here Task 13.5 mainly preserves a strong dense
+  baseline while avoiding hard-pruning loss.
+- **CUAD smoke** has weak local purity and only moderate nearest-cluster hit
+  rates. Its slight Task 13.5 gain should be interpreted as a sampled robustness
+  result, not as full legal-domain superiority.
+- **eManual** is the key negative case: nearest-cluster hit@3 and context-space
+  GT recall are not weak, but Task 13.5 remains far below dense. This means the
+  failure is likely not simply "no manifold structure"; it is more likely an arm
+  selection, credit assignment, fusion/ranking, or feedback-utilization problem.
+
+This improves the paper argument. The manifold assumption is no longer only a
+theoretical metaphor: it is measured with independent diagnostics. At the same
+time, the diagnostics prevent overclaiming by showing where the current policy
+does not yet exploit available geometry.
 
 ---
 
@@ -201,6 +233,60 @@ After LinUCB becomes confident in specific arms, the system can reduce global
 dense/BM25 depth or weight, rely more on high-confidence cluster-local retrieval,
 and shrink rerank candidates and final LLM context. This gives a plausible path
 from robust retrieval to cost-aware adaptive pruning.
+
+---
+
+## Retrieval-Only Evaluation and Feedback Semantics
+
+The current experiments intentionally evaluate the retrieval layer before adding
+LLM generation. This is appropriate for the current research stage because the
+method changes context selection, corpus pruning, multi-route recall, cluster
+routing, and feedback-updated arm selection. The tested question is whether the
+system can retrieve the correct evidence chunks, not whether a particular LLM can
+write the final answer.
+
+The evaluation therefore uses Recall@k, MRR@k, and nDCG@k over
+`ground_truth_chunk_ids`. Correct context is a necessary condition for grounded
+answer quality, but not a sufficient condition. End-to-end LLM answer relevance,
+faithfulness, citation correctness, and LLM-as-judge or RAGAS-style metrics
+remain future extensions.
+
+Ignoring the LLM stage does not break the feedback loop. In the current
+prequential experiments, GT-derived reward is attached to retrieval outputs. In
+a deployed system, the same update can use user feedback attached to contexts,
+chunks, citations, or retrieval routes:
+
+```text
+query -> multi-route retrieval -> context/citation exposure
+      -> user feedback -> reward -> LinUCB arm update
+```
+
+The reward should be assigned to the retrieval routes or cluster arms that
+contributed useful evidence. Dense, BM25, and cluster-local routes can receive
+credit based on whether their chunks were used, clicked, accepted, cited, or
+marked useful. If user credibility is available, the update can be
+reliability-weighted:
+
+```text
+A_arm += trust_user * x x^T
+b_arm += trust_user * reward * x
+```
+
+This makes high-trust feedback influence the value field more strongly and
+reduces the variance caused by noisy or low-trust users.
+
+The composite reward is not the manifold feature itself. It is an observation of
+the value field defined over the manifold:
+
+```text
+M       = semantic geometry from embeddings, PCA, clusters, and neighborhoods
+V(x, t) = dynamic value field estimated from quality, feedback, and cost
+M*      = (M, V), the dynamic value manifold
+```
+
+Thus BM25, dense, clustering, and neighborhood structure describe the geometry
+`M`, while reward samples where value lies on that geometry. LinUCB uses those
+samples to approximate the query-document relevance/value manifold over time.
 
 ---
 

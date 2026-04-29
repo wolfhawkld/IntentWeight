@@ -338,6 +338,56 @@ Outputs:
 - `paper/experiments/results/linucb_soft_smoke_table.csv`
 - `paper/experiments/results/linucb_soft_tables.md`
 
+### Step 9: Manifold diagnostics
+
+Task 14 directly tests whether the datasets expose usable local geometry for
+the manifold-routing assumption. It stays at the retrieval layer and reports:
+
+- PCA spectrum and intrinsic-dimensionality proxies;
+- cluster balance, silhouette sample, and metadata label alignment;
+- local neighborhood label purity;
+- nearest-cluster GT hit rates without LinUCB feedback;
+- context-space GT recall and retention versus dense retrieval;
+- Task13.5 soft-routing gain relative to dense.
+
+Example:
+
+```bash
+.venv/bin/python paper/experiments/scripts/manifold_diagnostics.py \
+  --dataset pubmedqa \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 64 \
+  --n-clusters 32 --context-dim 64 --sample-size 1000 \
+  --neighbor-k 10 --cluster-hit-ks 1,3,5 --recall-ks 1,5,10
+```
+
+Join diagnostics with dense and Task13.5 soft-routing results:
+
+```bash
+.venv/bin/python paper/experiments/scripts/summarize_manifold_diagnostics.py \
+  --diagnostics paper/experiments/results/manifold_diagnostics_summary.csv \
+  --dense-summary paper/experiments/results/dense_baseline_summary.csv \
+  --soft-summary paper/experiments/results/linucb_soft_summary.csv \
+  --output-csv paper/experiments/results/manifold_diagnostics_comparison.csv \
+  --output-markdown paper/experiments/results/manifold_diagnostics_tables.md
+```
+
+Current Task 14 diagnostics:
+
+| Dataset | Scope | PCA dim 90% | Local purity | Nearest cluster hit@3 | Context recall@10 | Soft - Dense R@10 | Interpretation |
+|---------|-------|-------------|--------------|------------------------|-------------------|-------------------|----------------|
+| PubMedQA | full/train/full | 177 | 0.2439 | 0.9680 | 0.9860 | -0.0010 | Strong GT-cluster routing signal; soft routing mainly preserves dense baseline |
+| eManual | heldout_test/test/full | 111 | 0.0169 | 0.8923 | 0.3615 | -0.1795 | Geometry can route to GT clusters, but learned arm/fusion underuses the signal |
+| Banking77 | heldout_test/test/full | 105 | 0.8539 | 0.9968 | 0.9782 | +0.0026 | Strong local routing signal aligns with intent-proxy soft routing |
+| CUAD | smoke_only/test/gt_anchored_10000 | 182 | 0.0716 | 0.6076 | 0.0759 | +0.0084 | Smoke/sample only; soft routing helps despite imperfect cluster routing |
+
+Outputs:
+
+- `paper/experiments/results/manifold_diagnostics_summary.csv`
+- `paper/experiments/results/manifold_diagnostics_comparison.csv`
+- `paper/experiments/results/manifold_diagnostics_tables.md`
+- `paper/experiments/results/manifold_diagnostics_{dataset}.json`
+
 ---
 
 ## 统一数据格式

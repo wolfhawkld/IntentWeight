@@ -231,7 +231,9 @@ PY
 - [x] Task 11: 设计并运行 LinUCB baseline / ablation 实验
 - [x] Task 12: 实现流形局部反馈机制（CPU exact 邻域检索 + 距离加权反馈）
 - [x] Task 13: 对比全局 LinUCB 与流形局部反馈效果
-- [ ] Task 14: 整理论文实验表格、结论和局限性
+- [x] Task 14: 流形假设诊断与 eManual 失败定位
+- [ ] Task 15: Trust-weighted feedback LinUCB
+- [ ] Task 16: Cost-aware soft routing
 
 ## 后续任务规划
 
@@ -790,7 +792,41 @@ Smoke result:
     - Task 13.5 是 robustness phase：三路召回全开，主要解决召回稳定性。
     - 后续应进入 efficiency phase：把成本、延迟、上下文 token、rerank 候选数写入 reward。
     - 随着 LinUCB arm 策略收敛，可逐步降低 global dense/BM25 depth 或权重，让系统更多依赖高置信 selected arms，从而减少 embedding/index 查询、rerank 候选和 LLM context token。
+  - Task 13.5 后补充确认：
+    - 当前实验仍是 retrieval-only evaluation，尚未调用 LLM；评估目标是检索出的 context/chunk 是否命中 GT，而不是生成答案质量。
+    - 这一设计在当前阶段是合理的：目标 context 正确是 LLM 回答正确的必要前提，后续端到端 answer relevance、faithfulness、citation correctness、RAGAS/LLM-as-judge 可作为扩展实验。
+    - 即使暂时忽略 LLM，用户 feedback 仍可作用于 retrieval bandit：反馈可绑定到最终 context、引用 chunk、点击/采纳证据、检索 route 或 cluster arm，再转化为 LinUCB reward 更新。
+    - 真实系统中应把用户信誉分纳入更新权重，例如用 `trust_user * reward` 更新对应 arm，以降低低质量反馈带来的方差。
+    - 综合 reward 不是流形特征本身，而是流形上动态价值场的观测；embedding/PCA/cluster/dense/BM25 描述相对稳定的几何结构，reward 描述不同 query/context/arm 在该结构上的价值分布。
   - 建议后续任务：
-    - Task 14：trust-weighted feedback LinUCB，模拟高/低信誉用户反馈，比较等权反馈 vs 信誉加权反馈的收敛和鲁棒性。
-    - Task 15：cost-aware soft routing，比较固定三路全开 vs confidence-gated routing，在 Recall@k/MRR 与 latency/candidate/context token 成本之间画 trade-off。
-    - Task 16：eManual failure analysis，定位 dense/fusion/cluster/GT 哪一环导致 Task13.5 仍明显低于 dense。
+    - Task 14：manifold diagnostics，先验证各数据集是否存在可利用的局部流形结构，并解释 eManual 失败原因。
+    - Task 15：trust-weighted feedback LinUCB，模拟高/低信誉用户反馈，比较等权反馈 vs 信誉加权反馈的收敛和鲁棒性。
+    - Task 16：cost-aware soft routing，比较固定三路全开 vs confidence-gated routing，在 Recall@k/MRR 与 latency/candidate/context token 成本之间画 trade-off。
+
+- 2026-04-29 Task 14 manifold diagnostics：
+  - 新增 `paper/experiments/scripts/manifold_diagnostics.py`：
+    - 计算 PCA spectrum、`pca_dim_for_90pct`、participation ratio、spectral entropy 等低维集中度指标。
+    - 基于现有 PCA context + MiniBatchKMeans cluster arms，计算 cluster size entropy、silhouette sample、metadata label purity/NMI/ARI。
+    - 计算 local label purity，衡量 embedding/PCA 邻域是否与可用 metadata label 对齐。
+    - 计算 `nearest_cluster_hit@1/3/5`：不用 LinUCB，只按 query context 到 cluster centroid 的距离，看最近 cluster 是否包含 GT chunk。
+    - 计算 `context_gt_recall@k` 与 `context_recall_retention@k`，验证 PCA context 是否保留 dense evidence retrieval 能力。
+  - 新增 `paper/experiments/scripts/summarize_manifold_diagnostics.py`：
+    - 将 `manifold_diagnostics_summary.csv` 与 dense baseline、Task13.5 soft summary 对齐。
+    - 输出 `manifold_diagnostics_comparison.csv` 与 `manifold_diagnostics_tables.md`。
+  - 新增测试：
+    - `cache/test_manifold_diagnostics.py`
+    - `cache/test_summarize_manifold_diagnostics.py`
+  - 已运行正式矩阵：
+    - PubMedQA full/train/full: `pca_dim_for_90pct=177`, `local_label_purity=0.2439`, `nearest_cluster_hit@3=0.9680`, `context_gt_recall@10=0.9860`, Task13.5-dense delta=-0.0010。
+    - eManual heldout_test/test/full: `pca_dim_for_90pct=111`, `local_label_purity=0.0169`, `nearest_cluster_hit@3=0.8923`, `context_gt_recall@10=0.3615`, Task13.5-dense delta=-0.1795。
+    - Banking77 heldout_test/test/full: `pca_dim_for_90pct=105`, `local_label_purity=0.8539`, `nearest_cluster_hit@3=0.9968`, `context_gt_recall@10=0.9782`, Task13.5-dense delta=+0.0026。
+    - CUAD smoke_only/test/gt_anchored_10000: `pca_dim_for_90pct=182`, `local_label_purity=0.0716`, `nearest_cluster_hit@3=0.6076`, `context_gt_recall@10=0.0759`, Task13.5-dense delta=+0.0084。
+  - 当前解释：
+    - Banking77 的流形结构最清晰：label/local purity 与 nearest-cluster hit 都高，支持 intent proxy 上的 soft routing 表现。
+    - PubMedQA 的 metadata label purity 不高，但 nearest-cluster hit 与 context recall 很高，说明 evidence routing 几何有效，Task13.5 主要是在保留 dense 强基线。
+    - CUAD smoke 局部结构弱，Task13.5 的小幅提升主要来自多路召回鲁棒性，不足以作为 full-corpus 结论。
+    - eManual 并不是“完全没有几何信号”：nearest_cluster_hit@3=0.8923 且 context_gt_recall@10 高于 dense baseline；失败更可能在 LinUCB arm 选择、credit assignment、fusion/ranking 或 reward 对 selected cluster 的利用不足。
+  - 后续任务顺序调整：
+    - Task 15：trust-weighted feedback LinUCB。
+    - Task 16：cost-aware soft routing。
+    - eManual failure analysis 可作为 Task15 前置消融或 Task14.5：比较 nearest-centroid cluster oracle、LinUCB selected cluster、soft fusion 三者差距。
