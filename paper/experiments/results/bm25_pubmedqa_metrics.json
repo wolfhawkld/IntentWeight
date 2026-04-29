@@ -1,4 +1,6 @@
 {
+  "comparable_group": "dataset=pubmedqa|query_scope=split_train|corpus_scope=full|top_k=10|ks=1,5,10",
+  "corpus_scope": "full",
   "dataset": "pubmedqa",
   "elapsed_sec": 3.321,
   "ks": [
@@ -8,18 +10,29 @@
   ],
   "max_queries": null,
   "method": "bm25",
+  "metric_ks": "1,5,10",
   "mrr@1": 0.691,
   "mrr@10": 0.827284523809524,
   "mrr@5": 0.8266833333333337,
   "ndcg@1": 0.691,
   "ndcg@10": 0.664831991717885,
   "ndcg@5": 0.6358259161953906,
+  "notes": "GT is abstract context section-level, not strict answer-supporting sentence evidence.",
   "num_corpus_chunks": 4348,
   "num_queries": 1000,
+  "num_query_candidates": 1000,
   "num_skipped_no_gt": 0,
+  "num_total_corpus_chunks": 4348,
   "num_total_queries": 1000,
+  "query_scope": "split_train",
+  "query_split": "train",
+  "query_splits": [
+    "train"
+  ],
   "recall@1": 0.691,
   "recall@10": 0.977,
   "recall@5": 0.973,
+  "scope": "full",
+  "task_type": "evidence_retrieval",
   "top_k": 10
 }

@@ -106,6 +106,40 @@ class BM25BaselineTests(unittest.TestCase):
             metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
             self.assertEqual(metrics["dataset"], "toy")
             self.assertEqual(metrics["method"], "bm25")
+            self.assertEqual(metrics["task_type"], "unknown")
+            self.assertAlmostEqual(metrics["recall@1"], 1.0)
+
+    def test_run_dataset_filters_query_split_and_marks_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            data_dir = tmpdir / "processed"
+            out_dir = tmpdir / "results"
+            data_dir.mkdir()
+            corpus = [
+                {"chunk_id": "c_train", "text": "alpha train"},
+                {"chunk_id": "c_test", "text": "beta test"},
+            ]
+            queries = [
+                {"query_id": "q_train", "text": "alpha", "ground_truth_chunk_ids": ["c_train"], "split": "train"},
+                {"query_id": "q_test", "text": "beta", "ground_truth_chunk_ids": ["c_test"], "split": "test"},
+            ]
+            (data_dir / "toy_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / "toy_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+
+            metrics = bm25_baseline.run_dataset(
+                "toy",
+                data_dir,
+                out_dir,
+                top_k=1,
+                ks=(1,),
+                query_split="test",
+            )
+
+            rankings = json.loads((out_dir / "bm25_toy_rankings.json").read_text(encoding="utf-8"))
+            self.assertEqual(list(rankings), ["q_test"])
+            self.assertEqual(metrics["query_split"], "test")
+            self.assertEqual(metrics["query_scope"], "split_test")
+            self.assertEqual(metrics["num_query_candidates"], 1)
             self.assertAlmostEqual(metrics["recall@1"], 1.0)
 
 

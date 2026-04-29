@@ -1,5 +1,7 @@
 {
   "batch_size": 64,
+  "comparable_group": "dataset=pubmedqa|query_scope=split_train|corpus_scope=full|top_k=10|ks=1,5,10",
+  "corpus_scope": "full",
   "dataset": "pubmedqa",
   "elapsed_sec": 63.261,
   "fusion_depth": 100,
@@ -11,6 +13,7 @@
   "max_corpus": null,
   "max_queries": null,
   "method": "hybrid_rrf",
+  "metric_ks": "1,5,10",
   "model": "sentence-transformers/all-MiniLM-L6-v2",
   "mrr@1": 0.707,
   "mrr@10": 0.8443412698412699,
@@ -18,14 +21,23 @@
   "ndcg@1": 0.707,
   "ndcg@10": 0.7230453880905247,
   "ndcg@5": 0.6948549755090639,
+  "notes": "GT is abstract context section-level, not strict answer-supporting sentence evidence. Dense encoder is all-MiniLM-L6-v2 CPU exact cosine, not BGE-large.",
   "num_corpus_chunks": 4348,
   "num_queries": 1000,
+  "num_query_candidates": 1000,
   "num_skipped_no_gt": 0,
   "num_total_corpus_chunks": 4348,
   "num_total_queries": 1000,
+  "query_scope": "split_train",
+  "query_split": "train",
+  "query_splits": [
+    "train"
+  ],
   "recall@1": 0.707,
   "recall@10": 0.989,
   "recall@5": 0.983,
   "rrf_k": 60,
+  "scope": "full",
+  "task_type": "evidence_retrieval",
   "top_k": 10
 }

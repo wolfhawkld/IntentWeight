@@ -18,7 +18,13 @@ paper/experiments/
 │   ├── retrieval_metrics.py       # Recall/MRR/nDCG 评估
 │   ├── bm25_baseline.py           # BM25 静态检索 baseline
 │   ├── dense_baseline.py          # dense embedding 静态检索 baseline
-│   └── hybrid_baseline.py         # BM25+dense RRF hybrid baseline
+│   ├── hybrid_baseline.py         # BM25+dense RRF hybrid baseline
+│   ├── experiment_guardrails.py   # split/sample/comparability guardrails + comparison CSV
+│   ├── summarize_retrieval_baselines.py # paper-ready baseline tables
+│   ├── linucb_online_baseline.py  # global LinUCB prequential online baseline
+│   ├── summarize_linucb_online.py # paper-ready LinUCB online tables
+│   ├── linucb_manifold_local.py   # manifold-local LinUCB feedback propagation
+│   └── summarize_linucb_manifold.py # paper-ready manifold-local LinUCB tables
 ├── data/
 │   ├── raw/                       # 下载的原始数据 (git ignored)
 │   ├── processed/                 # 统一格式 (git ignored)
@@ -88,6 +94,9 @@ data/processed/
 ```bash
 python paper/experiments/scripts/bm25_baseline.py --dataset pubmedqa,banking77,emanual --top-k 10 --ks 1,5,10
 
+# RAGBench held-out query split example:
+python paper/experiments/scripts/bm25_baseline.py --dataset emanual --query-split test --top-k 10 --ks 1,5,10
+
 python paper/experiments/scripts/dense_baseline.py \
   --dataset pubmedqa,banking77,emanual \
   --model sentence-transformers/all-MiniLM-L6-v2 \
@@ -99,21 +108,235 @@ python paper/experiments/scripts/hybrid_baseline.py \
   --local-files-only --device cpu --batch-size 64 --top-k 10 --fusion-depth 100 --ks 1,5,10
 ```
 
-CUAD full corpus 当前为 675400 sentence chunks，CPU exact dense 全量成本较高。当前 CUAD 结果应标为 smoke/sample，不应直接进入主表排名：
+CUAD full corpus 当前为 675400 sentence chunks，CPU exact dense 全量成本较高。CUAD smoke/sample 必须使用 GT-anchored corpus sampling：先固定评估 query，把这些 query 的 GT chunks 放入候选 corpus，再补采样 distractors。当前 CUAD 结果应标为 smoke/sample，不应直接进入主表排名：
 
 ```bash
-python paper/experiments/scripts/dense_baseline.py \
+.venv/bin/python paper/experiments/scripts/bm25_baseline.py \
   --dataset cuad \
+  --query-split test \
+  --top-k 10 --ks 1,5,10 \
+  --max-queries 100 --max-corpus 10000
+
+.venv/bin/python paper/experiments/scripts/dense_baseline.py \
+  --dataset cuad \
+  --query-split test \
   --model sentence-transformers/all-MiniLM-L6-v2 \
   --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10 \
   --max-queries 100 --max-corpus 10000
 
-python paper/experiments/scripts/hybrid_baseline.py \
+.venv/bin/python paper/experiments/scripts/hybrid_baseline.py \
   --dataset cuad \
+  --query-split test \
   --model sentence-transformers/all-MiniLM-L6-v2 \
   --local-files-only --device cpu --batch-size 64 --top-k 10 --fusion-depth 100 --ks 1,5,10 \
   --max-queries 100 --max-corpus 10000
 ```
+
+生成带 guardrails 的静态检索对比表：
+
+```bash
+.venv/bin/python paper/experiments/scripts/experiment_guardrails.py \
+  --results-dir paper/experiments/results \
+  --data-dir paper/experiments/data/processed \
+  --output paper/experiments/results/retrieval_baseline_comparison.csv
+```
+
+生成论文用 baseline 主表、proxy 表、smoke/sample 表：
+
+```bash
+.venv/bin/python paper/experiments/scripts/summarize_retrieval_baselines.py \
+  --comparison paper/experiments/results/retrieval_baseline_comparison.csv \
+  --output-dir paper/experiments/results
+```
+
+输出：
+
+- `paper/experiments/results/retrieval_baseline_main_table.csv`
+- `paper/experiments/results/retrieval_baseline_intent_proxy_table.csv`
+- `paper/experiments/results/retrieval_baseline_smoke_table.csv`
+- `paper/experiments/results/retrieval_baseline_tables.md`
+
+### Step 5: Global LinUCB online baseline
+
+Task 11 starts with a global LinUCB baseline under a no-leakage `prequential` protocol:
+each query is evaluated first, then GT-derived feedback updates the selected cluster arms.
+This is the online-learning baseline for Task 12/13; manifold-local propagation is not included here.
+
+Smoke example:
+
+```bash
+.venv/bin/python paper/experiments/scripts/linucb_online_baseline.py \
+  --dataset pubmedqa \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 64 \
+  --top-k 10 --ks 1,5,10 \
+  --max-queries 50 --max-corpus 500 \
+  --seeds 13,17 --n-clusters 8 --context-dim 16 --candidate-arms 3
+```
+
+Current smoke output:
+
+- `paper/experiments/results/linucb_pubmedqa_prequential_metrics.json`
+- `paper/experiments/results/linucb_pubmedqa_prequential_rankings.json`
+- `paper/experiments/results/linucb_online_summary.csv`
+
+Generate paper-ready LinUCB tables:
+
+```bash
+.venv/bin/python paper/experiments/scripts/summarize_linucb_online.py \
+  --summary paper/experiments/results/linucb_online_summary.csv \
+  --output-dir paper/experiments/results
+```
+
+Formal global LinUCB baseline matrix:
+
+| Dataset | Scope | Queries | Seeds | Recall@10 mean | MRR@10 mean | Notes |
+|---------|-------|---------|-------|----------------|-------------|-------|
+| PubMedQA | full/train/full | 1000 | 3 | 0.5480 | 0.4637 | Section-level GT caveat |
+| eManual | heldout_test/test/full | 130 | 3 | 0.1154 | 0.0182 | Evidence retrieval held-out |
+| Banking77 | heldout_test/test/full | 3080 | 3 | 0.7215 | 0.6094 | Intent/domain routing proxy |
+| CUAD | smoke_only/test/gt_anchored_10000 | 79 | 3 | 0.0464 | 0.0275 | GT-anchored smoke/sample only |
+
+Outputs:
+
+- `paper/experiments/results/linucb_online_main_table.csv`
+- `paper/experiments/results/linucb_online_intent_proxy_table.csv`
+- `paper/experiments/results/linucb_online_smoke_table.csv`
+- `paper/experiments/results/linucb_online_tables.md`
+
+Initial PubMedQA sample ablation (`max_queries=200`, `max_corpus=1000`, `seeds=13,17,19`):
+
+| Variant | Recall@10 | MRR@10 | Observation |
+|---------|-----------|--------|-------------|
+| default: alpha_decay=0.01, candidate_arms=3 | 0.5450 | 0.4690 | Reference sample |
+| alpha_decay=0.0, candidate_arms=3 | 0.6550 | 0.5615 | Better than default; decay may exploit too early |
+| alpha_decay=0.01, candidate_arms=1 | 0.2433 | 0.2060 | Too narrow |
+| alpha_decay=0.01, candidate_arms=5 | 0.8150 | 0.6984 | Best in sample; candidate breadth is critical |
+
+Outputs:
+
+- `paper/experiments/results/linucb_ablations/linucb_ablation_summary.csv`
+- `paper/experiments/results/linucb_ablations/linucb_ablation_summary.md`
+
+### Step 6: Manifold-local LinUCB feedback
+
+Task 12 extends the global LinUCB baseline with manifold-local feedback propagation under the same `prequential` protocol:
+
+- query-local feedback attention: nearby historical query feedback boosts relevant arms;
+- cross-arm propagation: selected-arm feedback updates neighboring cluster arms with `exp(-distance / sigma)` decay;
+- fixed semantic geometry: embeddings/PCA/clusters define the manifold, while feedback updates the value field.
+
+Smoke example:
+
+```bash
+.venv/bin/python paper/experiments/scripts/linucb_manifold_local.py \
+  --dataset pubmedqa \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 64 \
+  --top-k 10 --ks 1,5,10 \
+  --max-queries 50 --max-corpus 500 \
+  --seeds 13,17 --n-clusters 8 --context-dim 16 --candidate-arms 3
+```
+
+Generate paper-ready manifold-local LinUCB tables:
+
+```bash
+.venv/bin/python paper/experiments/scripts/summarize_linucb_manifold.py \
+  --summary paper/experiments/results/linucb_manifold_summary.csv \
+  --output-dir paper/experiments/results
+```
+
+Formal manifold-local LinUCB matrix:
+
+| Dataset | Scope | Queries | Seeds | Recall@10 mean | MRR@10 mean | Task 11 Recall@10 | Notes |
+|---------|-------|---------|-------|----------------|-------------|-------------------|-------|
+| PubMedQA | full/train/full | 1000 | 3 | 0.6607 | 0.5654 | 0.5480 | Improves over global LinUCB |
+| eManual | heldout_test/test/full | 130 | 3 | 0.0923 | 0.0193 | 0.1154 | Worse Recall@10; local propagation not universally beneficial |
+| Banking77 | heldout_test/test/full | 3080 | 3 | 0.8247 | 0.7490 | 0.7215 | Intent proxy improves strongly |
+| CUAD | smoke_only/test/gt_anchored_10000 | 79 | 3 | 0.0295 | 0.0120 | 0.0464 | Smoke/sample only; worse than global on this sample |
+
+Outputs:
+
+- `paper/experiments/results/linucb_manifold_main_table.csv`
+- `paper/experiments/results/linucb_manifold_intent_proxy_table.csv`
+- `paper/experiments/results/linucb_manifold_smoke_table.csv`
+- `paper/experiments/results/linucb_manifold_tables.md`
+
+### Step 7: Global vs manifold-local LinUCB comparison
+
+Task 13 compares Task 11 and Task 12 under matching dataset/split/corpus/protocol scopes:
+
+```bash
+.venv/bin/python paper/experiments/scripts/compare_linucb_variants.py \
+  --global-summary paper/experiments/results/linucb_online_summary.csv \
+  --manifold-summary paper/experiments/results/linucb_manifold_summary.csv \
+  --output-csv paper/experiments/results/linucb_variant_comparison.csv \
+  --output-markdown paper/experiments/results/linucb_variant_comparison.md
+```
+
+Current comparison:
+
+| Dataset | Scope | Global Recall@10 | Manifold Recall@10 | Delta | Global MRR@10 | Manifold MRR@10 | Interpretation |
+|---------|-------|------------------|--------------------|-------|---------------|-----------------|----------------|
+| PubMedQA | full/train/full | 0.5480 | 0.6607 | +0.1127 | 0.4637 | 0.5654 | Manifold-local improves both recall and MRR |
+| eManual | heldout_test/test/full | 0.1154 | 0.0923 | -0.0231 | 0.0182 | 0.0193 | Global has better recall; local has slight rank-quality gain |
+| Banking77 | heldout_test/test/full | 0.7215 | 0.8247 | +0.1031 | 0.6094 | 0.7490 | Manifold-local improves both recall and MRR |
+| CUAD | smoke_only/test/gt_anchored_10000 | 0.0464 | 0.0295 | -0.0169 | 0.0275 | 0.0120 | Global remains stronger on CUAD smoke sample |
+
+Outputs:
+
+- `paper/experiments/results/linucb_variant_comparison.csv`
+- `paper/experiments/results/linucb_variant_comparison.md`
+
+### Step 8: Soft-routed manifold LinUCB
+
+Task 13.5 keeps manifold-local LinUCB as the adaptive policy, but removes the
+hard cluster gate from final retrieval. Each query fuses three candidate
+streams with weighted RRF:
+
+- global dense retrieval over the selected corpus;
+- global BM25 lexical retrieval over the selected corpus;
+- dense retrieval inside LinUCB-selected cluster arms.
+
+It also reports hard-pruning diagnostics: selected GT-cluster hit rate and
+rescue rate after a selected-cluster miss.
+
+Example:
+
+```bash
+.venv/bin/python paper/experiments/scripts/linucb_soft_routing.py \
+  --dataset pubmedqa \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 64 \
+  --top-k 10 --ks 1,5,10 \
+  --seeds 13,17,19 --n-clusters 32 --context-dim 64 --candidate-arms 3 \
+  --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-floor-k 5
+```
+
+Generate paper-ready soft-routing tables:
+
+```bash
+.venv/bin/python paper/experiments/scripts/summarize_linucb_soft.py \
+  --summary paper/experiments/results/linucb_soft_summary.csv \
+  --output-dir paper/experiments/results
+```
+
+Current Task 13.5 results:
+
+| Dataset | Scope | Recall@10 mean | MRR@10 mean | Selected cluster hit | Rescue on cluster miss | Dense baseline Recall@10 | Notes |
+|---------|-------|----------------|-------------|----------------------|------------------------|--------------------------|-------|
+| PubMedQA | full/train/full | 0.9920 | 0.8466 | 0.6817 | 0.9800 | 0.9930 | Soft routing removes most hard-pruning loss |
+| eManual | heldout_test/test/full | 0.1436 | 0.0337 | 0.2641 | 0.1173 | 0.3231 | Still below dense; source recall and cluster routing remain weak |
+| Banking77 | heldout_test/test/full | 0.9831 | 0.9420 | 0.8829 | 0.9699 | 0.9805 | Intent proxy matches/exceeds dense under this run |
+| CUAD | smoke_only/test/gt_anchored_10000 | 0.0844 | 0.0344 | 0.3713 | 0.0865 | 0.0759 | Smoke/sample only; slightly above dense on this sample |
+
+Outputs:
+
+- `paper/experiments/results/linucb_soft_summary.csv`
+- `paper/experiments/results/linucb_soft_main_table.csv`
+- `paper/experiments/results/linucb_soft_intent_proxy_table.csv`
+- `paper/experiments/results/linucb_soft_smoke_table.csv`
+- `paper/experiments/results/linucb_soft_tables.md`
 
 ---
 
@@ -191,9 +414,27 @@ Task 10 汇总表之前必须满足以下 guardrails：
 
 1. RAGBench eManual/CUAD 需要显式记录 `query_split`。正式主表优先使用 held-out `test` query；train/validation 可用于调参、反馈流或 smoke。
 2. 同一 dataset 的 BM25/dense/hybrid 横向比较必须使用相同 query subset 和 corpus subset。
-3. CUAD 当前历史结果口径不完全一致，只能标为 `smoke_only` 或 `not_comparable`。
-4. 表格需要包含 `scope`、`query_split`、`corpus_scope`、`task_type`、`comparable_group`、`is_comparable`、`notes`。
-5. 当前 dense baseline 使用 `sentence-transformers/all-MiniLM-L6-v2` CPU exact cosine；除非另跑 BGE/GTE，否则论文中不得称为 BGE-large。
+3. sampled corpus 必须通过 GT-in-corpus guardrail：所有有 GT 的评估 query 至少有一个 GT chunk 出现在 selected corpus。
+4. CUAD 当前历史结果口径不完全一致，只能标为 `smoke_only` 或 `not_comparable`。
+5. 表格需要包含 `scope`、`query_split`、`corpus_scope`、`corpus_sampling`、`task_type`、`comparable_group`、`is_comparable`、`gt_query_coverage`、`notes`。
+6. 当前 dense baseline 使用 `sentence-transformers/all-MiniLM-L6-v2` CPU exact cosine；除非另跑 BGE/GTE，否则论文中不得称为 BGE-large。
+
+当前 guardrails 已在 `experiment_guardrails.py` 中实现。baseline metrics/summary 会写出 split/sample metadata；`retrieval_baseline_comparison.csv` 会自动标注：
+
+- eManual 已重跑为 held-out `test` split，三方法均为 `is_comparable=true`。
+- CUAD 已重跑为统一 `test + max_queries=100 + gt_anchored_10000 corpus` smoke/sample 口径，三方法均为 `is_comparable=true`，但仍不得作为 full-corpus 主表结果。
+- Banking77 为 `intent_retrieval_proxy`，应和 evidence retrieval 结论分开表述。
+
+当前 guarded rerun 结果：
+
+| Dataset | Scope | Query split | Corpus scope | Method | Queries | Skipped no GT | GT query coverage | Recall@10 | MRR@10 |
+|---------|-------|-------------|--------------|--------|---------|---------------|-------------------|-----------|--------|
+| eManual | heldout_test | test | full | BM25 | 130 | 2 | 1.0000 | 0.1154 | 0.0244 |
+| eManual | heldout_test | test | full | dense all-MiniLM-L6-v2 | 130 | 2 | 1.0000 | 0.3231 | 0.0551 |
+| eManual | heldout_test | test | full | hybrid RRF | 130 | 2 | 1.0000 | 0.1692 | 0.0366 |
+| CUAD | smoke_only | test | gt_anchored_10000 | BM25 | 79 | 21 | 1.0000 | 0.0506 | 0.0232 |
+| CUAD | smoke_only | test | gt_anchored_10000 | dense all-MiniLM-L6-v2 | 79 | 21 | 1.0000 | 0.0759 | 0.0334 |
+| CUAD | smoke_only | test | gt_anchored_10000 | hybrid RRF | 79 | 21 | 1.0000 | 0.0633 | 0.0254 |
 
 ### Online learning protocol
 
@@ -213,9 +454,9 @@ Task 11-13 的在线学习实验必须先选定无泄漏协议：
 2. **PubMedQA artificial** 子集约 211K 条，下载和处理需要几分钟，默认不包含。
 3. 所有 data/ 下的数据文件已在 `.gitignore` 中排除，不会提交到 git。
 4. 预处理脚本会打印统计信息（chunks 数、queries 数、GT 覆盖率），请检查是否合理。
-5. 当前 Task 7-9 结果工程上可复现，但 Task 10 之前需要先完成 Task 9.5 的 split/sample/comparability guardrails。
+5. Task 10 表格已基于 guarded results 生成；CUAD 仅进入 smoke/sample 表，不进入 full-corpus evidence 主表。
 
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-04-27*
+*更新时间: 2026-04-28*

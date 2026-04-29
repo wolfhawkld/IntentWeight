@@ -1,0 +1,7 @@
+dataset,method,task_type,scope,query_split,corpus_scope,corpus_sampling,num_corpus_chunks,num_queries,num_skipped_no_gt,num_queries_with_gt_in_corpus,gt_query_coverage,recall@1,recall@5,recall@10,mrr@10,ndcg@10,elapsed_sec,notes
+emanual,BM25,evidence_retrieval,heldout_test,test,full,,18812,130,2,130,1.0,0.0000,0.0615,0.1154,0.0244,0.0256,1.632,
+emanual,Dense,evidence_retrieval,heldout_test,test,full,,18812,130,2,130,1.0,0.0000,0.0846,0.3231,0.0551,0.0526,47.336,"Dense encoder is all-MiniLM-L6-v2 CPU exact cosine, not BGE-large."
+emanual,Hybrid RRF,evidence_retrieval,heldout_test,test,full,,18812,130,2,130,1.0,0.0000,0.0769,0.1692,0.0366,0.0287,51.143,"Dense encoder is all-MiniLM-L6-v2 CPU exact cosine, not BGE-large."
+pubmedqa,BM25,evidence_retrieval,full,train,full,,4348,1000,0,1000,1.0,0.6910,0.9730,0.9770,0.8273,0.6648,3.321,"GT is abstract context section-level, not strict answer-supporting sentence evidence."
+pubmedqa,Dense,evidence_retrieval,full,train,full,,4348,1000,0,1000,1.0,0.7090,0.9870,0.9930,0.8468,0.7396,53.697,"GT is abstract context section-level, not strict answer-supporting sentence evidence. Dense encoder is all-MiniLM-L6-v2 CPU exact cosine, not BGE-large."
+pubmedqa,Hybrid RRF,evidence_retrieval,full,train,full,,4348,1000,0,1000,1.0,0.7070,0.9830,0.9890,0.8443,0.7230,63.261,"GT is abstract context section-level, not strict answer-supporting sentence evidence. Dense encoder is all-MiniLM-L6-v2 CPU exact cosine, not BGE-large."

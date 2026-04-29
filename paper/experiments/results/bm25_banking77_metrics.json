@@ -1,4 +1,6 @@
 {
+  "comparable_group": "dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",
+  "corpus_scope": "full",
   "dataset": "banking77",
   "elapsed_sec": 23.559,
   "ks": [
@@ -8,18 +10,29 @@
   ],
   "max_queries": null,
   "method": "bm25",
+  "metric_ks": "1,5,10",
   "mrr@1": 0.801948051948052,
   "mrr@10": 0.8603728612657192,
   "mrr@5": 0.8558387445887456,
   "ndcg@1": 0.801948051948052,
   "ndcg@10": 0.6762452477120666,
   "ndcg@5": 0.7253923742895273,
+  "notes": "Intent retrieval proxy/domain routing; do not mix with evidence retrieval conclusions.",
   "num_corpus_chunks": 10003,
   "num_queries": 3080,
+  "num_query_candidates": 3080,
   "num_skipped_no_gt": 0,
+  "num_total_corpus_chunks": 10003,
   "num_total_queries": 3080,
+  "query_scope": "split_test",
+  "query_split": "test",
+  "query_splits": [
+    "test"
+  ],
   "recall@1": 0.801948051948052,
   "recall@10": 0.9698051948051948,
   "recall@5": 0.937012987012987,
+  "scope": "heldout_test",
+  "task_type": "intent_retrieval_proxy",
   "top_k": 10
 }

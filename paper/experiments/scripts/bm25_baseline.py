@@ -21,6 +21,10 @@ _METRICS_PATH = SCRIPT_DIR / "retrieval_metrics.py"
 _spec = importlib.util.spec_from_file_location("retrieval_metrics", _METRICS_PATH)
 retrieval_metrics = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(retrieval_metrics)
+_GUARDRAILS_PATH = SCRIPT_DIR / "experiment_guardrails.py"
+_guardrails_spec = importlib.util.spec_from_file_location("experiment_guardrails", _GUARDRAILS_PATH)
+experiment_guardrails = importlib.util.module_from_spec(_guardrails_spec)
+_guardrails_spec.loader.exec_module(experiment_guardrails)
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
@@ -138,12 +142,17 @@ def run_bm25(
     top_k: int = 10,
     ks: Sequence[int] = (1, 5, 10),
     max_queries: int | None = None,
+    max_corpus: int | None = None,
 ) -> Dict[str, object]:
     """Run BM25 over corpus chunks and evaluate processed queries."""
     if top_k <= 0:
         raise ValueError(f"top_k must be positive, got {top_k}")
     if not corpus:
         raise ValueError("corpus must not be empty")
+    if max_corpus is not None:
+        if max_corpus <= 0:
+            raise ValueError(f"max_corpus must be positive, got {max_corpus}")
+        corpus = corpus[:max_corpus]
     if max_queries is not None:
         if max_queries <= 0:
             raise ValueError(f"max_queries must be positive, got {max_queries}")
@@ -173,14 +182,32 @@ def run_dataset(
     top_k: int,
     ks: Sequence[int],
     max_queries: int | None = None,
+    max_corpus: int | None = None,
+    query_split: str | None = None,
+    corpus_sampling: str | None = None,
+    sampling_seed: int = 13,
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
     corpus = load_json_list(corpus_path)
     queries = load_json_list(queries_path)
+    selected_queries = experiment_guardrails.apply_query_controls(
+        queries,
+        query_split=query_split,
+        max_queries=max_queries,
+    )
+    resolved_corpus_sampling = experiment_guardrails.resolve_corpus_sampling(dataset, max_corpus, corpus_sampling)
+    selected_corpus = experiment_guardrails.apply_corpus_controls(
+        corpus,
+        max_corpus=max_corpus,
+        queries=selected_queries,
+        corpus_sampling=resolved_corpus_sampling,
+        random_seed=sampling_seed,
+    )
+    gt_coverage = experiment_guardrails.assert_gt_corpus_coverage(selected_queries, selected_corpus)
 
     start = time.perf_counter()
-    result = run_bm25(corpus, queries, top_k=top_k, ks=ks, max_queries=max_queries)
+    result = run_bm25(selected_corpus, selected_queries, top_k=top_k, ks=ks)
     elapsed_sec = time.perf_counter() - start
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -192,10 +219,26 @@ def run_dataset(
         "method": "bm25",
         "top_k": top_k,
         "ks": list(ks),
-        "num_corpus_chunks": len(corpus),
+        "num_corpus_chunks": len(selected_corpus),
+        "num_total_corpus_chunks": len(corpus),
         "num_total_queries": len(queries),
         "max_queries": max_queries,
+        "max_corpus": max_corpus,
         "elapsed_sec": round(elapsed_sec, 3),
+        **experiment_guardrails.build_run_metadata(
+            dataset=dataset,
+            queries=selected_queries,
+            all_queries=queries,
+            corpus=selected_corpus,
+            all_corpus=corpus,
+            max_queries=max_queries,
+            max_corpus=max_corpus,
+            corpus_sampling=resolved_corpus_sampling,
+            requested_query_split=query_split,
+            top_k=top_k,
+            ks=ks,
+        ),
+        **gt_coverage,
         **result["metrics"],
     }
 
@@ -229,18 +272,44 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
         "num_queries",
         "num_skipped_no_gt",
         "num_corpus_chunks",
+        "num_total_corpus_chunks",
         "num_total_queries",
+        "num_query_candidates",
         "max_queries",
+        "max_corpus",
+        "corpus_sampling",
         "top_k",
+        "task_type",
+        "scope",
+        "query_split",
+        "query_splits",
+        "query_scope",
+        "corpus_scope",
+        "num_queries_with_gt",
+        "num_queries_with_gt_in_corpus",
+        "num_queries_gt_missing_from_corpus",
+        "num_gt_refs",
+        "num_gt_refs_in_corpus",
+        "num_gt_refs_missing_from_corpus",
+        "gt_query_coverage",
+        "gt_ref_coverage",
+        "gt_corpus_guardrail",
+        "comparable_group",
+        "is_comparable",
+        "metric_ks",
         *metric_keys,
         "elapsed_sec",
+        "notes",
     ]
 
     with summary_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         for key in sorted(existing):
-            writer.writerow(existing[key])
+            writer.writerow({
+                name: "|".join(str(item) for item in value) if isinstance(value, (list, tuple)) else value
+                for name, value in existing[key].items()
+            })
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -256,6 +325,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         default=None,
         help="Evaluate only the first N queries; useful for reproducible CUAD smoke/sample runs",
     )
+    parser.add_argument("--max-corpus", type=int, default=None, help="Use only the first N corpus chunks")
+    parser.add_argument("--query-split", default=None, help="Evaluate only one query split, e.g. test")
+    parser.add_argument(
+        "--corpus-sampling",
+        default="auto",
+        choices=sorted(experiment_guardrails.CORPUS_SAMPLING_STRATEGIES),
+        help="Corpus sampling strategy; auto uses GT-anchored CUAD samples when max-corpus is set",
+    )
+    parser.add_argument("--sampling-seed", type=int, default=13, help="Random seed for sampled distractors")
     args = parser.parse_args(argv)
 
     datasets = parse_datasets(args.dataset)
@@ -263,14 +341,26 @@ def main(argv: Sequence[str] | None = None) -> int:
     metrics_rows = []
     for dataset in datasets:
         print(f"Running BM25 baseline: {dataset}")
-        metrics = run_dataset(dataset, args.data_dir, args.output_dir, args.top_k, ks, max_queries=args.max_queries)
+        metrics = run_dataset(
+            dataset,
+            args.data_dir,
+            args.output_dir,
+            args.top_k,
+            ks,
+            max_queries=args.max_queries,
+            max_corpus=args.max_corpus,
+            query_split=args.query_split,
+            corpus_sampling=args.corpus_sampling,
+            sampling_seed=args.sampling_seed,
+        )
         metrics_rows.append(metrics)
         metric_text = ", ".join(
             f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key
         )
         print(
             f"  chunks={metrics['num_corpus_chunks']} queries={metrics['num_queries']} "
-            f"skipped_no_gt={metrics['num_skipped_no_gt']} elapsed={metrics['elapsed_sec']}s"
+            f"skipped_no_gt={metrics['num_skipped_no_gt']} "
+            f"gt_query_coverage={metrics['gt_query_coverage']:.4f} elapsed={metrics['elapsed_sec']}s"
         )
         print(f"  {metric_text}")
 

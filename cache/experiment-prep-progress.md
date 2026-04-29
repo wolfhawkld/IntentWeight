@@ -226,11 +226,11 @@ PY
 - [x] Task 7: 实现 BM25 retrieval baseline
 - [x] Task 8: 实现 dense embedding retrieval baseline
 - [x] Task 9: 实现 hybrid BM25 + dense retrieval baseline
-- [ ] Task 9.5: 修正实验协议与评估口径 guardrails
-- [ ] Task 10: 汇总 BM25 / dense / hybrid baseline 对比表
-- [ ] Task 11: 设计并运行 LinUCB baseline / ablation 实验
-- [ ] Task 12: 实现流形局部反馈机制（FAISS/HNSW 邻域检索 + 距离加权反馈）
-- [ ] Task 13: 对比全局 LinUCB 与流形局部反馈效果
+- [x] Task 9.5: 修正实验协议与评估口径 guardrails
+- [x] Task 10: 汇总 BM25 / dense / hybrid baseline 对比表
+- [x] Task 11: 设计并运行 LinUCB baseline / ablation 实验
+- [x] Task 12: 实现流形局部反馈机制（CPU exact 邻域检索 + 距离加权反馈）
+- [x] Task 13: 对比全局 LinUCB 与流形局部反馈效果
 - [ ] Task 14: 整理论文实验表格、结论和局限性
 
 ## 后续任务规划
@@ -266,7 +266,7 @@ PY
 
 ### Task 9.5: 实验协议与评估口径修正
 
-状态：文档协议已确认，代码 guardrails 尚未实现。
+状态：已完成。
 
 目标：在 Task 10 汇总表之前，先修正静态检索实验的论文口径，避免把不可比较结果放进同一主表，也为 Task 11-13 的在线学习实验预先规定无泄漏协议。
 
@@ -304,18 +304,31 @@ PY
 建议实现顺序：
 
 1. 更新实验 README 和本进度文档，固定协议。
-2. 给 baseline 脚本或汇总脚本增加 split/sample metadata guardrails。
-3. 重新生成或重新标注 retrieval baseline comparison 数据。
+2. 给 baseline 脚本或汇总脚本增加 split/sample metadata guardrails。已完成。
+3. 重新生成或重新标注 retrieval baseline comparison 数据。已完成。
 4. 再进入 Task 10 主表汇总。
 
 ### Task 10: Baseline 对比汇总表
 
+状态：已完成。
+
 目标：把 BM25、dense、hybrid 的结果统一成论文可用的表格。
 
-预计输出：
+已输出：
 
 - `paper/experiments/results/retrieval_baseline_comparison.csv`
-- 可选 Markdown 表格，写入本文档或实验说明文档。
+- `paper/experiments/results/retrieval_baseline_main_table.csv`
+- `paper/experiments/results/retrieval_baseline_intent_proxy_table.csv`
+- `paper/experiments/results/retrieval_baseline_smoke_table.csv`
+- `paper/experiments/results/retrieval_baseline_tables.md`
+
+实现：
+
+- 新增 `paper/experiments/scripts/summarize_retrieval_baselines.py`。
+- 从 guarded `retrieval_baseline_comparison.csv` 生成论文表格。
+- Evidence retrieval 主表只纳入 `task_type=evidence_retrieval`、`is_comparable=true`、`scope in {full, heldout_test}`、`corpus_scope=full` 的结果。
+- Banking77 单独进入 intent/domain routing proxy 表。
+- CUAD 单独进入 smoke/sample 表，不进入 evidence full-corpus 主表。
 
 表格应至少包含：
 
@@ -336,11 +349,118 @@ PY
 - elapsed_sec
 - notes，例如 CUAD sample 限制。
 
+当前 Task 10 表格摘要：
+
+- Evidence retrieval main table: 6 rows
+  - PubMedQA full/train/full corpus: BM25, dense, hybrid
+  - eManual heldout_test/test/full corpus: BM25, dense, hybrid
+- Intent proxy table: 3 rows
+  - Banking77 heldout_test/test/full corpus: BM25, dense, hybrid
+- Smoke/sample table: 3 rows
+  - CUAD smoke_only/test/first_10000: BM25, dense, hybrid
+- 已运行验证：
+  - `.venv/bin/python -m unittest cache/test_summarize_retrieval_baselines.py cache/test_experiment_guardrails.py cache/test_bm25_baseline.py cache/test_dense_baseline.py cache/test_hybrid_baseline.py cache/test_retrieval_metrics.py`，26 tests 通过。
+  - `.venv/bin/python -m py_compile paper/experiments/scripts/summarize_retrieval_baselines.py paper/experiments/scripts/experiment_guardrails.py paper/experiments/scripts/bm25_baseline.py paper/experiments/scripts/dense_baseline.py paper/experiments/scripts/hybrid_baseline.py cache/test_summarize_retrieval_baselines.py cache/test_experiment_guardrails.py cache/test_bm25_baseline.py`，通过。
+
 ### Task 11: LinUCB baseline / ablation 实验
+
+状态：已启动。
 
 目标：在已有 retrieval baseline 基础上，验证当前代码中的全局 LinUCB 反馈策略。
 
 注意：当前 `intent_weight/linucb.py` 仍是全局 arm 更新，尚未实现最新设计文档中的流形局部反馈。
+
+当前 Task 11 边界：
+
+- 使用 `prequential` 无泄漏协议：每条 query 先评估，再用 GT 派生反馈更新。
+- 只验证全局 LinUCB baseline：cluster arms 的全局 A/b 更新。
+- 不在 Task 11 中训练 Reward Model；Reward Model 和第四信誉方案作为中期扩展记录。
+- 不在 Task 11 中实现流形局部反馈、跨 arm 距离衰减传播或局部信誉；这些属于 Task 12。
+
+已实现：
+
+- 新增 `paper/experiments/scripts/linucb_online_baseline.py`
+  - corpus embedding 聚类得到 arms；
+  - PCA context features；
+  - 全局 LinUCB 使用探索衰减 `alpha / (1 + alpha_decay * total_feedback)`；
+  - 每个 seed 使用随机 query stream，报告 mean/std；
+  - 输出 `linucb_{dataset}_prequential_metrics.json`、`linucb_{dataset}_prequential_rankings.json`、`linucb_online_summary.csv`。
+- 新增 `cache/test_linucb_online_baseline.py`，覆盖 selected-arm retrieval、prequential update、seed aggregation、output files。
+
+已完成 smoke：
+
+```bash
+.venv/bin/python paper/experiments/scripts/linucb_online_baseline.py \
+  --dataset pubmedqa \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 64 \
+  --top-k 10 --ks 1,5,10 \
+  --max-queries 50 --max-corpus 500 \
+  --seeds 13,17 --n-clusters 8 --context-dim 16 --candidate-arms 3
+```
+
+Smoke result:
+
+- PubMedQA sample: evaluated_queries=50, skipped_no_gt=0
+- recall@10_mean=0.8200, recall@10_std=0.0600
+- mrr@10_mean=0.7096, mrr@10_std=0.0729
+- final_effective_alpha_mean=0.4000
+
+已完成正式 Task 11 baseline matrix：
+
+- PubMedQA full/train/full corpus:
+  - evaluated_queries=1000, skipped_no_gt=0, seeds=3
+  - recall@10_mean=0.5480, recall@10_std=0.0159
+  - mrr@10_mean=0.4637, mrr@10_std=0.0186
+- eManual heldout_test/test/full corpus:
+  - evaluated_queries=130, skipped_no_gt=2, seeds=3
+  - recall@10_mean=0.1154, recall@10_std=0.0326
+  - mrr@10_mean=0.0182, mrr@10_std=0.0042
+- Banking77 intent proxy heldout_test/test/full corpus:
+  - evaluated_queries=3080, skipped_no_gt=0, seeds=3
+  - recall@10_mean=0.7215, recall@10_std=0.0087
+  - mrr@10_mean=0.6094, mrr@10_std=0.0093
+- CUAD smoke_only/test/first_10000:
+  - evaluated_queries=79, skipped_no_gt=21, seeds=3
+  - recall@10_mean=0.0000, mrr@10_mean=0.0000
+
+已生成 Task 11 表格：
+
+- `paper/experiments/results/linucb_online_main_table.csv`
+- `paper/experiments/results/linucb_online_intent_proxy_table.csv`
+- `paper/experiments/results/linucb_online_smoke_table.csv`
+- `paper/experiments/results/linucb_online_tables.md`
+
+已完成初步 ablation（PubMedQA sample: max_queries=200, max_corpus=1000, seeds=13/17/19, n_clusters=16, context_dim=32）：
+
+| Variant | Recall@10 mean | MRR@10 mean | 观察 |
+|---------|----------------|-------------|------|
+| default: alpha_decay=0.01, candidate_arms=3 | 0.5450 | 0.4690 | 参考配置 |
+| alpha_decay=0.0, candidate_arms=3 | 0.6550 | 0.5615 | 好于默认，当前衰减可能过早 exploitation |
+| alpha_decay=0.01, candidate_arms=1 | 0.2433 | 0.2060 | 过窄，容易错过正确 cluster |
+| alpha_decay=0.01, candidate_arms=5 | 0.8150 | 0.6984 | sample 中最好，candidate breadth 是关键超参 |
+
+已生成 ablation 表格：
+
+- `paper/experiments/results/linucb_ablations/linucb_ablation_summary.csv`
+- `paper/experiments/results/linucb_ablations/linucb_ablation_summary.md`
+
+当前观察：
+
+- 全局 LinUCB 在 PubMedQA full 上低于 Task 10 的 dense/hybrid 静态检索结果。
+- eManual held-out 上全局 LinUCB Recall@10 与 BM25 持平，但低于 dense。
+- 这说明简单全局 cluster-arm 更新不足以稳定改进 evidence retrieval，是 Task 12 流形局部反馈的关键对照。
+
+已验证：
+
+- `.venv/bin/python -m unittest cache/test_linucb_online_baseline.py cache/test_summarize_retrieval_baselines.py cache/test_experiment_guardrails.py cache/test_retrieval_metrics.py`，13 tests 通过。
+- `.venv/bin/python -m py_compile paper/experiments/scripts/linucb_online_baseline.py cache/test_linucb_online_baseline.py`，通过。
+
+下一步：
+
+- 如需正式论文级 ablation，扩展当前 sample ablation 到 eManual held-out 和 PubMedQA full。
+- 补充 random/no-learning cluster selection 与 context_dim ablation。
+- 决定 Task 12 的局部流形反馈是否沿用同一 prequential 协议和数据口径。
 
 ### Task 12: 流形局部反馈实现
 
@@ -348,11 +468,33 @@ PY
 
 核心方向：
 
-- 使用 FAISS/HNSW 做 query/chunk/cluster 邻域检索；
-- 历史反馈按 embedding 距离加权；
+- 使用 CPU exact numpy 邻域检索作为 FAISS/HNSW-compatible 实验内核；
+- 历史反馈按 query embedding/PCA context 距离加权；
 - 单 cluster 反馈向邻近 cluster 衰减传播；
-- 多轮对话内按 query embedding 距离做 feedback attention；
-- 用户信誉从全局扩展到局部/领域信誉。
+- 多轮/序列内按 query embedding 距离做 feedback attention；
+- 用户信誉从全局扩展到局部/领域信誉（保留为后续 Task 13/14 或真实用户反馈扩展，不进入当前 GT 模拟闭环）。
+
+已完成：
+
+- 新增 `paper/experiments/scripts/linucb_manifold_local.py`：
+  - 复用 Task 11 的 prequential 协议、SentenceTransformer embedding、PCA context、MiniBatchKMeans cluster arms、dense intra-arm retrieval、GT-derived reward。
+  - 新增 query-local feedback attention：当前 query 在历史 feedback contexts 中找近邻，按 `exp(-distance / feedback_tau)` 加权，把近邻历史 reward 作为 arm score boost。
+  - 新增 cross-arm feedback propagation：selected arm 收到反馈后，按 cluster centroid 距离对邻近 arms 做 `propagation_strength * exp(-distance / arm_decay_sigma)` 权重更新。
+  - 输出 `linucb_manifold_{dataset}_prequential_metrics.json`、`linucb_manifold_{dataset}_prequential_rankings.json`、`linucb_manifold_summary.csv`。
+  - metadata 包含 `online_learning_scope=manifold_local_feedback_propagation`、`manifold_neighbor_engine=cpu_exact_numpy`、`arm_neighbor_k`、`arm_decay_sigma`、`propagation_strength`、`feedback_k`、`feedback_tau`、`feedback_weight`、`cross_arm_update_weight_mean`、`avg_local_boost_norm_mean`。
+- 新增 `paper/experiments/scripts/summarize_linucb_manifold.py`：
+  - 生成 `linucb_manifold_main_table.csv`、`linucb_manifold_intent_proxy_table.csv`、`linucb_manifold_smoke_table.csv`、`linucb_manifold_tables.md`。
+- 新增测试：
+  - `cache/test_linucb_manifold_local.py`
+  - `cache/test_summarize_linucb_manifold.py`
+- 已运行正式 Task 12 矩阵：
+  - PubMedQA full/train/full: recall@10_mean=0.6607, mrr@10_mean=0.5654
+  - eManual heldout_test/test/full: recall@10_mean=0.0923, mrr@10_mean=0.0193
+  - Banking77 heldout_test/test/full: recall@10_mean=0.8247, mrr@10_mean=0.7490
+  - CUAD smoke_only/test/gt_anchored_10000: recall@10_mean=0.0295, mrr@10_mean=0.0120
+- 初步对比 Task 11：
+  - PubMedQA 和 Banking77 明显提升；
+  - eManual 与 CUAD 没有提升，说明当前局部传播参数/假设不是无条件有效，Task 13 需要重点解释并做消融。
 
 ### Task 13: 全局 LinUCB vs 流形局部反馈对比
 
@@ -522,7 +664,7 @@ PY
     - CUAD sample: max_queries=100, max_corpus=10000, evaluated_queries=74, skipped_no_gt=26, elapsed=80.288s, recall@1=0.0000, recall@5=0.0270, recall@10=0.0405, mrr@10=0.0096, ndcg@10=0.0060
   - 已运行回归测试：`cache/test_hybrid_baseline.py`、`cache/test_dense_baseline.py`、`cache/test_bm25_baseline.py`、`cache/test_retrieval_metrics.py`，全部通过。
   - 已运行 `python -m py_compile paper/experiments/scripts/hybrid_baseline.py cache/test_hybrid_baseline.py`，语法检查通过。
-- Task 9.5 已启动：实验协议与评估口径修正
+- Task 9.5 已完成：实验协议与评估口径修正
   - 背景：Task 7-9 结果工程上可复现，但论文口径需要先收紧，否则 Task 10 汇总表会把不可比较结果放进同一主表。
   - 已确认 8 个必须修正点：
     - RAGBench eManual/CUAD 必须显式区分 train/validation/test query split。
@@ -538,4 +680,117 @@ PY
     - 同步当前脚本目录和 baseline 运行方式。
     - 新增 Dataset task type、静态检索指标、split/comparability guardrails、在线学习防泄漏协议。
     - 明确当前 CUAD 结果为 smoke/sample，当前 dense baseline 为 `all-MiniLM-L6-v2` CPU exact cosine。
-  - 下一步：根据剩余 quota/时间决定是否继续进入代码实现和测试。
+  - 新增 `paper/experiments/scripts/experiment_guardrails.py`：
+    - 统一实现 `query_split` 过滤、query/corpus sample scope 标注、dataset `task_type`、PubMedQA/Banking77/dense model notes。
+    - 可从历史 `*_metrics.json` 生成 `paper/experiments/results/retrieval_baseline_comparison.csv`。
+    - comparison group 由 dataset、query scope、corpus scope、top_k、ks 组成；缺少 BM25/dense/hybrid 三方同口径结果时自动 `is_comparable=false`。
+  - 已更新 `bm25_baseline.py`、`dense_baseline.py`、`hybrid_baseline.py`：
+    - 新增 `--query-split`，支持 RAGBench held-out `test` query 评估。
+    - BM25 新增 `--max-corpus`，便于和 dense/hybrid 使用同一 CUAD sample corpus。
+    - metrics/summary 输出新增 `task_type`、`scope`、`query_split`、`query_splits`、`query_scope`、`corpus_scope`、`comparable_group`、`is_comparable`、`metric_ks`、`notes`。
+  - 已生成 `paper/experiments/results/retrieval_baseline_comparison.csv`：
+    - 12 rows，覆盖 BM25/dense/hybrid × PubMedQA/Banking77/eManual/CUAD。
+    - eManual 历史结果标为 `historical_mixed_split`，三方法口径一致但不能作为 held-out 主表。
+    - CUAD 历史结果标为 `smoke_only`；BM25 full corpus 与 dense/hybrid first-10000 corpus 不同组，均 `is_comparable=false`。
+    - Banking77 标为 `intent_retrieval_proxy`，和 evidence retrieval 分开解释。
+  - 新增 `cache/test_experiment_guardrails.py`，覆盖 split filtering、sample/smoke scope、comparison guardrails、legacy metrics enrichment。
+  - 已运行回归测试：`python -m unittest cache/test_experiment_guardrails.py cache/test_bm25_baseline.py cache/test_dense_baseline.py cache/test_hybrid_baseline.py cache/test_retrieval_metrics.py`，24 tests 通过。
+  - 已运行语法检查：`python -m py_compile paper/experiments/scripts/experiment_guardrails.py paper/experiments/scripts/bm25_baseline.py paper/experiments/scripts/dense_baseline.py paper/experiments/scripts/hybrid_baseline.py cache/test_experiment_guardrails.py cache/test_bm25_baseline.py`，通过。
+  - 已基于新 guardrails 重跑相关 baseline：
+    - eManual held-out `test` split + full corpus：
+      - BM25: evaluated_queries=130, skipped_no_gt=2, recall@10=0.1154, mrr@10=0.0244
+      - dense all-MiniLM-L6-v2: evaluated_queries=130, skipped_no_gt=2, recall@10=0.3231, mrr@10=0.0551
+      - hybrid RRF: evaluated_queries=130, skipped_no_gt=2, recall@10=0.1692, mrr@10=0.0366
+    - CUAD unified smoke/sample `test + max_queries=100 + max_corpus=10000`：
+      - BM25: evaluated_queries=79, skipped_no_gt=21, recall@10=0.0000, mrr@10=0.0000
+      - dense all-MiniLM-L6-v2: evaluated_queries=79, skipped_no_gt=21, recall@10=0.0000, mrr@10=0.0000
+      - hybrid RRF: evaluated_queries=79, skipped_no_gt=21, recall@10=0.0000, mrr@10=0.0000
+    - 已重新生成 `paper/experiments/results/retrieval_baseline_comparison.csv`：
+      - eManual 三方法均为 `heldout_test/test/full/is_comparable=true`。
+      - CUAD 三方法均为 `smoke_only/test/first_10000/is_comparable=true`，但仍不得作为 full-corpus 主表结果。
+  - 重跑后已再次验证：`.venv/bin/python -m unittest cache/test_experiment_guardrails.py cache/test_bm25_baseline.py cache/test_dense_baseline.py cache/test_hybrid_baseline.py cache/test_retrieval_metrics.py`，24 tests 通过；`.venv/bin/python -m py_compile ...` 通过。
+  - Task 10 已完成：基于 `retrieval_baseline_comparison.csv` 生成论文主表；CUAD 只进入 smoke/sample 附表或注释，不进入 full-corpus 主表。
+
+- 2026-04-28 CUAD GT guardrail follow-up：
+  - 问题定位：旧 CUAD `test + first_100 queries + first_10000 corpus` 中，79 个有 GT 的评估 query 有 0 个 query 的 GT chunk 落在 selected corpus，因此 BM25/dense/hybrid/LinUCB 全 0 属于 sample protocol failure，不是算法结论。
+  - 已新增 GT-in-corpus guardrail：
+    - `gt_corpus_coverage()` / `assert_gt_corpus_coverage()` 统计并强制检查 `num_queries_with_gt_in_corpus`、`gt_query_coverage`、`gt_ref_coverage`、`gt_corpus_guardrail`。
+    - sampled corpus 若让任一有 GT 的评估 query 完全没有 GT chunk，会直接报错。
+  - 已新增 CUAD `gt_anchored` corpus sampling：
+    - 默认 `--corpus-sampling auto` 下，CUAD 只要设置 `--max-corpus` 就使用 `gt_anchored`。
+    - sample 由 selected query 的 GT chunks + 随机 distractors 组成，metadata 写为 `corpus_scope=gt_anchored_10000`。
+  - 已重跑 CUAD smoke：
+    - Static BM25: `gt_query_coverage=1.0000`, recall@10=0.0506, mrr@10=0.0232
+    - Static dense all-MiniLM-L6-v2: `gt_query_coverage=1.0000`, recall@10=0.0759, mrr@10=0.0334
+    - Static hybrid RRF: `gt_query_coverage=1.0000`, recall@10=0.0633, mrr@10=0.0254
+    - Global LinUCB: `gt_query_coverage=1.0000`, recall@10_mean=0.0464, mrr@10_mean=0.0275
+  - 已重新生成：
+    - `paper/experiments/results/retrieval_baseline_comparison.csv`
+    - `paper/experiments/results/retrieval_baseline_*_table.csv`
+    - `paper/experiments/results/retrieval_baseline_tables.md`
+    - `paper/experiments/results/linucb_online_*_table.csv`
+    - `paper/experiments/results/linucb_online_tables.md`
+  - 已修正 `summarize_retrieval_baselines.py`，静态 retrieval table 只收 BM25/dense/hybrid，避免把 LinUCB metrics 混入静态 baseline 表。
+  - 已运行完整回归：`.venv/bin/python -m unittest discover cache`，40 tests 通过。
+
+- 2026-04-28 Task 13 global vs manifold-local comparison：
+  - 新增 `paper/experiments/scripts/compare_linucb_variants.py`：
+    - 读取 `linucb_online_summary.csv` 与 `linucb_manifold_summary.csv`。
+    - 按 `dataset/task_type/scope/query_split/corpus_scope/top_k/metric_ks` 对齐同口径结果。
+    - 输出 `delta_recall@10_mean`、`relative_recall@10_pct`、`delta_mrr@10_mean`、winner 与解释文本。
+  - 新增 `cache/test_compare_linucb_variants.py`，覆盖 delta/winner、非同口径跳过、CSV/Markdown 输出。
+  - 已生成：
+    - `paper/experiments/results/linucb_variant_comparison.csv`
+    - `paper/experiments/results/linucb_variant_comparison.md`
+  - 对比结论：
+    - PubMedQA: global recall@10=0.5480, manifold recall@10=0.6607, delta=+0.1127；MRR@10 delta=+0.1016。
+    - eManual: global recall@10=0.1154, manifold recall@10=0.0923, delta=-0.0231；但 MRR@10 delta=+0.0012。
+    - Banking77: global recall@10=0.7215, manifold recall@10=0.8247, delta=+0.1031；MRR@10 delta=+0.1395。
+    - CUAD smoke: global recall@10=0.0464, manifold recall@10=0.0295, delta=-0.0169；MRR@10 delta=-0.0155。
+  - 论文解释要点：
+    - 流形局部反馈在 PubMedQA 与 Banking77 这类结构较清晰/标签较密的数据上有效。
+    - eManual/CUAD 当前未提升，说明局部传播对 sparse evidence、噪声 GT、长文档局部证据可能过度传播或参数不匹配。
+    - Task 13 结果支持“可验证条件下的流形局部反馈”，但不支持“无条件优于全局 LinUCB”的强结论。
+
+- 2026-04-29 Task 13.5 soft-routed manifold LinUCB：
+  - 新增 `paper/experiments/scripts/linucb_soft_routing.py`：
+    - 保留 Task 12 的 manifold-local LinUCB arm selection、query-neighborhood feedback attention、cross-arm propagation。
+    - 最终检索不再 hard gate 到 selected clusters，而是融合三路候选：global dense、global BM25、selected-cluster dense。
+    - 使用 weighted RRF，并新增 `--dense-floor-k` 保护前若干 global dense 候选，降低 soft fusion 将 dense 证据挤出 top-k 的风险。
+    - 新增 hard-pruning 诊断：`selected_cluster_hit_rate`、`selected_cluster_miss_rate`、`soft_rescue_on_cluster_miss_rate`、`dense_fallback_hit_rate`、`bm25_fallback_hit_rate`、`cluster_local_hit_rate`。
+    - dense source ranking 在 Task 13.5 内使用 stable score-desc/index-asc 排序，避免 `argpartition` 在大量 tie/near-tie 时因 `depth=10` vs `depth=100` 产生不稳定前缀。
+  - 新增 `paper/experiments/scripts/summarize_linucb_soft.py`：
+    - 输出 `linucb_soft_main_table.csv`、`linucb_soft_intent_proxy_table.csv`、`linucb_soft_smoke_table.csv`、`linucb_soft_tables.md`。
+  - 新增测试：
+    - `cache/test_linucb_soft_routing.py`
+    - `cache/test_summarize_linucb_soft.py`
+  - 已运行正式矩阵：
+    - PubMedQA full/train/full: recall@10_mean=0.9920, mrr@10_mean=0.8466, selected_cluster_hit_rate=0.6817, soft_rescue_on_cluster_miss_rate=0.9800。
+    - eManual heldout_test/test/full: recall@10_mean=0.1436, mrr@10_mean=0.0337, selected_cluster_hit_rate=0.2641, soft_rescue_on_cluster_miss_rate=0.1173；仍低于 dense baseline，说明 source recall/cluster routing 仍是瓶颈。
+    - Banking77 heldout_test/test/full: recall@10_mean=0.9831, mrr@10_mean=0.9420, selected_cluster_hit_rate=0.8829, soft_rescue_on_cluster_miss_rate=0.9699。
+    - CUAD smoke_only/test/gt_anchored_10000: recall@10_mean=0.0844, mrr@10_mean=0.0344, selected_cluster_hit_rate=0.3713, soft_rescue_on_cluster_miss_rate=0.0865；仅作为 smoke/sample。
+  - 已生成：
+    - `paper/experiments/results/linucb_soft_summary.csv`
+    - `paper/experiments/results/linucb_soft_*_table.csv`
+    - `paper/experiments/results/linucb_soft_tables.md`
+  - 当前解释：
+    - Task 13.5 明显修复了 Task 11/12 的 hard-pruning 损失，在 PubMedQA、Banking77、CUAD smoke 上恢复到接近或略高于 dense 的 Recall@10。
+    - eManual 仍是负例，说明“流形 + feedback + BM25/dense fusion”不是无条件优于 dense；论文应将其作为适用边界和后续 reranker/领域 embedding/arm 设计改进方向。
+
+- 2026-04-29 阶段性经验总结 / 当前暂停点：
+  - 当前方法定位已从“LinUCB 替代 dense/BM25”修正为“LinUCB-guided adaptive multi-route retrieval”：
+    - dense/BM25 提供稳定召回底座和 bypass，避免 hard pruning 的不可恢复漏召回。
+    - cluster-local dense + LinUCB 提供可学习的局部流形导航信号。
+    - weighted RRF + dense floor 负责把 lexical、semantic、cluster-local 三类信号融合成最终候选。
+  - 当前结果支持“双重优势”但需限定边界：
+    - 稳定性：Task 13.5 在 PubMedQA、Banking77、CUAD smoke 上显著减少 Task 11/12 的硬裁剪损失。
+    - 自我进化：LinUCB arm 选择可随 GT/用户反馈更新；若引入用户信誉分，可对高可信反馈赋予更大更新权重，降低用户反馈噪声和方差。
+    - 边界条件：eManual 仍低于 dense baseline，说明部分 sparse evidence/长文档局部证据场景仍需继续诊断，不能声称无条件优于 dense。
+  - 成本优化逻辑需要作为下一阶段，而不是 Task 13.5 已完成的结论：
+    - Task 13.5 是 robustness phase：三路召回全开，主要解决召回稳定性。
+    - 后续应进入 efficiency phase：把成本、延迟、上下文 token、rerank 候选数写入 reward。
+    - 随着 LinUCB arm 策略收敛，可逐步降低 global dense/BM25 depth 或权重，让系统更多依赖高置信 selected arms，从而减少 embedding/index 查询、rerank 候选和 LLM context token。
+  - 建议后续任务：
+    - Task 14：trust-weighted feedback LinUCB，模拟高/低信誉用户反馈，比较等权反馈 vs 信誉加权反馈的收敛和鲁棒性。
+    - Task 15：cost-aware soft routing，比较固定三路全开 vs confidence-gated routing，在 Recall@k/MRR 与 latency/candidate/context token 成本之间画 trade-off。
+    - Task 16：eManual failure analysis，定位 dense/fusion/cluster/GT 哪一环导致 Task13.5 仍明显低于 dense。

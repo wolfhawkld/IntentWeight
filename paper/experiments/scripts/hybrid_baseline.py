@@ -25,6 +25,7 @@ def _load_script_module(name: str, path: Path):
 bm25_baseline = _load_script_module("bm25_baseline", SCRIPT_DIR / "bm25_baseline.py")
 dense_baseline = _load_script_module("dense_baseline", SCRIPT_DIR / "dense_baseline.py")
 retrieval_metrics = _load_script_module("retrieval_metrics", SCRIPT_DIR / "retrieval_metrics.py")
+experiment_guardrails = _load_script_module("experiment_guardrails", SCRIPT_DIR / "experiment_guardrails.py")
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
@@ -176,24 +177,39 @@ def run_dataset(
     fusion_depth: int = 100,
     max_queries: int | None = None,
     max_corpus: int | None = None,
+    query_split: str | None = None,
+    corpus_sampling: str | None = None,
+    sampling_seed: int = 13,
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
     corpus = load_json_list(corpus_path)
     queries = load_json_list(queries_path)
+    selected_queries = experiment_guardrails.apply_query_controls(
+        queries,
+        query_split=query_split,
+        max_queries=max_queries,
+    )
+    resolved_corpus_sampling = experiment_guardrails.resolve_corpus_sampling(dataset, max_corpus, corpus_sampling)
+    selected_corpus = experiment_guardrails.apply_corpus_controls(
+        corpus,
+        max_corpus=max_corpus,
+        queries=selected_queries,
+        corpus_sampling=resolved_corpus_sampling,
+        random_seed=sampling_seed,
+    )
+    gt_coverage = experiment_guardrails.assert_gt_corpus_coverage(selected_queries, selected_corpus)
 
     start = time.perf_counter()
     result = run_hybrid(
-        corpus,
-        queries,
+        selected_corpus,
+        selected_queries,
         encoder,
         top_k=top_k,
         ks=ks,
         batch_size=batch_size,
         rrf_k=rrf_k,
         fusion_depth=fusion_depth,
-        max_queries=max_queries,
-        max_corpus=max_corpus,
     )
     elapsed_sec = time.perf_counter() - start
 
@@ -210,12 +226,26 @@ def run_dataset(
         "batch_size": batch_size,
         "rrf_k": rrf_k,
         "fusion_depth": fusion_depth,
-        "num_corpus_chunks": len(corpus[:max_corpus] if max_corpus is not None else corpus),
+        "num_corpus_chunks": len(selected_corpus),
         "num_total_corpus_chunks": len(corpus),
         "num_total_queries": len(queries),
         "max_queries": max_queries,
         "max_corpus": max_corpus,
         "elapsed_sec": round(elapsed_sec, 3),
+        **experiment_guardrails.build_run_metadata(
+            dataset=dataset,
+            queries=selected_queries,
+            all_queries=queries,
+            corpus=selected_corpus,
+            all_corpus=corpus,
+            max_queries=max_queries,
+            max_corpus=max_corpus,
+            corpus_sampling=resolved_corpus_sampling,
+            requested_query_split=query_split,
+            top_k=top_k,
+            ks=ks,
+        ),
+        **gt_coverage,
         **result["metrics"],
     }
 
@@ -252,20 +282,44 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
         "num_corpus_chunks",
         "num_total_corpus_chunks",
         "num_total_queries",
+        "num_query_candidates",
         "max_queries",
         "max_corpus",
+        "corpus_sampling",
         "top_k",
+        "task_type",
+        "scope",
+        "query_split",
+        "query_splits",
+        "query_scope",
+        "corpus_scope",
+        "num_queries_with_gt",
+        "num_queries_with_gt_in_corpus",
+        "num_queries_gt_missing_from_corpus",
+        "num_gt_refs",
+        "num_gt_refs_in_corpus",
+        "num_gt_refs_missing_from_corpus",
+        "gt_query_coverage",
+        "gt_ref_coverage",
+        "gt_corpus_guardrail",
+        "comparable_group",
+        "is_comparable",
+        "metric_ks",
         "fusion_depth",
         "rrf_k",
         *metric_keys,
         "elapsed_sec",
+        "notes",
     ]
 
     with summary_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         for key in sorted(existing):
-            writer.writerow(existing[key])
+            writer.writerow({
+                name: "|".join(str(item) for item in value) if isinstance(value, (list, tuple)) else value
+                for name, value in existing[key].items()
+            })
 
 
 def load_sentence_transformer(model_name: str, *, device: str | None = None, local_files_only: bool = False):
@@ -287,6 +341,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--ks", default="1,5,10", help="Comma-separated metric cutoffs")
     parser.add_argument("--max-queries", type=int, default=None, help="Evaluate only the first N queries")
     parser.add_argument("--max-corpus", type=int, default=None, help="Use only the first N corpus chunks")
+    parser.add_argument("--query-split", default=None, help="Evaluate only one query split, e.g. test")
+    parser.add_argument(
+        "--corpus-sampling",
+        default="auto",
+        choices=sorted(experiment_guardrails.CORPUS_SAMPLING_STRATEGIES),
+        help="Corpus sampling strategy; auto uses GT-anchored CUAD samples when max-corpus is set",
+    )
+    parser.add_argument("--sampling-seed", type=int, default=13, help="Random seed for sampled distractors")
     args = parser.parse_args(argv)
 
     datasets = parse_datasets(args.dataset)
@@ -309,12 +371,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             fusion_depth=args.fusion_depth,
             max_queries=args.max_queries,
             max_corpus=args.max_corpus,
+            query_split=args.query_split,
+            corpus_sampling=args.corpus_sampling,
+            sampling_seed=args.sampling_seed,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)
         print(
             f"  chunks={metrics['num_corpus_chunks']} queries={metrics['num_queries']} "
-            f"skipped_no_gt={metrics['num_skipped_no_gt']} elapsed={metrics['elapsed_sec']}s"
+            f"skipped_no_gt={metrics['num_skipped_no_gt']} "
+            f"gt_query_coverage={metrics['gt_query_coverage']:.4f} elapsed={metrics['elapsed_sec']}s"
         )
         print(f"  {metric_text}")
 
