@@ -24,7 +24,9 @@ paper/experiments/
 │   ├── linucb_online_baseline.py  # global LinUCB prequential online baseline
 │   ├── summarize_linucb_online.py # paper-ready LinUCB online tables
 │   ├── linucb_manifold_local.py   # manifold-local LinUCB feedback propagation
-│   └── summarize_linucb_manifold.py # paper-ready manifold-local LinUCB tables
+│   ├── summarize_linucb_manifold.py # paper-ready manifold-local LinUCB tables
+│   ├── linucb_trust_feedback.py   # trust-weighted repeated-feedback LinUCB
+│   └── linucb_cost_aware_routing.py # confidence-gated cost-aware routing
 ├── data/
 │   ├── raw/                       # 下载的原始数据 (git ignored)
 │   ├── processed/                 # 统一格式 (git ignored)
@@ -424,6 +426,102 @@ Outputs:
 - `paper/experiments/results/emanual_failure_analysis_tables.csv`
 - `paper/experiments/results/emanual_failure_analysis_tables.md`
 - `paper/experiments/results/emanual_deduplicated_rankings.json`
+
+### Step 11: Trust-weighted feedback LinUCB
+
+Task 15 keeps the Task13.5 soft multi-route retrieval surface and changes the
+online signal: the LinUCB cluster-arm policy is updated by repeated simulated
+feedback. It compares four feedback modes:
+
+- `none`: no feedback control;
+- `oracle`: clean GT-derived feedback;
+- `equal_noisy`: simulated user feedback with equal update weight;
+- `trust_weighted`: simulated user feedback whose update weight and local
+  feedback memory are scaled by user trust.
+
+Example:
+
+```bash
+.venv/bin/python paper/experiments/scripts/linucb_trust_feedback.py \
+  --dataset pubmedqa \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 64 \
+  --top-k 10 --ks 1,5,10 --seeds 13,17,19 \
+  --epochs 3 --n-clusters 32 --context-dim 64 --candidate-arms 3
+```
+
+Current Task 15 results:
+
+| Dataset | Scope | Mode | R@10 | Last true reward | Reward gain | Last selected-cluster hit | Selected-cluster gain | Interpretation |
+|---------|-------|------|------|------------------|-------------|---------------------------|-----------------------|----------------|
+| PubMedQA | full/train/full | none | 0.9933 | 0.1383 | -0.0063 | 0.1623 | -0.0060 | Dense floor keeps recall high, but arm policy does not improve without feedback |
+| PubMedQA | full/train/full | trust_weighted | 0.9940 | 0.8727 | +0.4030 | 0.8860 | +0.3950 | Trust feedback clearly improves the policy value field |
+| eManual | heldout_test/test/full | none | 0.1436 | 0.0152 | -0.0227 | 0.2121 | -0.0581 | Strict chunk-id/duplicate-text issues still dominate |
+| eManual | heldout_test/test/full | trust_weighted | 0.1487 | 0.0556 | +0.0152 | 0.2652 | +0.0429 | Feedback helps policy metrics, but not enough to fix strict evidence recall |
+| Banking77 | heldout_test/test/full | none | 0.9855 | 0.1660 | -0.0005 | 0.4390 | +0.0043 | Full intent-proxy run; final recall is already near ceiling |
+| Banking77 | heldout_test/test/full | trust_weighted | 0.9844 | 0.9805 | +0.1317 | 0.9983 | +0.0627 | Strong policy improvement, but no final R@10 gain on full |
+| Banking77 | sample/test/full | none | 0.9840 | 0.1773 | -0.0123 | 0.4387 | -0.0077 | Sampled 1000-query intent proxy run |
+| Banking77 | sample/test/full | trust_weighted | 0.9863 | 0.9583 | +0.2863 | 0.9843 | +0.1957 | Sample shows small final R@10 gain and strong policy improvement |
+| CUAD | smoke_only/test/gt_anchored_10000 | none | 0.0675 | 0.0133 | +0.0067 | 0.2433 | +0.0167 | Sparse smoke sample remains weak |
+| CUAD | smoke_only/test/gt_anchored_10000 | trust_weighted | 0.0886 | 0.0233 | +0.0167 | 0.2900 | +0.0400 | Small positive movement under sparse GT |
+
+The main Task 15 signal is policy self-evolution, not a large final R@10 jump.
+Because dense/BM25 bypass and dense floor already protect final recall, feedback
+improvement is most visible in `last_epoch_true_reward` and
+`last_epoch_selected_cluster_hit_rate`. For paper reporting,
+`last_epoch_true_reward` is the primary LinUCB self-evolution metric, while
+Recall@k is the downstream multi-route retrieval outcome.
+
+Outputs:
+
+- `paper/experiments/results/linucb_trust_summary.csv`
+- `paper/experiments/results/linucb_trust_tables.md`
+- `paper/experiments/results/linucb_trust_{dataset}_{scope}_{split}_{corpus}_{query_count}_prequential_metrics.json`
+- `paper/experiments/results/linucb_trust_{dataset}_{scope}_{split}_{corpus}_{query_count}_prequential_rankings.json`
+
+### Step 12: Cost-aware LinUCB routing
+
+Task 16 tests whether the feedback-improved LinUCB policy can reduce retrieval
+cost by shifting from full dense-heavy multi-route retrieval to confidence-gated
+lite routing. The formal run below uses a conservative gate: it does not fully
+disable dense; it lowers dense/BM25 candidate depth under sufficient confidence
+and falls back to the full route otherwise.
+
+Example:
+
+```bash
+.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py \
+  --dataset pubmedqa \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 64 \
+  --top-k 10 --ks 1,5,10 --seeds 13,17,19 --epochs 3 \
+  --n-clusters 32 --context-dim 64 --candidate-arms 3 \
+  --high-confidence-threshold 1.1 --mid-confidence-threshold 0.25 \
+  --confidence-feedback-floor 6 --drift-threshold 1.1
+```
+
+Current Task 16 results:
+
+| Dataset | Scope | Full R@10 | Gated R@10 | Delta | Full cost | Gated cost | Cost reduction | Interpretation |
+|---------|-------|-----------|------------|-------|-----------|------------|----------------|----------------|
+| PubMedQA | full/train/full | 0.9940 | 0.9893 | -0.0047 | 299.94 | 152.36 | 49.20% | Good quality-cost trade-off |
+| Banking77 | heldout_test/test/full | 0.9844 | 0.9813 | -0.0031 | 300.00 | 142.51 | 52.50% | Good intent-proxy trade-off on full test |
+| eManual | heldout_test/test/full | 0.1487 | 0.1154 | -0.0333 | 300.00 | 214.07 | 28.64% | Cost gating hurts weak strict evidence recall |
+| CUAD | smoke_only/test/gt_anchored_10000 | 0.0886 | 0.0633 | -0.0253 | 300.00 | 203.47 | 32.18% | Sparse smoke result; not safe for aggressive gating |
+
+Task 16 supports a cost-aware claim, not a free-lunch claim. On PubMedQA and
+Banking77, conservative gating cuts source candidate cost by roughly half with
+less than 0.5 percentage-point Recall@10 loss. Banking77 also has a 1000-query
+sample run with a similar trade-off, but the full held-out run above should
+anchor the main result. On eManual and CUAD, the same gate hurts recall too
+much, so dense/BM25 fallback should remain stronger.
+
+Outputs:
+
+- `paper/experiments/results/linucb_cost_summary.csv`
+- `paper/experiments/results/linucb_cost_tables.md`
+- `paper/experiments/results/linucb_cost_{dataset}_{scope}_{split}_{corpus}_{query_count}_prequential_metrics.json`
+- `paper/experiments/results/linucb_cost_{dataset}_{scope}_{split}_{corpus}_{query_count}_prequential_rankings.json`
 
 ---
 

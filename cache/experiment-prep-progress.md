@@ -232,8 +232,8 @@ PY
 - [x] Task 12: 实现流形局部反馈机制（CPU exact 邻域检索 + 距离加权反馈）
 - [x] Task 13: 对比全局 LinUCB 与流形局部反馈效果
 - [x] Task 14: 流形假设诊断与 eManual 失败定位
-- [ ] Task 15: Trust-weighted feedback LinUCB
-- [ ] Task 16: Cost-aware soft routing
+- [x] Task 15: Trust-weighted feedback LinUCB
+- [x] Task 16: Cost-aware soft routing
 
 ## 后续任务规划
 
@@ -860,3 +860,57 @@ Smoke result:
     - 必须通过 eManual 修正型消融回答：strict chunk-id、text-equivalent、deduplicated corpus、nearest-centroid warm start、text-equivalent reward、fusion calibration 分别如何影响结果。
     - 必须通过成本消融回答：full multi-route、confidence-gated routing、reduced dense/BM25 depth 在 recall、candidate count、context token、latency 之间的 trade-off。
     - 因此后续 Task 15/16 不应只追求单个更高分数，而应围绕 ablation matrix 解释机制边界、适用条件和工程收益。
+
+- 2026-04-30 研究定位更新与 Task 15 前置结论：
+  - 当前论文价值应从“静态无条件超过 dense”转向“feedback-driven self-evolving retrieval policy”。
+  - dense 是强基线，不应被描述成必须替代的对象；更合理定位是稳定召回底座、强对照组和可降级安全兜底通道。
+  - 本方法最大研究价值在于：把 RAG 检索从固定排序问题改造成可通过用户反馈持续修正的策略学习问题。
+  - 在小/中规模公开数据集上，dense 可能已经足够强；本方法的工程优势更可能出现在大规模、垂类、异构、持续交互、成本敏感的 RAG 系统中。
+  - 后续 scale-up 实验需要验证 corpus size 增长时，本方法能否在接近 dense 质量的同时降低 candidate count、context token、latency 或 dense/BM25 查询深度。
+  - 后续 cost-aware routing 中，dense 不应永久关闭，而应降级为 conditional fallback：
+    - 高置信：cluster/BM25/lightweight route 优先；
+    - 中置信：保留 small dense floor；
+    - 低置信、OOD、负反馈增加或语义相关性不足：触发 full dense fallback。
+  - Task 15 的核心目标不是刷新静态 recall，而是验证 feedback 是否能让 LinUCB arm policy 随使用逐步改善，并证明 trust-weighted feedback 比等权 noisy feedback 更稳。
+  - Task 16/17 应继续验证 confidence-gated dense fallback 与 large-scale RAG scaling。
+
+- 2026-04-30 Task 15 trust-weighted feedback LinUCB：
+  - 新增 `paper/experiments/scripts/linucb_trust_feedback.py`：
+    - 保留 Task13.5 的 soft multi-route retrieval：global dense、global BM25、LinUCB-selected cluster-local dense、weighted RRF、dense floor。
+    - 新增 repeated prequential feedback protocol：每个 query 先评估，再用模拟 feedback 更新 selected cluster arms，支持多 epoch 观察自进化趋势。
+    - 对比 `none`、`oracle`、`equal_noisy`、`trust_weighted` 四种模式。
+    - `trust_weighted` 用模拟用户信誉分缩放 LinUCB update weight 与 local feedback memory，近似工程系统中“高信誉用户反馈更可信、低信誉用户反馈降权”的机制。
+  - 新增测试 `cache/test_linucb_trust_feedback.py`，覆盖 feedback mode 解析、用户反馈模拟、window gain、prequential seed evolution、结果写盘。
+  - 已运行 Task15 矩阵：
+    - PubMedQA full/train/full：`trust_weighted recall@10=0.9940`，`last_epoch_true_reward=0.8727`，`epoch_true_reward_gain=+0.4030`，`selected_cluster_hit_gain=+0.3950`。
+    - eManual heldout_test/test/full：`trust_weighted recall@10=0.1487`，`last_epoch_true_reward=0.0556`，`epoch_true_reward_gain=+0.0152`，`selected_cluster_hit_gain=+0.0429`。
+    - Banking77 heldout_test/test/full：`trust_weighted recall@10=0.9844`，低于 no-feedback `0.9855` 约 `-0.0011`；但 `last_epoch_true_reward=0.9805`、`epoch_true_reward_gain=+0.1317`、`selected_cluster_hit_gain=+0.0627`，说明 full 版主要验证 policy self-evolution，而不是 final recall 提升。
+    - Banking77 sample/test/full：`trust_weighted recall@10=0.9863`，`last_epoch_true_reward=0.9583`，`epoch_true_reward_gain=+0.2863`，`selected_cluster_hit_gain=+0.1957`；sample 版显示 final recall 小幅提升，但论文主叙述应以 full 版为准。
+    - CUAD smoke_only/test/gt_anchored_10000：`trust_weighted recall@10=0.0886`，`last_epoch_true_reward=0.0233`，`epoch_true_reward_gain=+0.0167`，`selected_cluster_hit_gain=+0.0400`。
+  - 当前解释：
+    - Task15 最终论文口径：`last_epoch_true_reward` 是 LinUCB 自进化最核心证据；`epoch_true_reward_gain` 与 `selected_cluster_hit_gain` 是学习过程和 arm selection 改善的辅助证据；`Recall@k` 是多路融合后的下游检索结果，不应单独用来判断 LinUCB 是否自进化。
+    - Task15 验证的不是“静态检索分数大幅超过 dense”，而是 feedback 能让 LinUCB 的 arm policy / value field 随交互变好。
+    - final recall 的变化可能较小，因为 dense/BM25 bypass 与 dense floor 已经把最终召回稳定住；因此应同时报告 `last_epoch_true_reward`、`epoch_true_reward_gain`、`selected_cluster_hit_rate`、`selected_cluster_hit_gain`。
+    - PubMedQA、Banking77 full/sample 都显示 trust-weighted feedback 能显著改善策略层指标；但 Banking77 full 的 final recall 未提升，说明 final R@k 会被 dense/BM25 floor、近天花板基线和 fusion 排序共同影响。
+    - CUAD smoke 在稀疏 GT 下只有小幅正向趋势；eManual 仍受 strict chunk-id、duplicate text 与 policy/fusion 问题限制。
+    - dense 不应永久关闭，而应在后续 Task16 cost-aware routing 中作为 conditional fallback：高置信时降低 dense/BM25 depth 或权重，低置信、OOD、负反馈增加或语义相关不足时恢复 full dense fallback。
+
+- 2026-04-30 Task 16 cost-aware soft routing：
+  - 新增 `paper/experiments/scripts/linucb_cost_aware_routing.py`：
+    - 复用 Task13.5/15 的 global dense、BM25、LinUCB-selected cluster-local dense、weighted RRF、trust-weighted feedback。
+    - 新增 `full_multi_route` 与 `gated_cost_aware` 两个 routing mode。
+    - `full_multi_route` 保持 dense/BM25/cluster 三路全开，作为质量优先对照。
+    - `gated_cost_aware` 根据 LinUCB policy confidence 与 selected-cluster semantic drift 切换路由；当前正式矩阵采用保守阈值，只启用 `hybrid_lite + full_dense_fallback`，不直接完全关闭 dense。
+    - 成本指标使用 source candidate count：`dense_candidates + bm25_candidates + cluster_candidates`，同时记录 `dense_query_rate`、`hybrid_lite_rate`、`full_dense_fallback_rate`。
+  - 新增 `cache/test_linucb_cost_aware_routing.py`，覆盖 route mode 解析、gating 决策、policy confidence maturity、结果写盘。
+  - 已运行正式矩阵：
+    - PubMedQA full/train/full：full `recall@10=0.9940`、cost `299.94`；gated `recall@10=0.9893`、cost `152.36`，R@10 `-0.0047`，成本下降 `49.20%`。
+    - Banking77 heldout_test/test/full：full `recall@10=0.9844`、cost `300.00`；gated `recall@10=0.9813`、cost `142.51`，R@10 `-0.0031`，成本下降 `52.50%`。
+    - Banking77 sample/test/full：full `recall@10=0.9863`、cost `300.00`；gated `recall@10=0.9817`、cost `146.28`，R@10 `-0.0047`，成本下降 `51.24%`；作为 full 结果的补充观察。
+    - eManual heldout_test/test/full：full `recall@10=0.1487`、cost `300.00`；gated `recall@10=0.1154`、cost `214.07`，R@10 `-0.0333`，成本下降 `28.64%`。
+    - CUAD smoke_only/test/gt_anchored_10000：full `recall@10=0.0886`、cost `300.00`；gated `recall@10=0.0633`、cost `203.47`，R@10 `-0.0253`，成本下降 `32.18%`。
+  - 当前解释：
+    - Task16 验证了成本优化存在可行 trade-off，但不是无损提升。
+    - PubMedQA 与 Banking77 full 能以低于 0.5 个百分点 R@10 损失换约 49%-52% source candidate cost 降低，支持“feedback 后可逐步降低 dense/BM25 深度和候选规模”的工程价值。
+    - eManual 与 CUAD 不适合使用同一 gating 强度；这两个数据集应保持更强 full dense fallback，或等待 text-equivalent reward、dedup/reranker、领域 embedding 等修正后再做成本压缩。
+    - 当前正式结果支持“先 dense-lite / BM25-lite，再 full dense fallback”的保守路线；直接把 dense 完全关闭为兜底通道仍需要更强的 policy confidence、语义漂移检测和 OOD guardrail。

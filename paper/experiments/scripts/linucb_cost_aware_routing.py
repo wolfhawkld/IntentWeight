@@ -1,0 +1,1123 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Task 16: confidence-gated cost-aware LinUCB routing.
+
+Task 16 converts the Task15 self-evolving LinUCB policy into a cost-aware
+retrieval controller. The control group keeps the Task13.5/15 full multi-route
+surface. The gated variant lets LinUCB become the primary route when its learned
+policy confidence is high and the selected cluster is semantically close to the
+query; otherwise global dense remains a fallback.
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import importlib.util
+import json
+import time
+from pathlib import Path
+from typing import Dict, Iterable, List, Mapping, NamedTuple, Sequence
+
+import numpy as np
+
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+
+
+def _load_script_module(name: str, path: Path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+linucb_soft = _load_script_module("linucb_soft_routing", SCRIPT_DIR / "linucb_soft_routing.py")
+linucb_trust = _load_script_module("linucb_trust_feedback", SCRIPT_DIR / "linucb_trust_feedback.py")
+global_linucb = linucb_soft.global_linucb
+manifold_linucb = linucb_soft.manifold_linucb
+bm25_baseline = linucb_soft.bm25_baseline
+dense_baseline = linucb_soft.dense_baseline
+experiment_guardrails = linucb_soft.experiment_guardrails
+retrieval_metrics = linucb_soft.retrieval_metrics
+
+DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
+DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
+DEFAULT_DATASETS = global_linucb.DEFAULT_DATASETS
+DEFAULT_MODEL = global_linucb.DEFAULT_MODEL
+ROUTING_MODES = ("full_multi_route", "gated_cost_aware")
+FEEDBACK_MODES = linucb_trust.FEEDBACK_MODES
+
+
+class RoutingDecision(NamedTuple):
+    route: str
+    dense_depth: int
+    bm25_depth: int
+    cluster_depth: int
+    dense_weight: float
+    bm25_weight: float
+    cluster_weight: float
+    dense_floor_k: int
+    confidence: float
+    semantic_drift: float
+
+
+def parse_ints(value: str) -> tuple[int, ...]:
+    return tuple(int(part.strip()) for part in value.split(",") if part.strip())
+
+
+def parse_list(value: str, choices: Sequence[str], *, label: str) -> tuple[str, ...]:
+    items = tuple(part.strip() for part in value.split(",") if part.strip())
+    invalid = [item for item in items if item not in choices]
+    if invalid:
+        raise ValueError(f"Unsupported {label}: {invalid}. Choices: {tuple(choices)}")
+    return items
+
+
+def parse_datasets(value: str) -> tuple[str, ...]:
+    if value == "all":
+        return DEFAULT_DATASETS
+    return tuple(part.strip() for part in value.split(",") if part.strip())
+
+
+def _chunk_id(chunk: Mapping) -> str:
+    return global_linucb._chunk_id(chunk)
+
+
+def _query_id(query: Mapping) -> str:
+    return global_linucb._query_id(query)
+
+
+def _ground_truth(query: Mapping) -> set[str]:
+    return global_linucb._ground_truth(query)
+
+
+def _has_hit(ranking: Sequence[str], ground_truth: set[str], *, k: int) -> bool:
+    return linucb_soft._has_hit(ranking, ground_truth, k=k)
+
+
+def _slug_part(value: object) -> str:
+    raw = str(value or "na").strip().lower()
+    chars = [char if char.isalnum() else "-" for char in raw]
+    slug = "-".join(part for part in "".join(chars).split("-") if part)
+    return slug or "na"
+
+
+def build_artifact_slug(dataset: str, run_metadata: Mapping[str, object]) -> str:
+    return "_".join([
+        _slug_part(dataset),
+        _slug_part(run_metadata.get("scope", "full")),
+        _slug_part(run_metadata.get("query_split", "all")),
+        f"corpus-{_slug_part(run_metadata.get('corpus_scope', 'full'))}",
+        f"q{_slug_part(run_metadata.get('num_queries', 'all'))}",
+    ])
+
+
+def arm_point_estimates(policy, context: np.ndarray) -> np.ndarray:
+    values = np.zeros(policy.n_arms, dtype=np.float64)
+    for arm in range(policy.n_arms):
+        theta = np.linalg.solve(policy.A[arm], policy.b[arm])
+        values[arm] = float(np.dot(theta, context))
+    return values
+
+
+def policy_confidence(
+    policy,
+    context: np.ndarray,
+    selected_arms: Sequence[int],
+    boosts: np.ndarray,
+    *,
+    confidence_feedback_floor: float,
+) -> tuple[float, float, float]:
+    """Return confidence, best value estimate, and top-vs-rest margin."""
+    if confidence_feedback_floor <= 0:
+        raise ValueError(f"confidence_feedback_floor must be positive, got {confidence_feedback_floor}")
+    values = arm_point_estimates(policy, context) + boosts
+    if values.size == 0 or not selected_arms:
+        return 0.0, 0.0, 0.0
+    selected = [int(arm) for arm in selected_arms]
+    selected_values = np.asarray([values[arm] for arm in selected], dtype=np.float64)
+    best_value = float(np.max(selected_values))
+    unselected = [arm for arm in range(policy.n_arms) if arm not in set(selected)]
+    next_best = float(np.max(values[unselected])) if unselected else 0.0
+    margin = best_value - next_best
+    mean_pulls = float(np.mean([policy.pull_counts[arm] for arm in selected]))
+    maturity = min(1.0, mean_pulls / float(confidence_feedback_floor))
+    bounded_value = min(1.0, max(0.0, best_value))
+    bounded_margin = min(1.0, max(0.0, margin))
+    confidence = maturity * (0.85 * bounded_value + 0.15 * bounded_margin)
+    return float(min(1.0, max(0.0, confidence))), best_value, margin
+
+
+def selected_semantic_drift(context: np.ndarray, centroids: np.ndarray, selected_arms: Sequence[int]) -> float:
+    if not selected_arms:
+        return 1.0
+    selected_centroids = centroids[np.asarray(selected_arms, dtype=np.int32)]
+    similarities = selected_centroids @ context
+    best_similarity = float(np.max(similarities)) if similarities.size else 0.0
+    return float(1.0 - best_similarity)
+
+
+def decide_route(
+    routing_mode: str,
+    *,
+    confidence: float,
+    semantic_drift: float,
+    dense_depth: int,
+    bm25_depth: int,
+    cluster_depth: int,
+    dense_weight: float,
+    bm25_weight: float,
+    cluster_weight: float,
+    dense_floor_k: int,
+    dense_lite_depth: int,
+    bm25_lite_depth: int,
+    dense_lite_weight: float,
+    bm25_lite_weight: float,
+    cluster_primary_weight: float,
+    dense_lite_floor_k: int,
+    high_confidence_threshold: float,
+    mid_confidence_threshold: float,
+    drift_threshold: float,
+) -> RoutingDecision:
+    if routing_mode == "full_multi_route":
+        return RoutingDecision(
+            "full_multi_route",
+            dense_depth,
+            bm25_depth,
+            cluster_depth,
+            dense_weight,
+            bm25_weight,
+            cluster_weight,
+            dense_floor_k,
+            confidence,
+            semantic_drift,
+        )
+    if routing_mode != "gated_cost_aware":
+        raise ValueError(f"Unsupported routing_mode: {routing_mode}")
+
+    if confidence >= high_confidence_threshold and semantic_drift <= drift_threshold:
+        return RoutingDecision(
+            "linucb_primary",
+            0,
+            bm25_lite_depth,
+            cluster_depth,
+            0.0,
+            bm25_lite_weight,
+            cluster_primary_weight,
+            0,
+            confidence,
+            semantic_drift,
+        )
+    if confidence >= mid_confidence_threshold and semantic_drift <= drift_threshold:
+        return RoutingDecision(
+            "hybrid_lite",
+            dense_lite_depth,
+            bm25_lite_depth,
+            cluster_depth,
+            dense_lite_weight,
+            bm25_lite_weight,
+            cluster_primary_weight,
+            dense_lite_floor_k,
+            confidence,
+            semantic_drift,
+        )
+    return RoutingDecision(
+        "full_dense_fallback",
+        dense_depth,
+        bm25_depth,
+        cluster_depth,
+        dense_weight,
+        bm25_weight,
+        cluster_weight,
+        dense_floor_k,
+        confidence,
+        semantic_drift,
+    )
+
+
+def source_cost(dense_ranking: Sequence[str], bm25_ranking: Sequence[str], cluster_ranking: Sequence[str]) -> int:
+    return int(len(dense_ranking) + len(bm25_ranking) + len(cluster_ranking))
+
+
+def _mean(values: Sequence[float]) -> float:
+    return float(np.mean(values)) if values else 0.0
+
+
+def _window_mean(values: Sequence[float], window_size: int, *, tail: bool) -> float:
+    return linucb_trust._window_mean(values, window_size, tail=tail)
+
+
+def run_prequential_seed(
+    corpus: Sequence[Mapping],
+    queries: Sequence[Mapping],
+    corpus_embeddings: np.ndarray,
+    query_embeddings: np.ndarray,
+    *,
+    seed: int,
+    routing_mode: str,
+    feedback_mode: str,
+    epochs: int,
+    top_k: int,
+    ks: Sequence[int],
+    n_clusters: int,
+    context_dim: int,
+    candidate_arms: int,
+    alpha: float,
+    alpha_decay: float,
+    alpha_min: float,
+    arm_neighbor_k: int,
+    arm_decay_sigma: float,
+    propagation_strength: float,
+    feedback_k: int,
+    feedback_tau: float,
+    feedback_weight: float,
+    dense_depth: int,
+    bm25_depth: int,
+    cluster_depth: int,
+    dense_weight: float,
+    bm25_weight: float,
+    cluster_weight: float,
+    rrf_k: int,
+    dense_floor_k: int,
+    dense_lite_depth: int,
+    bm25_lite_depth: int,
+    dense_lite_weight: float,
+    bm25_lite_weight: float,
+    cluster_primary_weight: float,
+    dense_lite_floor_k: int,
+    high_confidence_threshold: float,
+    mid_confidence_threshold: float,
+    drift_threshold: float,
+    confidence_feedback_floor: float,
+    high_trust_prob: float,
+    high_trust: float,
+    low_trust: float,
+    high_accuracy: float,
+    low_accuracy: float,
+    window_size: int,
+) -> Dict[str, object]:
+    if routing_mode not in ROUTING_MODES:
+        raise ValueError(f"Unsupported routing_mode: {routing_mode}")
+    if feedback_mode not in FEEDBACK_MODES:
+        raise ValueError(f"Unsupported feedback_mode: {feedback_mode}")
+    if epochs <= 0:
+        raise ValueError(f"epochs must be positive, got {epochs}")
+    if min(top_k, dense_depth, bm25_depth, cluster_depth) <= 0:
+        raise ValueError("top_k and full source depths must be positive")
+
+    _, corpus_context, query_context = global_linucb.fit_context_projection(
+        corpus_embeddings,
+        query_embeddings,
+        context_dim,
+    )
+    corpus_context = global_linucb.l2_normalize(corpus_context)
+    query_context = global_linucb.l2_normalize(query_context)
+
+    arm_labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
+    n_effective_arms = int(np.max(arm_labels)) + 1
+    centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
+    policy = global_linucb.GlobalLinUCBPolicy(
+        n_arms=n_effective_arms,
+        context_dim=query_context.shape[1],
+        alpha=alpha,
+        alpha_decay=alpha_decay,
+        alpha_min=alpha_min,
+        seed=seed,
+    )
+
+    rng = np.random.default_rng(seed)
+    chunk_ids = [_chunk_id(chunk) for chunk in corpus]
+    arm_labels_by_chunk = {chunk_id: int(label) for chunk_id, label in zip(chunk_ids, arm_labels)}
+    tokenized_corpus = [bm25_baseline.tokenize(str(chunk.get("text", ""))) for chunk in corpus]
+    bm25 = bm25_baseline.SparseBM25(tokenized_corpus)
+
+    rankings: Dict[str, List[str]] = {}
+    feedback_contexts: List[np.ndarray] = []
+    feedback_arm_rewards: List[Dict[int, float]] = []
+    total_update_weight = 0.0
+    cross_arm_update_weight = 0.0
+    propagated_updates = 0
+
+    true_rewards: List[float] = []
+    observed_rewards: List[float] = []
+    selected_cluster_hits: List[float] = []
+    final_hits: List[float] = []
+    confidences: List[float] = []
+    semantic_drifts: List[float] = []
+    source_costs: List[float] = []
+    union_candidate_counts: List[float] = []
+    dense_candidates: List[float] = []
+    bm25_candidates: List[float] = []
+    cluster_candidates: List[float] = []
+    dense_query_flags: List[float] = []
+    bm25_query_flags: List[float] = []
+    route_counts = {
+        "full_multi_route": 0,
+        "full_dense_fallback": 0,
+        "hybrid_lite": 0,
+        "linucb_primary": 0,
+    }
+    epoch_rows: List[Dict[str, float]] = []
+
+    for epoch in range(epochs):
+        epoch_indices = np.arange(len(queries))
+        rng.shuffle(epoch_indices)
+        epoch_true_rewards: List[float] = []
+        epoch_hits: List[float] = []
+        epoch_costs: List[float] = []
+        epoch_confidences: List[float] = []
+        epoch_lite_routes: List[float] = []
+
+        for query_idx in epoch_indices:
+            query_idx = int(query_idx)
+            query = queries[query_idx]
+            qid = _query_id(query)
+            context = query_context[query_idx]
+            selected_arms, boosts = manifold_linucb.select_arms_with_local_feedback(
+                policy,
+                context,
+                candidate_arms=candidate_arms,
+                feedback_contexts=feedback_contexts,
+                feedback_arm_rewards=feedback_arm_rewards,
+                feedback_k=feedback_k,
+                feedback_tau=feedback_tau,
+                feedback_weight=feedback_weight,
+            )
+            confidence, _, _ = policy_confidence(
+                policy,
+                context,
+                selected_arms,
+                boosts,
+                confidence_feedback_floor=confidence_feedback_floor,
+            )
+            semantic_drift = selected_semantic_drift(context, centroids, selected_arms)
+            decision = decide_route(
+                routing_mode,
+                confidence=confidence,
+                semantic_drift=semantic_drift,
+                dense_depth=dense_depth,
+                bm25_depth=bm25_depth,
+                cluster_depth=cluster_depth,
+                dense_weight=dense_weight,
+                bm25_weight=bm25_weight,
+                cluster_weight=cluster_weight,
+                dense_floor_k=dense_floor_k,
+                dense_lite_depth=dense_lite_depth,
+                bm25_lite_depth=bm25_lite_depth,
+                dense_lite_weight=dense_lite_weight,
+                bm25_lite_weight=bm25_lite_weight,
+                cluster_primary_weight=cluster_primary_weight,
+                dense_lite_floor_k=dense_lite_floor_k,
+                high_confidence_threshold=high_confidence_threshold,
+                mid_confidence_threshold=mid_confidence_threshold,
+                drift_threshold=drift_threshold,
+            )
+            route_counts[decision.route] += 1
+
+            dense_ranking = linucb_soft.top_dense_ranking(
+                query_embeddings[query_idx],
+                corpus_embeddings,
+                chunk_ids,
+                depth=decision.dense_depth,
+            )
+            bm25_ranking = linucb_soft.top_bm25_ranking(
+                str(query.get("text", "")),
+                bm25,
+                chunk_ids,
+                depth=decision.bm25_depth,
+            )
+            cluster_ranking = global_linucb.retrieve_from_arms(
+                query_embeddings[query_idx],
+                corpus_embeddings,
+                chunk_ids,
+                arm_labels,
+                selected_arms,
+                top_k=decision.cluster_depth,
+            )
+            ranking = linucb_soft.weighted_reciprocal_rank_fusion(
+                (
+                    (dense_ranking, decision.dense_weight),
+                    (bm25_ranking, decision.bm25_weight),
+                    (cluster_ranking, decision.cluster_weight),
+                ),
+                rrf_k=rrf_k,
+                top_k=top_k,
+            )
+            ranking = linucb_soft.apply_dense_floor(
+                ranking,
+                dense_ranking,
+                dense_floor_k=decision.dense_floor_k,
+                top_k=top_k,
+            )
+            rankings[qid] = ranking
+
+            gt = _ground_truth(query)
+            final_hit = _has_hit(ranking, gt, k=top_k)
+            selected_cluster_hit = linucb_soft.gt_cluster_hit(selected_arms, gt, arm_labels_by_chunk)
+            interaction_cost = float(source_cost(dense_ranking, bm25_ranking, cluster_ranking))
+            source_costs.append(interaction_cost)
+            union_candidate_counts.append(float(len(set(dense_ranking) | set(bm25_ranking) | set(cluster_ranking))))
+            dense_candidates.append(float(len(dense_ranking)))
+            bm25_candidates.append(float(len(bm25_ranking)))
+            cluster_candidates.append(float(len(cluster_ranking)))
+            dense_query_flags.append(float(decision.dense_depth > 0))
+            bm25_query_flags.append(float(decision.bm25_depth > 0))
+            confidences.append(float(confidence))
+            semantic_drifts.append(float(semantic_drift))
+            selected_cluster_hits.append(float(selected_cluster_hit))
+            final_hits.append(float(final_hit))
+
+            arm_memory_rewards: Dict[int, float] = {}
+            selected_true_rewards: List[float] = []
+            selected_observed_rewards: List[float] = []
+            for source_arm in selected_arms:
+                true_reward = global_linucb._arm_reward(ranking, gt, source_arm, arm_labels_by_chunk)
+                observation = linucb_trust.simulate_user_feedback(
+                    true_reward,
+                    rng,
+                    mode=feedback_mode,
+                    high_trust_prob=high_trust_prob,
+                    high_trust=high_trust,
+                    low_trust=low_trust,
+                    high_accuracy=high_accuracy,
+                    low_accuracy=low_accuracy,
+                )
+                update_weight = linucb_trust.update_weight_for_mode(feedback_mode, observation)
+                memory_reward = linucb_trust.memory_reward_for_mode(feedback_mode, observation)
+                arm_memory_rewards[int(source_arm)] = memory_reward
+                selected_true_rewards.append(float(true_reward))
+                selected_observed_rewards.append(float(observation.observed_reward))
+                if update_weight > 0:
+                    for target_arm, propagation_weight in manifold_linucb.arm_propagation_weights(
+                        centroids,
+                        source_arm,
+                        sigma=arm_decay_sigma,
+                        neighbor_k=arm_neighbor_k,
+                        propagation_strength=propagation_strength,
+                    ):
+                        weight = float(update_weight * propagation_weight)
+                        policy.update(target_arm, context, observation.observed_reward, weight=weight)
+                        total_update_weight += weight
+                        if target_arm != source_arm:
+                            cross_arm_update_weight += weight
+                            propagated_updates += 1
+
+            if feedback_mode != "none":
+                feedback_contexts.append(context.copy())
+                feedback_arm_rewards.append(arm_memory_rewards)
+
+            interaction_true = max(selected_true_rewards) if selected_true_rewards else 0.0
+            interaction_observed = max(selected_observed_rewards) if selected_observed_rewards else 0.0
+            true_rewards.append(float(interaction_true))
+            observed_rewards.append(float(interaction_observed))
+            epoch_true_rewards.append(float(interaction_true))
+            epoch_hits.append(float(final_hit))
+            epoch_costs.append(interaction_cost)
+            epoch_confidences.append(float(confidence))
+            epoch_lite_routes.append(float(decision.route in {"hybrid_lite", "linucb_primary"}))
+
+        epoch_rows.append({
+            "epoch": float(epoch + 1),
+            "true_reward": _mean(epoch_true_rewards),
+            "hit_rate": _mean(epoch_hits),
+            "source_cost": _mean(epoch_costs),
+            "confidence": _mean(epoch_confidences),
+            "lite_route_rate": _mean(epoch_lite_routes),
+        })
+
+    metrics = retrieval_metrics.evaluate_rankings(queries, rankings, ks=ks)
+    first_epoch = epoch_rows[0] if epoch_rows else {}
+    last_epoch = epoch_rows[-1] if epoch_rows else {}
+    num_interactions = max(1, len(source_costs))
+    metrics.update({
+        "seed": seed,
+        "routing_mode": routing_mode,
+        "feedback_mode": feedback_mode,
+        "epochs": epochs,
+        "num_interactions": len(source_costs),
+        "avg_true_feedback_reward": _mean(true_rewards),
+        "avg_observed_feedback_reward": _mean(observed_rewards),
+        "last_epoch_true_reward": float(last_epoch.get("true_reward", 0.0)),
+        "epoch_true_reward_gain": float(last_epoch.get("true_reward", 0.0) - first_epoch.get("true_reward", 0.0)),
+        "last_epoch_hit_rate": float(last_epoch.get("hit_rate", 0.0)),
+        "epoch_hit_rate_gain": float(last_epoch.get("hit_rate", 0.0) - first_epoch.get("hit_rate", 0.0)),
+        "last_epoch_source_cost": float(last_epoch.get("source_cost", 0.0)),
+        "epoch_source_cost_delta": float(last_epoch.get("source_cost", 0.0) - first_epoch.get("source_cost", 0.0)),
+        "last_epoch_confidence": float(last_epoch.get("confidence", 0.0)),
+        "epoch_confidence_gain": float(last_epoch.get("confidence", 0.0) - first_epoch.get("confidence", 0.0)),
+        "last_epoch_lite_route_rate": float(last_epoch.get("lite_route_rate", 0.0)),
+        "avg_source_candidate_cost": _mean(source_costs),
+        "avg_union_candidate_chunks": _mean(union_candidate_counts),
+        "avg_dense_candidates": _mean(dense_candidates),
+        "avg_bm25_candidates": _mean(bm25_candidates),
+        "avg_cluster_candidates": _mean(cluster_candidates),
+        "dense_query_rate": _mean(dense_query_flags),
+        "bm25_query_rate": _mean(bm25_query_flags),
+        "avg_confidence": _mean(confidences),
+        "avg_semantic_drift": _mean(semantic_drifts),
+        "selected_cluster_hit_rate": _mean(selected_cluster_hits),
+        "soft_fused_hit_rate": _mean(final_hits),
+        "full_multi_route_rate": route_counts["full_multi_route"] / num_interactions,
+        "full_dense_fallback_rate": route_counts["full_dense_fallback"] / num_interactions,
+        "hybrid_lite_rate": route_counts["hybrid_lite"] / num_interactions,
+        "linucb_primary_rate": route_counts["linucb_primary"] / num_interactions,
+        "first_window_true_reward": _window_mean(true_rewards, window_size, tail=False),
+        "last_window_true_reward": _window_mean(true_rewards, window_size, tail=True),
+        "window_true_reward_gain": float(
+            _window_mean(true_rewards, window_size, tail=True) - _window_mean(true_rewards, window_size, tail=False)
+        ),
+        "first_window_source_cost": _window_mean(source_costs, window_size, tail=False),
+        "last_window_source_cost": _window_mean(source_costs, window_size, tail=True),
+        "window_source_cost_delta": float(
+            _window_mean(source_costs, window_size, tail=True) - _window_mean(source_costs, window_size, tail=False)
+        ),
+        "final_effective_alpha": float(policy.effective_alpha),
+        "n_effective_arms": n_effective_arms,
+        "total_feedback_updates": int(policy.total_feedback),
+        "total_update_weight": float(total_update_weight),
+        "cross_arm_update_weight": float(cross_arm_update_weight),
+        "propagated_updates": int(propagated_updates),
+        "epoch_metrics": epoch_rows,
+    })
+    return {"rankings": rankings, "metrics": metrics}
+
+
+def aggregate_seed_metrics(seed_metrics: Sequence[Mapping]) -> Dict[str, object]:
+    return global_linucb.aggregate_seed_metrics(seed_metrics)
+
+
+def run_dataset(
+    dataset: str,
+    data_dir: Path,
+    output_dir: Path,
+    encoder,
+    *,
+    model_name: str,
+    routing_modes: Sequence[str],
+    feedback_mode: str,
+    top_k: int,
+    ks: Sequence[int],
+    batch_size: int,
+    seeds: Sequence[int],
+    epochs: int,
+    n_clusters: int,
+    context_dim: int,
+    candidate_arms: int,
+    alpha: float,
+    alpha_decay: float,
+    alpha_min: float,
+    arm_neighbor_k: int,
+    arm_decay_sigma: float,
+    propagation_strength: float,
+    feedback_k: int,
+    feedback_tau: float,
+    feedback_weight: float,
+    dense_depth: int,
+    bm25_depth: int,
+    cluster_depth: int,
+    dense_weight: float,
+    bm25_weight: float,
+    cluster_weight: float,
+    rrf_k: int,
+    dense_floor_k: int,
+    dense_lite_depth: int,
+    bm25_lite_depth: int,
+    dense_lite_weight: float,
+    bm25_lite_weight: float,
+    cluster_primary_weight: float,
+    dense_lite_floor_k: int,
+    high_confidence_threshold: float,
+    mid_confidence_threshold: float,
+    drift_threshold: float,
+    confidence_feedback_floor: float,
+    high_trust_prob: float,
+    high_trust: float,
+    low_trust: float,
+    high_accuracy: float,
+    low_accuracy: float,
+    window_size: int,
+    max_queries: int | None = None,
+    max_corpus: int | None = None,
+    query_split: str | None = None,
+    corpus_sampling: str | None = None,
+    sampling_seed: int = 13,
+) -> List[Dict[str, object]]:
+    corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
+    queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
+    queries = experiment_guardrails.apply_query_controls(queries_all, query_split=query_split, max_queries=max_queries)
+    resolved_corpus_sampling = experiment_guardrails.resolve_corpus_sampling(dataset, max_corpus, corpus_sampling)
+    corpus = experiment_guardrails.apply_corpus_controls(
+        corpus_all,
+        max_corpus=max_corpus,
+        queries=queries,
+        corpus_sampling=resolved_corpus_sampling,
+        random_seed=sampling_seed,
+    )
+    gt_coverage = experiment_guardrails.assert_gt_corpus_coverage(queries, corpus)
+    run_metadata = {
+        **experiment_guardrails.build_run_metadata(
+            dataset=dataset,
+            queries=queries,
+            all_queries=queries_all,
+            corpus=corpus,
+            all_corpus=corpus_all,
+            max_queries=max_queries,
+            max_corpus=max_corpus,
+            corpus_sampling=resolved_corpus_sampling,
+            requested_query_split=query_split,
+            top_k=top_k,
+            ks=ks,
+        ),
+        "num_queries": len(queries),
+    }
+    artifact_slug = build_artifact_slug(dataset, run_metadata)
+
+    start = time.perf_counter()
+    corpus_embeddings = dense_baseline.encode_texts(
+        encoder,
+        [str(chunk.get("text", "")) for chunk in corpus],
+        batch_size=batch_size,
+    )
+    query_embeddings = dense_baseline.encode_texts(
+        encoder,
+        [str(query.get("text", "")) for query in queries],
+        batch_size=batch_size,
+    )
+
+    rows: List[Dict[str, object]] = []
+    all_rankings: Dict[str, Dict[str, Dict[str, List[str]]]] = {}
+    for routing_mode in routing_modes:
+        seed_results = []
+        for seed in seeds:
+            seed_results.append(run_prequential_seed(
+                corpus,
+                queries,
+                corpus_embeddings,
+                query_embeddings,
+                seed=seed,
+                routing_mode=routing_mode,
+                feedback_mode=feedback_mode,
+                epochs=epochs,
+                top_k=top_k,
+                ks=ks,
+                n_clusters=n_clusters,
+                context_dim=context_dim,
+                candidate_arms=candidate_arms,
+                alpha=alpha,
+                alpha_decay=alpha_decay,
+                alpha_min=alpha_min,
+                arm_neighbor_k=arm_neighbor_k,
+                arm_decay_sigma=arm_decay_sigma,
+                propagation_strength=propagation_strength,
+                feedback_k=feedback_k,
+                feedback_tau=feedback_tau,
+                feedback_weight=feedback_weight,
+                dense_depth=dense_depth,
+                bm25_depth=bm25_depth,
+                cluster_depth=cluster_depth,
+                dense_weight=dense_weight,
+                bm25_weight=bm25_weight,
+                cluster_weight=cluster_weight,
+                rrf_k=rrf_k,
+                dense_floor_k=dense_floor_k,
+                dense_lite_depth=dense_lite_depth,
+                bm25_lite_depth=bm25_lite_depth,
+                dense_lite_weight=dense_lite_weight,
+                bm25_lite_weight=bm25_lite_weight,
+                cluster_primary_weight=cluster_primary_weight,
+                dense_lite_floor_k=dense_lite_floor_k,
+                high_confidence_threshold=high_confidence_threshold,
+                mid_confidence_threshold=mid_confidence_threshold,
+                drift_threshold=drift_threshold,
+                confidence_feedback_floor=confidence_feedback_floor,
+                high_trust_prob=high_trust_prob,
+                high_trust=high_trust,
+                low_trust=low_trust,
+                high_accuracy=high_accuracy,
+                low_accuracy=low_accuracy,
+                window_size=window_size,
+            ))
+        elapsed_sec = time.perf_counter() - start
+        per_seed_metrics = [result["metrics"] for result in seed_results]
+        representative = per_seed_metrics[0]
+        aggregated = aggregate_seed_metrics(per_seed_metrics)
+        metadata = {
+            "dataset": dataset,
+            "method": f"linucb_cost_{routing_mode}",
+            "model": model_name,
+            "protocol": "prequential_cost_aware_feedback",
+            "routing_mode": routing_mode,
+            "feedback_mode": feedback_mode,
+            "feedback_source": "trust_weighted_simulated_user_feedback",
+            "online_learning_scope": "confidence_gated_cost_aware_routing",
+            "manifold_neighbor_engine": "cpu_exact_numpy",
+            "fusion": "weighted_rrf",
+            "top_k": top_k,
+            "ks": list(ks),
+            "batch_size": batch_size,
+            "seeds": list(seeds),
+            "epochs": epochs,
+            "n_clusters_requested": n_clusters,
+            "context_dim_requested": context_dim,
+            "candidate_arms": candidate_arms,
+            "alpha": alpha,
+            "alpha_decay": alpha_decay,
+            "alpha_min": alpha_min,
+            "arm_neighbor_k": arm_neighbor_k,
+            "arm_decay_sigma": arm_decay_sigma,
+            "propagation_strength": propagation_strength,
+            "feedback_k": feedback_k,
+            "feedback_tau": feedback_tau,
+            "feedback_weight": feedback_weight,
+            "dense_depth": dense_depth,
+            "bm25_depth": bm25_depth,
+            "cluster_depth": cluster_depth,
+            "dense_weight": dense_weight,
+            "bm25_weight": bm25_weight,
+            "cluster_weight": cluster_weight,
+            "rrf_k": rrf_k,
+            "dense_floor_k": dense_floor_k,
+            "dense_lite_depth": dense_lite_depth,
+            "bm25_lite_depth": bm25_lite_depth,
+            "dense_lite_weight": dense_lite_weight,
+            "bm25_lite_weight": bm25_lite_weight,
+            "cluster_primary_weight": cluster_primary_weight,
+            "dense_lite_floor_k": dense_lite_floor_k,
+            "high_confidence_threshold": high_confidence_threshold,
+            "mid_confidence_threshold": mid_confidence_threshold,
+            "drift_threshold": drift_threshold,
+            "confidence_feedback_floor": confidence_feedback_floor,
+            "high_trust_prob": high_trust_prob,
+            "high_trust": high_trust,
+            "low_trust": low_trust,
+            "high_accuracy": high_accuracy,
+            "low_accuracy": low_accuracy,
+            "window_size": window_size,
+            "num_corpus_chunks": len(corpus),
+            "num_total_corpus_chunks": len(corpus_all),
+            "num_total_queries": len(queries_all),
+            "max_queries": max_queries,
+            "max_corpus": max_corpus,
+            "artifact_slug": artifact_slug,
+            "elapsed_sec": round(elapsed_sec, 3),
+            **run_metadata,
+            **gt_coverage,
+        }
+        metrics = {
+            **metadata,
+            **{key: value for key, value in representative.items() if key in {"num_queries", "num_skipped_no_gt"}},
+            **aggregated,
+            "per_seed": per_seed_metrics,
+        }
+        rows.append(metrics)
+        all_rankings[routing_mode] = {
+            str(result["metrics"]["seed"]): result["rankings"]
+            for result in seed_results
+        }
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    metrics_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_metrics.json"
+    rankings_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_rankings.json"
+    metrics_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    rankings_path.write_text(json.dumps(all_rankings, ensure_ascii=False), encoding="utf-8")
+    return rows
+
+
+def _stringify_csv_value(value: object) -> object:
+    return global_linucb._stringify_csv_value(value)
+
+
+def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
+    new_rows = list(rows)
+    if not new_rows:
+        return
+    existing: Dict[tuple[str, str, str, str, str, str, str], Mapping] = {}
+    if summary_path.exists():
+        with summary_path.open("r", encoding="utf-8", newline="") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                existing[(
+                    row.get("dataset", ""),
+                    row.get("method", ""),
+                    row.get("model", ""),
+                    row.get("routing_mode", ""),
+                    row.get("scope", ""),
+                    row.get("query_split", ""),
+                    row.get("num_queries", ""),
+                )] = row
+    for row in new_rows:
+        existing[(
+            str(row["dataset"]),
+            str(row["method"]),
+            str(row.get("model", "")),
+            str(row.get("routing_mode", "")),
+            str(row.get("scope", "")),
+            str(row.get("query_split", "")),
+            str(row.get("num_queries", "")),
+        )] = row
+
+    preferred = [
+        "dataset",
+        "method",
+        "routing_mode",
+        "feedback_mode",
+        "model",
+        "protocol",
+        "task_type",
+        "scope",
+        "query_split",
+        "corpus_scope",
+        "corpus_sampling",
+        "num_queries",
+        "num_skipped_no_gt",
+        "gt_query_coverage",
+        "num_corpus_chunks",
+        "num_total_corpus_chunks",
+        "top_k",
+        "metric_ks",
+        "num_seeds",
+        "seeds",
+        "epochs",
+        "dense_depth",
+        "bm25_depth",
+        "cluster_depth",
+        "dense_lite_depth",
+        "bm25_lite_depth",
+        "dense_floor_k",
+        "dense_lite_floor_k",
+        "high_confidence_threshold",
+        "mid_confidence_threshold",
+        "drift_threshold",
+        "confidence_feedback_floor",
+    ]
+    preferred_set = set(preferred) | {"elapsed_sec", "notes"}
+    metric_keys = sorted({
+        key
+        for row in existing.values()
+        for key in row
+        if key not in preferred_set
+        and (
+            "@" in key
+            or key.endswith("_mean")
+            or key.endswith("_rate_mean")
+            or key.endswith("_gain_mean")
+            or key.endswith("_delta_mean")
+            or key.endswith("_cost_mean")
+            or key.endswith("_candidates_mean")
+        )
+    })
+    fieldnames = [*preferred, *metric_keys, "elapsed_sec", "notes"]
+    with summary_path.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore", lineterminator="\n")
+        writer.writeheader()
+        for key in sorted(existing):
+            writer.writerow({
+                name: _stringify_csv_value(value)
+                for name, value in existing[key].items()
+            })
+
+
+def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
+    if not summary_path.exists():
+        return
+    with summary_path.open("r", encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    columns = [
+        "dataset",
+        "routing_mode",
+        "scope",
+        "query_split",
+        "num_queries",
+        "recall@10_mean",
+        "last_epoch_true_reward_mean",
+        "avg_source_candidate_cost_mean",
+        "dense_query_rate_mean",
+        "linucb_primary_rate_mean",
+        "hybrid_lite_rate_mean",
+        "full_dense_fallback_rate_mean",
+    ]
+    lines = [
+        "# Cost-Aware LinUCB Routing Tables",
+        "",
+        "| " + " | ".join(columns) + " |",
+        "| " + " | ".join("---" for _ in columns) + " |",
+    ]
+    for row in sorted(rows, key=lambda item: (item.get("dataset", ""), item.get("scope", ""), item.get("routing_mode", ""))):
+        values = []
+        for column in columns:
+            value = row.get(column, "")
+            if value not in ("", None):
+                if column == "num_queries":
+                    try:
+                        value = str(int(float(value)))
+                    except ValueError:
+                        pass
+                elif column.endswith("_mean") or column.startswith("recall@"):
+                    try:
+                        value = f"{float(value):.4f}"
+                    except ValueError:
+                        pass
+            values.append(str(value))
+        lines.append("| " + " | ".join(values) + " |")
+    lines.extend([
+        "",
+        "## Notes",
+        "",
+        "- `full_multi_route` keeps global dense, BM25, cluster-local retrieval, weighted RRF, and dense floor enabled.",
+        "- `gated_cost_aware` shifts to LinUCB-primary or hybrid-lite routes when confidence is high and semantic drift is low; otherwise it uses full dense fallback.",
+        "- Cost is reported as source candidate count before fusion; dense query rate captures how often global dense retrieval is still executed.",
+    ])
+    markdown_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def load_sentence_transformer(model_name: str, *, device: str | None = None, local_files_only: bool = False):
+    return dense_baseline.load_sentence_transformer(model_name, device=device, local_files_only=local_files_only)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Run confidence-gated cost-aware LinUCB routing experiment")
+    parser.add_argument("--dataset", default="all", help="Dataset name, comma list, or all")
+    parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--device", default=None)
+    parser.add_argument("--local-files-only", action="store_true")
+    parser.add_argument("--routing-modes", default="full_multi_route,gated_cost_aware")
+    parser.add_argument("--feedback-mode", default="trust_weighted", choices=FEEDBACK_MODES)
+    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--top-k", type=int, default=10)
+    parser.add_argument("--ks", default="1,5,10")
+    parser.add_argument("--seeds", default="13,17,19")
+    parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument("--n-clusters", type=int, default=32)
+    parser.add_argument("--context-dim", type=int, default=64)
+    parser.add_argument("--candidate-arms", type=int, default=3)
+    parser.add_argument("--alpha", type=float, default=1.0)
+    parser.add_argument("--alpha-decay", type=float, default=0.01)
+    parser.add_argument("--alpha-min", type=float, default=0.3)
+    parser.add_argument("--arm-neighbor-k", type=int, default=4)
+    parser.add_argument("--arm-decay-sigma", type=float, default=0.75)
+    parser.add_argument("--propagation-strength", type=float, default=0.25)
+    parser.add_argument("--feedback-k", type=int, default=16)
+    parser.add_argument("--feedback-tau", type=float, default=0.75)
+    parser.add_argument("--feedback-weight", type=float, default=0.35)
+    parser.add_argument("--dense-depth", type=int, default=100)
+    parser.add_argument("--bm25-depth", type=int, default=100)
+    parser.add_argument("--cluster-depth", type=int, default=100)
+    parser.add_argument("--dense-weight", type=float, default=2.0)
+    parser.add_argument("--bm25-weight", type=float, default=0.8)
+    parser.add_argument("--cluster-weight", type=float, default=0.8)
+    parser.add_argument("--rrf-k", type=int, default=60)
+    parser.add_argument("--dense-floor-k", type=int, default=5)
+    parser.add_argument("--dense-lite-depth", type=int, default=20)
+    parser.add_argument("--bm25-lite-depth", type=int, default=20)
+    parser.add_argument("--dense-lite-weight", type=float, default=0.8)
+    parser.add_argument("--bm25-lite-weight", type=float, default=0.5)
+    parser.add_argument("--cluster-primary-weight", type=float, default=2.0)
+    parser.add_argument("--dense-lite-floor-k", type=int, default=2)
+    parser.add_argument("--high-confidence-threshold", type=float, default=0.65)
+    parser.add_argument("--mid-confidence-threshold", type=float, default=0.35)
+    parser.add_argument("--drift-threshold", type=float, default=1.0)
+    parser.add_argument("--confidence-feedback-floor", type=float, default=8.0)
+    parser.add_argument("--high-trust-prob", type=float, default=0.7)
+    parser.add_argument("--high-trust", type=float, default=1.0)
+    parser.add_argument("--low-trust", type=float, default=0.25)
+    parser.add_argument("--high-accuracy", type=float, default=0.9)
+    parser.add_argument("--low-accuracy", type=float, default=0.55)
+    parser.add_argument("--window-size", type=int, default=50)
+    parser.add_argument("--max-queries", type=int, default=None)
+    parser.add_argument("--max-corpus", type=int, default=None)
+    parser.add_argument("--query-split", default=None)
+    parser.add_argument(
+        "--corpus-sampling",
+        default="auto",
+        choices=sorted(experiment_guardrails.CORPUS_SAMPLING_STRATEGIES),
+    )
+    parser.add_argument("--sampling-seed", type=int, default=13)
+    args = parser.parse_args(argv)
+
+    datasets = parse_datasets(args.dataset)
+    routing_modes = parse_list(args.routing_modes, ROUTING_MODES, label="routing modes")
+    ks = parse_ints(args.ks)
+    seeds = parse_ints(args.seeds)
+    encoder = load_sentence_transformer(args.model, device=args.device, local_files_only=args.local_files_only)
+
+    all_rows: List[Dict[str, object]] = []
+    for dataset in datasets:
+        print(f"Running cost-aware LinUCB routing: {dataset}")
+        rows = run_dataset(
+            dataset,
+            args.data_dir,
+            args.output_dir,
+            encoder,
+            model_name=args.model,
+            routing_modes=routing_modes,
+            feedback_mode=args.feedback_mode,
+            top_k=args.top_k,
+            ks=ks,
+            batch_size=args.batch_size,
+            seeds=seeds,
+            epochs=args.epochs,
+            n_clusters=args.n_clusters,
+            context_dim=args.context_dim,
+            candidate_arms=args.candidate_arms,
+            alpha=args.alpha,
+            alpha_decay=args.alpha_decay,
+            alpha_min=args.alpha_min,
+            arm_neighbor_k=args.arm_neighbor_k,
+            arm_decay_sigma=args.arm_decay_sigma,
+            propagation_strength=args.propagation_strength,
+            feedback_k=args.feedback_k,
+            feedback_tau=args.feedback_tau,
+            feedback_weight=args.feedback_weight,
+            dense_depth=args.dense_depth,
+            bm25_depth=args.bm25_depth,
+            cluster_depth=args.cluster_depth,
+            dense_weight=args.dense_weight,
+            bm25_weight=args.bm25_weight,
+            cluster_weight=args.cluster_weight,
+            rrf_k=args.rrf_k,
+            dense_floor_k=args.dense_floor_k,
+            dense_lite_depth=args.dense_lite_depth,
+            bm25_lite_depth=args.bm25_lite_depth,
+            dense_lite_weight=args.dense_lite_weight,
+            bm25_lite_weight=args.bm25_lite_weight,
+            cluster_primary_weight=args.cluster_primary_weight,
+            dense_lite_floor_k=args.dense_lite_floor_k,
+            high_confidence_threshold=args.high_confidence_threshold,
+            mid_confidence_threshold=args.mid_confidence_threshold,
+            drift_threshold=args.drift_threshold,
+            confidence_feedback_floor=args.confidence_feedback_floor,
+            high_trust_prob=args.high_trust_prob,
+            high_trust=args.high_trust,
+            low_trust=args.low_trust,
+            high_accuracy=args.high_accuracy,
+            low_accuracy=args.low_accuracy,
+            window_size=args.window_size,
+            max_queries=args.max_queries,
+            max_corpus=args.max_corpus,
+            query_split=args.query_split,
+            corpus_sampling=args.corpus_sampling,
+            sampling_seed=args.sampling_seed,
+        )
+        all_rows.extend(rows)
+        for row in rows:
+            print(
+                f"  mode={row['routing_mode']} queries={row.get('num_queries')} "
+                f"recall@10={row.get('recall@10_mean', 0.0):.4f} "
+                f"last_reward={row.get('last_epoch_true_reward_mean', 0.0):.4f} "
+                f"avg_cost={row.get('avg_source_candidate_cost_mean', 0.0):.2f} "
+                f"dense_rate={row.get('dense_query_rate_mean', 0.0):.4f} "
+                f"primary_rate={row.get('linucb_primary_rate_mean', 0.0):.4f}"
+            )
+
+    summary_path = args.output_dir / "linucb_cost_summary.csv"
+    update_summary(summary_path, all_rows)
+    write_markdown_table(summary_path, args.output_dir / "linucb_cost_tables.md")
+    print(f"Summary: {summary_path}")
+    print(f"Markdown: {args.output_dir / 'linucb_cost_tables.md'}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -238,6 +238,30 @@ universal dense replacement, but an adaptive retrieval-control framework whose
 benefit depends on measurable corpus structure, feedback quality, and
 cost-quality trade-offs.
 
+## Dense as Fallback, Not Enemy
+
+Dense retrieval is a strong baseline. The paper should not frame IntentWeight
+as a universal replacement for dense retrieval. The stronger claim is that dense
+retrieval can be placed inside a self-evolving retrieval-control system.
+
+In early or uncertain states, dense/BM25 provide a robust recall floor. As
+feedback accumulates, LinUCB can learn when cheaper or more localized routes are
+reliable enough and when dense retrieval should be reduced to a fallback safety
+channel. This creates a staged operating model:
+
+```text
+robustness phase: dense + BM25 + cluster-local retrieval all active
+self-evolution phase: feedback updates arm and route values
+efficiency phase: high-confidence routes reduce dense/BM25 depth or weight
+safety phase: low confidence, drift, or negative feedback reactivates dense
+```
+
+Therefore the key value is not that the static policy always beats dense on
+small public benchmarks. The key value is that, in large-scale vertical RAG
+systems, retrieval can become a feedback-driven policy that controls where to
+search, how much to search, when to pay for dense fallback, and how to trade
+quality against cost and latency.
+
 ---
 
 ## Lessons From Task 13.5
@@ -356,6 +380,103 @@ M*      = (M, V), the dynamic value manifold
 Thus BM25, dense, clustering, and neighborhood structure describe the geometry
 `M`, while reward samples where value lies on that geometry. LinUCB uses those
 samples to approximate the query-document relevance/value manifold over time.
+
+---
+
+## Lessons From Task 15
+
+Task 15 tests whether the retrieval policy can self-evolve from feedback while
+keeping the Task13.5 multi-route recall floor. The key result is that feedback
+mostly improves the policy/value layer rather than producing a large jump in
+final Recall@10.
+
+This is expected. Global dense, BM25, and dense floor already protect the final
+candidate list, so recall can stay stable even when the selected LinUCB arm is
+weak. Therefore Task 15 should be interpreted through policy-level metrics:
+
+- `last_epoch_true_reward`: whether the selected arm produces higher true
+  reward after repeated interactions;
+- `epoch_true_reward_gain`: whether the policy improves from early to late
+  epochs;
+- `last_epoch_selected_cluster_hit_rate`: whether the selected cluster arms
+  increasingly contain GT evidence;
+- `epoch_selected_cluster_hit_gain`: whether cluster-arm selection improves
+  over time.
+
+The primary self-evolution indicator is `last_epoch_true_reward`. It measures
+the value of the arms selected by the learned policy after feedback has been
+applied. Recall@k remains necessary as the downstream retrieval metric, but it
+is affected by dense/BM25 fallback, fusion, and dense floor. A run can therefore
+strongly validate policy self-evolution without showing a final Recall@k gain.
+
+The current results support the self-evolution claim:
+
+- PubMedQA: trust-weighted feedback improves `last_epoch_true_reward` to
+  `0.8727` and selected-cluster gain to `+0.3950` while maintaining
+  `Recall@10=0.9940`.
+- Banking77 full: trust-weighted feedback reaches `last_epoch_true_reward`
+  `0.9805` and selected-cluster gain `+0.0627`, while final
+  `Recall@10=0.9844` is slightly below the no-feedback control `0.9855`.
+  This makes Banking77 a useful example where feedback clearly improves the
+  policy/value field but does not automatically improve final R@k.
+- Banking77 sample: the 1000-query sample shows both policy improvement and a
+  small final recall gain (`Recall@10=0.9863` versus no-feedback `0.9840`), but
+  the full held-out run should anchor the main claim.
+- CUAD smoke: sparse GT limits the conclusion, but trust-weighted feedback moves
+  policy metrics in the positive direction.
+- eManual: feedback improves policy metrics only modestly; strict chunk-id
+  labels, duplicate evidence text, and underused centroid geometry remain the
+  dominant failure factors.
+
+The result strengthens the paper's central framing: the method is not a static
+replacement for dense retrieval. It is a feedback-driven controller that learns
+which retrieval routes and local semantic regions are valuable. Dense should
+remain a fallback and safety floor, then become cost-gated once policy
+confidence is high.
+
+---
+
+## Lessons From Task 16
+
+Task 16 tests the engineering consequence of Task 15: if feedback makes the
+LinUCB value field more reliable, can retrieval cost be reduced by routing fewer
+global dense/BM25 candidates?
+
+The conservative Task 16 gate keeps dense as an active safety channel. It does
+not fully switch dense off. Instead, it uses:
+
+- `full_multi_route`: full global dense + BM25 + cluster-local retrieval;
+- `gated_cost_aware`: hybrid-lite retrieval under sufficient confidence and
+  full dense fallback otherwise.
+
+This setting validates a quality-cost trade-off:
+
+- PubMedQA: candidate cost drops by `49.20%` with `Recall@10` moving from
+  `0.9940` to `0.9893`.
+- Banking77 full: candidate cost drops by `52.50%` with `Recall@10` moving
+  from `0.9844` to `0.9813`.
+- eManual: candidate cost drops by `28.64%`, but `Recall@10` falls from
+  `0.1487` to `0.1154`.
+- CUAD smoke: candidate cost drops by `32.18%`, but `Recall@10` falls from
+  `0.0886` to `0.0633`.
+
+The lesson is that cost-aware routing is feasible, but not universally safe.
+For datasets where the policy/value field is reliable, dense/BM25 depth can be
+reduced with modest quality loss. For sparse or evaluation-fragile datasets such
+as CUAD and eManual, the system should keep a stronger full dense fallback.
+
+This supports a staged deployment model:
+
+```text
+stage 1: full multi-route retrieval for stability
+stage 2: confidence-gated dense-lite/BM25-lite routing
+stage 3: LinUCB-primary retrieval only under very high confidence
+stage 4: full dense fallback for low confidence, semantic drift, OOD, or negative feedback
+```
+
+Task 16 therefore strengthens the engineering-value claim: IntentWeight is not
+only a way to learn retrieval policy from feedback, but also a path toward
+adaptive cost control once the policy has accumulated enough reliable feedback.
 
 ---
 
