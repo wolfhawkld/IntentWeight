@@ -132,6 +132,53 @@ class DenseBaselineTests(unittest.TestCase):
             self.assertTrue((out_dir / "dense_baseline_summary.csv").exists())
             self.assertAlmostEqual(metrics["recall@1"], 1.0)
 
+    def test_run_dataset_can_reuse_embedding_cache(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            data_dir = tmpdir / "processed"
+            out_dir = tmpdir / "results"
+            cache_dir = tmpdir / "embeddings"
+            data_dir.mkdir()
+            corpus = [{"chunk_id": "c_alpha", "text": "alpha document"}]
+            queries = [{"query_id": "q_alpha", "text": "alpha query", "ground_truth_chunk_ids": ["c_alpha"]}]
+            (data_dir / "toy_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / "toy_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+            encoder = FakeEncoder({
+                "alpha document": [1.0, 0.0],
+                "alpha query": [1.0, 0.0],
+            })
+
+            first = dense_baseline.run_dataset(
+                "toy",
+                data_dir,
+                out_dir,
+                encoder,
+                model_name="fake-model",
+                top_k=1,
+                ks=(1,),
+                batch_size=1,
+                embedding_cache_dir=cache_dir,
+                use_embedding_cache=True,
+            )
+            second = dense_baseline.run_dataset(
+                "toy",
+                data_dir,
+                out_dir,
+                encoder,
+                model_name="fake-model",
+                top_k=1,
+                ks=(1,),
+                batch_size=1,
+                embedding_cache_dir=cache_dir,
+                use_embedding_cache=True,
+            )
+
+            self.assertFalse(first["corpus_embedding_cache_hit"])
+            self.assertFalse(first["query_embedding_cache_hit"])
+            self.assertTrue(second["corpus_embedding_cache_hit"])
+            self.assertTrue(second["query_embedding_cache_hit"])
+            self.assertAlmostEqual(second["recall@1"], 1.0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

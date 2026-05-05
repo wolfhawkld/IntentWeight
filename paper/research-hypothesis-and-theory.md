@@ -480,6 +480,55 @@ adaptive cost control once the policy has accumulated enough reliable feedback.
 
 ---
 
+## Task 17 Direction: LoTTE Scale-Up
+
+Task 17 should use LoTTE as the main large-scale vertical-domain validation
+target. PubMedQA and Banking77 have already been evaluated on their full
+processed corpora and query sets, so they should remain full small/medium-scale
+anchors rather than large-scale evidence. CUAD has a large corpus, but its sparse
+GT and weak structure make it better suited to stress-test and limitation
+analysis.
+
+LoTTE is a better fit for the scale-up claim because it combines:
+
+- domain-specific search queries;
+- hundreds of thousands of corpus passages in the technology/search split;
+- explicit qrels that map queries to positive evidence passages;
+- enough scale to test whether dense-heavy retrieval becomes costly and whether
+  confidence-gated LinUCB can preserve quality while reducing candidate depth.
+
+The initial LoTTE technology/search sample passed the current guardrails:
+`5018` corpus chunks, `20` test queries, `56` GT refs, `BM25 Recall@10=0.9000`,
+`dense Recall@10=0.9000`, `hybrid Recall@10=1.0000`, LinUCB full-route
+`Recall@10=1.0000`, and cost-aware gated `Recall@10=0.9500` in a one-seed,
+one-epoch smoke run.
+
+The first large-scale stage also passed the guardrails: LoTTE
+technology/search with `596` full test queries and `101311` GT-anchored corpus
+chunks. BM25 reached `Recall@10=0.7232`, dense reached `0.8674`, full
+multi-route LinUCB reached `0.8725`, and gated cost-aware LinUCB reached
+`0.8356` with average source candidate cost reduced from `300.00` to `224.16`.
+This is an encouraging stage-1 signal because the method slightly exceeds the
+dense baseline in full-route mode and shows a measurable quality-cost trade-off
+in gated mode.
+
+However, the 100k run also exposes a practical requirement: CPU exact dense
+encoding took `1640.076s`, and the old LinUCB script repeated embedding work
+instead of reusing cached embeddings. The experiment code now has a reusable
+embedding cache for dense, hybrid, and cost-aware LinUCB runs. Before expanding
+Task 17 to multiple seeds, more epochs, or the full `638509`-passage test
+corpus, the next engineering step should be a shared large-scale runner that
+also reuses BM25 indices, dense rankings, and clustering artifacts.
+
+This result is not yet evidence of final method superiority. It shows that the
+dataset schema, GT mapping, static baselines, and LinUCB routing all work on
+LoTTE. The formal Task 17 experiment should scale query count and corpus scope,
+then report both retrieval quality and cost-control metrics: Recall@k, MRR@k,
+nDCG@k, average source candidate cost, dense query rate, fallback rate, policy
+reward evolution, and selected-cluster hit evolution.
+
+---
+
 ## One-Sentence Positioning
 
 English:

@@ -12,6 +12,10 @@
 | cuad | gated_cost_aware | smoke_only | test | 79 | 0.0633 | 0.0200 | 203.4667 | 1.0000 | 0.0000 | 0.6033 | 0.3967 |
 | emanual | full_multi_route | heldout_test | test | 130 | 0.1487 | 0.0556 | 300.0000 | 1.0000 | 0.0000 | 0.0000 | 0.0000 |
 | emanual | gated_cost_aware | heldout_test | test | 130 | 0.1154 | 0.0808 | 214.0741 | 1.0000 | 0.0000 | 0.5370 | 0.4630 |
+| lotte_technology_search | full_multi_route | heldout_test | test | 20 | 1.0000 | 0.5000 | 150.0000 | 1.0000 | 0.0000 | 0.0000 | 0.0000 |
+| lotte_technology_search | gated_cost_aware | heldout_test | test | 20 | 0.9500 | 0.4500 | 129.5000 | 0.9500 | 0.0500 | 0.2000 | 0.7500 |
+| lotte_technology_search_100k | full_multi_route | heldout_test | test | 596 | 0.8725 | 0.3104 | 300.0000 | 1.0000 | 0.0000 | 0.0000 | 0.0000 |
+| lotte_technology_search_100k | gated_cost_aware | heldout_test | test | 596 | 0.8356 | 0.3356 | 224.1611 | 0.9530 | 0.0470 | 0.4211 | 0.5319 |
 | pubmedqa | full_multi_route | full | train | 1000 | 0.9940 | 0.8727 | 299.9400 | 1.0000 | 0.0000 | 0.0000 | 0.0000 |
 | pubmedqa | gated_cost_aware | full | train | 1000 | 0.9893 | 0.8667 | 152.3558 | 1.0000 | 0.0000 | 0.9227 | 0.0773 |
 | pubmedqa | full_multi_route | sample | train | 100 | 0.9800 | 0.3300 | 300.0000 | 1.0000 | 0.0000 | 0.0000 | 0.0000 |

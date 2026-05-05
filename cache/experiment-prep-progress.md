@@ -914,3 +914,76 @@ Smoke result:
     - PubMedQA 与 Banking77 full 能以低于 0.5 个百分点 R@10 损失换约 49%-52% source candidate cost 降低，支持“feedback 后可逐步降低 dense/BM25 深度和候选规模”的工程价值。
     - eManual 与 CUAD 不适合使用同一 gating 强度；这两个数据集应保持更强 full dense fallback，或等待 text-equivalent reward、dedup/reranker、领域 embedding 等修正后再做成本压缩。
     - 当前正式结果支持“先 dense-lite / BM25-lite，再 full dense fallback”的保守路线；直接把 dense 完全关闭为兜底通道仍需要更强的 policy confidence、语义漂移检测和 OOD guardrail。
+
+- 2026-05-05 Task 17 前置讨论与 LoTTE 小样本验证：
+  - 当前 large-scale 数据集定位：
+    - PubMedQA full 已完成：`1000` queries / `4348` corpus chunks，是 full 小规模 evidence anchor，不再作为 large-scale。
+    - Banking77 full 已完成：`3080` queries / `10003` corpus chunks，是 full 中规模 intent/domain routing proxy，不再作为 large-scale。
+    - CUAD corpus 大，但 GT 稀疏且结构弱，更适合作为 large-scale stress / limitation case，而不是主正向证明。
+    - LoTTE 更适合 Task17：垂类 domain-search，technology/search test corpus 约 `638509` passages，test queries 约 `596`，有 qrels，可同时验证垂类适配和大规模质量-成本 trade-off。
+  - 新增 `paper/experiments/scripts/preprocess_lotte.py`：
+    - 支持 `mteb/LoTTE` 的 `{domain}_{mode}-corpus`、`queries`、`qrels` 映射到统一 processed schema。
+    - 默认非 streaming 加载，避免 HF streaming 在当前环境退出时出现 Python finalization 错误；保留 `--streaming` 选项。
+    - 小样本为 GT-anchored：抽中 query 的所有正样本 corpus chunk 必须进入 corpus，再补 distractors。
+  - 新增/更新测试：
+    - `cache/test_preprocess_lotte.py`
+    - `cache/test_experiment_guardrails.py` 中新增 `lotte_* -> evidence_retrieval` 分类测试。
+  - 已生成 LoTTE technology/search 小样本：
+    - 命令：`.venv/bin/python paper/experiments/scripts/preprocess_lotte.py --domain technology --mode search --split test --max-queries 20 --max-corpus 5000`
+    - 输出：`lotte_technology_search_corpus.json` / `lotte_technology_search_queries.json`
+    - corpus chunks=`5018`，queries=`20`，GT refs=`56`
+    - validate：queries_with_gt=`20`，GT coverage=`100.00%`，missing refs=`0`
+  - LoTTE 小样本 baseline：
+    - BM25：Recall@10=`0.9000`，MRR@10=`0.8100`
+    - dense all-MiniLM-L6-v2：Recall@10=`0.9000`，MRR@10=`0.9000`
+    - hybrid RRF：Recall@10=`1.0000`，MRR@10=`0.9300`
+  - LoTTE 小样本 cost-aware LinUCB smoke：
+    - 配置：1 seed / 1 epoch / 16 clusters / 32 context dim / depth 50
+    - full_multi_route：Recall@10=`1.0000`，last_reward=`0.5000`，avg_cost=`150.00`，dense_rate=`1.0000`
+    - gated_cost_aware：Recall@10=`0.9500`，last_reward=`0.4500`，avg_cost=`129.50`，dense_rate=`0.9500`，primary_rate=`0.0500`
+  - 当前结论：
+    - LoTTE 小样本已经通过数据、GT、baseline 与 LinUCB 路由的 pipeline 验证。
+    - Task17 可以以 LoTTE 为主做 large-scale，重点不是证明无条件超过 dense，而是验证大规模垂类场景下的 self-evolving policy 与 quality-cost trade-off。
+    - 正式 Task17 应逐步扩大 query/corpus scope，并报告 Recall/MRR/nDCG、candidate cost、dense query rate、fallback rate、policy reward evolution、selected-cluster hit evolution。
+
+- 2026-05-05 Task 17 stage-1 LoTTE 100k large-scale smoke：
+  - 生成独立 large-scale processed dataset，避免覆盖小样本：
+    - 命令：`.venv/bin/python paper/experiments/scripts/preprocess_lotte.py --domain technology --mode search --split test --max-queries 596 --max-corpus 100000 --output-name lotte_technology_search_100k`
+    - 输出：`lotte_technology_search_100k_corpus.json` / `lotte_technology_search_100k_queries.json`
+    - corpus chunks=`101311`，queries=`596`，GT refs=`2045`
+    - validate：queries_with_gt=`596`，GT coverage=`100.00%`，missing refs=`0`
+  - 100k baseline：
+    - BM25：Recall@10=`0.7232`，MRR@10=`0.5545`，nDCG@10=`0.4768`，elapsed=`108.834s`
+    - dense all-MiniLM-L6-v2 CPU exact cosine：Recall@10=`0.8674`，MRR@10=`0.7081`，nDCG@10=`0.6487`，elapsed=`1640.076s`
+  - 100k cost-aware LinUCB smoke：
+    - 配置：1 seed / 1 epoch / 32 clusters / 64 context dim / depths 100
+    - full_multi_route：Recall@10=`0.8725`，MRR@10=`0.7089`，last_reward=`0.3104`，avg_cost=`300.00`，dense_rate=`1.0000`，elapsed=`1772.420s`
+    - gated_cost_aware：Recall@10=`0.8356`，MRR@10=`0.6888`，last_reward=`0.3356`，avg_cost=`224.16`，dense_rate=`0.9530`，primary_rate=`0.0470`，elapsed=`1905.491s`
+    - cost reduction=`25.28%`，Recall@10 delta vs full route=`-0.0369`
+  - 当前解释：
+    - 这是 Task17 的第一条 large-scale 正向信号：full multi-route LinUCB 在 100k corpus 上略高于 dense baseline（`0.8725` vs `0.8674`）。
+    - gated mode 已显示成本压缩潜力，但当前阈值/1-epoch 策略导致 R@10 损失约 `3.69` 个百分点，正式结论不能声称无损。
+    - dense baseline 单次 CPU exact cosine 已耗时约 27 分钟，LinUCB 也重复了 embedding 计算；正式 Task17 在扩展 seeds/epochs/full 638k 前，应先实现 embedding cache 或共享 large-scale runner。
+
+- 2026-05-05 Task 17 embedding cache：
+  - 新增 `paper/experiments/scripts/embedding_cache.py`：
+    - cache key 包含 dataset、model、record kind、record id 与 text fingerprint。
+    - 输出 `.npy` embedding 与 `.json` metadata，默认位置 `paper/experiments/data/embeddings/`。
+    - 数据或模型变化会自动生成新 cache，不会复用旧向量。
+  - 已接入：
+    - `dense_baseline.py`
+    - `hybrid_baseline.py`
+    - `linucb_cost_aware_routing.py`
+  - CLI 默认启用 cache，新增参数：
+    - `--embedding-cache-dir`
+    - `--no-embedding-cache`
+    - `--force-embedding-cache`
+  - 新增/更新测试：
+    - `cache/test_embedding_cache.py`
+    - `cache/test_dense_baseline.py`
+  - 已做 CLI smoke：
+    - LoTTE 小样本 5 query / 100 corpus，第一次 elapsed=`1.484s`，第二次 cache hit elapsed=`0.001s`。
+    - 第二次 metrics 标记：`embedding_cache_enabled=True`，`corpus_embedding_cache_hit=True`，`query_embedding_cache_hit=True`。
+  - 当前解释：
+    - embedding cache 已解决 dense/hybrid/Task16 cost-aware LinUCB 重复编码问题。
+    - shared large-scale runner 仍是下一步：它需要进一步复用 BM25 index、dense rankings、cluster labels 等非 embedding 中间产物。

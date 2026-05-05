@@ -14,8 +14,10 @@ paper/experiments/
 │   ├── preprocess_pubmedqa.py     # PubMedQA 预处理
 │   ├── preprocess_bioasq.py       # BioASQ 预处理
 │   ├── preprocess_banking77.py    # BANKING77 预处理
+│   ├── preprocess_lotte.py        # LoTTE domain-search 预处理
 │   ├── validate_processed.py      # 统一 processed 数据校验
 │   ├── retrieval_metrics.py       # Recall/MRR/nDCG 评估
+│   ├── embedding_cache.py         # reusable dense embedding cache
 │   ├── bm25_baseline.py           # BM25 静态检索 baseline
 │   ├── dense_baseline.py          # dense embedding 静态检索 baseline
 │   ├── hybrid_baseline.py         # BM25+dense RRF hybrid baseline
@@ -65,6 +67,11 @@ python paper/experiments/scripts/preprocess_bioasq.py
 
 # PubMedQA 如需包含 211K artificial 子集（用于大规模在线学习模拟）：
 python paper/experiments/scripts/preprocess_pubmedqa.py --include-artificial
+
+# LoTTE 小样本 / large-scale 垂类检索验证：
+.venv/bin/python paper/experiments/scripts/preprocess_lotte.py \
+  --domain technology --mode search --split test \
+  --max-queries 20 --max-corpus 5000
 ```
 
 ### Step 3: 验证
@@ -86,7 +93,9 @@ data/processed/
 ├── bioasq_corpus.json         # BioASQ 语料库
 ├── bioasq_queries.json        # BioASQ 查询 + GT
 ├── banking77_corpus.json      # BANKING77 语料库
-└── banking77_queries.json     # BANKING77 查询 + GT
+├── banking77_queries.json     # BANKING77 查询 + GT
+├── lotte_technology_search_corpus.json  # LoTTE technology/search 语料库
+└── lotte_technology_search_queries.json # LoTTE technology/search 查询 + GT
 ```
 
 ### Step 4: 静态检索 baseline
@@ -108,6 +117,20 @@ python paper/experiments/scripts/hybrid_baseline.py \
   --dataset pubmedqa,banking77,emanual \
   --model sentence-transformers/all-MiniLM-L6-v2 \
   --local-files-only --device cpu --batch-size 64 --top-k 10 --fusion-depth 100 --ks 1,5,10
+```
+
+Dense, hybrid, and cost-aware LinUCB scripts now enable reusable embedding cache
+by default. Cache files are written under `paper/experiments/data/embeddings/`
+and are ignored by git. The cache key includes dataset, model, record kind,
+record ids, and record text, so changing the model or processed data naturally
+creates a new cache.
+
+Useful cache flags:
+
+```bash
+--embedding-cache-dir paper/experiments/data/embeddings
+--no-embedding-cache
+--force-embedding-cache
 ```
 
 CUAD full corpus 当前为 675400 sentence chunks，CPU exact dense 全量成本较高。CUAD smoke/sample 必须使用 GT-anchored corpus sampling：先固定评估 query，把这些 query 的 GT chunks 放入候选 corpus，再补采样 distractors。当前 CUAD 结果应标为 smoke/sample，不应直接进入主表排名：
@@ -523,6 +546,49 @@ Outputs:
 - `paper/experiments/results/linucb_cost_{dataset}_{scope}_{split}_{corpus}_{query_count}_prequential_metrics.json`
 - `paper/experiments/results/linucb_cost_{dataset}_{scope}_{split}_{corpus}_{query_count}_prequential_rankings.json`
 
+### Step 13: LoTTE large-scale pre-validation
+
+Task 17 should use LoTTE as the primary large-scale vertical-domain evidence
+retrieval candidate. PubMedQA and Banking77 have already been fully evaluated
+in the current processed form, so they should remain full small/medium-scale
+anchors rather than large-scale evidence. CUAD remains useful as a sparse
+large-scale stress/limitation case, not as the main positive proof.
+
+LoTTE small validation (`technology/search`, `test`, 20 queries, 5000
+distractors plus GT anchors) passed the processed-data guardrail:
+
+| Dataset | Corpus | Queries | GT refs | BM25 R@10 | Dense R@10 | Hybrid R@10 | LinUCB full R@10 | LinUCB gated R@10 |
+|---------|--------|---------|---------|-----------|------------|-------------|------------------|-------------------|
+| LoTTE technology/search sample | 5018 | 20 | 56 | 0.9000 | 0.9000 | 1.0000 | 1.0000 | 0.9500 |
+
+The cost-aware LinUCB smoke used one seed and one epoch. It verifies pipeline
+compatibility, not final Task 17 significance. The full Task 17 run should scale
+LoTTE by increasing query count and corpus scope while reporting quality-cost
+trade-offs, dense query rate, fallback rate, and policy self-evolution metrics.
+
+Task 17 stage-1 large-scale smoke (`technology/search`, full 596 test queries,
+100k distractors plus GT anchors) also passed the processed-data guardrail:
+
+| Dataset | Corpus | Queries | GT refs | BM25 R@10 | Dense R@10 | LinUCB full R@10 | LinUCB gated R@10 | Gated cost reduction |
+|---------|--------|---------|---------|-----------|------------|------------------|-------------------|----------------------|
+| LoTTE technology/search 100k | 101311 | 596 | 2045 | 0.7232 | 0.8674 | 0.8725 | 0.8356 | 25.28% |
+
+The 100k dense baseline took `1640.076s` on CPU exact cosine. The cost-aware
+LinUCB smoke took `1772.420s` for full route and `1905.491s` for gated route
+before embedding cache was added, because the old scripts repeated embedding
+work across runs. Task 17 should now reuse the embedding cache before scaling to
+more seeds, epochs, or full 638k corpus; a shared large-scale runner remains a
+separate next step for avoiding repeated BM25 index and clustering work.
+
+Example smoke commands:
+
+```bash
+.venv/bin/python paper/experiments/scripts/validate_processed.py --dataset lotte_technology_search
+.venv/bin/python paper/experiments/scripts/bm25_baseline.py --dataset lotte_technology_search --query-split test --top-k 10 --ks 1,5,10
+.venv/bin/python paper/experiments/scripts/dense_baseline.py --dataset lotte_technology_search --query-split test --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10
+.venv/bin/python paper/experiments/scripts/hybrid_baseline.py --dataset lotte_technology_search --query-split test --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10
+```
+
 ---
 
 ## 统一数据格式
@@ -568,6 +634,7 @@ Outputs:
 | PubMedQA | 生物医学 | qiaojin/PubMedQA | ~1K-211K | ~1K-211K |
 | BioASQ | 生物医学 | bigbio/bioasq_task_b | ~40K snippets | ~4.7K |
 | BANKING77 | 银行意图 | PolyAI/banking77 | ~10K (train) | ~3K (test) |
+| LoTTE technology/search | 技术问答检索 | mteb/LoTTE | ~638K test corpus | ~596 test queries |
 
 ---
 
@@ -582,6 +649,7 @@ Outputs:
 | eManual | evidence retrieval | 可进入 evidence retrieval 主表 | RAGBench sentence-level chunks；必须显式记录 query split |
 | CUAD | evidence retrieval | 当前仅 smoke/sample | full corpus 较大；BM25/dense/hybrid 必须统一 sample 后才可横向比较 |
 | BANKING77 | intent retrieval proxy | 单独作为 intent/domain routing 子实验 | train utterances 是 corpus，test utterances 是 queries，同 intent train utterances 为 GT |
+| LoTTE | evidence retrieval | Task 17 large-scale 主候选 | 垂类 domain-search，适合验证大规模质量-成本 trade-off |
 
 ### Static retrieval metrics
 
@@ -644,4 +712,4 @@ Task 11-13 的在线学习实验必须先选定无泄漏协议：
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-04-29*
+*更新时间: 2026-05-05*

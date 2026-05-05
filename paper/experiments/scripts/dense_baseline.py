@@ -23,9 +23,14 @@ _GUARDRAILS_PATH = SCRIPT_DIR / "experiment_guardrails.py"
 _guardrails_spec = importlib.util.spec_from_file_location("experiment_guardrails", _GUARDRAILS_PATH)
 experiment_guardrails = importlib.util.module_from_spec(_guardrails_spec)
 _guardrails_spec.loader.exec_module(experiment_guardrails)
+_CACHE_PATH = SCRIPT_DIR / "embedding_cache.py"
+_cache_spec = importlib.util.spec_from_file_location("embedding_cache", _CACHE_PATH)
+embedding_cache = importlib.util.module_from_spec(_cache_spec)
+_cache_spec.loader.exec_module(embedding_cache)
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
+DEFAULT_EMBEDDING_CACHE_DIR = SCRIPT_DIR.parent / "data" / "embeddings"
 DEFAULT_DATASETS = ("pubmedqa", "banking77", "emanual", "cuad")
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -98,6 +103,45 @@ def encode_texts(encoder, texts: Sequence[str], *, batch_size: int) -> np.ndarra
     return normalize_embeddings(embeddings)
 
 
+def encode_records_with_optional_cache(
+    records: Sequence[Mapping],
+    encoder,
+    *,
+    dataset: str,
+    model_name: str,
+    record_kind: str,
+    batch_size: int,
+    embedding_cache_dir: Path | None = None,
+    use_embedding_cache: bool = False,
+    force_embedding_cache: bool = False,
+) -> tuple[np.ndarray, Dict[str, object]]:
+    """Encode records, optionally using the shared on-disk embedding cache."""
+    if use_embedding_cache:
+        if embedding_cache_dir is None:
+            raise ValueError("embedding_cache_dir is required when use_embedding_cache=True")
+        return embedding_cache.load_or_compute_embeddings(
+            records,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind=record_kind,
+            encoder=encoder,
+            batch_size=batch_size,
+            cache_dir=embedding_cache_dir,
+            force=force_embedding_cache,
+        )
+    embeddings = encode_texts(
+        encoder,
+        [str(record.get("text", "")) for record in records],
+        batch_size=batch_size,
+    )
+    return embeddings, {
+        "cache_hit": False,
+        "cache_enabled": False,
+        "record_count": len(records),
+        "record_kind": record_kind,
+    }
+
+
 def _slice_positive(value: int | None, name: str):
     if value is None:
         return None
@@ -132,17 +176,56 @@ def run_dense(
     if max_queries is not None:
         queries = queries[:max_queries]
 
-    chunk_ids = [_chunk_id(chunk) for chunk in corpus]
-    corpus_texts = [str(chunk.get("text", "")) for chunk in corpus]
-    corpus_embeddings = encode_texts(encoder, corpus_texts, batch_size=batch_size)
+    corpus_embeddings = encode_texts(
+        encoder,
+        [str(chunk.get("text", "")) for chunk in corpus],
+        batch_size=batch_size,
+    )
+    query_embeddings = encode_texts(
+        encoder,
+        [str(query.get("text", "")) for query in queries],
+        batch_size=batch_size,
+    )
 
+    return run_dense_with_embeddings(
+        corpus,
+        queries,
+        corpus_embeddings,
+        query_embeddings,
+        top_k=top_k,
+        ks=ks,
+        batch_size=batch_size,
+    )
+
+
+def run_dense_with_embeddings(
+    corpus: Sequence[Mapping],
+    queries: Sequence[Mapping],
+    corpus_embeddings: np.ndarray,
+    query_embeddings: np.ndarray,
+    *,
+    top_k: int = 10,
+    ks: Sequence[int] = (1, 5, 10),
+    batch_size: int = 64,
+) -> Dict[str, object]:
+    """Run exact cosine retrieval using precomputed normalized embeddings."""
+    if top_k <= 0:
+        raise ValueError(f"top_k must be positive, got {top_k}")
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be positive, got {batch_size}")
+    if not corpus:
+        raise ValueError("corpus must not be empty")
+    if len(corpus_embeddings) != len(corpus):
+        raise ValueError(f"corpus_embeddings rows={len(corpus_embeddings)} but corpus rows={len(corpus)}")
+    if len(query_embeddings) != len(queries):
+        raise ValueError(f"query_embeddings rows={len(query_embeddings)} but query rows={len(queries)}")
+
+    chunk_ids = [_chunk_id(chunk) for chunk in corpus]
     rankings: Dict[str, List[str]] = {}
     effective_top_k = min(top_k, len(corpus))
     for start in range(0, len(queries), batch_size):
         batch_queries = queries[start : start + batch_size]
-        query_texts = [str(query.get("text", "")) for query in batch_queries]
-        query_embeddings = encode_texts(encoder, query_texts, batch_size=batch_size)
-        scores_batch = query_embeddings @ corpus_embeddings.T
+        scores_batch = query_embeddings[start : start + len(batch_queries)] @ corpus_embeddings.T
         for query, scores in zip(batch_queries, scores_batch):
             qid = _query_id(query)
             top_indices = top_k_indices(scores, effective_top_k)
@@ -167,6 +250,9 @@ def run_dataset(
     query_split: str | None = None,
     corpus_sampling: str | None = None,
     sampling_seed: int = 13,
+    embedding_cache_dir: Path | None = None,
+    use_embedding_cache: bool = False,
+    force_embedding_cache: bool = False,
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
@@ -188,14 +274,49 @@ def run_dataset(
     gt_coverage = experiment_guardrails.assert_gt_corpus_coverage(selected_queries, selected_corpus)
 
     start = time.perf_counter()
-    result = run_dense(
-        selected_corpus,
-        selected_queries,
-        encoder,
-        top_k=top_k,
-        ks=ks,
-        batch_size=batch_size,
-    )
+    if use_embedding_cache:
+        corpus_embeddings, corpus_cache = encode_records_with_optional_cache(
+            selected_corpus,
+            encoder,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind="corpus",
+            batch_size=batch_size,
+            embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+            use_embedding_cache=True,
+            force_embedding_cache=force_embedding_cache,
+        )
+        query_embeddings, query_cache = encode_records_with_optional_cache(
+            selected_queries,
+            encoder,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind="queries",
+            batch_size=batch_size,
+            embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+            use_embedding_cache=True,
+            force_embedding_cache=force_embedding_cache,
+        )
+        result = run_dense_with_embeddings(
+            selected_corpus,
+            selected_queries,
+            corpus_embeddings,
+            query_embeddings,
+            top_k=top_k,
+            ks=ks,
+            batch_size=batch_size,
+        )
+    else:
+        corpus_cache = {"cache_hit": False, "cache_enabled": False}
+        query_cache = {"cache_hit": False, "cache_enabled": False}
+        result = run_dense(
+            selected_corpus,
+            selected_queries,
+            encoder,
+            top_k=top_k,
+            ks=ks,
+            batch_size=batch_size,
+        )
     elapsed_sec = time.perf_counter() - start
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -214,6 +335,12 @@ def run_dataset(
         "num_total_queries": len(queries),
         "max_queries": max_queries,
         "max_corpus": max_corpus,
+        "embedding_cache_enabled": bool(use_embedding_cache),
+        "embedding_cache_dir": str(embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR) if use_embedding_cache else "",
+        "corpus_embedding_cache_hit": corpus_cache.get("cache_hit", False),
+        "query_embedding_cache_hit": query_cache.get("cache_hit", False),
+        "corpus_embedding_cache_path": corpus_cache.get("embedding_path", ""),
+        "query_embedding_cache_path": query_cache.get("embedding_path", ""),
         "elapsed_sec": round(elapsed_sec, 3),
         **experiment_guardrails.build_run_metadata(
             dataset=dataset,
@@ -288,6 +415,9 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
         "comparable_group",
         "is_comparable",
         "metric_ks",
+        "embedding_cache_enabled",
+        "corpus_embedding_cache_hit",
+        "query_embedding_cache_hit",
         *metric_keys,
         "elapsed_sec",
         "notes",
@@ -323,6 +453,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--device", default=None, help="SentenceTransformer device, e.g. cpu/cuda")
     parser.add_argument("--local-files-only", action="store_true", help="Load model from local HF cache only")
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
+    parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
+    parser.add_argument("--force-embedding-cache", action="store_true", help="Recompute embeddings even when cache files exist")
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--ks", default="1,5,10", help="Comma-separated metric cutoffs")
     parser.add_argument("--max-queries", type=int, default=None, help="Evaluate only the first N queries")
@@ -358,6 +491,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             query_split=args.query_split,
             corpus_sampling=args.corpus_sampling,
             sampling_seed=args.sampling_seed,
+            embedding_cache_dir=args.embedding_cache_dir,
+            use_embedding_cache=not args.no_embedding_cache,
+            force_embedding_cache=args.force_embedding_cache,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)

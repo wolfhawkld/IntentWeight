@@ -53,6 +53,25 @@ class ExperimentGuardrailsTests(unittest.TestCase):
         self.assertEqual(metadata["gt_corpus_guardrail"], "pass")
         self.assertIn("CUAD smoke/sample", metadata["notes"])
 
+    def test_lotte_dataset_prefix_is_evidence_retrieval(self):
+        queries = [{"query_id": "q1", "split": "test", "ground_truth_chunk_ids": ["c1"]}]
+        corpus = [{"chunk_id": "c1"}]
+
+        metadata = experiment_guardrails.build_run_metadata(
+            dataset="lotte_technology_search",
+            queries=queries,
+            all_queries=queries,
+            corpus=corpus,
+            all_corpus=corpus,
+            requested_query_split="test",
+            top_k=10,
+            ks=(1, 5, 10),
+        )
+
+        self.assertEqual(metadata["task_type"], "evidence_retrieval")
+        self.assertEqual(metadata["scope"], "heldout_test")
+        self.assertIn("LoTTE domain search", metadata["notes"])
+
     def test_gt_anchored_corpus_sampling_keeps_selected_query_gt(self):
         corpus = [
             {"chunk_id": "d1"},
@@ -81,6 +100,16 @@ class ExperimentGuardrailsTests(unittest.TestCase):
         self.assertEqual(len(selected), 4)
         self.assertEqual(coverage["num_queries_with_gt_in_corpus"], 2)
         self.assertEqual(coverage["gt_corpus_guardrail"], "pass")
+
+    def test_auto_corpus_sampling_uses_gt_anchor_for_lotte_samples(self):
+        self.assertEqual(
+            experiment_guardrails.resolve_corpus_sampling("lotte_technology_search", 10000, "auto"),
+            "gt_anchored",
+        )
+        self.assertEqual(
+            experiment_guardrails.resolve_corpus_sampling("lotte_technology_search", None, "auto"),
+            "first",
+        )
 
     def test_gt_corpus_guardrail_fails_when_selected_corpus_excludes_gt(self):
         queries = [{"query_id": "q1", "ground_truth_chunk_ids": ["gt"]}]

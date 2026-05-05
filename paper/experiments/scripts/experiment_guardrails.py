@@ -28,6 +28,13 @@ METRIC_PREFIXES = ("recall@", "mrr@", "ndcg@")
 CORPUS_SAMPLING_STRATEGIES = {"first", "gt_anchored", "auto"}
 
 
+def task_type_for_dataset(dataset: str) -> str:
+    """Classify datasets for paper tables and comparability notes."""
+    if dataset.startswith("lotte_"):
+        return "evidence_retrieval"
+    return TASK_TYPES.get(dataset, "unknown")
+
+
 def load_json_list(path: Path) -> List[Mapping]:
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
@@ -106,7 +113,7 @@ def resolve_corpus_sampling(dataset: str, max_corpus: int | None, corpus_samplin
     if strategy not in CORPUS_SAMPLING_STRATEGIES:
         raise ValueError(f"Unknown corpus_sampling={strategy!r}; expected one of {sorted(CORPUS_SAMPLING_STRATEGIES)}")
     if strategy == "auto":
-        return "gt_anchored" if dataset == "cuad" and max_corpus is not None else "first"
+        return "gt_anchored" if (dataset == "cuad" or dataset.startswith("lotte_")) and max_corpus is not None else "first"
     return strategy
 
 
@@ -271,7 +278,7 @@ def build_run_metadata(
     coverage = gt_corpus_coverage(queries, corpus)
     row = {
         "dataset": dataset,
-        "task_type": TASK_TYPES.get(dataset, "unknown"),
+        "task_type": task_type_for_dataset(dataset),
         "query_split": actual_split,
         "query_splits": splits,
         "requested_query_split": requested_query_split or "all",
@@ -304,6 +311,8 @@ def notes_for_row(row: Mapping) -> str:
         notes.append("GT is abstract context section-level, not strict answer-supporting sentence evidence.")
     if dataset == "banking77":
         notes.append("Intent retrieval proxy/domain routing; do not mix with evidence retrieval conclusions.")
+    if dataset.startswith("lotte_"):
+        notes.append("LoTTE domain search evidence retrieval; suitable for large-scale vertical RAG validation.")
     if query_split_value == "mixed":
         notes.append("Mixed train/validation/test queries; keep out of held-out main table.")
     if scope in {"sample", "smoke_only"}:
@@ -339,7 +348,7 @@ def enrich_metrics_row(row: Mapping, data_dir: Path) -> Dict[str, object]:
         enriched.setdefault("query_splits", [])
         enriched.setdefault("query_scope", query_scope(str(enriched["query_split"]), _int_or_none(enriched.get("max_queries"))))
 
-    enriched.setdefault("task_type", TASK_TYPES.get(dataset, "unknown"))
+    enriched.setdefault("task_type", task_type_for_dataset(dataset))
     num_corpus = _int_or_none(enriched.get("num_corpus_chunks")) or 0
     total_corpus = _int_or_none(enriched.get("num_total_corpus_chunks")) or num_corpus
     max_corpus = _int_or_none(enriched.get("max_corpus"))

@@ -29,6 +29,7 @@ experiment_guardrails = _load_script_module("experiment_guardrails", SCRIPT_DIR 
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
+DEFAULT_EMBEDDING_CACHE_DIR = dense_baseline.DEFAULT_EMBEDDING_CACHE_DIR
 DEFAULT_DATASETS = ("pubmedqa", "banking77", "emanual", "cuad")
 DEFAULT_MODEL = dense_baseline.DEFAULT_MODEL
 
@@ -136,12 +137,49 @@ def run_hybrid(
     if max_queries is not None:
         queries = queries[:max_queries]
 
-    source_top_k = min(max(top_k, fusion_depth), len(corpus))
-    bm25_result = bm25_baseline.run_bm25(corpus, queries, top_k=source_top_k, ks=ks)
-    dense_result = dense_baseline.run_dense(
+    corpus_embeddings = dense_baseline.encode_texts(
+        encoder,
+        [str(chunk.get("text", "")) for chunk in corpus],
+        batch_size=batch_size,
+    )
+    query_embeddings = dense_baseline.encode_texts(
+        encoder,
+        [str(query.get("text", "")) for query in queries],
+        batch_size=batch_size,
+    )
+    return run_hybrid_with_dense_embeddings(
         corpus,
         queries,
-        encoder,
+        corpus_embeddings,
+        query_embeddings,
+        top_k=top_k,
+        ks=ks,
+        batch_size=batch_size,
+        rrf_k=rrf_k,
+        fusion_depth=fusion_depth,
+    )
+
+
+def run_hybrid_with_dense_embeddings(
+    corpus: Sequence[Mapping],
+    queries: Sequence[Mapping],
+    corpus_embeddings,
+    query_embeddings,
+    *,
+    top_k: int = 10,
+    ks: Sequence[int] = (1, 5, 10),
+    batch_size: int = 64,
+    rrf_k: int = 60,
+    fusion_depth: int = 100,
+) -> Dict[str, object]:
+    """Run hybrid retrieval using precomputed dense embeddings."""
+    source_top_k = min(max(top_k, fusion_depth), len(corpus))
+    bm25_result = bm25_baseline.run_bm25(corpus, queries, top_k=source_top_k, ks=ks)
+    dense_result = dense_baseline.run_dense_with_embeddings(
+        corpus,
+        queries,
+        corpus_embeddings,
+        query_embeddings,
         top_k=source_top_k,
         ks=ks,
         batch_size=batch_size,
@@ -180,6 +218,9 @@ def run_dataset(
     query_split: str | None = None,
     corpus_sampling: str | None = None,
     sampling_seed: int = 13,
+    embedding_cache_dir: Path | None = None,
+    use_embedding_cache: bool = False,
+    force_embedding_cache: bool = False,
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
@@ -201,16 +242,53 @@ def run_dataset(
     gt_coverage = experiment_guardrails.assert_gt_corpus_coverage(selected_queries, selected_corpus)
 
     start = time.perf_counter()
-    result = run_hybrid(
-        selected_corpus,
-        selected_queries,
-        encoder,
-        top_k=top_k,
-        ks=ks,
-        batch_size=batch_size,
-        rrf_k=rrf_k,
-        fusion_depth=fusion_depth,
-    )
+    if use_embedding_cache:
+        corpus_embeddings, corpus_cache = dense_baseline.encode_records_with_optional_cache(
+            selected_corpus,
+            encoder,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind="corpus",
+            batch_size=batch_size,
+            embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+            use_embedding_cache=True,
+            force_embedding_cache=force_embedding_cache,
+        )
+        query_embeddings, query_cache = dense_baseline.encode_records_with_optional_cache(
+            selected_queries,
+            encoder,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind="queries",
+            batch_size=batch_size,
+            embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+            use_embedding_cache=True,
+            force_embedding_cache=force_embedding_cache,
+        )
+        result = run_hybrid_with_dense_embeddings(
+            selected_corpus,
+            selected_queries,
+            corpus_embeddings,
+            query_embeddings,
+            top_k=top_k,
+            ks=ks,
+            batch_size=batch_size,
+            rrf_k=rrf_k,
+            fusion_depth=fusion_depth,
+        )
+    else:
+        corpus_cache = {"cache_hit": False, "cache_enabled": False}
+        query_cache = {"cache_hit": False, "cache_enabled": False}
+        result = run_hybrid(
+            selected_corpus,
+            selected_queries,
+            encoder,
+            top_k=top_k,
+            ks=ks,
+            batch_size=batch_size,
+            rrf_k=rrf_k,
+            fusion_depth=fusion_depth,
+        )
     elapsed_sec = time.perf_counter() - start
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -231,6 +309,12 @@ def run_dataset(
         "num_total_queries": len(queries),
         "max_queries": max_queries,
         "max_corpus": max_corpus,
+        "embedding_cache_enabled": bool(use_embedding_cache),
+        "embedding_cache_dir": str(embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR) if use_embedding_cache else "",
+        "corpus_embedding_cache_hit": corpus_cache.get("cache_hit", False),
+        "query_embedding_cache_hit": query_cache.get("cache_hit", False),
+        "corpus_embedding_cache_path": corpus_cache.get("embedding_path", ""),
+        "query_embedding_cache_path": query_cache.get("embedding_path", ""),
         "elapsed_sec": round(elapsed_sec, 3),
         **experiment_guardrails.build_run_metadata(
             dataset=dataset,
@@ -307,6 +391,9 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
         "metric_ks",
         "fusion_depth",
         "rrf_k",
+        "embedding_cache_enabled",
+        "corpus_embedding_cache_hit",
+        "query_embedding_cache_hit",
         *metric_keys,
         "elapsed_sec",
         "notes",
@@ -335,6 +422,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--device", default=None, help="SentenceTransformer device, e.g. cpu/cuda")
     parser.add_argument("--local-files-only", action="store_true", help="Load model from local HF cache only")
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
+    parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
+    parser.add_argument("--force-embedding-cache", action="store_true", help="Recompute embeddings even when cache files exist")
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--fusion-depth", type=int, default=100, help="Per-source ranking depth before RRF")
     parser.add_argument("--rrf-k", type=int, default=60, help="RRF rank constant")
@@ -374,6 +464,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             query_split=args.query_split,
             corpus_sampling=args.corpus_sampling,
             sampling_seed=args.sampling_seed,
+            embedding_cache_dir=args.embedding_cache_dir,
+            use_embedding_cache=not args.no_embedding_cache,
+            force_embedding_cache=args.force_embedding_cache,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)

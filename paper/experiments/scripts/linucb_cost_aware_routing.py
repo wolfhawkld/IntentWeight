@@ -42,6 +42,7 @@ retrieval_metrics = linucb_soft.retrieval_metrics
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
+DEFAULT_EMBEDDING_CACHE_DIR = dense_baseline.DEFAULT_EMBEDDING_CACHE_DIR
 DEFAULT_DATASETS = global_linucb.DEFAULT_DATASETS
 DEFAULT_MODEL = global_linucb.DEFAULT_MODEL
 ROUTING_MODES = ("full_multi_route", "gated_cost_aware")
@@ -641,6 +642,9 @@ def run_dataset(
     query_split: str | None = None,
     corpus_sampling: str | None = None,
     sampling_seed: int = 13,
+    embedding_cache_dir: Path | None = None,
+    use_embedding_cache: bool = False,
+    force_embedding_cache: bool = False,
 ) -> List[Dict[str, object]]:
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
@@ -673,15 +677,27 @@ def run_dataset(
     artifact_slug = build_artifact_slug(dataset, run_metadata)
 
     start = time.perf_counter()
-    corpus_embeddings = dense_baseline.encode_texts(
+    corpus_embeddings, corpus_cache = dense_baseline.encode_records_with_optional_cache(
+        corpus,
         encoder,
-        [str(chunk.get("text", "")) for chunk in corpus],
+        dataset=dataset,
+        model_name=model_name,
+        record_kind="corpus",
         batch_size=batch_size,
+        embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+        use_embedding_cache=use_embedding_cache,
+        force_embedding_cache=force_embedding_cache,
     )
-    query_embeddings = dense_baseline.encode_texts(
+    query_embeddings, query_cache = dense_baseline.encode_records_with_optional_cache(
+        queries,
         encoder,
-        [str(query.get("text", "")) for query in queries],
+        dataset=dataset,
+        model_name=model_name,
+        record_kind="queries",
         batch_size=batch_size,
+        embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+        use_embedding_cache=use_embedding_cache,
+        force_embedding_cache=force_embedding_cache,
     )
 
     rows: List[Dict[str, object]] = []
@@ -798,6 +814,12 @@ def run_dataset(
             "num_total_queries": len(queries_all),
             "max_queries": max_queries,
             "max_corpus": max_corpus,
+            "embedding_cache_enabled": bool(use_embedding_cache),
+            "embedding_cache_dir": str(embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR) if use_embedding_cache else "",
+            "corpus_embedding_cache_hit": corpus_cache.get("cache_hit", False),
+            "query_embedding_cache_hit": query_cache.get("cache_hit", False),
+            "corpus_embedding_cache_path": corpus_cache.get("embedding_path", ""),
+            "query_embedding_cache_path": query_cache.get("embedding_path", ""),
             "artifact_slug": artifact_slug,
             "elapsed_sec": round(elapsed_sec, 3),
             **run_metadata,
@@ -889,6 +911,9 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "mid_confidence_threshold",
         "drift_threshold",
         "confidence_feedback_floor",
+        "embedding_cache_enabled",
+        "corpus_embedding_cache_hit",
+        "query_embedding_cache_hit",
     ]
     preferred_set = set(preferred) | {"elapsed_sec", "notes"}
     metric_keys = sorted({
@@ -982,6 +1007,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--device", default=None)
     parser.add_argument("--local-files-only", action="store_true")
+    parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
+    parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
+    parser.add_argument("--force-embedding-cache", action="store_true", help="Recompute embeddings even when cache files exist")
     parser.add_argument("--routing-modes", default="full_multi_route,gated_cost_aware")
     parser.add_argument("--feedback-mode", default="trust_weighted", choices=FEEDBACK_MODES)
     parser.add_argument("--batch-size", type=int, default=64)
@@ -1099,6 +1127,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             query_split=args.query_split,
             corpus_sampling=args.corpus_sampling,
             sampling_seed=args.sampling_seed,
+            embedding_cache_dir=args.embedding_cache_dir,
+            use_embedding_cache=not args.no_embedding_cache,
+            force_embedding_cache=args.force_embedding_cache,
         )
         all_rows.extend(rows)
         for row in rows:
