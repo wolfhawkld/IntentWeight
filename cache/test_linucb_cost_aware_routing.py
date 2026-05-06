@@ -184,12 +184,18 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                 low_accuracy=0.55,
                 window_size=1,
                 query_split="test",
+                artifact_cache_dir=tmpdir / "artifacts",
+                use_artifact_cache=True,
             )
             linucb_cost.update_summary(out_dir / "linucb_cost_summary.csv", rows)
             linucb_cost.write_markdown_table(out_dir / "linucb_cost_summary.csv", out_dir / "linucb_cost_tables.md")
 
             self.assertEqual([row["routing_mode"] for row in rows], ["full_multi_route", "gated_cost_aware"])
             self.assertIn("avg_source_candidate_cost_mean", rows[0])
+            self.assertTrue(rows[0]["artifact_cache_enabled"])
+            self.assertFalse(rows[0]["dense_ranking_cache_hit"])
+            self.assertFalse(rows[0]["bm25_ranking_cache_hit"])
+            self.assertEqual(rows[0]["context_cluster_cache_hits"], [False])
             artifact_slug = rows[0]["artifact_slug"]
             self.assertTrue((out_dir / f"linucb_cost_{artifact_slug}_prequential_metrics.json").exists())
             self.assertTrue((out_dir / f"linucb_cost_{artifact_slug}_prequential_rankings.json").exists())

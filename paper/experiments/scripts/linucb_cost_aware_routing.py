@@ -39,10 +39,12 @@ bm25_baseline = linucb_soft.bm25_baseline
 dense_baseline = linucb_soft.dense_baseline
 experiment_guardrails = linucb_soft.experiment_guardrails
 retrieval_metrics = linucb_soft.retrieval_metrics
+large_scale_artifacts = _load_script_module("large_scale_artifacts", SCRIPT_DIR / "large_scale_artifacts.py")
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
 DEFAULT_EMBEDDING_CACHE_DIR = dense_baseline.DEFAULT_EMBEDDING_CACHE_DIR
+DEFAULT_ARTIFACT_CACHE_DIR = large_scale_artifacts.DEFAULT_ARTIFACT_CACHE_DIR
 DEFAULT_DATASETS = global_linucb.DEFAULT_DATASETS
 DEFAULT_MODEL = global_linucb.DEFAULT_MODEL
 ROUTING_MODES = ("full_multi_route", "gated_cost_aware")
@@ -296,6 +298,9 @@ def run_prequential_seed(
     high_accuracy: float,
     low_accuracy: float,
     window_size: int,
+    shared_context_artifacts: Mapping[str, np.ndarray] | None = None,
+    dense_rankings_by_qid: Mapping[str, Sequence[str]] | None = None,
+    bm25_rankings_by_qid: Mapping[str, Sequence[str]] | None = None,
 ) -> Dict[str, object]:
     if routing_mode not in ROUTING_MODES:
         raise ValueError(f"Unsupported routing_mode: {routing_mode}")
@@ -306,17 +311,23 @@ def run_prequential_seed(
     if min(top_k, dense_depth, bm25_depth, cluster_depth) <= 0:
         raise ValueError("top_k and full source depths must be positive")
 
-    _, corpus_context, query_context = global_linucb.fit_context_projection(
-        corpus_embeddings,
-        query_embeddings,
-        context_dim,
-    )
-    corpus_context = global_linucb.l2_normalize(corpus_context)
-    query_context = global_linucb.l2_normalize(query_context)
-
-    arm_labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
-    n_effective_arms = int(np.max(arm_labels)) + 1
-    centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
+    if shared_context_artifacts is not None:
+        corpus_context = np.asarray(shared_context_artifacts["corpus_context"], dtype=np.float32)
+        query_context = np.asarray(shared_context_artifacts["query_context"], dtype=np.float32)
+        arm_labels = np.asarray(shared_context_artifacts["arm_labels"], dtype=np.int32)
+        centroids = np.asarray(shared_context_artifacts["centroids"], dtype=np.float32)
+        n_effective_arms = int(len(centroids))
+    else:
+        _, corpus_context, query_context = global_linucb.fit_context_projection(
+            corpus_embeddings,
+            query_embeddings,
+            context_dim,
+        )
+        corpus_context = global_linucb.l2_normalize(corpus_context)
+        query_context = global_linucb.l2_normalize(query_context)
+        arm_labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
+        n_effective_arms = int(np.max(arm_labels)) + 1
+        centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
     policy = global_linucb.GlobalLinUCBPolicy(
         n_arms=n_effective_arms,
         context_dim=query_context.shape[1],
@@ -329,8 +340,10 @@ def run_prequential_seed(
     rng = np.random.default_rng(seed)
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
     arm_labels_by_chunk = {chunk_id: int(label) for chunk_id, label in zip(chunk_ids, arm_labels)}
-    tokenized_corpus = [bm25_baseline.tokenize(str(chunk.get("text", ""))) for chunk in corpus]
-    bm25 = bm25_baseline.SparseBM25(tokenized_corpus)
+    bm25 = None
+    if bm25_rankings_by_qid is None:
+        tokenized_corpus = [bm25_baseline.tokenize(str(chunk.get("text", ""))) for chunk in corpus]
+        bm25 = bm25_baseline.SparseBM25(tokenized_corpus)
 
     rankings: Dict[str, List[str]] = {}
     feedback_contexts: List[np.ndarray] = []
@@ -415,18 +428,24 @@ def run_prequential_seed(
             )
             route_counts[decision.route] += 1
 
-            dense_ranking = linucb_soft.top_dense_ranking(
-                query_embeddings[query_idx],
-                corpus_embeddings,
-                chunk_ids,
-                depth=decision.dense_depth,
-            )
-            bm25_ranking = linucb_soft.top_bm25_ranking(
-                str(query.get("text", "")),
-                bm25,
-                chunk_ids,
-                depth=decision.bm25_depth,
-            )
+            if dense_rankings_by_qid is not None:
+                dense_ranking = [str(chunk_id) for chunk_id in dense_rankings_by_qid.get(qid, [])[: decision.dense_depth]]
+            else:
+                dense_ranking = linucb_soft.top_dense_ranking(
+                    query_embeddings[query_idx],
+                    corpus_embeddings,
+                    chunk_ids,
+                    depth=decision.dense_depth,
+                )
+            if bm25_rankings_by_qid is not None:
+                bm25_ranking = [str(chunk_id) for chunk_id in bm25_rankings_by_qid.get(qid, [])[: decision.bm25_depth]]
+            else:
+                bm25_ranking = linucb_soft.top_bm25_ranking(
+                    str(query.get("text", "")),
+                    bm25,
+                    chunk_ids,
+                    depth=decision.bm25_depth,
+                )
             cluster_ranking = global_linucb.retrieve_from_arms(
                 query_embeddings[query_idx],
                 corpus_embeddings,
@@ -645,6 +664,9 @@ def run_dataset(
     embedding_cache_dir: Path | None = None,
     use_embedding_cache: bool = False,
     force_embedding_cache: bool = False,
+    artifact_cache_dir: Path | None = None,
+    use_artifact_cache: bool = False,
+    force_artifact_cache: bool = False,
 ) -> List[Dict[str, object]]:
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
@@ -700,6 +722,53 @@ def run_dataset(
         force_embedding_cache=force_embedding_cache,
     )
 
+    max_dense_artifact_depth = max(dense_depth, dense_lite_depth)
+    max_bm25_artifact_depth = max(bm25_depth, bm25_lite_depth)
+    artifact_dir = artifact_cache_dir or DEFAULT_ARTIFACT_CACHE_DIR
+    dense_rankings_by_qid = None
+    bm25_rankings_by_qid = None
+    dense_ranking_cache: Dict[str, object] = {"cache_hit": False, "cache_enabled": False}
+    bm25_ranking_cache: Dict[str, object] = {"cache_hit": False, "cache_enabled": False}
+    context_cache_by_seed: Dict[int, Dict[str, object]] = {}
+    context_artifacts_by_seed: Dict[int, Mapping[str, np.ndarray]] = {}
+    if use_artifact_cache:
+        dense_rankings_by_qid, dense_ranking_cache = large_scale_artifacts.load_or_compute_dense_rankings(
+            corpus,
+            queries,
+            corpus_embeddings,
+            query_embeddings,
+            dataset=dataset,
+            model_name=model_name,
+            depth=max_dense_artifact_depth,
+            cache_dir=artifact_dir,
+            batch_size=batch_size,
+            force=force_artifact_cache,
+        )
+        bm25_rankings_by_qid, bm25_ranking_cache = large_scale_artifacts.load_or_compute_bm25_rankings(
+            corpus,
+            queries,
+            dataset=dataset,
+            depth=max_bm25_artifact_depth,
+            cache_dir=artifact_dir,
+            force=force_artifact_cache,
+        )
+        for seed in seeds:
+            artifacts, context_cache = large_scale_artifacts.load_or_compute_context_clusters(
+                corpus,
+                queries,
+                corpus_embeddings,
+                query_embeddings,
+                dataset=dataset,
+                model_name=model_name,
+                context_dim=context_dim,
+                n_clusters=n_clusters,
+                seed=seed,
+                cache_dir=artifact_dir,
+                force=force_artifact_cache,
+            )
+            context_artifacts_by_seed[int(seed)] = artifacts
+            context_cache_by_seed[int(seed)] = context_cache
+
     rows: List[Dict[str, object]] = []
     all_rankings: Dict[str, Dict[str, Dict[str, List[str]]]] = {}
     for routing_mode in routing_modes:
@@ -752,6 +821,9 @@ def run_dataset(
                 high_accuracy=high_accuracy,
                 low_accuracy=low_accuracy,
                 window_size=window_size,
+                shared_context_artifacts=context_artifacts_by_seed.get(int(seed)),
+                dense_rankings_by_qid=dense_rankings_by_qid,
+                bm25_rankings_by_qid=bm25_rankings_by_qid,
             ))
         elapsed_sec = time.perf_counter() - start
         per_seed_metrics = [result["metrics"] for result in seed_results]
@@ -820,6 +892,20 @@ def run_dataset(
             "query_embedding_cache_hit": query_cache.get("cache_hit", False),
             "corpus_embedding_cache_path": corpus_cache.get("embedding_path", ""),
             "query_embedding_cache_path": query_cache.get("embedding_path", ""),
+            "artifact_cache_enabled": bool(use_artifact_cache),
+            "artifact_cache_dir": str(artifact_dir) if use_artifact_cache else "",
+            "dense_ranking_cache_hit": dense_ranking_cache.get("cache_hit", False),
+            "bm25_ranking_cache_hit": bm25_ranking_cache.get("cache_hit", False),
+            "context_cluster_cache_hits": [
+                bool(context_cache_by_seed.get(int(seed), {}).get("cache_hit", False))
+                for seed in seeds
+            ],
+            "dense_ranking_artifact_path": dense_ranking_cache.get("artifact_path", ""),
+            "bm25_ranking_artifact_path": bm25_ranking_cache.get("artifact_path", ""),
+            "context_cluster_artifact_paths": [
+                context_cache_by_seed.get(int(seed), {}).get("artifact_path", "")
+                for seed in seeds
+            ],
             "artifact_slug": artifact_slug,
             "elapsed_sec": round(elapsed_sec, 3),
             **run_metadata,
@@ -914,6 +1000,10 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "embedding_cache_enabled",
         "corpus_embedding_cache_hit",
         "query_embedding_cache_hit",
+        "artifact_cache_enabled",
+        "dense_ranking_cache_hit",
+        "bm25_ranking_cache_hit",
+        "context_cluster_cache_hits",
     ]
     preferred_set = set(preferred) | {"elapsed_sec", "notes"}
     metric_keys = sorted({
@@ -1010,6 +1100,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
     parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
     parser.add_argument("--force-embedding-cache", action="store_true", help="Recompute embeddings even when cache files exist")
+    parser.add_argument("--artifact-cache-dir", type=Path, default=DEFAULT_ARTIFACT_CACHE_DIR)
+    parser.add_argument("--no-artifact-cache", action="store_true", help="Disable reusable dense/BM25/context retrieval artifacts")
+    parser.add_argument("--force-artifact-cache", action="store_true", help="Recompute retrieval artifacts even when cache files exist")
     parser.add_argument("--routing-modes", default="full_multi_route,gated_cost_aware")
     parser.add_argument("--feedback-mode", default="trust_weighted", choices=FEEDBACK_MODES)
     parser.add_argument("--batch-size", type=int, default=64)
@@ -1130,6 +1223,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             embedding_cache_dir=args.embedding_cache_dir,
             use_embedding_cache=not args.no_embedding_cache,
             force_embedding_cache=args.force_embedding_cache,
+            artifact_cache_dir=args.artifact_cache_dir,
+            use_artifact_cache=not args.no_artifact_cache,
+            force_artifact_cache=args.force_artifact_cache,
         )
         all_rows.extend(rows)
         for row in rows:

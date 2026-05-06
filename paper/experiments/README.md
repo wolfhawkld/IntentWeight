@@ -18,6 +18,7 @@ paper/experiments/
 │   ├── validate_processed.py      # 统一 processed 数据校验
 │   ├── retrieval_metrics.py       # Recall/MRR/nDCG 评估
 │   ├── embedding_cache.py         # reusable dense embedding cache
+│   ├── large_scale_artifacts.py   # reusable dense/BM25/context artifacts
 │   ├── bm25_baseline.py           # BM25 静态检索 baseline
 │   ├── dense_baseline.py          # dense embedding 静态检索 baseline
 │   ├── hybrid_baseline.py         # BM25+dense RRF hybrid baseline
@@ -32,7 +33,8 @@ paper/experiments/
 ├── data/
 │   ├── raw/                       # 下载的原始数据 (git ignored)
 │   ├── processed/                 # 统一格式 (git ignored)
-│   └── embeddings/                # 预计算 embedding (git ignored)
+│   ├── embeddings/                # 预计算 embedding (git ignored)
+│   └── retrieval_artifacts/        # dense/BM25/context artifact cache (git ignored)
 ├── results/                       # baseline metrics/rankings/summary
 └── README.md
 ```
@@ -577,12 +579,15 @@ The static BM25/dense/hybrid comparison group is now complete and comparable:
 The 100k dense baseline took `1640.076s` on CPU exact cosine before reusable
 embedding cache was added. The original cost-aware LinUCB smoke took
 `1772.420s` for full route and `1905.491s` for gated route because it repeated
-embedding work. After cache integration, the same one-seed/one-epoch LoTTE 100k
-LinUCB run hits both corpus and query embedding cache: full route elapsed
-`134.640s`, gated route elapsed `266.344s`, with unchanged retrieval metrics.
-A shared large-scale runner remains a separate next step for avoiding repeated
-BM25 index, dense-ranking, and clustering work before scaling to more seeds,
-epochs, or the full 638k corpus.
+embedding work. After embedding-cache integration, the same one-seed/one-epoch
+LoTTE 100k LinUCB run hit both corpus and query embedding cache: full route
+elapsed `134.640s`, gated route elapsed `266.344s`, with unchanged retrieval
+metrics. Task 17 now also has a shared large-scale artifact cache for dense
+top-depth rankings, BM25 top-depth rankings, and PCA/context cluster artifacts.
+The first artifact-generating rerun elapsed `110.931s` / `117.796s` for
+full/gated route; the second artifact-cache-hit rerun elapsed `7.392s` /
+`14.080s`, again with unchanged retrieval metrics. This makes more seeds and
+epochs practical before attempting the full 638k corpus.
 
 Current status as of 2026-05-06:
 
@@ -599,6 +604,10 @@ Current status as of 2026-05-06:
 - LoTTE 100k cost-aware LinUCB has been rerun with embedding-cache hits:
   full route `R@10=0.8725`, elapsed `134.640s`; gated route `R@10=0.8356`,
   elapsed `266.344s`, average source candidate cost `224.16`.
+- Shared large-scale artifacts have been generated for LoTTE 100k under
+  `paper/experiments/data/retrieval_artifacts/` and are ignored by git. With
+  dense/BM25/context artifact hits, the same LoTTE 100k cost-aware rerun now
+  reports full route elapsed `7.392s` and gated route elapsed `14.080s`.
 
 Current LoTTE 100k manifold diagnostics:
 

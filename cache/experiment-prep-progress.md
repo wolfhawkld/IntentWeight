@@ -1038,3 +1038,23 @@ Smoke result:
     - 与 pre-cache run 相比，retrieval metrics 保持一致，说明 cache 没改变实验语义。
     - full route elapsed 从 `1772.420s` 降到 `134.640s`，gated route elapsed 从 `1905.491s` 降到 `266.344s`，证明 embedding 重算是此前主要工程瓶颈之一。
     - cached rerun 后仍有百秒级成本，下一步如果扩展 seeds/epochs/full corpus，应优先复用 BM25 index、dense rankings、cluster labels 等非 embedding 中间产物。
+
+- 2026-05-06 Task 17.4 shared large-scale runner / retrieval artifacts：
+  - 新增 `paper/experiments/scripts/large_scale_artifacts.py`：
+    - 统一缓存 dense top-depth rankings、BM25 top-depth rankings、PCA context + cluster labels/centroids。
+    - artifact fingerprint 覆盖 dataset、model、corpus/query id+text fingerprint、depth、context_dim、n_clusters、seed 与 artifact 版本。
+    - artifact 默认写入 `paper/experiments/data/retrieval_artifacts/`，该目录位于 git ignored data 下。
+  - `linucb_cost_aware_routing.py` 已接入：
+    - 新增 CLI：`--artifact-cache-dir`、`--no-artifact-cache`、`--force-artifact-cache`。
+    - CLI 默认启用 artifact cache；直接调用 `run_dataset` 默认关闭，避免小单测或外部调用意外写大缓存。
+    - metrics 新增：`artifact_cache_enabled`、`dense_ranking_cache_hit`、`bm25_ranking_cache_hit`、`context_cluster_cache_hits` 与 artifact path 字段。
+  - LoTTE 小样本真实 CLI smoke：
+    - 第一次生成 artifact：dense/BM25/context cache hit 均为 false。
+    - 第二次同参数 rerun：`dense_ranking_cache_hit=True`，`bm25_ranking_cache_hit=True`，`context_cluster_cache_hits=[True]`，embedding cache 也命中。
+  - LoTTE 100k shared artifact rerun：
+    - 第一次 artifact-generating rerun：metrics 不变；full_multi_route elapsed=`110.931s`，gated_cost_aware elapsed=`117.796s`。
+    - 第二次 artifact-cache-hit rerun：metrics 不变；full_multi_route elapsed=`7.392s`，gated_cost_aware elapsed=`14.080s`。
+    - 当前 metrics 标记：`embedding_cache_enabled=True`，`corpus_embedding_cache_hit=True`，`query_embedding_cache_hit=True`，`artifact_cache_enabled=True`，`dense_ranking_cache_hit=True`，`bm25_ranking_cache_hit=True`，`context_cluster_cache_hits=[True]`。
+  - 当前解释：
+    - shared large-scale runner 不改变检索语义，只消除重复 dense ranking、BM25 ranking、PCA/context 与 KMeans cluster 构造。
+    - Task17 后续可以更现实地扩展到 multiple seeds / epochs；full 638k corpus 仍需要谨慎，因为 artifact 体积和 BM25/index 构造成本会进一步上升。
