@@ -11,6 +11,8 @@ from pathlib import Path
 from typing import Dict, List, Mapping, Sequence
 
 import numpy as np
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.decomposition import PCA
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -25,8 +27,6 @@ def _load_script_module(name: str, path: Path):
 
 embedding_cache = _load_script_module("embedding_cache", SCRIPT_DIR / "embedding_cache.py")
 bm25_baseline = _load_script_module("bm25_baseline", SCRIPT_DIR / "bm25_baseline.py")
-global_linucb = _load_script_module("linucb_online_baseline", SCRIPT_DIR / "linucb_online_baseline.py")
-manifold_linucb = _load_script_module("linucb_manifold_local", SCRIPT_DIR / "linucb_manifold_local.py")
 
 DEFAULT_ARTIFACT_CACHE_DIR = SCRIPT_DIR.parent / "data" / "retrieval_artifacts"
 ARTIFACT_VERSION = "large_scale_artifacts_v1"
@@ -54,6 +54,51 @@ def _stable_top_k_indices(scores: Sequence[float], k: int) -> List[int]:
     indices = np.arange(scores_array.size)
     ordered = np.lexsort((indices, -scores_array))
     return ordered[:k].astype(int).tolist()
+
+
+def _safe_context_dim(requested: int, n_samples: int, embedding_dim: int) -> int:
+    if requested <= 0:
+        raise ValueError(f"context_dim must be positive, got {requested}")
+    return max(1, min(requested, n_samples, embedding_dim))
+
+
+def _l2_normalize(array: np.ndarray) -> np.ndarray:
+    norms = np.linalg.norm(array, axis=1, keepdims=True)
+    return np.divide(array, norms, out=np.zeros_like(array), where=norms > 0)
+
+
+def _fit_context_projection(corpus_embeddings: np.ndarray, query_embeddings: np.ndarray, context_dim: int):
+    effective_dim = _safe_context_dim(context_dim, len(corpus_embeddings), corpus_embeddings.shape[1])
+    if effective_dim == corpus_embeddings.shape[1]:
+        return None, corpus_embeddings.astype(np.float32), query_embeddings.astype(np.float32)
+    pca = PCA(n_components=effective_dim, random_state=0)
+    corpus_context = pca.fit_transform(corpus_embeddings).astype(np.float32)
+    query_context = pca.transform(query_embeddings).astype(np.float32)
+    return pca, corpus_context, query_context
+
+
+def _cluster_corpus(corpus_context: np.ndarray, *, n_clusters: int, seed: int) -> np.ndarray:
+    if n_clusters <= 0:
+        raise ValueError(f"n_clusters must be positive, got {n_clusters}")
+    effective_clusters = min(n_clusters, len(corpus_context))
+    if effective_clusters == 1:
+        return np.zeros(len(corpus_context), dtype=np.int32)
+    clusterer = MiniBatchKMeans(
+        n_clusters=effective_clusters,
+        random_state=seed,
+        n_init=10,
+        batch_size=min(2048, max(128, len(corpus_context))),
+    )
+    return clusterer.fit_predict(corpus_context).astype(np.int32)
+
+
+def _arm_centroids(corpus_context: np.ndarray, arm_labels: np.ndarray, n_arms: int) -> np.ndarray:
+    centroids = np.zeros((n_arms, corpus_context.shape[1]), dtype=np.float32)
+    for arm in range(n_arms):
+        member_indices = np.flatnonzero(arm_labels == arm)
+        if member_indices.size:
+            centroids[arm] = np.mean(corpus_context[member_indices], axis=0)
+    return _l2_normalize(centroids)
 
 
 def _payload_fingerprint(payload: Mapping[str, object]) -> str:
@@ -325,16 +370,16 @@ def load_or_compute_context_clusters(
             return arrays, info
 
     start = time.perf_counter()
-    _, corpus_context, query_context = global_linucb.fit_context_projection(
+    _, corpus_context, query_context = _fit_context_projection(
         corpus_embeddings,
         query_embeddings,
         context_dim,
     )
-    corpus_context = global_linucb.l2_normalize(corpus_context).astype(np.float32, copy=False)
-    query_context = global_linucb.l2_normalize(query_context).astype(np.float32, copy=False)
-    arm_labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
+    corpus_context = _l2_normalize(corpus_context).astype(np.float32, copy=False)
+    query_context = _l2_normalize(query_context).astype(np.float32, copy=False)
+    arm_labels = _cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
     n_effective_arms = int(np.max(arm_labels)) + 1 if len(arm_labels) else 0
-    centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
+    centroids = _arm_centroids(corpus_context, arm_labels, n_effective_arms)
     elapsed_sec = time.perf_counter() - start
 
     cache_dir = Path(cache_dir)

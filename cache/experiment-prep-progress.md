@@ -234,6 +234,11 @@ PY
 - [x] Task 14: 流形假设诊断与 eManual 失败定位
 - [x] Task 15: Trust-weighted feedback LinUCB
 - [x] Task 16: Cost-aware soft routing
+- [x] Task 17: LoTTE large-scale pre-validation / 100k stage-1 smoke
+- [x] Task 17.1: LoTTE 100k hybrid baseline with embedding cache
+- [x] Task 17.2: LoTTE 100k manifold geometry diagnostics
+- [x] Task 17.3: LoTTE 100k cached cost-aware LinUCB rerun
+- [x] Task 17.4: Shared large-scale retrieval artifacts
 - [x] Task 17.5: Shared artifact cache 接入 dense_baseline / hybrid_baseline / manifold_diagnostics
 
 ## 后续任务规划
@@ -1088,9 +1093,15 @@ Smoke result:
     - `py_compile` 语法检查通过：`dense_baseline.py`、`hybrid_baseline.py`、`manifold_diagnostics.py`、`test_artifact_integration.py`。
     - AST parse 通过。
     - CLI 参数命名与 `linucb_cost_aware_routing.py` 一致。
-  - 待用户在完整依赖环境中运行验证：
-    - `.venv/bin/python -m unittest cache/test_artifact_integration.py`
-    - `.venv/bin/python -m unittest cache/test_dense_baseline.py cache/test_hybrid_baseline.py cache/test_manifold_diagnostics.py cache/test_large_scale_artifacts.py`
+  - 本地复测与修正：
+    - 初次运行发现 `dense_baseline -> large_scale_artifacts -> linucb_online_baseline -> dense_baseline` 循环导入；已将 `large_scale_artifacts.py` 改为自包含 PCA / MiniBatchKMeans / centroid 逻辑，避免反向依赖 LinUCB 脚本。
+    - 修正 `cache/test_artifact_integration.py` 的 fake encoder，使其兼容 `SentenceTransformer.encode()` 的 `convert_to_numpy` 等 keyword 参数。
+    - `.venv/bin/python -m unittest cache/test_artifact_integration.py cache/test_dense_baseline.py cache/test_hybrid_baseline.py cache/test_manifold_diagnostics.py cache/test_large_scale_artifacts.py` 通过：23 tests OK。
+    - `py_compile` 与 `git diff --check` 通过。
+  - LoTTE 100k 真实 smoke（输出写入 `/tmp/intentweight_task175_smoke/results`，不污染正式 results）：
+    - dense artifact-hit rerun：Recall@10=`0.8674`，MRR@10=`0.7081`，nDCG@10=`0.6487`，elapsed=`0.433s`，`dense_ranking_cache_hit=True`。
+    - hybrid artifact-hit rerun：Recall@10=`0.8624`，MRR@10=`0.6973`，nDCG@10=`0.6216`，elapsed=`0.541s`，`dense_ranking_cache_hit=True`，`bm25_ranking_cache_hit=True`。
+    - manifold artifact-hit rerun：`nearest_cluster_hit@3=0.8809`，`context_gt_recall@10=0.7836`，elapsed=`6.668s`，`context_cluster_cache_hit=True`。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

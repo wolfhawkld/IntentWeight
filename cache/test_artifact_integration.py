@@ -51,7 +51,7 @@ def _make_toy_dataset(tmp_dir: Path):
 class _FakeEncoder:
     """Deterministic encoder that returns fixed embeddings based on text hash."""
 
-    def encode(self, texts, batch_size=64, normalize_embeddings=False):
+    def encode(self, texts, batch_size=64, normalize_embeddings=False, **kwargs):
         embeddings = []
         for text in texts:
             seed = sum(ord(c) for c in text) % 1000
