@@ -39,12 +39,14 @@ def _load_script_module(name: str, path: Path):
 
 
 global_linucb = _load_script_module("linucb_online_baseline", SCRIPT_DIR / "linucb_online_baseline.py")
+large_scale_artifacts = _load_script_module("large_scale_artifacts", SCRIPT_DIR / "large_scale_artifacts.py")
 dense_baseline = global_linucb.dense_baseline
 experiment_guardrails = global_linucb.experiment_guardrails
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
 DEFAULT_EMBEDDING_CACHE_DIR = dense_baseline.DEFAULT_EMBEDDING_CACHE_DIR
+DEFAULT_ARTIFACT_CACHE_DIR = large_scale_artifacts.DEFAULT_ARTIFACT_CACHE_DIR
 DEFAULT_DATASETS = global_linucb.DEFAULT_DATASETS
 DEFAULT_MODEL = global_linucb.DEFAULT_MODEL
 
@@ -346,11 +348,17 @@ def run_diagnostics(
     neighbor_k: int,
     cluster_hit_ks: Sequence[int],
     recall_ks: Sequence[int],
+    shared_context_artifacts: Mapping[str, np.ndarray] | None = None,
 ) -> Dict[str, object]:
-    _, corpus_context, query_context = global_linucb.fit_context_projection(corpus_embeddings, query_embeddings, context_dim)
-    corpus_context = global_linucb.l2_normalize(corpus_context)
-    query_context = global_linucb.l2_normalize(query_context)
-    labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
+    if shared_context_artifacts is not None:
+        corpus_context = np.asarray(shared_context_artifacts["corpus_context"], dtype=np.float32)
+        query_context = np.asarray(shared_context_artifacts["query_context"], dtype=np.float32)
+        labels = np.asarray(shared_context_artifacts["arm_labels"], dtype=np.int32)
+    else:
+        _, corpus_context, query_context = global_linucb.fit_context_projection(corpus_embeddings, query_embeddings, context_dim)
+        corpus_context = global_linucb.l2_normalize(corpus_context)
+        query_context = global_linucb.l2_normalize(query_context)
+        labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
     corpus_labels = [infer_label(chunk, dataset) for chunk in corpus]
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
 
@@ -404,6 +412,9 @@ def run_dataset(
     embedding_cache_dir: Path | None = None,
     use_embedding_cache: bool = False,
     force_embedding_cache: bool = False,
+    artifact_cache_dir: Path | None = None,
+    use_artifact_cache: bool = False,
+    force_artifact_cache: bool = False,
 ) -> Dict[str, object]:
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
@@ -417,6 +428,9 @@ def run_dataset(
         random_seed=sampling_seed,
     )
     gt_coverage = experiment_guardrails.assert_gt_corpus_coverage(queries, corpus)
+
+    artifact_dir = artifact_cache_dir or DEFAULT_ARTIFACT_CACHE_DIR
+    context_artifact_info: Dict[str, object] = {"cache_hit": False}
 
     start = time.perf_counter()
     corpus_embeddings, corpus_cache = dense_baseline.encode_records_with_optional_cache(
@@ -441,6 +455,23 @@ def run_dataset(
         use_embedding_cache=use_embedding_cache,
         force_embedding_cache=force_embedding_cache,
     )
+
+    shared_context_artifacts = None
+    if use_artifact_cache:
+        shared_context_artifacts, context_artifact_info = large_scale_artifacts.load_or_compute_context_clusters(
+            corpus,
+            queries,
+            corpus_embeddings,
+            query_embeddings,
+            dataset=dataset,
+            model_name=model_name,
+            context_dim=context_dim,
+            n_clusters=n_clusters,
+            seed=seed,
+            cache_dir=artifact_dir,
+            force=force_artifact_cache,
+        )
+
     diagnostics = run_diagnostics(
         corpus,
         queries,
@@ -454,6 +485,7 @@ def run_dataset(
         neighbor_k=neighbor_k,
         cluster_hit_ks=cluster_hit_ks,
         recall_ks=recall_ks,
+        shared_context_artifacts=shared_context_artifacts,
     )
     elapsed_sec = time.perf_counter() - start
 
@@ -480,6 +512,10 @@ def run_dataset(
         "query_embedding_cache_hit": query_cache.get("cache_hit", False),
         "corpus_embedding_cache_path": corpus_cache.get("embedding_path", ""),
         "query_embedding_cache_path": query_cache.get("embedding_path", ""),
+        "artifact_cache_enabled": bool(use_artifact_cache),
+        "artifact_cache_dir": str(artifact_dir) if use_artifact_cache else "",
+        "context_cluster_cache_hit": context_artifact_info.get("cache_hit", False),
+        "context_cluster_artifact_path": context_artifact_info.get("artifact_path", ""),
         "elapsed_sec": round(elapsed_sec, 3),
         **experiment_guardrails.build_run_metadata(
             dataset=dataset,
@@ -598,6 +634,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
     parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
     parser.add_argument("--force-embedding-cache", action="store_true", help="Recompute embeddings even when cache files exist")
+    parser.add_argument("--artifact-cache-dir", type=Path, default=DEFAULT_ARTIFACT_CACHE_DIR)
+    parser.add_argument("--no-artifact-cache", action="store_true", help="Disable reusable context/cluster artifacts")
+    parser.add_argument("--force-artifact-cache", action="store_true", help="Recompute context/cluster artifacts even when cache files exist")
     parser.add_argument("--n-clusters", type=int, default=32)
     parser.add_argument("--context-dim", type=int, default=64)
     parser.add_argument("--seed", type=int, default=13)
@@ -647,6 +686,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             embedding_cache_dir=args.embedding_cache_dir,
             use_embedding_cache=not args.no_embedding_cache,
             force_embedding_cache=args.force_embedding_cache,
+            artifact_cache_dir=args.artifact_cache_dir,
+            use_artifact_cache=not args.no_artifact_cache,
+            force_artifact_cache=args.force_artifact_cache,
         )
         rows.append(metrics)
         print(

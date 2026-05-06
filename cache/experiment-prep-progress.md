@@ -234,6 +234,7 @@ PY
 - [x] Task 14: 流形假设诊断与 eManual 失败定位
 - [x] Task 15: Trust-weighted feedback LinUCB
 - [x] Task 16: Cost-aware soft routing
+- [x] Task 17.5: Shared artifact cache 接入 dense_baseline / hybrid_baseline / manifold_diagnostics
 
 ## 后续任务规划
 
@@ -1058,6 +1059,38 @@ Smoke result:
   - 当前解释：
     - shared large-scale runner 不改变检索语义，只消除重复 dense ranking、BM25 ranking、PCA/context 与 KMeans cluster 构造。
     - Task17 后续可以更现实地扩展到 multiple seeds / epochs；full 638k corpus 仍需要谨慎，因为 artifact 体积和 BM25/index 构造成本会进一步上升。
+
+- 2026-05-06 Task 17.5 shared artifact integration into baseline & diagnostics scripts：
+  - 已接入 `dense_baseline.py`：
+    - 新增 `large_scale_artifacts` 模块导入。
+    - `run_dataset()` 新增 `artifact_cache_dir`、`use_artifact_cache`、`force_artifact_cache` 参数。
+    - 当 `use_embedding_cache=True` 且 `use_artifact_cache=True` 时，通过 `load_or_compute_dense_rankings(depth=max(top_k, 100))` 获取缓存的 dense rankings，截断到 `top_k` 后评估。
+    - metrics 输出新增 `artifact_cache_enabled`、`dense_ranking_cache_hit`、`dense_ranking_artifact_path`。
+    - CLI 新增 `--artifact-cache-dir`、`--no-artifact-cache`、`--force-artifact-cache`。
+  - 已接入 `hybrid_baseline.py`：
+    - 新增 `large_scale_artifacts` 模块导入。
+    - `run_dataset()` 新增三个 artifact 参数。
+    - 当 artifact cache 启用时，同时加载 dense rankings 和 BM25 rankings，截断到 `fusion_depth` 后做 RRF 融合。
+    - metrics 输出新增 `artifact_cache_enabled`、`dense_ranking_cache_hit`、`bm25_ranking_cache_hit`、`dense_ranking_artifact_path`、`bm25_ranking_artifact_path`。
+    - CLI 新增三个 artifact 参数。
+  - 已接入 `manifold_diagnostics.py`：
+    - 新增 `large_scale_artifacts` 模块导入。
+    - `run_dataset()` 新增三个 artifact 参数。
+    - 当 artifact cache 启用时，通过 `load_or_compute_context_clusters()` 获取缓存的 PCA context、cluster labels、centroids。
+    - `run_diagnostics()` 新增 `shared_context_artifacts` 可选参数，有值时跳过本地 PCA + KMeans 计算。
+    - metrics 输出新增 `artifact_cache_enabled`、`context_cluster_cache_hit`、`context_cluster_artifact_path`。
+    - CLI 新增三个 artifact 参数。
+  - 新增测试 `cache/test_artifact_integration.py`：
+    - 覆盖 dense_baseline、hybrid_baseline、manifold_diagnostics 三个脚本的 artifact cache 首次 miss + 二次 hit 场景。
+    - 使用 toy data + tempdir，不依赖真实大规模数据。
+    - 验证 cache hit 前后检索指标一致。
+  - 已验证：
+    - `py_compile` 语法检查通过：`dense_baseline.py`、`hybrid_baseline.py`、`manifold_diagnostics.py`、`test_artifact_integration.py`。
+    - AST parse 通过。
+    - CLI 参数命名与 `linucb_cost_aware_routing.py` 一致。
+  - 待用户在完整依赖环境中运行验证：
+    - `.venv/bin/python -m unittest cache/test_artifact_integration.py`
+    - `.venv/bin/python -m unittest cache/test_dense_baseline.py cache/test_hybrid_baseline.py cache/test_manifold_diagnostics.py cache/test_large_scale_artifacts.py`
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

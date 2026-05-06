@@ -27,10 +27,15 @@ _CACHE_PATH = SCRIPT_DIR / "embedding_cache.py"
 _cache_spec = importlib.util.spec_from_file_location("embedding_cache", _CACHE_PATH)
 embedding_cache = importlib.util.module_from_spec(_cache_spec)
 _cache_spec.loader.exec_module(embedding_cache)
+_ARTIFACTS_PATH = SCRIPT_DIR / "large_scale_artifacts.py"
+_artifacts_spec = importlib.util.spec_from_file_location("large_scale_artifacts", _ARTIFACTS_PATH)
+large_scale_artifacts = importlib.util.module_from_spec(_artifacts_spec)
+_artifacts_spec.loader.exec_module(large_scale_artifacts)
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
 DEFAULT_EMBEDDING_CACHE_DIR = SCRIPT_DIR.parent / "data" / "embeddings"
+DEFAULT_ARTIFACT_CACHE_DIR = large_scale_artifacts.DEFAULT_ARTIFACT_CACHE_DIR
 DEFAULT_DATASETS = ("pubmedqa", "banking77", "emanual", "cuad")
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -253,6 +258,9 @@ def run_dataset(
     embedding_cache_dir: Path | None = None,
     use_embedding_cache: bool = False,
     force_embedding_cache: bool = False,
+    artifact_cache_dir: Path | None = None,
+    use_artifact_cache: bool = False,
+    force_artifact_cache: bool = False,
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
@@ -272,6 +280,9 @@ def run_dataset(
         random_seed=sampling_seed,
     )
     gt_coverage = experiment_guardrails.assert_gt_corpus_coverage(selected_queries, selected_corpus)
+
+    artifact_dir = artifact_cache_dir or DEFAULT_ARTIFACT_CACHE_DIR
+    dense_artifact_info: Dict[str, object] = {"cache_hit": False}
 
     start = time.perf_counter()
     if use_embedding_cache:
@@ -297,15 +308,33 @@ def run_dataset(
             use_embedding_cache=True,
             force_embedding_cache=force_embedding_cache,
         )
-        result = run_dense_with_embeddings(
-            selected_corpus,
-            selected_queries,
-            corpus_embeddings,
-            query_embeddings,
-            top_k=top_k,
-            ks=ks,
-            batch_size=batch_size,
-        )
+        if use_artifact_cache:
+            artifact_depth = max(top_k, 100)
+            rankings_by_qid, dense_artifact_info = large_scale_artifacts.load_or_compute_dense_rankings(
+                selected_corpus,
+                selected_queries,
+                corpus_embeddings,
+                query_embeddings,
+                dataset=dataset,
+                model_name=model_name,
+                depth=artifact_depth,
+                cache_dir=artifact_dir,
+                batch_size=batch_size,
+                force=force_artifact_cache,
+            )
+            truncated = {qid: ids[:top_k] for qid, ids in rankings_by_qid.items()}
+            metrics_result = retrieval_metrics.evaluate_rankings(selected_queries, truncated, ks=ks)
+            result = {"rankings": truncated, "metrics": metrics_result}
+        else:
+            result = run_dense_with_embeddings(
+                selected_corpus,
+                selected_queries,
+                corpus_embeddings,
+                query_embeddings,
+                top_k=top_k,
+                ks=ks,
+                batch_size=batch_size,
+            )
     else:
         corpus_cache = {"cache_hit": False, "cache_enabled": False}
         query_cache = {"cache_hit": False, "cache_enabled": False}
@@ -341,6 +370,10 @@ def run_dataset(
         "query_embedding_cache_hit": query_cache.get("cache_hit", False),
         "corpus_embedding_cache_path": corpus_cache.get("embedding_path", ""),
         "query_embedding_cache_path": query_cache.get("embedding_path", ""),
+        "artifact_cache_enabled": bool(use_artifact_cache),
+        "artifact_cache_dir": str(artifact_dir) if use_artifact_cache else "",
+        "dense_ranking_cache_hit": dense_artifact_info.get("cache_hit", False),
+        "dense_ranking_artifact_path": dense_artifact_info.get("artifact_path", ""),
         "elapsed_sec": round(elapsed_sec, 3),
         **experiment_guardrails.build_run_metadata(
             dataset=dataset,
@@ -456,6 +489,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
     parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
     parser.add_argument("--force-embedding-cache", action="store_true", help="Recompute embeddings even when cache files exist")
+    parser.add_argument("--artifact-cache-dir", type=Path, default=DEFAULT_ARTIFACT_CACHE_DIR)
+    parser.add_argument("--no-artifact-cache", action="store_true", help="Disable reusable dense ranking artifacts")
+    parser.add_argument("--force-artifact-cache", action="store_true", help="Recompute ranking artifacts even when cache files exist")
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--ks", default="1,5,10", help="Comma-separated metric cutoffs")
     parser.add_argument("--max-queries", type=int, default=None, help="Evaluate only the first N queries")
@@ -494,6 +530,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             embedding_cache_dir=args.embedding_cache_dir,
             use_embedding_cache=not args.no_embedding_cache,
             force_embedding_cache=args.force_embedding_cache,
+            artifact_cache_dir=args.artifact_cache_dir,
+            use_artifact_cache=not args.no_artifact_cache,
+            force_artifact_cache=args.force_artifact_cache,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)
