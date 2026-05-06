@@ -987,3 +987,20 @@ Smoke result:
   - 当前解释：
     - embedding cache 已解决 dense/hybrid/Task16 cost-aware LinUCB 重复编码问题。
     - shared large-scale runner 仍是下一步：它需要进一步复用 BM25 index、dense rankings、cluster labels 等非 embedding 中间产物。
+
+- 2026-05-06 Task 17 LoTTE 100k embedding cache 生成：
+  - 已为 `lotte_technology_search_100k` 生成本地 embedding cache：
+    - corpus shape=`[101311, 384]`
+    - queries shape=`[596, 384]`
+    - corpus cache file=`paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__corpus__n101311__60ef5529c079a71e.npy`
+    - query cache file=`paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__queries__n596__6c7ae007c1bcc394.npy`
+    - size: corpus=`149M`，queries=`896K`
+  - 生成与验证：
+    - 首次生成 elapsed=`1598.231s`
+    - 二次 cache-hit 校验 elapsed=`0.204s`
+    - 校验结果：`corpus_hit=True`，`query_hit=True`
+  - 当前状态：
+    - cache 文件位于 `paper/experiments/data/embeddings/`，被 `.gitignore` 忽略，不进入 git。
+    - LoTTE 100k BM25/dense baseline 与 cost-aware LinUCB smoke 已有结果。
+    - LoTTE 100k hybrid baseline 尚未运行，因此 `retrieval_baseline_comparison.csv` 中 100k BM25/dense 仍因缺 hybrid 标为 not comparable。
+    - large-scale LoTTE manifold geometry diagnostics 尚未运行；下一步应复用该 embedding cache 运行 Task17 manifold diagnostics。

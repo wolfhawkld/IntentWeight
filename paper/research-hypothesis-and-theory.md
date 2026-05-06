@@ -520,6 +520,15 @@ Task 17 to multiple seeds, more epochs, or the full `638509`-passage test
 corpus, the next engineering step should be a shared large-scale runner that
 also reuses BM25 indices, dense rankings, and clustering artifacts.
 
+As of 2026-05-06, the LoTTE 100k embedding cache has been generated locally:
+corpus embeddings have shape `[101311, 384]`, query embeddings have shape
+`[596, 384]`, first generation took `1598.231s`, and a second cache-hit check
+took `0.204s`. This removes repeated dense encoding as the next bottleneck for
+LoTTE 100k. The remaining missing evidence is large-scale manifold geometry
+diagnostics: the current LoTTE 100k results validate retrieval scale and
+quality-cost trade-off, but not yet the large-scale manifold-structure
+explanation.
+
 This result is not yet evidence of final method superiority. It shows that the
 dataset schema, GT mapping, static baselines, and LinUCB routing all work on
 LoTTE. The formal Task 17 experiment should scale query count and corpus scope,

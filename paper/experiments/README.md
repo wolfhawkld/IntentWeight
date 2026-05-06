@@ -580,6 +580,21 @@ work across runs. Task 17 should now reuse the embedding cache before scaling to
 more seeds, epochs, or full 638k corpus; a shared large-scale runner remains a
 separate next step for avoiding repeated BM25 index and clustering work.
 
+Current status as of 2026-05-06:
+
+- LoTTE 100k corpus/query embedding cache has been generated locally under
+  `paper/experiments/data/embeddings/` and is ignored by git.
+- Cached shapes: corpus `[101311, 384]`, queries `[596, 384]`.
+- Cache sizes: corpus `149M`, queries `896K`.
+- First cache generation took `1598.231s`; second cache-hit validation took
+  `0.204s` with `corpus_hit=true` and `query_hit=true`.
+- LoTTE 100k BM25 and dense baselines are available, plus a cost-aware LinUCB
+  smoke. The 100k hybrid baseline is not yet run, so the 100k
+  BM25/dense/hybrid comparison group is still marked not comparable.
+- Large-scale LoTTE manifold geometry diagnostics have not yet been run. The
+  next Task 17 step is to reuse the embedding cache for large-scale manifold
+  diagnostics before expanding seeds, epochs, or the full 638k corpus.
+
 Example smoke commands:
 
 ```bash
@@ -712,4 +727,4 @@ Task 11-13 的在线学习实验必须先选定无泄漏协议：
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-05-05*
+*更新时间: 2026-05-06*
