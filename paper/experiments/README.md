@@ -574,13 +574,15 @@ The static BM25/dense/hybrid comparison group is now complete and comparable:
 |---------|--------|---------|---------|-----------|------------|-------------|------------------|-------------------|----------------------|
 | LoTTE technology/search 100k | 101311 | 596 | 2045 | 0.7232 | 0.8674 | 0.8624 | 0.8725 | 0.8356 | 25.28% |
 
-The 100k dense baseline took `1640.076s` on CPU exact cosine. The cost-aware
-LinUCB smoke took `1772.420s` for full route and `1905.491s` for gated route
-before embedding cache was added, because the old scripts repeated embedding
-work across runs. Task 17 now reuses the generated embedding cache for LoTTE
-100k diagnostics; a shared large-scale runner remains a separate next step for
-avoiding repeated BM25 index, dense-ranking, and clustering work before scaling
-to more seeds, epochs, or the full 638k corpus.
+The 100k dense baseline took `1640.076s` on CPU exact cosine before reusable
+embedding cache was added. The original cost-aware LinUCB smoke took
+`1772.420s` for full route and `1905.491s` for gated route because it repeated
+embedding work. After cache integration, the same one-seed/one-epoch LoTTE 100k
+LinUCB run hits both corpus and query embedding cache: full route elapsed
+`134.640s`, gated route elapsed `266.344s`, with unchanged retrieval metrics.
+A shared large-scale runner remains a separate next step for avoiding repeated
+BM25 index, dense-ranking, and clustering work before scaling to more seeds,
+epochs, or the full 638k corpus.
 
 Current status as of 2026-05-06:
 
@@ -594,6 +596,9 @@ Current status as of 2026-05-06:
   comparable by the guardrail table.
 - LoTTE 100k large-scale manifold geometry diagnostics have been run with
   embedding-cache hits.
+- LoTTE 100k cost-aware LinUCB has been rerun with embedding-cache hits:
+  full route `R@10=0.8725`, elapsed `134.640s`; gated route `R@10=0.8356`,
+  elapsed `266.344s`, average source candidate cost `224.16`.
 
 Current LoTTE 100k manifold diagnostics:
 

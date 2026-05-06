@@ -515,10 +515,13 @@ in gated mode.
 However, the 100k run also exposes a practical requirement: CPU exact dense
 encoding took `1640.076s`, and the old LinUCB script repeated embedding work
 instead of reusing cached embeddings. The experiment code now has a reusable
-embedding cache for dense, hybrid, and cost-aware LinUCB runs. Before expanding
-Task 17 to multiple seeds, more epochs, or the full `638509`-passage test
-corpus, the next engineering step should be a shared large-scale runner that
-also reuses BM25 indices, dense rankings, and clustering artifacts.
+embedding cache for dense, hybrid, and cost-aware LinUCB runs. After cache
+integration, the same LoTTE 100k one-seed/one-epoch LinUCB run preserved the
+retrieval metrics while reducing elapsed time to `134.640s` for full route and
+`266.344s` for gated route. Before expanding Task 17 to multiple seeds, more
+epochs, or the full `638509`-passage test corpus, the next engineering step
+should be a shared large-scale runner that also reuses BM25 indices, dense
+rankings, and clustering artifacts.
 
 As of 2026-05-06, the LoTTE 100k embedding cache has been generated locally:
 corpus embeddings have shape `[101311, 384]`, query embeddings have shape

@@ -1026,3 +1026,15 @@ Smoke result:
     - LoTTE 100k large-scale 不只验证了效果与成本，也验证了可利用检索几何：正确证据有较高概率落在 query 近邻 cluster 内。
     - context/PCA 空间保留了约 `90.33%` 的 dense R@10 信号，说明流形压缩可用；但 context-only R@10 仍低于 dense，不能关闭 dense，只能作为 gated / LinUCB routing 的依据。
     - full multi-route LinUCB R@10=`0.8725` 仍是当前 100k 最优结果，高于 dense `0.8674`、hybrid `0.8624`、BM25 `0.7232`。
+
+- 2026-05-06 Task 17.3 LoTTE 100k cached cost-aware LinUCB rerun：
+  - 复用已生成的 LoTTE 100k corpus/query embedding cache 重跑 cost-aware LinUCB：
+    - command: `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_100k --query-split test --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10 --seeds 13 --epochs 1 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-lite-depth 20 --bm25-lite-depth 20 --feedback-k 16 --window-size 50`
+    - metrics 标记：`embedding_cache_enabled=True`，`corpus_embedding_cache_hit=True`，`query_embedding_cache_hit=True`
+  - 结果：
+    - full_multi_route：Recall@10=`0.8725`，MRR@10=`0.7089`，nDCG@10=`0.6525`，last_reward=`0.3104`，avg_cost=`300.00`，dense_rate=`1.0000`，elapsed=`134.640s`
+    - gated_cost_aware：Recall@10=`0.8356`，MRR@10=`0.6888`，nDCG@10=`0.6031`，last_reward=`0.3356`，avg_cost=`224.16`，dense_rate=`0.9530`，primary_rate=`0.0470`，elapsed=`266.344s`
+  - 当前解释：
+    - 与 pre-cache run 相比，retrieval metrics 保持一致，说明 cache 没改变实验语义。
+    - full route elapsed 从 `1772.420s` 降到 `134.640s`，gated route elapsed 从 `1905.491s` 降到 `266.344s`，证明 embedding 重算是此前主要工程瓶颈之一。
+    - cached rerun 后仍有百秒级成本，下一步如果扩展 seeds/epochs/full corpus，应优先复用 BM25 index、dense rankings、cluster labels 等非 embedding 中间产物。
