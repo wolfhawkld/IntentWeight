@@ -623,6 +623,17 @@ the corpus has usable cluster routing signal (`nearest_cluster_hit@3=0.8809`)
 and PCA-context retrieval retains about `90.33%` of dense Recall@10, but the
 geometry is not sufficient to replace dense retrieval by itself.
 
+Next roadmap:
+
+| Task | Goal | Main evidence |
+|------|------|---------------|
+| 17.5 | Connect shared artifacts to more experiment scripts | BM25/dense/hybrid/manifold/LinUCB use more consistent cached ranking/context assets |
+| 18 | Run LoTTE 100k multi-seed / multi-epoch experiments | Stability of full multi-route, gated cost-aware trade-off, reward evolution |
+| 19 | Run dense/LinUCB weight and threshold ablations | Quality-cost Pareto frontier rather than a single Recall@10 point |
+| 20 | Test conditional dense fallback | Dense becomes fallback under low confidence, high drift, OOD, or reward decline |
+| 21 | Assemble paper-ready result tables and argument | Baselines, manifold diagnostics, feedback evolution, cost routing, limitations |
+| 22 | Optional LoTTE full-corpus expansion | Stronger scale claim if 100k evidence is stable enough |
+
 Example smoke commands:
 
 ```bash

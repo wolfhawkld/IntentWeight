@@ -557,6 +557,16 @@ then report both retrieval quality and cost-control metrics: Recall@k, MRR@k,
 nDCG@k, average source candidate cost, dense query rate, fallback rate, policy
 reward evolution, and selected-cluster hit evolution.
 
+The next research plan is to treat dense as a strong recall floor rather than an
+opponent to be removed immediately. Task 18 should test LoTTE 100k with multiple
+seeds and epochs. Task 19 should map the dense/LinUCB weight and threshold
+ablation space to find a quality-cost Pareto frontier. Task 20 should evaluate
+conditional dense fallback, where dense is reduced only when LinUCB confidence,
+semantic drift, and reward history indicate that the adaptive route is mature
+enough. Task 21 should convert these results into paper-ready tables and a
+bounded claim; Task 22 should only expand to full LoTTE if 100k evidence is
+stable and the paper needs a stronger scale claim.
+
 ---
 
 ## One-Sentence Positioning

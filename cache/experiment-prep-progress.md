@@ -1058,3 +1058,28 @@ Smoke result:
   - 当前解释：
     - shared large-scale runner 不改变检索语义，只消除重复 dense ranking、BM25 ranking、PCA/context 与 KMeans cluster 构造。
     - Task17 后续可以更现实地扩展到 multiple seeds / epochs；full 638k corpus 仍需要谨慎，因为 artifact 体积和 BM25/index 构造成本会进一步上升。
+
+- 2026-05-06 后续任务规划记录：
+  - 当前总判断：
+    - 现有数据支持“方法成立但不是无条件替代 dense”的结论。
+    - dense 仍应作为 recall floor / fallback；LinUCB 随反馈成熟后可逐步提高权重、降低 dense 深度或调用频率。
+    - 后续重点不是证明单点全面超过 dense，而是系统性刻画 quality-cost trade-off、feedback self-evolution 与 conditional dense fallback。
+  - Task 17.5：把 shared artifacts 接到更多分项实验。
+    - 当前 shared artifacts 主路径已接入 `linucb_cost_aware_routing.py`。
+    - 后续可接入 `dense_baseline.py`、`hybrid_baseline.py`、`manifold_diagnostics.py`，让 BM25/dense/hybrid/manifold/LinUCB 尽量共享同一套 ranking/context artifacts。
+  - Task 18：LoTTE 100k 多 seed / 多 epoch 正式实验。
+    - 目标配置优先考虑 `seeds=13,17,19`、`epochs=3`。
+    - 重点验证 full multi-route 是否稳定高于 dense，gated cost-aware 是否能在可接受召回损失下显著降成本，以及 feedback reward 是否持续提升。
+  - Task 19：dense / LinUCB 权重与阈值 ablation。
+    - 重点调参：`dense_weight`、`cluster_primary_weight`、`dense_floor_k`、`dense_lite_depth`、`high_confidence_threshold`、`mid_confidence_threshold`、`drift_threshold`。
+    - 目标是找 quality-cost Pareto frontier，而不是只追一个最高 Recall@10 单点。
+  - Task 20：conditional dense fallback 实验。
+    - 将 dense 从常驻主路逐步降级为条件兜底。
+    - 触发条件可包括 LinUCB confidence 低、semantic drift 高、selected cluster 距 query 远、最近窗口 reward 下降、负反馈或 OOD query。
+    - 这是最贴近“随着反馈增长降低 dense 比重、靠 LinUCB 主召回降成本”的实验。
+  - Task 21：论文实验表格与论证整理。
+    - 汇总 static baselines、manifold diagnostics、feedback self-evolution、cost-aware routing、LoTTE large-scale、failure/limitation cases。
+    - 论文表述应强调成立条件、弱收益/失败条件、dense 不能简单替代的原因，以及 feedback-driven routing 的研究价值。
+  - Task 22（可选）：LoTTE full corpus 扩展。
+    - 只有当 100k 多 seed/ablation 结果足够稳，且论文需要更强 large-scale claim 时再做。
+    - full `638509` corpus 的 artifact 体积、BM25/index 构造和结果文件规模都需要单独评估。
