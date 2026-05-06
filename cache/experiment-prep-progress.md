@@ -240,6 +240,7 @@ PY
 - [x] Task 17.3: LoTTE 100k cached cost-aware LinUCB rerun
 - [x] Task 17.4: Shared large-scale retrieval artifacts
 - [x] Task 17.5: Shared artifact cache 接入 dense_baseline / hybrid_baseline / manifold_diagnostics
+- [x] Task 18: LoTTE 100k multi-seed / multi-epoch cost-aware LinUCB
 
 ## 后续任务规划
 
@@ -1102,6 +1103,18 @@ Smoke result:
     - dense artifact-hit rerun：Recall@10=`0.8674`，MRR@10=`0.7081`，nDCG@10=`0.6487`，elapsed=`0.433s`，`dense_ranking_cache_hit=True`。
     - hybrid artifact-hit rerun：Recall@10=`0.8624`，MRR@10=`0.6973`，nDCG@10=`0.6216`，elapsed=`0.541s`，`dense_ranking_cache_hit=True`，`bm25_ranking_cache_hit=True`。
     - manifold artifact-hit rerun：`nearest_cluster_hit@3=0.8809`，`context_gt_recall@10=0.7836`，elapsed=`6.668s`，`context_cluster_cache_hit=True`。
+
+- 2026-05-06 Task 18 LoTTE 100k multi-seed / multi-epoch formal run：
+  - 配置：
+    - command: `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_100k --query-split test --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10 --seeds 13,17,19 --epochs 3 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-lite-depth 20 --bm25-lite-depth 20 --feedback-k 16 --window-size 50`
+    - 先运行一次生成 seed 17/19 的 context-cluster artifacts，再同参数 rerun，最终 metrics 记录为全 artifact hit：`dense_ranking_cache_hit=True`，`bm25_ranking_cache_hit=True`，`context_cluster_cache_hits=[True, True, True]`。
+  - 结果：
+    - full_multi_route：Recall@10 mean=`0.8826`，std=`0.0036`；MRR@10=`0.7105`；nDCG@10=`0.6573`；last true reward=`0.5671`；epoch true reward gain=`+0.2880`；avg cost=`300.00`；elapsed=`72.808s`。
+    - gated_cost_aware：Recall@10 mean=`0.8440`，std=`0.0107`；MRR@10=`0.6950`；nDCG@10=`0.5889`；last true reward=`0.5923`；epoch true reward gain=`+0.2931`；avg cost=`191.68`；dense query rate=`0.8220`；LinUCB primary rate=`0.1780`；hybrid-lite rate=`0.4767`；full dense fallback rate=`0.3453`；elapsed=`139.844s`。
+  - 当前解释：
+    - full_multi_route 在 multi-seed / multi-epoch 下稳定高于 dense baseline：`0.8826` vs dense `0.8674`，提升约 `+1.51` 个百分点，且 Recall@10 std 仅 `0.0036`。
+    - gated_cost_aware 仍低于 dense / full route，但相对 full route 将平均 source candidate cost 从 `300.00` 降到 `191.68`，成本下降约 `36.11%`，并将 dense query rate 降至 `0.8220`。
+    - 两个 routing mode 的 last true reward 和 epoch true reward gain 都明显提升，支持 feedback self-evolution；但 gated route 的 Recall@10 损失仍需 Task19/20 通过权重、阈值和 conditional dense fallback 继续优化。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

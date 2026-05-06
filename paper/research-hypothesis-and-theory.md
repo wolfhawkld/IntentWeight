@@ -558,14 +558,22 @@ nDCG@k, average source candidate cost, dense query rate, fallback rate, policy
 reward evolution, and selected-cluster hit evolution.
 
 The next research plan is to treat dense as a strong recall floor rather than an
-opponent to be removed immediately. Task 18 should test LoTTE 100k with multiple
-seeds and epochs. Task 19 should map the dense/LinUCB weight and threshold
-ablation space to find a quality-cost Pareto frontier. Task 20 should evaluate
-conditional dense fallback, where dense is reduced only when LinUCB confidence,
-semantic drift, and reward history indicate that the adaptive route is mature
-enough. Task 21 should convert these results into paper-ready tables and a
-bounded claim; Task 22 should only expand to full LoTTE if 100k evidence is
-stable and the paper needs a stronger scale claim.
+opponent to be removed immediately. Task 18 has now tested LoTTE 100k with
+`seeds=13,17,19` and `epochs=3`. Full multi-route LinUCB reaches
+`Recall@10=0.8826` with std `0.0036`, above dense-only `0.8674`. Gated
+cost-aware routing reaches `Recall@10=0.8440` with std `0.0107`, while reducing
+average source candidate cost from `300.00` to `191.68` and lowering dense
+query rate to `0.8220`. This strengthens the method-validity claim for
+adaptive multi-route retrieval, but it also confirms that cost-aware gating
+still needs tuning before it can be described as near-lossless.
+
+Task 19 should map the dense/LinUCB weight and threshold ablation space to find
+a quality-cost Pareto frontier. Task 20 should evaluate conditional dense
+fallback, where dense is reduced only when LinUCB confidence, semantic drift,
+and reward history indicate that the adaptive route is mature enough. Task 21
+should convert these results into paper-ready tables and a bounded claim; Task
+22 should only expand to full LoTTE if 100k evidence is stable and the paper
+needs a stronger scale claim.
 
 ---
 

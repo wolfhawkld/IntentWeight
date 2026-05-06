@@ -576,6 +576,19 @@ The static BM25/dense/hybrid comparison group is now complete and comparable:
 |---------|--------|---------|---------|-----------|------------|-------------|------------------|-------------------|----------------------|
 | LoTTE technology/search 100k | 101311 | 596 | 2045 | 0.7232 | 0.8674 | 0.8624 | 0.8725 | 0.8356 | 25.28% |
 
+Task 18 reran the same LoTTE 100k setting with `seeds=13,17,19` and
+`epochs=3`, using shared dense/BM25/context artifacts:
+
+| Setting | LinUCB full R@10 | Full R@10 std | LinUCB gated R@10 | Gated R@10 std | Full last reward | Gated last reward | Gated avg cost | Gated cost reduction | Gated dense query rate |
+|---------|------------------|---------------|-------------------|----------------|------------------|-------------------|----------------|----------------------|------------------------|
+| LoTTE 100k Task18 | 0.8826 | 0.0036 | 0.8440 | 0.0107 | 0.5671 | 0.5923 | 191.68 | 36.11% | 0.8220 |
+
+The multi-seed result strengthens the positive signal: full multi-route LinUCB
+is above dense-only by about `+1.51` Recall@10 points (`0.8826` vs `0.8674`).
+The gated route still trades away recall, but it reduces average source
+candidate cost from `300.00` to `191.68` while preserving a positive feedback
+learning signal.
+
 The 100k dense baseline took `1640.076s` on CPU exact cosine before reusable
 embedding cache was added. The original cost-aware LinUCB smoke took
 `1772.420s` for full route and `1905.491s` for gated route because it repeated
@@ -608,6 +621,9 @@ Current status as of 2026-05-06:
   `paper/experiments/data/retrieval_artifacts/` and are ignored by git. With
   dense/BM25/context artifact hits, the same LoTTE 100k cost-aware rerun now
   reports full route elapsed `7.392s` and gated route elapsed `14.080s`.
+- Task18 LoTTE 100k multi-seed/multi-epoch run is complete with all shared
+  artifact hits: full route `R@10=0.8826`, gated route `R@10=0.8440`, gated
+  average source candidate cost `191.68`.
 
 Current LoTTE 100k manifold diagnostics:
 
