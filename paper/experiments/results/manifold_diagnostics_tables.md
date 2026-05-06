@@ -5,6 +5,7 @@
 | dataset | scope | corpus_scope | pca_dim_for_90pct | cluster_label_purity | local_label_purity | nearest_cluster_hit@3 | context_gt_recall@10 | dense_recall@10 | soft_recall@10 | soft_minus_dense_recall@10 | interpretation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | emanual | heldout_test | full | 111 | 0.0275 | 0.0169 | 0.8923 | 0.3615 | 0.3231 | 0.1436 | -0.1795 | geometry can route to GT clusters, but learned arm/fusion underuses the signal |
+| lotte_technology_search_100k | heldout_test | full | 182 | 0.0000 | 0.0000 | 0.8809 | 0.7836 | 0.8674 |  |  | missing comparable dense/soft retrieval result |
 | pubmedqa | full | full | 177 | 0.0366 | 0.2439 | 0.9680 | 0.9860 | 0.9930 | 0.9920 | -0.0010 | strong GT-cluster routing signal; soft routing mainly preserves dense baseline |
 
 ## Intent Retrieval Proxy

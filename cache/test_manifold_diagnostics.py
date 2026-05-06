@@ -62,6 +62,15 @@ class ManifoldDiagnosticsTests(unittest.TestCase):
         self.assertEqual(alignment["cluster_label_purity"], 1.0)
         self.assertAlmostEqual(local["local_label_purity"], 1.0)
 
+    def test_lotte_does_not_infer_source_as_label(self):
+        record = {
+            "chunk_id": "c1",
+            "text": "sample",
+            "metadata": {"source": "lotte", "domain": "technology"},
+        }
+
+        self.assertIsNone(manifold_diagnostics.infer_label(record, "lotte_technology_search_100k"))
+
     def test_query_gt_manifold_metrics_reports_nearest_cluster_hits(self):
         corpus = [
             {"chunk_id": "c_a", "text": "alpha", "metadata": {"record_id": "a"}},
@@ -145,6 +154,77 @@ class ManifoldDiagnosticsTests(unittest.TestCase):
             self.assertEqual(metrics["query_split"], "test")
             self.assertTrue((out_dir / "manifold_diagnostics_toy.json").exists())
             self.assertTrue((out_dir / "manifold_diagnostics_summary.csv").exists())
+
+    def test_run_dataset_can_reuse_embedding_cache(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            data_dir = tmpdir / "processed"
+            out_dir = tmpdir / "results"
+            cache_dir = tmpdir / "embeddings"
+            data_dir.mkdir()
+            corpus = [
+                {"chunk_id": "c_alpha", "text": "alpha document", "metadata": {"record_id": "alpha"}},
+                {"chunk_id": "c_beta", "text": "beta document", "metadata": {"record_id": "beta"}},
+                {"chunk_id": "c_gamma", "text": "gamma document", "metadata": {"record_id": "gamma"}},
+            ]
+            queries = [
+                {
+                    "query_id": "q_alpha",
+                    "text": "alpha query",
+                    "ground_truth_chunk_ids": ["c_alpha"],
+                    "split": "test",
+                }
+            ]
+            (data_dir / "toy_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / "toy_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+            encoder = FakeEncoder({
+                "alpha document": [1.0, 0.0],
+                "beta document": [0.0, 1.0],
+                "gamma document": [-1.0, 0.0],
+                "alpha query": [1.0, 0.0],
+            })
+
+            first = manifold_diagnostics.run_dataset(
+                "toy",
+                data_dir,
+                out_dir,
+                encoder,
+                model_name="fake-model",
+                batch_size=2,
+                n_clusters=2,
+                context_dim=2,
+                seed=1,
+                sample_size=3,
+                neighbor_k=1,
+                cluster_hit_ks=(1, 2),
+                recall_ks=(1,),
+                query_split="test",
+                embedding_cache_dir=cache_dir,
+                use_embedding_cache=True,
+            )
+            second = manifold_diagnostics.run_dataset(
+                "toy",
+                data_dir,
+                out_dir,
+                encoder,
+                model_name="fake-model",
+                batch_size=2,
+                n_clusters=2,
+                context_dim=2,
+                seed=1,
+                sample_size=3,
+                neighbor_k=1,
+                cluster_hit_ks=(1, 2),
+                recall_ks=(1,),
+                query_split="test",
+                embedding_cache_dir=cache_dir,
+                use_embedding_cache=True,
+            )
+
+            self.assertFalse(first["corpus_embedding_cache_hit"])
+            self.assertFalse(first["query_embedding_cache_hit"])
+            self.assertTrue(second["corpus_embedding_cache_hit"])
+            self.assertTrue(second["query_embedding_cache_hit"])
 
 
 if __name__ == "__main__":

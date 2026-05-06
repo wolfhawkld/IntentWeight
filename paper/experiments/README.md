@@ -567,18 +567,20 @@ LoTTE by increasing query count and corpus scope while reporting quality-cost
 trade-offs, dense query rate, fallback rate, and policy self-evolution metrics.
 
 Task 17 stage-1 large-scale smoke (`technology/search`, full 596 test queries,
-100k distractors plus GT anchors) also passed the processed-data guardrail:
+100k distractors plus GT anchors) also passed the processed-data guardrail.
+The static BM25/dense/hybrid comparison group is now complete and comparable:
 
-| Dataset | Corpus | Queries | GT refs | BM25 R@10 | Dense R@10 | LinUCB full R@10 | LinUCB gated R@10 | Gated cost reduction |
-|---------|--------|---------|---------|-----------|------------|------------------|-------------------|----------------------|
-| LoTTE technology/search 100k | 101311 | 596 | 2045 | 0.7232 | 0.8674 | 0.8725 | 0.8356 | 25.28% |
+| Dataset | Corpus | Queries | GT refs | BM25 R@10 | Dense R@10 | Hybrid R@10 | LinUCB full R@10 | LinUCB gated R@10 | Gated cost reduction |
+|---------|--------|---------|---------|-----------|------------|-------------|------------------|-------------------|----------------------|
+| LoTTE technology/search 100k | 101311 | 596 | 2045 | 0.7232 | 0.8674 | 0.8624 | 0.8725 | 0.8356 | 25.28% |
 
 The 100k dense baseline took `1640.076s` on CPU exact cosine. The cost-aware
 LinUCB smoke took `1772.420s` for full route and `1905.491s` for gated route
 before embedding cache was added, because the old scripts repeated embedding
-work across runs. Task 17 should now reuse the embedding cache before scaling to
-more seeds, epochs, or full 638k corpus; a shared large-scale runner remains a
-separate next step for avoiding repeated BM25 index and clustering work.
+work across runs. Task 17 now reuses the generated embedding cache for LoTTE
+100k diagnostics; a shared large-scale runner remains a separate next step for
+avoiding repeated BM25 index, dense-ranking, and clustering work before scaling
+to more seeds, epochs, or the full 638k corpus.
 
 Current status as of 2026-05-06:
 
@@ -588,12 +590,24 @@ Current status as of 2026-05-06:
 - Cache sizes: corpus `149M`, queries `896K`.
 - First cache generation took `1598.231s`; second cache-hit validation took
   `0.204s` with `corpus_hit=true` and `query_hit=true`.
-- LoTTE 100k BM25 and dense baselines are available, plus a cost-aware LinUCB
-  smoke. The 100k hybrid baseline is not yet run, so the 100k
-  BM25/dense/hybrid comparison group is still marked not comparable.
-- Large-scale LoTTE manifold geometry diagnostics have not yet been run. The
-  next Task 17 step is to reuse the embedding cache for large-scale manifold
-  diagnostics before expanding seeds, epochs, or the full 638k corpus.
+- LoTTE 100k BM25, dense, and hybrid baselines are available and marked
+  comparable by the guardrail table.
+- LoTTE 100k large-scale manifold geometry diagnostics have been run with
+  embedding-cache hits.
+
+Current LoTTE 100k manifold diagnostics:
+
+| Dataset | pca_dim90 | pca_var@64 | nearest_cluster_hit@1 | nearest_cluster_hit@3 | nearest_cluster_hit@5 | dense R@10 | context R@10 | context retention@10 |
+|---------|-----------|------------|-----------------------|-----------------------|-----------------------|------------|-------------|----------------------|
+| LoTTE technology/search 100k | 182 | 0.6432 | 0.6997 | 0.8809 | 0.9413 | 0.8674 | 0.7836 | 0.9033 |
+
+LoTTE does not provide a true corpus topic/intent label in the processed qrels
+schema, so label-purity metrics are intentionally disabled for `lotte_*`
+datasets instead of using the constant `source=lotte` metadata field as a
+surrogate label. The diagnostics therefore support a retrieval-geometry claim:
+the corpus has usable cluster routing signal (`nearest_cluster_hit@3=0.8809`)
+and PCA-context retrieval retains about `90.33%` of dense Recall@10, but the
+geometry is not sufficient to replace dense retrieval by itself.
 
 Example smoke commands:
 

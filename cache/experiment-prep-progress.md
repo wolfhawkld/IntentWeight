@@ -1004,3 +1004,25 @@ Smoke result:
     - LoTTE 100k BM25/dense baseline 与 cost-aware LinUCB smoke 已有结果。
     - LoTTE 100k hybrid baseline 尚未运行，因此 `retrieval_baseline_comparison.csv` 中 100k BM25/dense 仍因缺 hybrid 标为 not comparable。
     - large-scale LoTTE manifold geometry diagnostics 尚未运行；下一步应复用该 embedding cache 运行 Task17 manifold diagnostics。
+
+- 2026-05-06 Task 17.1 / 17.2 LoTTE 100k hybrid 与 manifold diagnostics：
+  - LoTTE 100k hybrid baseline 已运行，复用 embedding cache：
+    - command: `.venv/bin/python paper/experiments/scripts/hybrid_baseline.py --dataset lotte_technology_search_100k --query-split test --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10`
+    - Recall@10=`0.8624`，MRR@10=`0.6973`，nDCG@10=`0.6216`，elapsed=`102.776s`
+    - metrics 标记：`embedding_cache_enabled=True`，`corpus_embedding_cache_hit=True`，`query_embedding_cache_hit=True`
+    - `retrieval_baseline_comparison.csv` 已更新为 18 rows；LoTTE 100k BM25/dense/hybrid 三方法 now comparable。
+  - `manifold_diagnostics.py` 已接入 embedding cache：
+    - 新增 `--embedding-cache-dir`、`--no-embedding-cache`、`--force-embedding-cache`
+    - 新增测试：LoTTE 不再把 constant `metadata.source=lotte` 当作 label。
+  - LoTTE 100k large-scale manifold diagnostics 已运行：
+    - command: `.venv/bin/python paper/experiments/scripts/manifold_diagnostics.py --dataset lotte_technology_search_100k --query-split test --local-files-only --device cpu --batch-size 64 --n-clusters 32 --context-dim 64 --seed 13 --sample-size 1000 --neighbor-k 10 --cluster-hit-ks 1,3,5 --recall-ks 1,5,10`
+    - elapsed=`6.746s`，cache hit for corpus/query embeddings
+    - `pca_dim_for_90pct=182`，`pca_var@64=0.6432`
+    - `nearest_cluster_hit@1=0.6997`，`nearest_cluster_hit@3=0.8809`，`nearest_cluster_hit@5=0.9413`
+    - dense Recall@10=`0.8674`，context Recall@10=`0.7836`，context retention@10=`0.9033`
+    - `gt_cluster_span_mean=1.7282`，`gt_cluster_concentration_mean=0.8120`
+    - `label_coverage=0.0`，`cluster_label_purity=0.0`，`local_label_purity=0.0`；LoTTE processed qrels 没有真实 corpus topic/intent label，因此 label metrics 不用于解释。
+  - 当前解释：
+    - LoTTE 100k large-scale 不只验证了效果与成本，也验证了可利用检索几何：正确证据有较高概率落在 query 近邻 cluster 内。
+    - context/PCA 空间保留了约 `90.33%` 的 dense R@10 信号，说明流形压缩可用；但 context-only R@10 仍低于 dense，不能关闭 dense，只能作为 gated / LinUCB routing 的依据。
+    - full multi-route LinUCB R@10=`0.8725` 仍是当前 100k 最优结果，高于 dense `0.8674`、hybrid `0.8624`、BM25 `0.7232`。

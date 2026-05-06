@@ -524,10 +524,24 @@ As of 2026-05-06, the LoTTE 100k embedding cache has been generated locally:
 corpus embeddings have shape `[101311, 384]`, query embeddings have shape
 `[596, 384]`, first generation took `1598.231s`, and a second cache-hit check
 took `0.204s`. This removes repeated dense encoding as the next bottleneck for
-LoTTE 100k. The remaining missing evidence is large-scale manifold geometry
-diagnostics: the current LoTTE 100k results validate retrieval scale and
-quality-cost trade-off, but not yet the large-scale manifold-structure
-explanation.
+LoTTE 100k and makes large-scale diagnostics practical.
+
+The large-scale manifold diagnostics have now been run for LoTTE 100k. The
+diagnostics show `pca_dim_for_90pct=182`, `pca_var@64=0.6432`,
+`nearest_cluster_hit@1=0.6997`, `nearest_cluster_hit@3=0.8809`,
+`nearest_cluster_hit@5=0.9413`, `dense_gt_recall@10=0.8674`, and
+`context_gt_recall@10=0.7836`, giving `context_recall_retention@10=0.9033`.
+This supports the claim that large-scale LoTTE has usable retrieval geometry:
+the correct evidence often lies in nearby clusters, and the compressed
+PCA/context space preserves most dense retrieval signal. It does not justify
+removing dense retrieval entirely, because context-only recall remains below
+full dense recall.
+
+LoTTE does not provide corpus-level topic labels in the processed qrels schema.
+Therefore label-alignment and local label purity are disabled for `lotte_*`
+datasets instead of treating the constant `source=lotte` metadata field as a
+surrogate label. The LoTTE evidence should be interpreted through geometry and
+GT-routing metrics, not label-purity metrics.
 
 This result is not yet evidence of final method superiority. It shows that the
 dataset schema, GT mapping, static baselines, and LinUCB routing all work on
