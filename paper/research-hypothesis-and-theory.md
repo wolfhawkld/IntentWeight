@@ -586,11 +586,27 @@ view: LinUCB learns useful route value from feedback, but dense remains the
 global semantic safety channel until confidence, drift, and reward history
 justify reducing it.
 
-Task 20 should evaluate conditional dense fallback, where dense is reduced only
-when LinUCB confidence, semantic drift, and reward history indicate that the
-adaptive route is mature enough. Task 21 should convert these results into
-paper-ready tables and a bounded claim; Task 22 should only expand to full
-LoTTE if 100k evidence is stable and the paper needs a stronger scale claim.
+Task 20 has now evaluated conditional dense fallback. The routing controller
+was extended to record whether fallback is caused by low confidence, high
+semantic drift, or recent reward decline. The best current setting, Task20-S,
+uses confidence/drift-only fallback and reaches `Recall@10=0.8747`, above
+dense-only `0.8674`, while reducing dense query rate to `0.8945` and average
+source candidate cost to `227.29`. Task19-D remains slightly higher in quality
+(`0.8770`) but also has higher cost (`229.97`) and a higher dense query rate
+(`0.9029`). Task20-S is therefore the better conditional-fallback cost point
+under the `dense_query_rate < 0.90` constraint.
+
+The reward-drop fallback trigger is useful as a safety diagnostic, but it did
+not dominate in Task20. The M/H runs show that reward-drop fallback can increase
+dense usage and cost without reliably improving Recall@10. The stronger
+evidence is therefore confidence/drift gating: dense can be treated as a
+conditional semantic safety channel, not a permanent first-stage requirement,
+when the learned LinUCB route has enough confidence and stays close to the
+selected semantic region.
+
+Task 21 should convert these results into paper-ready tables and a bounded
+claim; Task 22 should only expand to full LoTTE if 100k evidence is stable and
+the paper needs a stronger scale claim.
 
 ---
 

@@ -609,6 +609,23 @@ frontier. A/B/C are medium-cost points and remain below dense-only R@10
 current evidence should be framed as adaptive route weighting under a cost
 budget, not as a universal low-cost replacement for dense retrieval.
 
+Task 20 then tested conditional dense fallback. The routing script now records
+why full dense fallback fires: low confidence, high semantic drift, or recent
+reward drop. It also reports dense saved rate and a simple quality-cost ratio.
+
+| Setting | Dense-lite depth | Dense-lite floor | Mid/high confidence | Reward-drop threshold | R@10 | MRR@10 | nDCG@10 | Last reward | Reward gain | Avg cost | Dense query rate | Dense saved rate | Fallback reason summary |
+|---------|------------------|------------------|---------------------|-----------------------|------|--------|---------|-------------|-------------|----------|------------------|------------------|-------------------------|
+| Task20-L | 10 | 1 | 0.20 / 0.45 | 0.20 | 0.7383 | 0.6221 | 0.5007 | 0.6292 | +0.3322 | 143.22 | 0.5405 | 0.4595 | low_conf=0.0462, drift=0.0515, reward_drop=0.0071 |
+| Task20-M | 30 | 3 | 0.35 / 0.65 | 0.05 | 0.8624 | 0.7009 | 0.6198 | 0.5889 | +0.3048 | 225.49 | 0.8689 | 0.1311 | low_conf=0.2261, drift=0.0431, reward_drop=0.2603 |
+| Task20-H | 30 | 3 | 0.40 / 0.70 | 0.05 | 0.8669 | 0.7048 | 0.6271 | 0.5587 | +0.2752 | 237.54 | 0.9053 | 0.0947 | low_conf=0.3098, drift=0.0429, reward_drop=0.2498 |
+| Task20-S | 30 | 3 | 0.44 / 0.74 | 0.00 | 0.8747 | 0.7071 | 0.6308 | 0.6074 | +0.3160 | 227.29 | 0.8945 | 0.1055 | low_conf=0.4862, drift=0.0501, reward_drop=0.0000 |
+
+Task20-S is the best current conditional-fallback point: it exceeds dense-only
+R@10 `0.8674`, stays below Task19-D cost (`227.29` vs `229.97`), and reduces
+dense query rate below Task19-D (`0.8945` vs `0.9029`). The reward-drop trigger
+is useful diagnostically, but in these runs it increased fallback cost without
+beating the cleaner confidence/drift-only S configuration.
+
 The 100k dense baseline took `1640.076s` on CPU exact cosine before reusable
 embedding cache was added. The original cost-aware LinUCB smoke took
 `1772.420s` for full route and `1905.491s` for gated route because it repeated
@@ -622,7 +639,7 @@ full/gated route; the second artifact-cache-hit rerun elapsed `7.392s` /
 `14.080s`, again with unchanged retrieval metrics. This makes more seeds and
 epochs practical before attempting the full 638k corpus.
 
-Current status as of 2026-05-06:
+Current status as of 2026-05-07:
 
 - LoTTE 100k corpus/query embedding cache has been generated locally under
   `paper/experiments/data/embeddings/` and is ignored by git.
@@ -647,6 +664,9 @@ Current status as of 2026-05-06:
 - Task19 LoTTE 100k dense/LinUCB gating ablation is complete: medium-cost C
   reaches `R@10=0.8496` at cost `198.77`, while quality-first D/E exceed dense
   baseline with `R@10=0.8770` / `0.8865` at costs `229.97` / `258.84`.
+- Task20 LoTTE 100k conditional dense fallback is complete: S reaches
+  `R@10=0.8747` at cost `227.29`, with dense query rate `0.8945` and dense
+  saved rate `0.1055`.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -669,7 +689,7 @@ Next roadmap:
 | 17.5 | Connect shared artifacts to more experiment scripts | BM25/dense/hybrid/manifold/LinUCB use more consistent cached ranking/context assets |
 | 18 | Run LoTTE 100k multi-seed / multi-epoch experiments | Stability of full multi-route, gated cost-aware trade-off, reward evolution |
 | 19 | Run dense/LinUCB weight and threshold ablations | Complete: quality-cost Pareto frontier, with D/E exceeding dense at higher cost |
-| 20 | Test conditional dense fallback | Dense becomes fallback under low confidence, high drift, OOD, or reward decline |
+| 20 | Test conditional dense fallback | Complete: S exceeds dense while reducing dense query rate below Task19-D |
 | 21 | Assemble paper-ready result tables and argument | Baselines, manifold diagnostics, feedback evolution, cost routing, limitations |
 | 22 | Optional LoTTE full-corpus expansion | Stronger scale claim if 100k evidence is stable enough |
 

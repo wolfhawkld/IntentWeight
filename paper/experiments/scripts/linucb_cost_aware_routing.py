@@ -53,6 +53,7 @@ FEEDBACK_MODES = linucb_trust.FEEDBACK_MODES
 
 class RoutingDecision(NamedTuple):
     route: str
+    route_reason: str
     dense_depth: int
     bm25_depth: int
     cluster_depth: int
@@ -165,6 +166,7 @@ def decide_route(
     *,
     confidence: float,
     semantic_drift: float,
+    recent_reward_delta: float,
     dense_depth: int,
     bm25_depth: int,
     cluster_depth: int,
@@ -181,9 +183,11 @@ def decide_route(
     high_confidence_threshold: float,
     mid_confidence_threshold: float,
     drift_threshold: float,
+    reward_drop_threshold: float,
 ) -> RoutingDecision:
     if routing_mode == "full_multi_route":
         return RoutingDecision(
+            "full_multi_route",
             "full_multi_route",
             dense_depth,
             bm25_depth,
@@ -198,9 +202,11 @@ def decide_route(
     if routing_mode != "gated_cost_aware":
         raise ValueError(f"Unsupported routing_mode: {routing_mode}")
 
-    if confidence >= high_confidence_threshold and semantic_drift <= drift_threshold:
+    reward_drop = reward_drop_threshold > 0 and recent_reward_delta < -reward_drop_threshold
+    if confidence >= high_confidence_threshold and semantic_drift <= drift_threshold and not reward_drop:
         return RoutingDecision(
             "linucb_primary",
+            "linucb_primary_ready",
             0,
             bm25_lite_depth,
             cluster_depth,
@@ -211,9 +217,10 @@ def decide_route(
             confidence,
             semantic_drift,
         )
-    if confidence >= mid_confidence_threshold and semantic_drift <= drift_threshold:
+    if confidence >= mid_confidence_threshold and semantic_drift <= drift_threshold and not reward_drop:
         return RoutingDecision(
             "hybrid_lite",
+            "hybrid_lite_ready",
             dense_lite_depth,
             bm25_lite_depth,
             cluster_depth,
@@ -224,8 +231,15 @@ def decide_route(
             confidence,
             semantic_drift,
         )
+    if reward_drop:
+        route_reason = "fallback_reward_drop"
+    elif semantic_drift > drift_threshold:
+        route_reason = "fallback_high_drift"
+    else:
+        route_reason = "fallback_low_confidence"
     return RoutingDecision(
         "full_dense_fallback",
+        route_reason,
         dense_depth,
         bm25_depth,
         cluster_depth,
@@ -248,6 +262,14 @@ def _mean(values: Sequence[float]) -> float:
 
 def _window_mean(values: Sequence[float], window_size: int, *, tail: bool) -> float:
     return linucb_trust._window_mean(values, window_size, tail=tail)
+
+
+def _recent_window_delta(values: Sequence[float], window_size: int) -> float:
+    if window_size <= 0 or len(values) < window_size * 2:
+        return 0.0
+    recent = values[-window_size:]
+    previous = values[-window_size * 2:-window_size]
+    return float(_mean(recent) - _mean(previous))
 
 
 def run_prequential_seed(
@@ -291,6 +313,7 @@ def run_prequential_seed(
     high_confidence_threshold: float,
     mid_confidence_threshold: float,
     drift_threshold: float,
+    reward_drop_threshold: float,
     confidence_feedback_floor: float,
     high_trust_prob: float,
     high_trust: float,
@@ -371,6 +394,14 @@ def run_prequential_seed(
         "hybrid_lite": 0,
         "linucb_primary": 0,
     }
+    route_reason_counts = {
+        "full_multi_route": 0,
+        "linucb_primary_ready": 0,
+        "hybrid_lite_ready": 0,
+        "fallback_low_confidence": 0,
+        "fallback_high_drift": 0,
+        "fallback_reward_drop": 0,
+    }
     epoch_rows: List[Dict[str, float]] = []
 
     for epoch in range(epochs):
@@ -405,10 +436,12 @@ def run_prequential_seed(
                 confidence_feedback_floor=confidence_feedback_floor,
             )
             semantic_drift = selected_semantic_drift(context, centroids, selected_arms)
+            recent_reward_delta = _recent_window_delta(observed_rewards, window_size)
             decision = decide_route(
                 routing_mode,
                 confidence=confidence,
                 semantic_drift=semantic_drift,
+                recent_reward_delta=recent_reward_delta,
                 dense_depth=dense_depth,
                 bm25_depth=bm25_depth,
                 cluster_depth=cluster_depth,
@@ -425,8 +458,10 @@ def run_prequential_seed(
                 high_confidence_threshold=high_confidence_threshold,
                 mid_confidence_threshold=mid_confidence_threshold,
                 drift_threshold=drift_threshold,
+                reward_drop_threshold=reward_drop_threshold,
             )
             route_counts[decision.route] += 1
+            route_reason_counts[decision.route_reason] += 1
 
             if dense_rankings_by_qid is not None:
                 dense_ranking = [str(chunk_id) for chunk_id in dense_rankings_by_qid.get(qid, [])[: decision.dense_depth]]
@@ -549,6 +584,8 @@ def run_prequential_seed(
     first_epoch = epoch_rows[0] if epoch_rows else {}
     last_epoch = epoch_rows[-1] if epoch_rows else {}
     num_interactions = max(1, len(source_costs))
+    avg_source_cost = _mean(source_costs)
+    recall_at_top_k = float(metrics.get(f"recall@{top_k}", 0.0))
     metrics.update({
         "seed": seed,
         "routing_mode": routing_mode,
@@ -566,7 +603,8 @@ def run_prequential_seed(
         "last_epoch_confidence": float(last_epoch.get("confidence", 0.0)),
         "epoch_confidence_gain": float(last_epoch.get("confidence", 0.0) - first_epoch.get("confidence", 0.0)),
         "last_epoch_lite_route_rate": float(last_epoch.get("lite_route_rate", 0.0)),
-        "avg_source_candidate_cost": _mean(source_costs),
+        "avg_source_candidate_cost": avg_source_cost,
+        f"quality_cost_ratio@{top_k}": recall_at_top_k / avg_source_cost if avg_source_cost > 0 else 0.0,
         "avg_union_candidate_chunks": _mean(union_candidate_counts),
         "avg_dense_candidates": _mean(dense_candidates),
         "avg_bm25_candidates": _mean(bm25_candidates),
@@ -581,6 +619,10 @@ def run_prequential_seed(
         "full_dense_fallback_rate": route_counts["full_dense_fallback"] / num_interactions,
         "hybrid_lite_rate": route_counts["hybrid_lite"] / num_interactions,
         "linucb_primary_rate": route_counts["linucb_primary"] / num_interactions,
+        "fallback_low_confidence_rate": route_reason_counts["fallback_low_confidence"] / num_interactions,
+        "fallback_high_drift_rate": route_reason_counts["fallback_high_drift"] / num_interactions,
+        "fallback_reward_drop_rate": route_reason_counts["fallback_reward_drop"] / num_interactions,
+        "dense_saved_rate": 1.0 - _mean(dense_query_flags),
         "first_window_true_reward": _window_mean(true_rewards, window_size, tail=False),
         "last_window_true_reward": _window_mean(true_rewards, window_size, tail=True),
         "window_true_reward_gain": float(
@@ -649,6 +691,7 @@ def run_dataset(
     high_confidence_threshold: float,
     mid_confidence_threshold: float,
     drift_threshold: float,
+    reward_drop_threshold: float,
     confidence_feedback_floor: float,
     high_trust_prob: float,
     high_trust: float,
@@ -814,6 +857,7 @@ def run_dataset(
                 high_confidence_threshold=high_confidence_threshold,
                 mid_confidence_threshold=mid_confidence_threshold,
                 drift_threshold=drift_threshold,
+                reward_drop_threshold=reward_drop_threshold,
                 confidence_feedback_floor=confidence_feedback_floor,
                 high_trust_prob=high_trust_prob,
                 high_trust=high_trust,
@@ -874,6 +918,7 @@ def run_dataset(
             "high_confidence_threshold": high_confidence_threshold,
             "mid_confidence_threshold": mid_confidence_threshold,
             "drift_threshold": drift_threshold,
+            "reward_drop_threshold": reward_drop_threshold,
             "confidence_feedback_floor": confidence_feedback_floor,
             "high_trust_prob": high_trust_prob,
             "high_trust": high_trust,
@@ -996,6 +1041,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "high_confidence_threshold",
         "mid_confidence_threshold",
         "drift_threshold",
+        "reward_drop_threshold",
         "confidence_feedback_floor",
         "embedding_cache_enabled",
         "corpus_embedding_cache_hit",
@@ -1044,12 +1090,17 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "query_split",
         "num_queries",
         "recall@10_mean",
+        "quality_cost_ratio@10_mean",
         "last_epoch_true_reward_mean",
         "avg_source_candidate_cost_mean",
         "dense_query_rate_mean",
+        "dense_saved_rate_mean",
         "linucb_primary_rate_mean",
         "hybrid_lite_rate_mean",
         "full_dense_fallback_rate_mean",
+        "fallback_low_confidence_rate_mean",
+        "fallback_high_drift_rate_mean",
+        "fallback_reward_drop_rate_mean",
     ]
     lines = [
         "# Cost-Aware LinUCB Routing Tables",
@@ -1139,6 +1190,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--high-confidence-threshold", type=float, default=0.65)
     parser.add_argument("--mid-confidence-threshold", type=float, default=0.35)
     parser.add_argument("--drift-threshold", type=float, default=1.0)
+    parser.add_argument("--reward-drop-threshold", type=float, default=0.0)
     parser.add_argument("--confidence-feedback-floor", type=float, default=8.0)
     parser.add_argument("--high-trust-prob", type=float, default=0.7)
     parser.add_argument("--high-trust", type=float, default=1.0)
@@ -1208,6 +1260,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             high_confidence_threshold=args.high_confidence_threshold,
             mid_confidence_threshold=args.mid_confidence_threshold,
             drift_threshold=args.drift_threshold,
+            reward_drop_threshold=args.reward_drop_threshold,
             confidence_feedback_floor=args.confidence_feedback_floor,
             high_trust_prob=args.high_trust_prob,
             high_trust=args.high_trust,

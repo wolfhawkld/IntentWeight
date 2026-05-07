@@ -242,6 +242,7 @@ PY
 - [x] Task 17.5: Shared artifact cache 接入 dense_baseline / hybrid_baseline / manifold_diagnostics
 - [x] Task 18: LoTTE 100k multi-seed / multi-epoch cost-aware LinUCB
 - [x] Task 19: LoTTE 100k dense / LinUCB gating threshold ablation
+- [x] Task 20: LoTTE 100k conditional dense fallback
 
 ## 后续任务规划
 
@@ -1140,6 +1141,28 @@ Smoke result:
     - D/E 的提升主要来自更保守 gating 触发更多 full dense fallback，而不是 LinUCB 低成本路径单独替代 dense；因此本方法当前更适合表述为可调 Pareto frontier，而非无条件低成本替代 dense。
     - E 质量最高，但 dense query rate=`0.9489`、fallback rate=`0.7030`，成本也最高；D 是当前较均衡的质量优先配置。
     - Task19 支持论文主张：反馈驱动的 LinUCB gating 能在不同成本预算下调节 dense/BM25/cluster/LinUCB 的权重，并在质量优先设置下超过 strong dense baseline。
+
+- 2026-05-07 Task 20 LoTTE 100k conditional dense fallback：
+  - 代码补充：
+    - `linucb_cost_aware_routing.py` 新增 `route_reason` 统计，用于区分 full dense fallback 是由 low confidence、high semantic drift 还是 reward drop 触发。
+    - CLI 新增 `--reward-drop-threshold`，默认 `0.0`，因此不改变 Task18/19 默认行为；启用后，当近期 observed reward window 明显下降时强制走 dense fallback。
+    - metrics / summary 新增 `fallback_low_confidence_rate`、`fallback_high_drift_rate`、`fallback_reward_drop_rate`、`dense_saved_rate`、`quality_cost_ratio@10`。
+  - 固定配置：
+    - dataset=`lotte_technology_search_100k`，query split=`test`，queries=`596`，corpus chunks=`101311`。
+    - seeds=`13,17,19`，epochs=`3`，n_clusters=`32`，context_dim=`64`，candidate_arms=`3`。
+    - dense_depth=`100`，bm25_depth=`100`，cluster_depth=`100`，bm25_lite_depth=`20`，feedback_k=`16`，window_size=`50`。
+    - routing_modes=`gated_cost_aware`，feedback_mode=`trust_weighted`。
+  - 结果：
+    - L (`dense_lite_depth=10`, `floor=1`, thresholds `0.20/0.45`, reward_drop=`0.20`)：Recall@10=`0.7383`，MRR@10=`0.6221`，nDCG@10=`0.5007`，last reward=`0.6292`，reward gain=`+0.3322`，cost=`143.22`，dense query rate=`0.5405`，dense saved rate=`0.4595`。
+    - M (`dense_lite_depth=30`, `floor=3`, thresholds `0.35/0.65`, reward_drop=`0.05`)：Recall@10=`0.8624`，MRR@10=`0.7009`，nDCG@10=`0.6198`，last reward=`0.5889`，reward gain=`+0.3048`，cost=`225.49`，dense query rate=`0.8689`，dense saved rate=`0.1311`。
+    - H (`dense_lite_depth=30`, `floor=3`, thresholds `0.40/0.70`, reward_drop=`0.05`)：Recall@10=`0.8669`，MRR@10=`0.7048`，nDCG@10=`0.6271`，last reward=`0.5587`，reward gain=`+0.2752`，cost=`237.54`，dense query rate=`0.9053`，dense saved rate=`0.0947`。
+    - S (`dense_lite_depth=30`, `floor=3`, thresholds `0.44/0.74`, reward_drop=`0.0`)：Recall@10=`0.8747`，MRR@10=`0.7071`，nDCG@10=`0.6308`，last reward=`0.6074`，reward gain=`+0.3160`，cost=`227.29`，dense query rate=`0.8945`，dense saved rate=`0.1055`。
+  - 关键解释：
+    - L 证明 aggressive dense saving 能显著降低 dense 调用和候选成本，但召回损失过大，只能作为 Pareto 左端。
+    - M 接近 dense baseline `0.8674`，但仍低约 `0.50` 个百分点；reward-drop trigger 会增加 fallback 成本。
+    - H 进一步保守后几乎贴近 dense baseline，但 cost 超过 Task19-D，说明 reward-drop trigger 不是当前最优质量-成本手段。
+    - S 是当前 Task20 最优配置：Recall@10=`0.8747`，超过 dense baseline，同时 dense query rate=`0.8945`，低于 Task19-D 的 `0.9029`，cost=`227.29` 也低于 Task19-D 的 `229.97`。
+    - 因此 Task20 支持“dense 可从常驻主路降级为 confidence/drift 条件兜底”的说法；但 reward-window fallback 暂时应作为可选安全机制，而不是默认最优策略。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
