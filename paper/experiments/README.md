@@ -626,6 +626,14 @@ dense query rate below Task19-D (`0.8945` vs `0.9029`). The reward-drop trigger
 is useful diagnostically, but in these runs it increased fallback cost without
 beating the cleaner confidence/drift-only S configuration.
 
+Task 21 consolidates the paper-facing evidence chain in
+`paper/experiments/task21_paper_ready_summary.md`. The summary frames Task19 as
+the hypothesis/Pareto validation stage and Task20 as the conditional dense
+fallback optimization stage. The bounded paper claim is that IntentWeight can
+learn useful route value from trust-weighted feedback and expose a controllable
+quality-cost frontier; it should not be claimed as a universal low-cost
+replacement for dense retrieval.
+
 The 100k dense baseline took `1640.076s` on CPU exact cosine before reusable
 embedding cache was added. The original cost-aware LinUCB smoke took
 `1772.420s` for full route and `1905.491s` for gated route because it repeated
@@ -667,6 +675,8 @@ Current status as of 2026-05-07:
 - Task20 LoTTE 100k conditional dense fallback is complete: S reaches
   `R@10=0.8747` at cost `227.29`, with dense query rate `0.8945` and dense
   saved rate `0.1055`.
+- Task21 paper-ready summary is complete:
+  `paper/experiments/task21_paper_ready_summary.md`.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -690,7 +700,7 @@ Next roadmap:
 | 18 | Run LoTTE 100k multi-seed / multi-epoch experiments | Stability of full multi-route, gated cost-aware trade-off, reward evolution |
 | 19 | Run dense/LinUCB weight and threshold ablations | Complete: quality-cost Pareto frontier, with D/E exceeding dense at higher cost |
 | 20 | Test conditional dense fallback | Complete: S exceeds dense while reducing dense query rate below Task19-D |
-| 21 | Assemble paper-ready result tables and argument | Baselines, manifold diagnostics, feedback evolution, cost routing, limitations |
+| 21 | Assemble paper-ready result tables and argument | Complete: bounded evidence summary and recommended paper claim |
 | 22 | Optional LoTTE full-corpus expansion | Stronger scale claim if 100k evidence is stable enough |
 
 Example smoke commands:

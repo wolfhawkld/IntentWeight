@@ -605,8 +605,14 @@ when the learned LinUCB route has enough confidence and stays close to the
 selected semantic region.
 
 Task 21 should convert these results into paper-ready tables and a bounded
-claim; Task 22 should only expand to full LoTTE if 100k evidence is stable and
-the paper needs a stronger scale claim.
+claim. This synthesis is now captured in
+`paper/experiments/task21_paper_ready_summary.md`. The paper-level conclusion is
+that IntentWeight supports feedback-driven adaptive route learning and
+quality-cost Pareto control under a vertical-domain piecewise relevance-manifold
+view, but it should be explicitly bounded by dense fallback dependence,
+dataset-specific geometry, and failure/limitation cases such as eManual and
+CUAD smoke. Task 22 should only expand to full LoTTE if 100k evidence is stable
+and the paper needs a stronger scale claim.
 
 ---
 

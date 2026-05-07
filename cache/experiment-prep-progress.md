@@ -243,6 +243,7 @@ PY
 - [x] Task 18: LoTTE 100k multi-seed / multi-epoch cost-aware LinUCB
 - [x] Task 19: LoTTE 100k dense / LinUCB gating threshold ablation
 - [x] Task 20: LoTTE 100k conditional dense fallback
+- [x] Task 21: Paper-ready evidence summary and bounded claim
 
 ## 后续任务规划
 
@@ -1163,6 +1164,22 @@ Smoke result:
     - H 进一步保守后几乎贴近 dense baseline，但 cost 超过 Task19-D，说明 reward-drop trigger 不是当前最优质量-成本手段。
     - S 是当前 Task20 最优配置：Recall@10=`0.8747`，超过 dense baseline，同时 dense query rate=`0.8945`，低于 Task19-D 的 `0.9029`，cost=`227.29` 也低于 Task19-D 的 `229.97`。
     - 因此 Task20 支持“dense 可从常驻主路降级为 confidence/drift 条件兜底”的说法；但 reward-window fallback 暂时应作为可选安全机制，而不是默认最优策略。
+
+- 2026-05-07 Task 21 paper-ready summary：
+  - 新增 `paper/experiments/task21_paper_ready_summary.md`。
+  - 汇总 Task1-20 的论文证据链：
+    - 数据集角色与 guardrails。
+    - 静态 BM25 / dense / hybrid baseline。
+    - Task11-16 的 LinUCB 演进、manifold-local feedback、trust-weighted feedback 与 cost-aware routing。
+    - Task14 manifold diagnostics 与 eManual/CUAD limitation cases。
+    - Task18/19/20 LoTTE 100k large-scale quality-cost frontier。
+  - 明确论文主张边界：
+    - 支持：feedback-driven adaptive multi-route retrieval 可以学习 routing value field，并在 LoTTE 100k 中形成可调 quality-cost frontier。
+    - 支持：Task20-S 在 dense 作为条件兜底时超过 dense baseline，并降低 dense query rate。
+    - 不支持：无条件替代 dense 或在所有数据集上全面优于 dense。
+  - 明确 Task19 / Task20 定位：
+    - Task19 是假设/Pareto frontier 验证。
+    - Task20 是基于 Task19 的 conditional dense fallback 参数微调与工程优化检验。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
