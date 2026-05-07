@@ -589,6 +589,26 @@ The gated route still trades away recall, but it reduces average source
 candidate cost from `300.00` to `191.68` while preserving a positive feedback
 learning signal.
 
+Task 19 mapped the gated cost-aware quality-cost frontier with five
+dense/LinUCB gating configurations. All runs used LoTTE 100k, `seeds=13,17,19`,
+`epochs=3`, `n_clusters=32`, and shared artifact cache hits.
+
+| Setting | Dense-lite depth | Dense-lite floor | Mid/high confidence | R@10 | MRR@10 | nDCG@10 | Last reward | Reward gain | Avg cost | Dense query rate | Fallback rate | LinUCB primary rate |
+|---------|------------------|------------------|---------------------|------|--------|---------|-------------|-------------|----------|------------------|---------------|---------------------|
+| Task18 gated | 20 | 2 | 0.35 / 0.65 | 0.8440 | 0.6950 | 0.5889 | 0.5923 | +0.2931 | 191.68 | 0.8220 | 0.3453 | 0.1780 |
+| Task19-A | 30 | 2 | 0.35 / 0.65 | 0.8378 | 0.6911 | 0.5872 | 0.5632 | +0.2724 | 199.56 | 0.8249 | 0.3654 | 0.1751 |
+| Task19-B | 50 | 2 | 0.35 / 0.65 | 0.8479 | 0.6935 | 0.5923 | 0.5962 | +0.3043 | 205.96 | 0.8138 | 0.3482 | 0.1862 |
+| Task19-C | 30 | 3 | 0.35 / 0.65 | 0.8496 | 0.6941 | 0.6042 | 0.5783 | +0.2875 | 198.77 | 0.8276 | 0.3596 | 0.1724 |
+| Task19-D | 30 | 3 | 0.45 / 0.75 | 0.8770 | 0.7065 | 0.6321 | 0.6074 | +0.3160 | 229.97 | 0.9029 | 0.5526 | 0.0971 |
+| Task19-E | 50 | 5 | 0.55 / 0.85 | 0.8865 | 0.7116 | 0.6508 | 0.6370 | +0.3507 | 258.84 | 0.9489 | 0.7030 | 0.0511 |
+
+The Task 19 ablation confirms that the method exposes a tunable Pareto
+frontier. A/B/C are medium-cost points and remain below dense-only R@10
+`0.8674`. D/E are quality-first points and exceed dense-only, with E reaching
+`0.8865`, but they do so by triggering more full dense fallback. This means the
+current evidence should be framed as adaptive route weighting under a cost
+budget, not as a universal low-cost replacement for dense retrieval.
+
 The 100k dense baseline took `1640.076s` on CPU exact cosine before reusable
 embedding cache was added. The original cost-aware LinUCB smoke took
 `1772.420s` for full route and `1905.491s` for gated route because it repeated
@@ -624,6 +644,9 @@ Current status as of 2026-05-06:
 - Task18 LoTTE 100k multi-seed/multi-epoch run is complete with all shared
   artifact hits: full route `R@10=0.8826`, gated route `R@10=0.8440`, gated
   average source candidate cost `191.68`.
+- Task19 LoTTE 100k dense/LinUCB gating ablation is complete: medium-cost C
+  reaches `R@10=0.8496` at cost `198.77`, while quality-first D/E exceed dense
+  baseline with `R@10=0.8770` / `0.8865` at costs `229.97` / `258.84`.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -645,7 +668,7 @@ Next roadmap:
 |------|------|---------------|
 | 17.5 | Connect shared artifacts to more experiment scripts | BM25/dense/hybrid/manifold/LinUCB use more consistent cached ranking/context assets |
 | 18 | Run LoTTE 100k multi-seed / multi-epoch experiments | Stability of full multi-route, gated cost-aware trade-off, reward evolution |
-| 19 | Run dense/LinUCB weight and threshold ablations | Quality-cost Pareto frontier rather than a single Recall@10 point |
+| 19 | Run dense/LinUCB weight and threshold ablations | Complete: quality-cost Pareto frontier, with D/E exceeding dense at higher cost |
 | 20 | Test conditional dense fallback | Dense becomes fallback under low confidence, high drift, OOD, or reward decline |
 | 21 | Assemble paper-ready result tables and argument | Baselines, manifold diagnostics, feedback evolution, cost routing, limitations |
 | 22 | Optional LoTTE full-corpus expansion | Stronger scale claim if 100k evidence is stable enough |

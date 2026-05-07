@@ -241,6 +241,7 @@ PY
 - [x] Task 17.4: Shared large-scale retrieval artifacts
 - [x] Task 17.5: Shared artifact cache 接入 dense_baseline / hybrid_baseline / manifold_diagnostics
 - [x] Task 18: LoTTE 100k multi-seed / multi-epoch cost-aware LinUCB
+- [x] Task 19: LoTTE 100k dense / LinUCB gating threshold ablation
 
 ## 后续任务规划
 
@@ -1115,6 +1116,30 @@ Smoke result:
     - full_multi_route 在 multi-seed / multi-epoch 下稳定高于 dense baseline：`0.8826` vs dense `0.8674`，提升约 `+1.51` 个百分点，且 Recall@10 std 仅 `0.0036`。
     - gated_cost_aware 仍低于 dense / full route，但相对 full route 将平均 source candidate cost 从 `300.00` 降到 `191.68`，成本下降约 `36.11%`，并将 dense query rate 降至 `0.8220`。
     - 两个 routing mode 的 last true reward 和 epoch true reward gain 都明显提升，支持 feedback self-evolution；但 gated route 的 Recall@10 损失仍需 Task19/20 通过权重、阈值和 conditional dense fallback 继续优化。
+
+- 2026-05-07 Task 19 LoTTE 100k dense / LinUCB gating ablation：
+  - 目标：
+    - 在 Task18 gated route 的基础上，系统性扫描 dense-lite depth、dense-lite floor 和 confidence threshold，寻找 quality-cost Pareto frontier。
+    - 输出写入独立目录 `paper/experiments/results/task19_ablation_{A,B,C,D,E}/`，避免覆盖 Task18 正式 metrics。
+  - 固定配置：
+    - dataset=`lotte_technology_search_100k`，query split=`test`，queries=`596`，corpus chunks=`101311`。
+    - seeds=`13,17,19`，epochs=`3`，n_clusters=`32`，context_dim=`64`，candidate_arms=`3`。
+    - dense_depth=`100`，bm25_depth=`100`，cluster_depth=`100`，bm25_lite_depth=`20`，feedback_k=`16`，window_size=`50`。
+    - routing_modes=`gated_cost_aware`，feedback_mode=`trust_weighted`。
+  - 结果：
+    - Task18 gated reference：Recall@10=`0.8440`，MRR@10=`0.6950`，nDCG@10=`0.5889`，last reward=`0.5923`，reward gain=`+0.2931`，cost=`191.68`，dense query rate=`0.8220`，fallback rate=`0.3453`。
+    - A (`dense_lite_depth=30`, `dense_lite_floor_k=2`, thresholds `0.35/0.65`)：Recall@10=`0.8378`，MRR@10=`0.6911`，nDCG@10=`0.5872`，last reward=`0.5632`，reward gain=`+0.2724`，cost=`199.56`，dense query rate=`0.8249`，fallback rate=`0.3654`。
+    - B (`dense_lite_depth=50`, `dense_lite_floor_k=2`, thresholds `0.35/0.65`)：Recall@10=`0.8479`，MRR@10=`0.6935`，nDCG@10=`0.5923`，last reward=`0.5962`，reward gain=`+0.3043`，cost=`205.96`，dense query rate=`0.8138`，fallback rate=`0.3482`。
+    - C (`dense_lite_depth=30`, `dense_lite_floor_k=3`, thresholds `0.35/0.65`)：Recall@10=`0.8496`，MRR@10=`0.6941`，nDCG@10=`0.6042`，last reward=`0.5783`，reward gain=`+0.2875`，cost=`198.77`，dense query rate=`0.8276`，fallback rate=`0.3596`。
+    - D (`dense_lite_depth=30`, `dense_lite_floor_k=3`, thresholds `0.45/0.75`)：Recall@10=`0.8770`，MRR@10=`0.7065`，nDCG@10=`0.6321`，last reward=`0.6074`，reward gain=`+0.3160`，cost=`229.97`，dense query rate=`0.9029`，fallback rate=`0.5526`。
+    - E (`dense_lite_depth=50`, `dense_lite_floor_k=5`, thresholds `0.55/0.85`)：Recall@10=`0.8865`，MRR@10=`0.7116`，nDCG@10=`0.6508`，last reward=`0.6370`，reward gain=`+0.3507`，cost=`258.84`，dense query rate=`0.9489`，fallback rate=`0.7030`。
+  - 解释：
+    - A 是负向 ablation：相对 Task18 gated 没有收益。
+    - B/C 是中等成本点：C 的 Recall@10 和 nDCG@10 优于 B，且成本更低，说明 `dense_lite_floor_k=3` 对质量有帮助。
+    - D/E 是质量优先点：D 和 E 均超过 dense-only baseline `0.8674`，分别达到 `0.8770` 和 `0.8865`。
+    - D/E 的提升主要来自更保守 gating 触发更多 full dense fallback，而不是 LinUCB 低成本路径单独替代 dense；因此本方法当前更适合表述为可调 Pareto frontier，而非无条件低成本替代 dense。
+    - E 质量最高，但 dense query rate=`0.9489`、fallback rate=`0.7030`，成本也最高；D 是当前较均衡的质量优先配置。
+    - Task19 支持论文主张：反馈驱动的 LinUCB gating 能在不同成本预算下调节 dense/BM25/cluster/LinUCB 的权重，并在质量优先设置下超过 strong dense baseline。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

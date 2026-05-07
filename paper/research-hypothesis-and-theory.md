@@ -568,12 +568,29 @@ adaptive multi-route retrieval, but it also confirms that cost-aware gating
 still needs tuning before it can be described as near-lossless.
 
 Task 19 should map the dense/LinUCB weight and threshold ablation space to find
-a quality-cost Pareto frontier. Task 20 should evaluate conditional dense
-fallback, where dense is reduced only when LinUCB confidence, semantic drift,
-and reward history indicate that the adaptive route is mature enough. Task 21
-should convert these results into paper-ready tables and a bounded claim; Task
-22 should only expand to full LoTTE if 100k evidence is stable and the paper
-needs a stronger scale claim.
+a quality-cost Pareto frontier. This has now been run on LoTTE 100k with five
+gated configurations. The medium-cost points A/B/C remain below dense-only, but
+quality-first configurations D and E exceed dense-only `Recall@10=0.8674`:
+D reaches `0.8770` at average source candidate cost `229.97`, and E reaches
+`0.8865` at cost `258.84`. Their reward evolution is also stronger
+(`+0.3160` and `+0.3507`) than the Task18 gated reference (`+0.2931`).
+
+The theoretical implication is important: the current method should not be
+claimed as an unconditional low-cost dense replacement. Instead, it provides an
+adaptive Pareto controller over dense, BM25, cluster, and LinUCB routes. When
+the gating policy is conservative, dense acts as a strong recall floor and the
+multi-route policy can surpass dense-only quality. When the policy is more
+aggressive about low-cost routing, cost falls but recall drops. This is exactly
+the expected quality-cost trade-off under the piecewise relevance-manifold
+view: LinUCB learns useful route value from feedback, but dense remains the
+global semantic safety channel until confidence, drift, and reward history
+justify reducing it.
+
+Task 20 should evaluate conditional dense fallback, where dense is reduced only
+when LinUCB confidence, semantic drift, and reward history indicate that the
+adaptive route is mature enough. Task 21 should convert these results into
+paper-ready tables and a bounded claim; Task 22 should only expand to full
+LoTTE if 100k evidence is stable and the paper needs a stronger scale claim.
 
 ---
 
