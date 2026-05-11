@@ -45,6 +45,7 @@ DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
 DEFAULT_EMBEDDING_CACHE_DIR = dense_baseline.DEFAULT_EMBEDDING_CACHE_DIR
 DEFAULT_ARTIFACT_CACHE_DIR = large_scale_artifacts.DEFAULT_ARTIFACT_CACHE_DIR
+DEFAULT_SCALE_STORE_DIR = dense_baseline.DEFAULT_SCALE_STORE_DIR
 DEFAULT_DATASETS = global_linucb.DEFAULT_DATASETS
 DEFAULT_MODEL = global_linucb.DEFAULT_MODEL
 ROUTING_MODES = ("full_multi_route", "gated_cost_aware")
@@ -710,6 +711,9 @@ def run_dataset(
     artifact_cache_dir: Path | None = None,
     use_artifact_cache: bool = False,
     force_artifact_cache: bool = False,
+    scale_store_dir: Path | None = None,
+    use_scale_store: bool = False,
+    scale_store_canonical_name: str = "lotte_technology_search",
 ) -> List[Dict[str, object]]:
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
@@ -742,17 +746,30 @@ def run_dataset(
     artifact_slug = build_artifact_slug(dataset, run_metadata)
 
     start = time.perf_counter()
-    corpus_embeddings, corpus_cache = dense_baseline.encode_records_with_optional_cache(
-        corpus,
-        encoder,
-        dataset=dataset,
-        model_name=model_name,
-        record_kind="corpus",
-        batch_size=batch_size,
-        embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
-        use_embedding_cache=use_embedding_cache,
-        force_embedding_cache=force_embedding_cache,
-    )
+    scale_store_info: Dict[str, object] = {"enabled": False}
+    if use_scale_store:
+        corpus_embeddings, scale_store_info = dense_baseline.load_corpus_embeddings_from_scale_store(
+            corpus,
+            canonical_name=scale_store_canonical_name,
+            scale_store_dir=scale_store_dir or DEFAULT_SCALE_STORE_DIR,
+        )
+        corpus_cache = {
+            "cache_hit": True,
+            "cache_enabled": False,
+            "embedding_path": scale_store_info.get("canonical_embedding_path", ""),
+        }
+    else:
+        corpus_embeddings, corpus_cache = dense_baseline.encode_records_with_optional_cache(
+            corpus,
+            encoder,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind="corpus",
+            batch_size=batch_size,
+            embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+            use_embedding_cache=use_embedding_cache,
+            force_embedding_cache=force_embedding_cache,
+        )
     query_embeddings, query_cache = dense_baseline.encode_records_with_optional_cache(
         queries,
         encoder,
@@ -945,6 +962,11 @@ def run_dataset(
                 bool(context_cache_by_seed.get(int(seed), {}).get("cache_hit", False))
                 for seed in seeds
             ],
+            "scale_store_enabled": bool(use_scale_store),
+            "scale_store_dir": str(scale_store_dir or DEFAULT_SCALE_STORE_DIR) if use_scale_store else "",
+            "scale_store_canonical_name": scale_store_canonical_name if use_scale_store else "",
+            "scale_store_canonical_count": scale_store_info.get("canonical_count", 0),
+            "scale_store_selected_rows": scale_store_info.get("selected_rows", 0),
             "dense_ranking_artifact_path": dense_ranking_cache.get("artifact_path", ""),
             "bm25_ranking_artifact_path": bm25_ranking_cache.get("artifact_path", ""),
             "context_cluster_artifact_paths": [
@@ -1050,6 +1072,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "dense_ranking_cache_hit",
         "bm25_ranking_cache_hit",
         "context_cluster_cache_hits",
+        "scale_store_enabled",
+        "scale_store_selected_rows",
     ]
     preferred_set = set(preferred) | {"elapsed_sec", "notes"}
     metric_keys = sorted({
@@ -1154,6 +1178,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--artifact-cache-dir", type=Path, default=DEFAULT_ARTIFACT_CACHE_DIR)
     parser.add_argument("--no-artifact-cache", action="store_true", help="Disable reusable dense/BM25/context retrieval artifacts")
     parser.add_argument("--force-artifact-cache", action="store_true", help="Recompute retrieval artifacts even when cache files exist")
+    parser.add_argument("--scale-store-dir", type=Path, default=DEFAULT_SCALE_STORE_DIR)
+    parser.add_argument("--use-scale-store", action="store_true", help="Load corpus embeddings from canonical LoTTE scale store")
+    parser.add_argument("--scale-store-canonical-name", default="lotte_technology_search")
     parser.add_argument("--routing-modes", default="full_multi_route,gated_cost_aware")
     parser.add_argument("--feedback-mode", default="trust_weighted", choices=FEEDBACK_MODES)
     parser.add_argument("--batch-size", type=int, default=64)
@@ -1279,6 +1306,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             artifact_cache_dir=args.artifact_cache_dir,
             use_artifact_cache=not args.no_artifact_cache,
             force_artifact_cache=args.force_artifact_cache,
+            scale_store_dir=args.scale_store_dir,
+            use_scale_store=args.use_scale_store,
+            scale_store_canonical_name=args.scale_store_canonical_name,
         )
         all_rows.extend(rows)
         for row in rows:

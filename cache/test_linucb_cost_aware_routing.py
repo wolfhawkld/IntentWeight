@@ -39,6 +39,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             "gated_cost_aware",
             confidence=0.9,
             semantic_drift=0.1,
+            recent_reward_delta=0.0,
             dense_depth=100,
             bm25_depth=100,
             cluster_depth=100,
@@ -55,6 +56,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             high_confidence_threshold=0.65,
             mid_confidence_threshold=0.35,
             drift_threshold=1.0,
+            reward_drop_threshold=0.0,
         )
         self.assertEqual(primary.route, "linucb_primary")
         self.assertEqual(primary.dense_depth, 0)
@@ -63,6 +65,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             "gated_cost_aware",
             confidence=0.9,
             semantic_drift=1.2,
+            recent_reward_delta=0.0,
             dense_depth=100,
             bm25_depth=100,
             cluster_depth=100,
@@ -79,6 +82,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             high_confidence_threshold=0.65,
             mid_confidence_threshold=0.35,
             drift_threshold=1.0,
+            reward_drop_threshold=0.0,
         )
         self.assertEqual(fallback.route, "full_dense_fallback")
         self.assertEqual(fallback.dense_depth, 100)
@@ -176,6 +180,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                 high_confidence_threshold=0.65,
                 mid_confidence_threshold=0.35,
                 drift_threshold=1.0,
+                reward_drop_threshold=0.0,
                 confidence_feedback_floor=1.0,
                 high_trust_prob=1.0,
                 high_trust=1.0,
@@ -201,6 +206,119 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             self.assertTrue((out_dir / f"linucb_cost_{artifact_slug}_prequential_rankings.json").exists())
             self.assertTrue((out_dir / "linucb_cost_summary.csv").exists())
             self.assertTrue((out_dir / "linucb_cost_tables.md").exists())
+
+    def test_run_dataset_can_load_corpus_embeddings_from_scale_store(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            data_dir = tmpdir / "processed"
+            out_dir = tmpdir / "results"
+            store_dir = tmpdir / "scale_store"
+            data_dir.mkdir()
+            store_dir.mkdir()
+            corpus = [
+                {
+                    "chunk_id": "toy_400k_c0",
+                    "text": "alpha document",
+                    "metadata": {"original_corpus_id": "0"},
+                },
+                {
+                    "chunk_id": "toy_400k_c1",
+                    "text": "beta document",
+                    "metadata": {"original_corpus_id": "1"},
+                },
+                {
+                    "chunk_id": "toy_400k_c2",
+                    "text": "gamma document",
+                    "metadata": {"original_corpus_id": "2"},
+                },
+            ]
+            queries = [
+                {
+                    "query_id": "q_alpha",
+                    "text": "alpha query",
+                    "ground_truth_chunk_ids": ["toy_400k_c0"],
+                    "split": "test",
+                },
+            ]
+            (data_dir / "toy_400k_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / "toy_400k_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+            np.save(
+                store_dir / "canonical_corpus_embeddings.npy",
+                np.asarray([[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0]], dtype=np.float32),
+            )
+            (store_dir / "canonical_corpus_ids.json").write_text(
+                json.dumps({
+                    "canonical_ids": ["toy_orig_0", "toy_orig_1", "toy_orig_2"],
+                    "text_sha256": ["unused", "unused", "unused"],
+                    "source_datasets": [["toy_400k"], ["toy_400k"], ["toy_400k"]],
+                }),
+                encoding="utf-8",
+            )
+            encoder = FakeEncoder({"alpha query": [1.0, 0.0]})
+
+            rows = linucb_cost.run_dataset(
+                "toy_400k",
+                data_dir,
+                out_dir,
+                encoder,
+                model_name="fake-model",
+                routing_modes=("full_multi_route",),
+                feedback_mode="trust_weighted",
+                top_k=1,
+                ks=(1,),
+                batch_size=2,
+                seeds=(1,),
+                epochs=1,
+                n_clusters=2,
+                context_dim=2,
+                candidate_arms=2,
+                alpha=1.0,
+                alpha_decay=0.01,
+                alpha_min=0.3,
+                arm_neighbor_k=2,
+                arm_decay_sigma=0.75,
+                propagation_strength=0.25,
+                feedback_k=2,
+                feedback_tau=0.75,
+                feedback_weight=0.35,
+                dense_depth=2,
+                bm25_depth=2,
+                cluster_depth=2,
+                dense_weight=2.0,
+                bm25_weight=0.8,
+                cluster_weight=0.8,
+                rrf_k=60,
+                dense_floor_k=1,
+                dense_lite_depth=1,
+                bm25_lite_depth=1,
+                dense_lite_weight=0.8,
+                bm25_lite_weight=0.5,
+                cluster_primary_weight=2.0,
+                dense_lite_floor_k=1,
+                high_confidence_threshold=0.65,
+                mid_confidence_threshold=0.35,
+                drift_threshold=1.0,
+                reward_drop_threshold=0.0,
+                confidence_feedback_floor=1.0,
+                high_trust_prob=1.0,
+                high_trust=1.0,
+                low_trust=0.25,
+                high_accuracy=1.0,
+                low_accuracy=0.55,
+                window_size=1,
+                query_split="test",
+                artifact_cache_dir=tmpdir / "artifacts",
+                use_artifact_cache=True,
+                use_scale_store=True,
+                scale_store_dir=store_dir,
+                scale_store_canonical_name="toy",
+            )
+
+            self.assertEqual(len(rows), 1)
+            self.assertTrue(rows[0]["scale_store_enabled"])
+            self.assertEqual(rows[0]["scale_store_selected_rows"], 3)
+            self.assertTrue(rows[0]["corpus_embedding_cache_hit"])
+            self.assertTrue((out_dir / f"linucb_cost_{rows[0]['artifact_slug']}_prequential_metrics.json").exists())
 
 
 if __name__ == "__main__":

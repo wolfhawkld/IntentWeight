@@ -1321,6 +1321,41 @@ Smoke result:
     - 400k hybrid RRF (`0.7617`) 略低于 dense (`0.7718`)，说明 LoTTE technology/search 在当前 all-MiniLM dense 表征下仍偏 semantic-friendly，BM25 融合不一定带来收益。
     - Task22.3c 完成的是 dense/hybrid baseline + shared artifact integration；400k LinUCB 尚未运行，应作为下一步。
 
+- 2026-05-11 Task 22.4 LoTTE 400k LinUCB scale-store smoke：
+  - 目标：
+    - 将 Task22.3c 的 canonical scale-store / shared artifact 路径接入 `linucb_cost_aware_routing.py`。
+    - 先跑 400k 单 seed / 单 epoch smoke，确认 400k LinUCB 可以复用 canonical embeddings、dense rankings、BM25 rankings 和 context cluster artifacts。
+  - 代码：
+    - `linucb_cost_aware_routing.py` 新增：
+      - `--use-scale-store`
+      - `--scale-store-dir`
+      - `--scale-store-canonical-name`
+    - LinUCB runner 现在可直接从 canonical scale store 读取 corpus embeddings；query embeddings 仍走原 embedding cache。
+    - metrics/summary 新增：
+      - `scale_store_enabled`
+      - `scale_store_dir`
+      - `scale_store_canonical_name`
+      - `scale_store_canonical_count`
+      - `scale_store_selected_rows`
+    - `cache/test_linucb_cost_aware_routing.py` 增加 scale-store corpus embedding path 覆盖。
+  - Smoke 配置：
+    - command: `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_400k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --seeds 13 --epochs 1 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-floor-k 3 --high-confidence-threshold 0.74 --mid-confidence-threshold 0.44 --routing-modes full_multi_route,gated_cost_aware --use-scale-store --output-dir paper/experiments/results/task22_4_lotte_400k_linucb_smoke`
+    - corpus chunks=`400674`
+    - queries=`596`
+    - seeds=`13`
+    - epochs=`1`
+    - scale_store_selected_rows=`400674`
+    - dense ranking artifact cache hit=`True`
+    - BM25 ranking artifact cache hit=`True`
+    - context cluster artifact cache hit=`True`
+  - Smoke 结果：
+    - full_multi_route：Recall@10=`0.8087`，MRR@10=`0.5928`，nDCG@10=`0.5226`，last true reward=`0.3205`，avg source candidate cost=`300.00`，dense query rate=`1.0000`。
+    - gated_cost_aware：Recall@10=`0.7768`，MRR@10=`0.5827`，nDCG@10=`0.4968`，last true reward=`0.3154`，avg source candidate cost=`247.70`，dense query rate=`0.9094`，LinUCB primary rate=`0.0906`。
+  - 当前解释：
+    - 400k full_multi_route smoke 高于 400k dense baseline：`0.8087` vs `0.7718`，支持在更大 corpus 下 multi-route LinUCB 仍有增益。
+    - 400k gated smoke 也略高于 dense baseline：`0.7768` vs `0.7718`，同时候选成本从 `300.00` 降到 `247.70`，约节省 `17.43%`。
+    - 这是 smoke，不是 formal multi-seed 结论；下一步应做 400k multi-seed / multi-epoch formal run，并继续观察 gated 的质量-成本 frontier。
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。
