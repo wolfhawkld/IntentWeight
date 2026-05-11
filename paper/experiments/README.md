@@ -152,6 +152,17 @@ processed `chunk_id`, so the same original corpus item is shared across 100k,
 200k, and future 400k/full slices. Generated store files live under
 `paper/experiments/data/scale_store/` and are ignored by git.
 
+To append a larger nested slice without recomputing existing canonical rows:
+
+```bash
+.venv/bin/python paper/experiments/scripts/lotte_scale_store.py \
+  --datasets lotte_technology_search_400k \
+  --canonical-name lotte_technology_search \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --append-existing-store --compute-missing \
+  --local-files-only --device cpu --batch-size 64
+```
+
 CUAD full corpus 当前为 675400 sentence chunks，CPU exact dense 全量成本较高。CUAD smoke/sample 必须使用 GT-anchored corpus sampling：先固定评估 query，把这些 query 的 GT chunks 放入候选 corpus，再补采样 distractors。当前 CUAD 结果应标为 smoke/sample，不应直接进入主表排名：
 
 ```bash

@@ -1243,6 +1243,45 @@ Smoke result:
     - Task22.3a 只建立 canonical scale store / manifest。
     - 还未把 dense baseline、hybrid、LinUCB runner 改为直接按 manifest 读取 canonical embedding rows；这是后续 Task22.3b/22.3c 的自然下一步。
 
+- 2026-05-11 Task 22.3b LoTTE 400k incremental canonical embedding append：
+  - 目标：
+    - 基于 Task22.3a 的 canonical store，将 LoTTE 从 200k 增量扩展到 400k。
+    - 已存在的 100k/200k corpus rows 直接复用，不重新计算 embedding。
+  - 代码修正：
+    - `preprocess_lotte.py` 修复 400k/full 规模下 GT-anchored corpus selection 的性能瓶颈。
+      - 原逻辑每行都做 `needed_corpus_ids.issubset(selected.keys())`，在大规模 corpus 上会产生大量重复集合扫描。
+      - 新逻辑维护 `missing_needed_ids`，命中 GT corpus id 后直接 `discard`，扫描复杂度更接近线性。
+    - `lotte_scale_store.py` 新增 append 模式：
+      - `--append-existing-store`
+      - `--compute-missing`
+      - `--local-files-only`
+      - `--device`
+      - `--batch-size`
+      - `--encode-chunk-size`
+    - append 模式会先加载现有 canonical rows，再对新 scale 中缺失的 canonical ids 编码并追加。
+  - 400k processed 数据：
+    - command: `.venv/bin/python paper/experiments/scripts/preprocess_lotte.py --domain technology --mode search --split test --max-queries 596 --max-corpus 400000 --output-name lotte_technology_search_400k --local-arrow-cache`
+    - corpus chunks=`400674`
+    - queries=`596`
+    - GT refs=`2045`
+    - validation：`gt_coverage=100.00%`，`missing_gt_refs=0`，`duplicate_chunks=0`
+  - 400k canonical append：
+    - command: `.venv/bin/python paper/experiments/scripts/lotte_scale_store.py --datasets lotte_technology_search_400k --canonical-name lotte_technology_search --model sentence-transformers/all-MiniLM-L6-v2 --append-existing-store --compute-missing --local-files-only --device cpu --batch-size 64 --encode-chunk-size 10000`
+    - initial canonical rows=`201010`
+    - 400k corpus rows=`400674`
+    - reused canonical rows=`201010`
+    - encoded missing rows=`199664`
+    - final canonical rows=`400674`
+    - final embedding shape=`[400674, 384]`
+    - encoding elapsed=`4041.080s`
+  - 已验证：
+    - `.venv/bin/python -m py_compile paper/experiments/scripts/preprocess_lotte.py paper/experiments/scripts/lotte_scale_store.py`
+    - `.venv/bin/python -m unittest cache/test_lotte_scale_store.py cache/test_preprocess_lotte.py cache/test_embedding_cache.py`
+    - 400k manifest row index shape=`(400674,)`，min=`0`，max=`400673`
+  - 当前解释：
+    - Task22.3b 证明了 400k 可以在 22.3a 的 canonical store 上增量扩展，不需要完整重算 100k/200k 已有 embedding。
+    - 下一步可开始 22.3c：让 dense / hybrid / LinUCB runner 直接按 400k row manifest 读取 canonical embeddings，或先生成 400k shared retrieval artifacts。
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。

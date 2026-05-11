@@ -205,6 +205,7 @@ def select_corpus_rows(
         local_arrow_cache=local_arrow_cache,
     )
     selected: MutableMapping[str, Mapping] = {}
+    missing_needed_ids = set(needed_corpus_ids)
 
     for row in rows:
         corpus_id = str(row.get("_id"))
@@ -212,13 +213,14 @@ def select_corpus_rows(
             continue
         if corpus_id in needed_corpus_ids:
             selected[corpus_id] = row
+            missing_needed_ids.discard(corpus_id)
         elif len(selected) < target_size:
             selected[corpus_id] = row
 
-        if needed_corpus_ids.issubset(selected.keys()) and len(selected) >= target_size:
+        if not missing_needed_ids and len(selected) >= target_size:
             break
 
-    missing = sorted(needed_corpus_ids - set(selected))
+    missing = sorted(missing_needed_ids)
     if missing:
         preview = ", ".join(missing[:5])
         raise ValueError(f"Could not find {len(missing)} GT corpus rows in LoTTE stream; first missing: {preview}")
