@@ -98,6 +98,25 @@ LoTTE 100k is the main large-scale vertical evidence retrieval setting:
 | Task19-E | 0.8865 | 0.7116 | 0.6508 | 0.6370 | +0.3507 | 258.84 | 0.9489 | Highest quality but dense-heavy |
 | Task20-S | 0.8747 | 0.7071 | 0.6308 | 0.6074 | +0.3160 | 227.29 | 0.8945 | Best conditional fallback point |
 
+## LoTTE Incremental Scale-Up
+
+Task22 begins the move from the 100k reference to larger LoTTE corpora. Task22.2
+uses `201010` corpus chunks, `596` held-out test queries, and `2045` GT refs
+with 100% GT coverage.
+
+| Setting | R@10 | MRR@10 | nDCG@10 | Last reward | Reward gain | Avg source cost | Dense query rate | Interpretation |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| BM25 200k | 0.6292 | 0.4572 | 0.3832 | - | - | - | - | Lexical baseline drops with more distractors |
+| Dense 200k | 0.7970 | 0.6279 | 0.5643 | - | - | 100.00 | 1.0000 | Strong baseline but lower than 100k dense |
+| Hybrid 200k | 0.8003 | 0.6045 | 0.5323 | - | - | 200.00 | 1.0000 | Slightly above dense in recall |
+| Task22.2 full multi-route | 0.8300 | 0.6326 | 0.5720 | 0.5078 | +0.2875 | 300.00 | 1.0000 | Still above dense at 200k |
+| Task22.2 gated | 0.8154 | 0.6305 | 0.5472 | 0.5677 | +0.3395 | 232.01 | 0.9027 | Above dense with lower source cost than full |
+
+This strengthens the scale argument. As corpus size increases from 100k to
+200k, static baselines degrade, but adaptive full/gated multi-route retrieval
+still remains above dense-only. The next scale checkpoint should be 400k before
+attempting the full `638509`-passage corpus.
+
 ## Task19 vs Task20 Interpretation
 
 Task19 is the hypothesis/Pareto validation stage. It shows that gated
@@ -155,4 +174,3 @@ Chinese:
 4. LoTTE 100k quality-cost frontier: dense, Task18 full/gated, Task19-D/E,
    Task20-S.
 5. Limitation cases: eManual, CUAD, aggressive low-cost routing.
-

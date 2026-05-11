@@ -634,6 +634,24 @@ learn useful route value from trust-weighted feedback and expose a controllable
 quality-cost frontier; it should not be claimed as a universal low-cost
 replacement for dense retrieval.
 
+Task 22 extends LoTTE incrementally beyond the 100k reference. Task22.2 generated
+and evaluated a 200k corpus (`201010` chunks, `596` test queries, `2045` GT
+refs, 100% GT coverage):
+
+| Setting | R@10 | MRR@10 | nDCG@10 | Last reward | Reward gain | Avg cost | Dense query rate | Notes |
+|---------|------|--------|---------|-------------|-------------|----------|------------------|-------|
+| BM25 200k | 0.6292 | 0.4572 | 0.3832 | - | - | - | - | Static lexical baseline |
+| Dense 200k | 0.7970 | 0.6279 | 0.5643 | - | - | 100.00 | 1.0000 | all-MiniLM-L6-v2 CPU exact cosine |
+| Hybrid 200k | 0.8003 | 0.6045 | 0.5323 | - | - | 200.00 | 1.0000 | RRF, fusion depth 100 |
+| Task22.2 full multi-route | 0.8300 | 0.6326 | 0.5720 | 0.5078 | +0.2875 | 300.00 | 1.0000 | seeds=13,17,19; epochs=3 |
+| Task22.2 gated | 0.8154 | 0.6305 | 0.5472 | 0.5677 | +0.3395 | 232.01 | 0.9027 | Task20-S-style thresholds |
+
+The 200k result preserves the large-scale signal: full multi-route remains
+above dense by about `+3.30` Recall@10 points, and gated routing remains above
+dense while reducing source candidate cost relative to the full route. Static
+baselines drop from 100k to 200k, confirming that the incremental scale-up makes
+retrieval harder rather than merely duplicating the 100k setting.
+
 The 100k dense baseline took `1640.076s` on CPU exact cosine before reusable
 embedding cache was added. The original cost-aware LinUCB smoke took
 `1772.420s` for full route and `1905.491s` for gated route because it repeated
@@ -677,6 +695,9 @@ Current status as of 2026-05-07:
   saved rate `0.1055`.
 - Task21 paper-ready summary is complete:
   `paper/experiments/task21_paper_ready_summary.md`.
+- Task22.2 LoTTE 200k scale-up is complete: static dense `R@10=0.7970`,
+  full multi-route `R@10=0.8300`, gated `R@10=0.8154`, gated average source
+  cost `232.01`.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -701,7 +722,10 @@ Next roadmap:
 | 19 | Run dense/LinUCB weight and threshold ablations | Complete: quality-cost Pareto frontier, with D/E exceeding dense at higher cost |
 | 20 | Test conditional dense fallback | Complete: S exceeds dense while reducing dense query rate below Task19-D |
 | 21 | Assemble paper-ready result tables and argument | Complete: bounded evidence summary and recommended paper claim |
-| 22 | Optional LoTTE full-corpus expansion | Stronger scale claim if 100k evidence is stable enough |
+| 22.1 | LoTTE 100k scale reference | Complete: Task18/19/20 quality-cost frontier |
+| 22.2 | LoTTE 200k incremental scale-up | Complete: full/gated remain above dense under larger corpus |
+| 22.3 | LoTTE 400k incremental scale-up | Next scale checkpoint if compute budget allows |
+| 22.4 | LoTTE 638k full-corpus expansion | Final full-corpus scale claim |
 
 Example smoke commands:
 

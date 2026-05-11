@@ -244,6 +244,8 @@ PY
 - [x] Task 19: LoTTE 100k dense / LinUCB gating threshold ablation
 - [x] Task 20: LoTTE 100k conditional dense fallback
 - [x] Task 21: Paper-ready evidence summary and bounded claim
+- [x] Task 22.1: LoTTE 100k scale reference
+- [x] Task 22.2: LoTTE 200k incremental scale-up
 
 ## 后续任务规划
 
@@ -1180,6 +1182,37 @@ Smoke result:
   - 明确 Task19 / Task20 定位：
     - Task19 是假设/Pareto frontier 验证。
     - Task20 是基于 Task19 的 conditional dense fallback 参数微调与工程优化检验。
+
+- 2026-05-11 Task 22.2 LoTTE 200k incremental scale-up：
+  - 目标：
+    - 从已完成的 LoTTE 100k reference 扩展到约 200k corpus，验证规模增加后 baseline 与 adaptive routing 的趋势是否稳定。
+    - 不直接跳到 638k full corpus，采用 100k -> 200k -> 400k -> full 的增量策略。
+  - 代码/数据：
+    - `preprocess_lotte.py` 新增 `--local-arrow-cache`，支持直接读取本机 HuggingFace Arrow cache，绕过 HF datasets lock/network 问题。
+    - LoTTE JSON 输出改为 compact JSON，降低 200k/400k/full 规模下的写入体积和时间。
+    - 生成 `lotte_technology_search_200k` processed 数据：
+      - corpus chunks=`201010`
+      - queries=`596`
+      - GT refs=`2045`
+      - validation：`gt_coverage=100.00%`，`missing_gt_refs=0`，`duplicate_chunks=0`
+      - corpus 超过 200000 是因为 GT anchors 全量保留后补充 distractors。
+  - 200k static baselines：
+    - BM25：Recall@10=`0.6292`，MRR@10=`0.4572`，nDCG@10=`0.3832`，elapsed=`331.144s`。
+    - Dense all-MiniLM-L6-v2：Recall@10=`0.7970`，MRR@10=`0.6279`，nDCG@10=`0.5643`，elapsed=`3448.732s`，首次生成 200k embedding cache。
+    - Hybrid RRF：Recall@10=`0.8003`，MRR@10=`0.6045`，nDCG@10=`0.5323`，elapsed=`232.139s`，复用 200k embedding cache。
+  - 200k LinUCB scale smoke：
+    - `seeds=13`，`epochs=1`，routing modes=`full_multi_route,gated_cost_aware`，gated 使用 Task20-S 风格阈值 `0.44/0.74`。
+    - full_multi_route：Recall@10=`0.8289`，avg cost=`300.00`。
+    - gated_cost_aware：Recall@10=`0.8104`，avg cost=`251.88`，dense query rate=`0.9480`。
+  - 200k formal multi-seed：
+    - `seeds=13,17,19`，`epochs=3`，same Task20-S-style gated config。
+    - full_multi_route：Recall@10 mean=`0.8300`，std=`0.0048`；MRR@10=`0.6326`；nDCG@10=`0.5720`；last true reward=`0.5078`；epoch reward gain=`+0.2875`；avg cost=`300.00`。
+    - gated_cost_aware：Recall@10 mean=`0.8154`，std=`0.0049`；MRR@10=`0.6305`；nDCG@10=`0.5472`；last true reward=`0.5677`；epoch reward gain=`+0.3395`；avg cost=`232.01`；dense query rate=`0.9027`；dense saved rate=`0.0973`。
+  - 解释：
+    - 规模从 100k 扩到 200k 后，BM25/dense/hybrid baseline 全部下降，说明 distractors 增加导致检索难度上升。
+    - 200k full multi-route 仍高于 dense baseline：`0.8300` vs `0.7970`，提升约 `+3.30` 个百分点。
+    - 200k gated 也高于 dense baseline：`0.8154` vs `0.7970`，同时平均 source cost 从 `300.00` 降到 `232.01`。
+    - 这支持 Task22 的核心 scale claim：随着 corpus 扩大，adaptive multi-route 的增益仍保留；但 gated dense query rate=`0.9027`，仍需在 400k 阶段继续监控成本。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

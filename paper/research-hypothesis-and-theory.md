@@ -614,6 +614,14 @@ dataset-specific geometry, and failure/limitation cases such as eManual and
 CUAD smoke. Task 22 should only expand to full LoTTE if 100k evidence is stable
 and the paper needs a stronger scale claim.
 
+Task 22 has begun as an incremental scale-up rather than a single full-corpus
+jump. The 200k LoTTE checkpoint supports the scale argument: dense-only drops to
+`Recall@10=0.7970`, while full multi-route reaches `0.8300` and the
+Task20-S-style gated route reaches `0.8154` at average source candidate cost
+`232.01`. This suggests the adaptive multi-route advantage is not limited to the
+100k subset. The next prudent checkpoint is 400k before attempting the full
+`638509` corpus.
+
 ---
 
 ## One-Sentence Positioning
