@@ -19,6 +19,7 @@ paper/experiments/
 │   ├── retrieval_metrics.py       # Recall/MRR/nDCG 评估
 │   ├── embedding_cache.py         # reusable dense embedding cache
 │   ├── large_scale_artifacts.py   # reusable dense/BM25/context artifacts
+│   ├── lotte_scale_store.py       # LoTTE nested-scale canonical embedding manifests
 │   ├── bm25_baseline.py           # BM25 静态检索 baseline
 │   ├── dense_baseline.py          # dense embedding 静态检索 baseline
 │   ├── hybrid_baseline.py         # BM25+dense RRF hybrid baseline
@@ -34,6 +35,7 @@ paper/experiments/
 │   ├── raw/                       # 下载的原始数据 (git ignored)
 │   ├── processed/                 # 统一格式 (git ignored)
 │   ├── embeddings/                # 预计算 embedding (git ignored)
+│   ├── scale_store/               # canonical scale manifests/embedding rows (git ignored)
 │   └── retrieval_artifacts/        # dense/BM25/context artifact cache (git ignored)
 ├── results/                       # baseline metrics/rankings/summary
 └── README.md
@@ -134,6 +136,21 @@ Useful cache flags:
 --no-embedding-cache
 --force-embedding-cache
 ```
+
+For LoTTE scale-up experiments, build a canonical scale store after generating
+the nested processed slices and their corpus embedding caches:
+
+```bash
+.venv/bin/python paper/experiments/scripts/lotte_scale_store.py \
+  --datasets lotte_technology_search_100k,lotte_technology_search_200k \
+  --canonical-name lotte_technology_search \
+  --model sentence-transformers/all-MiniLM-L6-v2
+```
+
+The store keys corpus rows by LoTTE `original_corpus_id`, not by scale-specific
+processed `chunk_id`, so the same original corpus item is shared across 100k,
+200k, and future 400k/full slices. Generated store files live under
+`paper/experiments/data/scale_store/` and are ignored by git.
 
 CUAD full corpus 当前为 675400 sentence chunks，CPU exact dense 全量成本较高。CUAD smoke/sample 必须使用 GT-anchored corpus sampling：先固定评估 query，把这些 query 的 GT chunks 放入候选 corpus，再补采样 distractors。当前 CUAD 结果应标为 smoke/sample，不应直接进入主表排名：
 
@@ -859,4 +876,4 @@ Task 11-13 的在线学习实验必须先选定无泄漏协议：
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-05-06*
+*更新时间: 2026-05-11*

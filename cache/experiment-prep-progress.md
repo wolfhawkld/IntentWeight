@@ -1214,6 +1214,35 @@ Smoke result:
     - 200k gated 也高于 dense baseline：`0.8154` vs `0.7970`，同时平均 source cost 从 `300.00` 降到 `232.01`。
     - 这支持 Task22 的核心 scale claim：随着 corpus 扩大，adaptive multi-route 的增益仍保留；但 gated dense query rate=`0.9027`，仍需在 400k 阶段继续监控成本。
 
+- 2026-05-11 Task 22.3a LoTTE canonical scale store：
+  - 背景：
+    - Task22.2 的 200k embedding cache 是 dataset-level cache，能复用同一 dataset 的 rerun，但没有直接复用 100k 已算过的 corpus rows。
+    - 后续 400k / 638k full 如果继续按 dataset name 单独建 cache，会重复计算/保存 100k、200k 已存在的 embedding。
+  - 代码：
+    - 新增 `paper/experiments/scripts/lotte_scale_store.py`。
+    - 新增 `cache/test_lotte_scale_store.py`。
+    - scale store 按 LoTTE `metadata.original_corpus_id` 建 canonical corpus id，而不是按 `lotte_technology_search_100k_c*` / `200k_c*` 这种 scale-specific chunk id 合并。
+    - 输出包含：
+      - `canonical_corpus_embeddings.npy`
+      - `canonical_metadata.json`
+      - `canonical_corpus_ids.json`
+      - 每个 scale 的 `*_manifest.json`
+      - 每个 scale 的 `*_row_indices.npy`
+    - 输出目录：`paper/experiments/data/scale_store/lotte_technology_search/`，受 `paper/experiments/data/.gitignore` 保护，不提交大文件。
+  - 实际 100k + 200k build 结果：
+    - canonical rows=`201010`
+    - embedding shape=`[201010, 384]`
+    - 100k：corpus=`101311`，new canonical rows=`101311`，reused=`0`
+    - 200k：corpus=`201010`，new canonical rows=`99699`，reused=`101311`
+    - 说明 200k 成功复用全部 100k canonical rows；后续 400k/full 可在此基础上只追加新增 original corpus ids。
+  - 已验证：
+    - `.venv/bin/python -m py_compile paper/experiments/scripts/lotte_scale_store.py`
+    - `.venv/bin/python -m unittest cache/test_lotte_scale_store.py cache/test_embedding_cache.py`
+    - 实际运行 `lotte_scale_store.py --datasets lotte_technology_search_100k,lotte_technology_search_200k` 成功。
+  - 当前边界：
+    - Task22.3a 只建立 canonical scale store / manifest。
+    - 还未把 dense baseline、hybrid、LinUCB runner 改为直接按 manifest 读取 canonical embedding rows；这是后续 Task22.3b/22.3c 的自然下一步。
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。
