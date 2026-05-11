@@ -1356,6 +1356,70 @@ Smoke result:
     - 400k gated smoke 也略高于 dense baseline：`0.7768` vs `0.7718`，同时候选成本从 `300.00` 降到 `247.70`，约节省 `17.43%`。
     - 这是 smoke，不是 formal multi-seed 结论；下一步应做 400k multi-seed / multi-epoch formal run，并继续观察 gated 的质量-成本 frontier。
 
+- 2026-05-11 Task 22.5 LoTTE 400k LinUCB formal multi-seed：
+  - 目标：
+    - 在 Task22.4 smoke 之后，按 200k formal 的口径跑 400k LinUCB multi-seed / multi-epoch 正式实验。
+    - 验证 400k 下 full multi-route / gated cost-aware 是否稳定高于 dense baseline，以及 gated 是否保留成本收益。
+  - 固定配置：
+    - dataset=`lotte_technology_search_400k`
+    - query split=`test`
+    - corpus chunks=`400674`
+    - queries=`596`
+    - seeds=`13,17,19`
+    - epochs=`3`
+    - n_clusters=`32`
+    - context_dim=`64`
+    - candidate_arms=`3`
+    - dense_depth=`100`
+    - bm25_depth=`100`
+    - cluster_depth=`100`
+    - dense_lite_depth=`30`
+    - bm25_lite_depth=`20`
+    - dense_lite_floor_k=`3`
+    - high_confidence_threshold=`0.74`
+    - mid_confidence_threshold=`0.44`
+    - routing modes=`full_multi_route,gated_cost_aware`
+    - scale store enabled=`True`
+  - command:
+    - `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_400k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --seeds 13,17,19 --epochs 3 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-floor-k 3 --high-confidence-threshold 0.74 --mid-confidence-threshold 0.44 --routing-modes full_multi_route,gated_cost_aware --use-scale-store --output-dir paper/experiments/results/task22_5_lotte_400k_linucb_formal`
+  - Artifact/cache 状态：
+    - dense ranking cache hit=`True`
+    - BM25 ranking cache hit=`True`
+    - context cluster cache hits=`[True, False, False]`
+    - 解释：seed 13 context artifact 已存在；seed 17/19 在本次 formal run 中首次生成，因此本次记录为 miss。生成后后续 rerun 会命中。
+  - 结果：
+    - full_multi_route：
+      - Recall@10 mean=`0.8003`，std=`0.0047`
+      - MRR@10 mean=`0.5920`
+      - nDCG@10 mean=`0.5251`
+      - last true reward mean=`0.5537`
+      - epoch true reward gain mean=`+0.2864`
+      - avg source candidate cost mean=`300.00`
+      - dense query rate mean=`1.0000`
+      - per-seed Recall@10：seed13=`0.8037`，seed17=`0.8037`，seed19=`0.7936`
+    - gated_cost_aware:
+      - Recall@10 mean=`0.7836`，std=`0.0024`
+      - MRR@10 mean=`0.5860`
+      - nDCG@10 mean=`0.5084`
+      - last true reward mean=`0.4983`
+      - epoch true reward gain mean=`+0.2366`
+      - avg source candidate cost mean=`233.22`
+      - dense query rate mean=`0.9141`
+      - dense saved rate mean=`0.0859`
+      - LinUCB primary rate mean=`0.0859`
+      - hybrid-lite rate mean=`0.3421`
+      - full dense fallback rate mean=`0.5720`
+      - per-seed Recall@10：seed13=`0.7852`，seed17=`0.7852`，seed19=`0.7802`
+  - 对照 400k baseline：
+    - 400k dense baseline Recall@10=`0.7718`
+    - 400k hybrid RRF Recall@10=`0.7617`
+    - 400k full_multi_route formal 高于 dense：`0.8003` vs `0.7718`，提升约 `+2.85` 个百分点。
+    - 400k gated_cost_aware formal 也高于 dense：`0.7836` vs `0.7718`，提升约 `+1.17` 个百分点，同时候选成本从 `300.00` 降到 `233.22`，约节省 `22.26%`。
+  - 当前解释：
+    - 400k formal 支持 Task22 的核心 large-scale claim：随着 corpus 扩大，adaptive multi-route 的收益仍然存在。
+    - gated route 在 400k formal 中同时高于 dense baseline 且降低候选成本，质量-成本 trade-off 比 200k 更有说服力。
+    - full route 的 Recall@10 相比 400k smoke (`0.8087`) 略低，是 multi-seed / multi-epoch 后的平均结果；std=`0.0047` 可接受。
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。

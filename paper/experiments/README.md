@@ -201,6 +201,24 @@ The cost-aware LinUCB runner also supports the same scale store:
   --use-scale-store
 ```
 
+For the 400k formal LinUCB run, use multi-seed / multi-epoch:
+
+```bash
+.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py \
+  --dataset lotte_technology_search_400k \
+  --query-split test \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 16 \
+  --top-k 10 --ks 1,5,10 \
+  --seeds 13,17,19 --epochs 3 \
+  --n-clusters 32 --context-dim 64 --candidate-arms 3 \
+  --dense-depth 100 --bm25-depth 100 --cluster-depth 100 \
+  --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-floor-k 3 \
+  --mid-confidence-threshold 0.44 --high-confidence-threshold 0.74 \
+  --routing-modes full_multi_route,gated_cost_aware \
+  --use-scale-store
+```
+
 CUAD full corpus 当前为 675400 sentence chunks，CPU exact dense 全量成本较高。CUAD smoke/sample 必须使用 GT-anchored corpus sampling：先固定评估 query，把这些 query 的 GT chunks 放入候选 corpus，再补采样 distractors。当前 CUAD 结果应标为 smoke/sample，不应直接进入主表排名：
 
 ```bash
