@@ -255,6 +255,7 @@ def load_or_compute_bm25_rankings(
     depth: int,
     cache_dir: Path = DEFAULT_ARTIFACT_CACHE_DIR,
     force: bool = False,
+    progress_every: int = 50,
 ) -> tuple[Dict[str, List[str]], Dict[str, object]]:
     """Load or compute sparse BM25 top-depth rankings for all selected queries."""
     if depth <= 0:
@@ -285,12 +286,25 @@ def load_or_compute_bm25_rankings(
             info["cache_hit"] = True
             return _load_json_rankings(ranking_path), info
 
+    if progress_every <= 0:
+        raise ValueError(f"progress_every must be positive, got {progress_every}")
+
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
+    print(
+        f"[{dataset}] building BM25 tokenized corpus for {len(corpus)} chunks",
+        flush=True,
+    )
     tokenized_corpus = [bm25_baseline.tokenize(str(chunk.get("text", ""))) for chunk in corpus]
     start = time.perf_counter()
+    print(f"[{dataset}] fitting BM25 index", flush=True)
     bm25 = bm25_baseline.SparseBM25(tokenized_corpus)
     rankings: Dict[str, List[str]] = {}
-    for query in queries:
+    for query_idx, query in enumerate(queries, start=1):
+        if query_idx == 1 or query_idx % progress_every == 0 or query_idx == len(queries):
+            print(
+                f"[{dataset}] computing BM25 rankings {query_idx}/{len(queries)}",
+                flush=True,
+            )
         scores = bm25.get_scores(bm25_baseline.tokenize(str(query.get("text", ""))))
         top_indices = bm25_baseline.top_k_sparse_indices(scores, effective_depth)
         rankings[_query_id(query)] = [chunk_ids[idx] for idx in top_indices]

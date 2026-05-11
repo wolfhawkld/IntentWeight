@@ -32,6 +32,7 @@ DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
 DEFAULT_EMBEDDING_CACHE_DIR = dense_baseline.DEFAULT_EMBEDDING_CACHE_DIR
 DEFAULT_ARTIFACT_CACHE_DIR = large_scale_artifacts.DEFAULT_ARTIFACT_CACHE_DIR
+DEFAULT_SCALE_STORE_DIR = dense_baseline.DEFAULT_SCALE_STORE_DIR
 DEFAULT_DATASETS = ("pubmedqa", "banking77", "emanual", "cuad")
 DEFAULT_MODEL = dense_baseline.DEFAULT_MODEL
 
@@ -226,6 +227,9 @@ def run_dataset(
     artifact_cache_dir: Path | None = None,
     use_artifact_cache: bool = False,
     force_artifact_cache: bool = False,
+    scale_store_dir: Path | None = None,
+    use_scale_store: bool = False,
+    scale_store_canonical_name: str = "lotte_technology_search",
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
@@ -249,9 +253,79 @@ def run_dataset(
     artifact_dir = artifact_cache_dir or DEFAULT_ARTIFACT_CACHE_DIR
     dense_artifact_info: Dict[str, object] = {"cache_hit": False}
     bm25_artifact_info: Dict[str, object] = {"cache_hit": False}
+    scale_store_info: Dict[str, object] = {"enabled": False}
 
     start = time.perf_counter()
-    if use_embedding_cache:
+    if use_scale_store:
+        corpus_embeddings, scale_store_info = dense_baseline.load_corpus_embeddings_from_scale_store(
+            selected_corpus,
+            canonical_name=scale_store_canonical_name,
+            scale_store_dir=scale_store_dir or DEFAULT_SCALE_STORE_DIR,
+        )
+        corpus_cache = {
+            "cache_hit": True,
+            "cache_enabled": False,
+            "embedding_path": scale_store_info.get("canonical_embedding_path", ""),
+        }
+        query_embeddings, query_cache = dense_baseline.encode_records_with_optional_cache(
+            selected_queries,
+            encoder,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind="queries",
+            batch_size=batch_size,
+            embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+            use_embedding_cache=use_embedding_cache,
+            force_embedding_cache=force_embedding_cache,
+        )
+        if use_artifact_cache:
+            artifact_depth = max(fusion_depth, top_k, 100)
+            dense_rankings_by_qid, dense_artifact_info = large_scale_artifacts.load_or_compute_dense_rankings(
+                selected_corpus,
+                selected_queries,
+                corpus_embeddings,
+                query_embeddings,
+                dataset=dataset,
+                model_name=model_name,
+                depth=artifact_depth,
+                cache_dir=artifact_dir,
+                batch_size=batch_size,
+                force=force_artifact_cache,
+            )
+            bm25_rankings_by_qid, bm25_artifact_info = large_scale_artifacts.load_or_compute_bm25_rankings(
+                selected_corpus,
+                selected_queries,
+                dataset=dataset,
+                depth=artifact_depth,
+                cache_dir=artifact_dir,
+                force=force_artifact_cache,
+            )
+            fused_rankings: Dict[str, List[str]] = {}
+            for query in selected_queries:
+                qid = _query_id(query)
+                fused_rankings[qid] = reciprocal_rank_fusion(
+                    [
+                        bm25_rankings_by_qid.get(qid, [])[:fusion_depth],
+                        dense_rankings_by_qid.get(qid, [])[:fusion_depth],
+                    ],
+                    rrf_k=rrf_k,
+                    top_k=top_k,
+                )
+            metrics_result = retrieval_metrics.evaluate_rankings(selected_queries, fused_rankings, ks=ks)
+            result = {"rankings": fused_rankings, "metrics": metrics_result}
+        else:
+            result = run_hybrid_with_dense_embeddings(
+                selected_corpus,
+                selected_queries,
+                corpus_embeddings,
+                query_embeddings,
+                top_k=top_k,
+                ks=ks,
+                batch_size=batch_size,
+                rrf_k=rrf_k,
+                fusion_depth=fusion_depth,
+            )
+    elif use_embedding_cache:
         corpus_embeddings, corpus_cache = dense_baseline.encode_records_with_optional_cache(
             selected_corpus,
             encoder,
@@ -366,6 +440,11 @@ def run_dataset(
         "bm25_ranking_cache_hit": bm25_artifact_info.get("cache_hit", False),
         "dense_ranking_artifact_path": dense_artifact_info.get("artifact_path", ""),
         "bm25_ranking_artifact_path": bm25_artifact_info.get("artifact_path", ""),
+        "scale_store_enabled": bool(use_scale_store),
+        "scale_store_dir": str(scale_store_dir or DEFAULT_SCALE_STORE_DIR) if use_scale_store else "",
+        "scale_store_canonical_name": scale_store_canonical_name if use_scale_store else "",
+        "scale_store_canonical_count": scale_store_info.get("canonical_count", 0),
+        "scale_store_selected_rows": scale_store_info.get("selected_rows", 0),
         "elapsed_sec": round(elapsed_sec, 3),
         **experiment_guardrails.build_run_metadata(
             dataset=dataset,
@@ -445,6 +524,8 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
         "embedding_cache_enabled",
         "corpus_embedding_cache_hit",
         "query_embedding_cache_hit",
+        "scale_store_enabled",
+        "scale_store_selected_rows",
         *metric_keys,
         "elapsed_sec",
         "notes",
@@ -479,6 +560,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--artifact-cache-dir", type=Path, default=DEFAULT_ARTIFACT_CACHE_DIR)
     parser.add_argument("--no-artifact-cache", action="store_true", help="Disable reusable dense/BM25 ranking artifacts")
     parser.add_argument("--force-artifact-cache", action="store_true", help="Recompute ranking artifacts even when cache files exist")
+    parser.add_argument("--scale-store-dir", type=Path, default=DEFAULT_SCALE_STORE_DIR)
+    parser.add_argument("--use-scale-store", action="store_true", help="Load corpus embeddings from canonical LoTTE scale store")
+    parser.add_argument("--scale-store-canonical-name", default="lotte_technology_search")
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--fusion-depth", type=int, default=100, help="Per-source ranking depth before RRF")
     parser.add_argument("--rrf-k", type=int, default=60, help="RRF rank constant")
@@ -524,6 +608,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             artifact_cache_dir=args.artifact_cache_dir,
             use_artifact_cache=not args.no_artifact_cache,
             force_artifact_cache=args.force_artifact_cache,
+            scale_store_dir=args.scale_store_dir,
+            use_scale_store=args.use_scale_store,
+            scale_store_canonical_name=args.scale_store_canonical_name,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)

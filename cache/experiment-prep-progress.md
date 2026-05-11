@@ -1282,6 +1282,45 @@ Smoke result:
     - Task22.3b 证明了 400k 可以在 22.3a 的 canonical store 上增量扩展，不需要完整重算 100k/200k 已有 embedding。
     - 下一步可开始 22.3c：让 dense / hybrid / LinUCB runner 直接按 400k row manifest 读取 canonical embeddings，或先生成 400k shared retrieval artifacts。
 
+- 2026-05-11 Task 22.3c LoTTE 400k scale-store baseline/artifact integration：
+  - 目标：
+    - 让 400k canonical scale store 真正进入实验运行路径，而不是只停留在 embedding store / manifest 生成。
+    - 先接入 dense / hybrid baseline，生成可复用的 400k dense/BM25 ranking artifacts，为后续 400k LinUCB 做准备。
+  - 代码：
+    - `dense_baseline.py` 新增 `--use-scale-store`、`--scale-store-dir`、`--scale-store-canonical-name`。
+    - `hybrid_baseline.py` 新增同样的 scale-store 参数。
+    - 两个 baseline 都通过 LoTTE `original_corpus_id` 对齐 canonical embedding rows，并继续使用 query embedding cache。
+    - `large_scale_artifacts.py` 给 BM25 ranking artifact 生成增加进度输出，避免 400k 首次 BM25 计算长时间无日志。
+    - 新增/扩展 `cache/test_dense_baseline.py`、`cache/test_hybrid_baseline.py` 覆盖 scale-store corpus embedding 读取路径。
+  - 400k dense baseline：
+    - command: `.venv/bin/python paper/experiments/scripts/dense_baseline.py --dataset lotte_technology_search_400k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --use-scale-store --output-dir paper/experiments/results/task22_3c_lotte_400k`
+    - corpus chunks=`400674`
+    - queries=`596`
+    - scale_store_selected_rows=`400674`
+    - dense ranking artifact path: `paper/experiments/data/retrieval_artifacts/lotte_technology_search_400k__dense_rankings__0fabbf9e9abe77a7.json`
+    - rerun cache hit：`dense_ranking_cache_hit=True`
+    - Recall@10=`0.7718`
+    - MRR@10=`0.5876`
+    - nDCG@10=`0.5174`
+    - artifact-hit rerun elapsed=`3.528s`
+  - 400k hybrid baseline：
+    - command: `.venv/bin/python paper/experiments/scripts/hybrid_baseline.py --dataset lotte_technology_search_400k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --fusion-depth 100 --use-scale-store --output-dir paper/experiments/results/task22_3c_lotte_400k`
+    - 首次运行生成 BM25 top-100 artifact；WSL 中断后重跑成功。
+    - BM25 artifact path: `paper/experiments/data/retrieval_artifacts/lotte_technology_search_400k__bm25_rankings__736de1c87ed7c6f6.json`
+    - rerun cache hit：`dense_ranking_cache_hit=True`，`bm25_ranking_cache_hit=True`
+    - Recall@10=`0.7617`
+    - MRR@10=`0.5436`
+    - nDCG@10=`0.4725`
+    - artifact-hit rerun elapsed=`4.550s`
+  - 已验证：
+    - `.venv/bin/python -m py_compile paper/experiments/scripts/large_scale_artifacts.py paper/experiments/scripts/dense_baseline.py paper/experiments/scripts/hybrid_baseline.py`
+    - `.venv/bin/python -m unittest cache/test_dense_baseline.py cache/test_hybrid_baseline.py cache/test_artifact_integration.py cache/test_large_scale_artifacts.py`
+    - 运行后无残留 dense/hybrid/LinUCB Python 进程。
+  - 当前解释：
+    - 400k dense baseline 从 200k 的 `0.7970` 下降到 `0.7718`，符合 corpus 扩大后 distractors 增多、检索难度上升的预期。
+    - 400k hybrid RRF (`0.7617`) 略低于 dense (`0.7718`)，说明 LoTTE technology/search 在当前 all-MiniLM dense 表征下仍偏 semantic-friendly，BM25 融合不一定带来收益。
+    - Task22.3c 完成的是 dense/hybrid baseline + shared artifact integration；400k LinUCB 尚未运行，应作为下一步。
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。

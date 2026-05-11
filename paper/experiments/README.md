@@ -163,6 +163,26 @@ To append a larger nested slice without recomputing existing canonical rows:
   --local-files-only --device cpu --batch-size 64
 ```
 
+Dense and hybrid baselines can consume the canonical store directly:
+
+```bash
+.venv/bin/python paper/experiments/scripts/dense_baseline.py \
+  --dataset lotte_technology_search_400k \
+  --query-split test \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 16 \
+  --top-k 10 --ks 1,5,10 \
+  --use-scale-store
+
+.venv/bin/python paper/experiments/scripts/hybrid_baseline.py \
+  --dataset lotte_technology_search_400k \
+  --query-split test \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --local-files-only --device cpu --batch-size 16 \
+  --top-k 10 --ks 1,5,10 --fusion-depth 100 \
+  --use-scale-store
+```
+
 CUAD full corpus 当前为 675400 sentence chunks，CPU exact dense 全量成本较高。CUAD smoke/sample 必须使用 GT-anchored corpus sampling：先固定评估 query，把这些 query 的 GT chunks 放入候选 corpus，再补采样 distractors。当前 CUAD 结果应标为 smoke/sample，不应直接进入主表排名：
 
 ```bash

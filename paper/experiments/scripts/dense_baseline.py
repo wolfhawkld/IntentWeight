@@ -31,11 +31,16 @@ _ARTIFACTS_PATH = SCRIPT_DIR / "large_scale_artifacts.py"
 _artifacts_spec = importlib.util.spec_from_file_location("large_scale_artifacts", _ARTIFACTS_PATH)
 large_scale_artifacts = importlib.util.module_from_spec(_artifacts_spec)
 _artifacts_spec.loader.exec_module(large_scale_artifacts)
+_LOTTE_SCALE_STORE_PATH = SCRIPT_DIR / "lotte_scale_store.py"
+_scale_store_spec = importlib.util.spec_from_file_location("lotte_scale_store", _LOTTE_SCALE_STORE_PATH)
+lotte_scale_store = importlib.util.module_from_spec(_scale_store_spec)
+_scale_store_spec.loader.exec_module(lotte_scale_store)
 
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR.parent / "results"
 DEFAULT_EMBEDDING_CACHE_DIR = SCRIPT_DIR.parent / "data" / "embeddings"
 DEFAULT_ARTIFACT_CACHE_DIR = large_scale_artifacts.DEFAULT_ARTIFACT_CACHE_DIR
+DEFAULT_SCALE_STORE_DIR = SCRIPT_DIR.parent / "data" / "scale_store" / "lotte_technology_search"
 DEFAULT_DATASETS = ("pubmedqa", "banking77", "emanual", "cuad")
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -144,6 +149,53 @@ def encode_records_with_optional_cache(
         "cache_enabled": False,
         "record_count": len(records),
         "record_kind": record_kind,
+    }
+
+
+def load_corpus_embeddings_from_scale_store(
+    corpus: Sequence[Mapping],
+    *,
+    canonical_name: str,
+    scale_store_dir: Path,
+) -> tuple[np.ndarray, Dict[str, object]]:
+    """Load corpus embeddings from a canonical LoTTE scale store."""
+    scale_store_dir = Path(scale_store_dir)
+    ids_path = scale_store_dir / "canonical_corpus_ids.json"
+    embeddings_path = scale_store_dir / "canonical_corpus_embeddings.npy"
+    if not ids_path.exists() or not embeddings_path.exists():
+        raise FileNotFoundError(f"Missing canonical scale store under {scale_store_dir}")
+    with ids_path.open("r", encoding="utf-8") as f:
+        ids_data = json.load(f)
+    canonical_ids = [str(item) for item in ids_data.get("canonical_ids", [])]
+    canonical_index = {cid: idx for idx, cid in enumerate(canonical_ids)}
+    row_indices: List[int] = []
+    missing_ids: List[str] = []
+    for record in corpus:
+        cid = lotte_scale_store.canonical_corpus_id(record, canonical_name=canonical_name)
+        row_idx = canonical_index.get(cid)
+        if row_idx is None:
+            missing_ids.append(cid)
+        else:
+            row_indices.append(row_idx)
+    if missing_ids:
+        preview = ", ".join(missing_ids[:5])
+        raise ValueError(
+            f"Scale store is missing {len(missing_ids)} corpus rows; first missing: {preview}"
+        )
+    canonical_embeddings = np.load(embeddings_path, mmap_mode="r")
+    if canonical_embeddings.shape[0] != len(canonical_ids):
+        raise ValueError(
+            f"Scale store row mismatch: {canonical_embeddings.shape[0]} embeddings "
+            f"for {len(canonical_ids)} canonical ids"
+        )
+    selected = np.asarray(canonical_embeddings[np.asarray(row_indices, dtype=np.int64)], dtype=np.float32)
+    return selected, {
+        "enabled": True,
+        "canonical_name": canonical_name,
+        "scale_store_dir": str(scale_store_dir),
+        "canonical_embedding_path": str(embeddings_path),
+        "canonical_count": len(canonical_ids),
+        "selected_rows": len(row_indices),
     }
 
 
@@ -261,6 +313,9 @@ def run_dataset(
     artifact_cache_dir: Path | None = None,
     use_artifact_cache: bool = False,
     force_artifact_cache: bool = False,
+    scale_store_dir: Path | None = None,
+    use_scale_store: bool = False,
+    scale_store_canonical_name: str = "lotte_technology_search",
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
@@ -283,9 +338,59 @@ def run_dataset(
 
     artifact_dir = artifact_cache_dir or DEFAULT_ARTIFACT_CACHE_DIR
     dense_artifact_info: Dict[str, object] = {"cache_hit": False}
+    scale_store_info: Dict[str, object] = {"enabled": False}
 
     start = time.perf_counter()
-    if use_embedding_cache:
+    if use_scale_store:
+        corpus_embeddings, scale_store_info = load_corpus_embeddings_from_scale_store(
+            selected_corpus,
+            canonical_name=scale_store_canonical_name,
+            scale_store_dir=scale_store_dir or DEFAULT_SCALE_STORE_DIR,
+        )
+        corpus_cache = {
+            "cache_hit": True,
+            "cache_enabled": False,
+            "embedding_path": scale_store_info.get("canonical_embedding_path", ""),
+        }
+        query_embeddings, query_cache = encode_records_with_optional_cache(
+            selected_queries,
+            encoder,
+            dataset=dataset,
+            model_name=model_name,
+            record_kind="queries",
+            batch_size=batch_size,
+            embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
+            use_embedding_cache=use_embedding_cache,
+            force_embedding_cache=force_embedding_cache,
+        )
+        if use_artifact_cache:
+            artifact_depth = max(top_k, 100)
+            rankings_by_qid, dense_artifact_info = large_scale_artifacts.load_or_compute_dense_rankings(
+                selected_corpus,
+                selected_queries,
+                corpus_embeddings,
+                query_embeddings,
+                dataset=dataset,
+                model_name=model_name,
+                depth=artifact_depth,
+                cache_dir=artifact_dir,
+                batch_size=batch_size,
+                force=force_artifact_cache,
+            )
+            truncated = {qid: ids[:top_k] for qid, ids in rankings_by_qid.items()}
+            metrics_result = retrieval_metrics.evaluate_rankings(selected_queries, truncated, ks=ks)
+            result = {"rankings": truncated, "metrics": metrics_result}
+        else:
+            result = run_dense_with_embeddings(
+                selected_corpus,
+                selected_queries,
+                corpus_embeddings,
+                query_embeddings,
+                top_k=top_k,
+                ks=ks,
+                batch_size=batch_size,
+            )
+    elif use_embedding_cache:
         corpus_embeddings, corpus_cache = encode_records_with_optional_cache(
             selected_corpus,
             encoder,
@@ -374,6 +479,11 @@ def run_dataset(
         "artifact_cache_dir": str(artifact_dir) if use_artifact_cache else "",
         "dense_ranking_cache_hit": dense_artifact_info.get("cache_hit", False),
         "dense_ranking_artifact_path": dense_artifact_info.get("artifact_path", ""),
+        "scale_store_enabled": bool(use_scale_store),
+        "scale_store_dir": str(scale_store_dir or DEFAULT_SCALE_STORE_DIR) if use_scale_store else "",
+        "scale_store_canonical_name": scale_store_canonical_name if use_scale_store else "",
+        "scale_store_canonical_count": scale_store_info.get("canonical_count", 0),
+        "scale_store_selected_rows": scale_store_info.get("selected_rows", 0),
         "elapsed_sec": round(elapsed_sec, 3),
         **experiment_guardrails.build_run_metadata(
             dataset=dataset,
@@ -451,6 +561,8 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
         "embedding_cache_enabled",
         "corpus_embedding_cache_hit",
         "query_embedding_cache_hit",
+        "scale_store_enabled",
+        "scale_store_selected_rows",
         *metric_keys,
         "elapsed_sec",
         "notes",
@@ -492,6 +604,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--artifact-cache-dir", type=Path, default=DEFAULT_ARTIFACT_CACHE_DIR)
     parser.add_argument("--no-artifact-cache", action="store_true", help="Disable reusable dense ranking artifacts")
     parser.add_argument("--force-artifact-cache", action="store_true", help="Recompute ranking artifacts even when cache files exist")
+    parser.add_argument("--scale-store-dir", type=Path, default=DEFAULT_SCALE_STORE_DIR)
+    parser.add_argument("--use-scale-store", action="store_true", help="Load corpus embeddings from canonical LoTTE scale store")
+    parser.add_argument("--scale-store-canonical-name", default="lotte_technology_search")
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--ks", default="1,5,10", help="Comma-separated metric cutoffs")
     parser.add_argument("--max-queries", type=int, default=None, help="Evaluate only the first N queries")
@@ -533,6 +648,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             artifact_cache_dir=args.artifact_cache_dir,
             use_artifact_cache=not args.no_artifact_cache,
             force_artifact_cache=args.force_artifact_cache,
+            scale_store_dir=args.scale_store_dir,
+            use_scale_store=args.use_scale_store,
+            scale_store_canonical_name=args.scale_store_canonical_name,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)
