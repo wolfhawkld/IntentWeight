@@ -1420,6 +1420,42 @@ Smoke result:
     - gated route 在 400k formal 中同时高于 dense baseline 且降低候选成本，质量-成本 trade-off 比 200k 更有说服力。
     - full route 的 Recall@10 相比 400k smoke (`0.8087`) 略低，是 multi-seed / multi-epoch 后的平均结果；std=`0.0047` 可接受。
 
+- 2026-05-12 Task 22.6 LoTTE 638k full-corpus incremental embedding append：
+  - 目标：
+    - 将 LoTTE technology/search test corpus 从 400k 扩展到 full `638509` corpus。
+    - 复用 400k canonical scale store，只编码 400k 之外新增的 original corpus ids。
+  - 稳定性修正：
+    - 初始使用普通 append 路径时，WSL 多次在模型加载后崩溃。
+    - 原因判断：普通 append 会把已有 400k canonical embeddings 展开成 Python list，再叠加 666MB processed JSON 和新增 embedding chunks，内存峰值过高。
+    - `lotte_scale_store.py` 新增 `--streaming-append`：
+      - 旧 canonical embeddings 使用 numpy mmap 读取。
+      - 新增 embeddings 分块写入临时 `.npy`。
+      - 最终 canonical embeddings 使用 mmap 分块复制并替换。
+      - 避免把所有旧/新 embedding 同时放进 Python list。
+  - 638k processed 数据：
+    - command: `.venv/bin/python paper/experiments/scripts/preprocess_lotte.py --domain technology --mode search --split test --max-queries 596 --max-corpus 638509 --output-name lotte_technology_search_638k --local-arrow-cache`
+    - corpus chunks=`638509`
+    - queries=`596`
+    - GT refs=`2045`
+    - validation：`gt_coverage=100.00%`，`missing_gt_refs=0`，`duplicate_chunks=0`
+  - 638k streaming append：
+    - command: `.venv/bin/python paper/experiments/scripts/lotte_scale_store.py --datasets lotte_technology_search_638k --canonical-name lotte_technology_search --model sentence-transformers/all-MiniLM-L6-v2 --append-existing-store --compute-missing --streaming-append --local-files-only --device cpu --batch-size 64 --encode-chunk-size 10000`
+    - initial canonical rows=`400674`
+    - 638k corpus rows=`638509`
+    - reused canonical rows=`400674`
+    - encoded missing rows=`237835`
+    - final canonical rows=`638509`
+    - final embedding shape=`[638509, 384]`
+    - encoding elapsed=`4887.725s`
+  - 已验证：
+    - `.venv/bin/python -m py_compile paper/experiments/scripts/lotte_scale_store.py`
+    - `.venv/bin/python -m unittest cache/test_lotte_scale_store.py cache/test_embedding_cache.py`
+    - 638k manifest row index shape=`(638509,)`，min=`0`，max=`638508`
+    - canonical embeddings shape=`(638509, 384)`，sample norm mean=`1.0`，zero rows=`0`
+  - 当前解释：
+    - Task22.6 完成了 full corpus embedding expansion，且没有重算 400k 已有 embeddings。
+    - 下一步可基于 638k canonical store 生成 dense/BM25 baseline artifacts；预计 BM25 full ranking 会比 400k 更慢，建议先跑 dense baseline，再决定是否立刻跑 hybrid / LinUCB。
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。

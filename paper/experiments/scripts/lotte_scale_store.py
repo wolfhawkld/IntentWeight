@@ -141,6 +141,195 @@ def load_existing_canonical_store(store_dir: Path) -> tuple[List[str], List[str]
     return canonical_ids, text_sha256, source_datasets, [embeddings[idx] for idx in range(embeddings.shape[0])]
 
 
+def write_json_atomic(path: Path, payload: Mapping) -> None:
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    with tmp_path.open("w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2, sort_keys=True)
+    tmp_path.replace(path)
+
+
+def append_scale_store_streaming(
+    dataset: str,
+    *,
+    canonical_name: str,
+    model_name: str,
+    data_dir: Path,
+    store_dir: Path,
+    encoder,
+    batch_size: int,
+    encode_chunk_size: int,
+    copy_chunk_size: int = 50000,
+) -> Dict[str, object]:
+    """Append one scale using mmap-backed arrays to keep memory bounded."""
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be positive, got {batch_size}")
+    if encode_chunk_size <= 0:
+        raise ValueError(f"encode_chunk_size must be positive, got {encode_chunk_size}")
+    if copy_chunk_size <= 0:
+        raise ValueError(f"copy_chunk_size must be positive, got {copy_chunk_size}")
+
+    ids_path = store_dir / "canonical_corpus_ids.json"
+    embeddings_path = store_dir / "canonical_corpus_embeddings.npy"
+    if not ids_path.exists() or not embeddings_path.exists():
+        raise FileNotFoundError(f"Existing canonical store is required under {store_dir}")
+    with ids_path.open("r", encoding="utf-8") as f:
+        ids_data = json.load(f)
+    canonical_ids = [str(item) for item in ids_data.get("canonical_ids", [])]
+    canonical_text_sha256 = [str(item) for item in ids_data.get("text_sha256", [])]
+    canonical_source_datasets = [
+        [str(value) for value in item]
+        for item in ids_data.get("source_datasets", [])
+    ]
+    existing_embeddings = np.load(embeddings_path, mmap_mode="r")
+    if existing_embeddings.shape[0] != len(canonical_ids):
+        raise ValueError(
+            f"Existing canonical store row mismatch: {existing_embeddings.shape[0]} embedding rows "
+            f"for {len(canonical_ids)} ids"
+        )
+    if len(canonical_text_sha256) != len(canonical_ids) or len(canonical_source_datasets) != len(canonical_ids):
+        raise ValueError("Existing canonical id metadata length mismatch")
+
+    canonical_index = {cid: row_idx for row_idx, cid in enumerate(canonical_ids)}
+    corpus = load_json_list(corpus_path(data_dir, dataset))
+    queries = load_json_list(queries_path(data_dir, dataset))
+    row_indices = np.empty(len(corpus), dtype=np.int64)
+    missing_local_indices: List[int] = []
+    initial_count = len(canonical_ids)
+    reused_rows = 0
+
+    for local_idx, record in enumerate(corpus):
+        cid = canonical_corpus_id(record, canonical_name=canonical_name)
+        fp = text_fingerprint(record.get("text", ""))
+        row_idx = canonical_index.get(cid)
+        if row_idx is not None:
+            if canonical_text_sha256[row_idx] != fp:
+                raise ValueError(f"Text fingerprint mismatch for canonical id {cid} in {dataset}")
+            if dataset not in canonical_source_datasets[row_idx]:
+                canonical_source_datasets[row_idx].append(dataset)
+            row_indices[local_idx] = row_idx
+            reused_rows += 1
+            continue
+
+        row_idx = len(canonical_ids)
+        canonical_index[cid] = row_idx
+        canonical_ids.append(cid)
+        canonical_text_sha256.append(fp)
+        canonical_source_datasets.append([dataset])
+        row_indices[local_idx] = row_idx
+        missing_local_indices.append(local_idx)
+
+    missing_count = len(missing_local_indices)
+    dim = int(existing_embeddings.shape[1])
+    new_embeddings_path = store_dir / f"{dataset}__new_embeddings.tmp.npy"
+    combined_tmp_path = store_dir / "canonical_corpus_embeddings.tmp.npy"
+
+    start = time.perf_counter()
+    new_embeddings = np.lib.format.open_memmap(
+        new_embeddings_path,
+        mode="w+",
+        dtype=np.float32,
+        shape=(missing_count, dim),
+    )
+    for start_idx in range(0, missing_count, encode_chunk_size):
+        end_idx = min(start_idx + encode_chunk_size, missing_count)
+        print(
+            f"[{dataset}] encoding missing rows {start_idx + 1}-{end_idx} "
+            f"of {missing_count}",
+            flush=True,
+        )
+        texts = [
+            str(corpus[missing_local_indices[idx]].get("text", ""))
+            for idx in range(start_idx, end_idx)
+        ]
+        new_embeddings[start_idx:end_idx] = embedding_cache.encode_texts(
+            encoder,
+            texts,
+            batch_size=batch_size,
+        )
+        new_embeddings.flush()
+    encode_elapsed_sec = time.perf_counter() - start
+
+    final_count = len(canonical_ids)
+    combined = np.lib.format.open_memmap(
+        combined_tmp_path,
+        mode="w+",
+        dtype=np.float32,
+        shape=(final_count, dim),
+    )
+    print(f"[{dataset}] copying existing canonical rows 1-{initial_count}", flush=True)
+    for start_idx in range(0, initial_count, copy_chunk_size):
+        end_idx = min(start_idx + copy_chunk_size, initial_count)
+        combined[start_idx:end_idx] = existing_embeddings[start_idx:end_idx]
+    print(f"[{dataset}] copying new canonical rows {initial_count + 1}-{final_count}", flush=True)
+    for start_idx in range(0, missing_count, copy_chunk_size):
+        end_idx = min(start_idx + copy_chunk_size, missing_count)
+        combined[initial_count + start_idx : initial_count + end_idx] = new_embeddings[start_idx:end_idx]
+    combined.flush()
+
+    row_index_path = store_dir / f"{dataset}__row_indices.npy"
+    np.save(row_index_path, row_indices)
+    manifest_path = store_dir / f"{dataset}__manifest.json"
+    manifest = {
+        "dataset": dataset,
+        "canonical_name": canonical_name,
+        "model_name": model_name,
+        "corpus_count": len(corpus),
+        "query_count": len(queries),
+        "ground_truth_ref_count": dataset_gt_ref_count(queries),
+        "canonical_row_count": final_count,
+        "new_canonical_rows": missing_count,
+        "reused_canonical_rows": reused_rows,
+        "dataset_embedding_cache_hit": False,
+        "encoded_missing_rows": missing_count,
+        "encode_elapsed_sec": round(encode_elapsed_sec, 3),
+        "row_index_path": str(row_index_path),
+        "embedding_cache_path": None,
+        "embedding_cache_fingerprint": None,
+    }
+    write_json_atomic(manifest_path, manifest)
+
+    existing_manifest_paths = sorted(str(path) for path in store_dir.glob("*__manifest.json"))
+    canonical_ids_payload = {
+        "canonical_ids": canonical_ids,
+        "text_sha256": canonical_text_sha256,
+        "source_datasets": canonical_source_datasets,
+    }
+    canonical_metadata = {
+        "canonical_name": canonical_name,
+        "model_name": model_name,
+        "datasets": sorted({
+            *(Path(path).name.split("__manifest.json")[0] for path in existing_manifest_paths),
+            dataset,
+        }),
+        "canonical_count": final_count,
+        "embedding_shape": [final_count, dim],
+        "normalized": True,
+        "canonical_embedding_path": str(embeddings_path),
+        "canonical_ids_path": str(ids_path),
+        "scale_manifests": sorted({*existing_manifest_paths, str(manifest_path)}),
+    }
+    summary = {
+        "canonical_name": canonical_name,
+        "model_name": model_name,
+        "store_dir": str(store_dir),
+        "initial_canonical_count": initial_count,
+        "canonical_count": final_count,
+        "new_canonical_rows": missing_count,
+        "embedding_shape": [final_count, dim],
+        "datasets": [{**manifest, "manifest_path": str(manifest_path)}],
+    }
+
+    combined_tmp_path.replace(embeddings_path)
+    write_json_atomic(ids_path, canonical_ids_payload)
+    write_json_atomic(store_dir / "canonical_metadata.json", canonical_metadata)
+    write_json_atomic(store_dir / "store_summary.json", summary)
+    try:
+        new_embeddings_path.unlink()
+    except FileNotFoundError:
+        pass
+    return summary
+
+
 def build_scale_store(
     datasets: Sequence[str],
     *,
@@ -365,6 +554,7 @@ def main() -> int:
     parser.add_argument("--store-dir", type=Path, default=DEFAULT_STORE_DIR)
     parser.add_argument("--append-existing-store", action="store_true")
     parser.add_argument("--compute-missing", action="store_true", help="Encode canonical rows missing from cache/store")
+    parser.add_argument("--streaming-append", action="store_true", help="Append one scale using mmap-backed arrays")
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--encode-chunk-size", type=int, default=10000)
     parser.add_argument("--device", default=None, help="SentenceTransformer device, e.g. cpu/cuda")
@@ -379,19 +569,36 @@ def main() -> int:
             local_files_only=args.local_files_only,
         )
 
-    summary = build_scale_store(
-        parse_datasets(args.datasets),
-        canonical_name=args.canonical_name,
-        model_name=args.model,
-        data_dir=args.data_dir,
-        embedding_cache_dir=args.embedding_cache_dir,
-        store_dir=args.store_dir,
-        append_existing_store=args.append_existing_store,
-        compute_missing=args.compute_missing,
-        encoder=encoder,
-        batch_size=args.batch_size,
-        encode_chunk_size=args.encode_chunk_size,
-    )
+    datasets = parse_datasets(args.datasets)
+    if args.streaming_append:
+        if len(datasets) != 1:
+            raise ValueError("--streaming-append requires exactly one dataset")
+        if encoder is None:
+            raise ValueError("--streaming-append requires --compute-missing")
+        summary = append_scale_store_streaming(
+            datasets[0],
+            canonical_name=args.canonical_name,
+            model_name=args.model,
+            data_dir=args.data_dir,
+            store_dir=args.store_dir,
+            encoder=encoder,
+            batch_size=args.batch_size,
+            encode_chunk_size=args.encode_chunk_size,
+        )
+    else:
+        summary = build_scale_store(
+            datasets,
+            canonical_name=args.canonical_name,
+            model_name=args.model,
+            data_dir=args.data_dir,
+            embedding_cache_dir=args.embedding_cache_dir,
+            store_dir=args.store_dir,
+            append_existing_store=args.append_existing_store,
+            compute_missing=args.compute_missing,
+            encoder=encoder,
+            batch_size=args.batch_size,
+            encode_chunk_size=args.encode_chunk_size,
+        )
 
     print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True))
     return 0

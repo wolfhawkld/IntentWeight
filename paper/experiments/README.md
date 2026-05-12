@@ -163,6 +163,24 @@ To append a larger nested slice without recomputing existing canonical rows:
   --local-files-only --device cpu --batch-size 64
 ```
 
+For the full LoTTE technology/search test corpus, use the mmap-backed append
+path to keep memory bounded:
+
+```bash
+.venv/bin/python paper/experiments/scripts/preprocess_lotte.py \
+  --domain technology --mode search --split test \
+  --max-queries 596 --max-corpus 638509 \
+  --output-name lotte_technology_search_638k \
+  --local-arrow-cache
+
+.venv/bin/python paper/experiments/scripts/lotte_scale_store.py \
+  --datasets lotte_technology_search_638k \
+  --canonical-name lotte_technology_search \
+  --model sentence-transformers/all-MiniLM-L6-v2 \
+  --append-existing-store --compute-missing --streaming-append \
+  --local-files-only --device cpu --batch-size 64 --encode-chunk-size 10000
+```
+
 Dense and hybrid baselines can consume the canonical store directly:
 
 ```bash
