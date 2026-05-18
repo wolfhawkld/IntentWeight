@@ -246,6 +246,11 @@ PY
 - [x] Task 21: Paper-ready evidence summary and bounded claim
 - [x] Task 22.1: LoTTE 100k scale reference
 - [x] Task 22.2: LoTTE 200k incremental scale-up
+- [x] Task 22.3: LoTTE 400k incremental scale-store baseline/artifact integration
+- [x] Task 22.4: LoTTE 400k LinUCB smoke
+- [x] Task 22.5: LoTTE 400k LinUCB formal multi-seed
+- [x] Task 22.6: LoTTE 638k full-corpus incremental embedding append
+- [x] Task 22.7: LoTTE 638k dense baseline
 
 ## 后续任务规划
 
@@ -1455,6 +1460,37 @@ Smoke result:
   - 当前解释：
     - Task22.6 完成了 full corpus embedding expansion，且没有重算 400k 已有 embeddings。
     - 下一步可基于 638k canonical store 生成 dense/BM25 baseline artifacts；预计 BM25 full ranking 会比 400k 更慢，建议先跑 dense baseline，再决定是否立刻跑 hybrid / LinUCB。
+
+- 2026-05-18 Task 22.7 LoTTE 638k dense baseline：
+  - 目标：
+    - 基于 Task22.6 的 full-corpus canonical scale store，先生成 638k dense baseline 与 dense ranking artifact。
+    - 作为后续 638k hybrid / LinUCB 的 full-corpus 对照基线。
+  - command:
+    - `.venv/bin/python paper/experiments/scripts/dense_baseline.py --dataset lotte_technology_search_638k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --use-scale-store --output-dir paper/experiments/results/task22_7_lotte_638k_dense`
+  - 输出：
+    - `paper/experiments/results/task22_7_lotte_638k_dense/dense_baseline_summary.csv`
+    - `paper/experiments/results/task22_7_lotte_638k_dense/dense_lotte_technology_search_638k_metrics.json`
+    - `paper/experiments/results/task22_7_lotte_638k_dense/dense_lotte_technology_search_638k_rankings.json`
+    - dense ranking artifact: `paper/experiments/data/retrieval_artifacts/lotte_technology_search_638k__dense_rankings__1877c58f1a7d8e17.json`
+  - 运行结果：
+    - corpus chunks=`638509`
+    - queries=`596`
+    - skipped_no_gt=`0`
+    - GT query coverage=`1.0000`
+    - GT ref coverage=`1.0000`
+    - `corpus_embedding_cache_hit=True`
+    - `scale_store_enabled=True`
+    - `scale_store_selected_rows=638509`
+    - elapsed=`51.726s`
+  - dense baseline metrics：
+    - Recall@1=`0.4195`
+    - Recall@5=`0.6258`
+    - Recall@10=`0.7282`
+    - MRR@10=`0.5102`
+    - nDCG@10=`0.4303`
+  - 当前解释：
+    - 638k dense baseline 显著低于 400k dense baseline Recall@10=`0.7718`，符合 corpus 扩大后 distractors 增多、检索难度上升的预期。
+    - 该结果提供了 full-corpus dense 对照线；下一步应先决定是否生成 638k BM25/hybrid artifacts，再进行 638k LinUCB smoke。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

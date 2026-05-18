@@ -185,12 +185,13 @@ Dense and hybrid baselines can consume the canonical store directly:
 
 ```bash
 .venv/bin/python paper/experiments/scripts/dense_baseline.py \
-  --dataset lotte_technology_search_400k \
+  --dataset lotte_technology_search_638k \
   --query-split test \
   --model sentence-transformers/all-MiniLM-L6-v2 \
   --local-files-only --device cpu --batch-size 16 \
   --top-k 10 --ks 1,5,10 \
-  --use-scale-store
+  --use-scale-store \
+  --output-dir paper/experiments/results/task22_7_lotte_638k_dense
 
 .venv/bin/python paper/experiments/scripts/hybrid_baseline.py \
   --dataset lotte_technology_search_400k \
@@ -800,6 +801,13 @@ Current status as of 2026-05-07:
 - Task22.2 LoTTE 200k scale-up is complete: static dense `R@10=0.7970`,
   full multi-route `R@10=0.8300`, gated `R@10=0.8154`, gated average source
   cost `232.01`.
+- Task22.3-22.5 LoTTE 400k scale-up is complete: static dense
+  `R@10=0.7718`, hybrid RRF `R@10=0.7617`, full multi-route
+  `R@10=0.8003`, and gated cost-aware `R@10=0.7836` with average source
+  cost `233.22`.
+- Task22.6-22.7 LoTTE 638k full-corpus setup and dense baseline are complete:
+  canonical scale store now contains `638509` rows, and 638k dense baseline
+  reaches `R@10=0.7282`, `MRR@10=0.5102`, `nDCG@10=0.4303` in `51.726s`.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -826,8 +834,13 @@ Next roadmap:
 | 21 | Assemble paper-ready result tables and argument | Complete: bounded evidence summary and recommended paper claim |
 | 22.1 | LoTTE 100k scale reference | Complete: Task18/19/20 quality-cost frontier |
 | 22.2 | LoTTE 200k incremental scale-up | Complete: full/gated remain above dense under larger corpus |
-| 22.3 | LoTTE 400k incremental scale-up | Next scale checkpoint if compute budget allows |
-| 22.4 | LoTTE 638k full-corpus expansion | Final full-corpus scale claim |
+| 22.3 | LoTTE 400k baseline/artifact integration | Complete: dense/hybrid use canonical scale store |
+| 22.4 | LoTTE 400k LinUCB smoke | Complete: full/gated above dense smoke |
+| 22.5 | LoTTE 400k LinUCB formal | Complete: full/gated above dense, gated reduces candidate cost |
+| 22.6 | LoTTE 638k full-corpus expansion | Complete: streaming append avoids full embedding recompute |
+| 22.7 | LoTTE 638k dense baseline | Complete: full-corpus dense baseline and ranking artifact generated |
+| 22.8 | LoTTE 638k BM25/hybrid artifacts | Next: decide whether to pay BM25 full-corpus cost before LinUCB |
+| 22.9 | LoTTE 638k LinUCB smoke/formal | Next: full-corpus adaptive routing validation |
 
 Example smoke commands:
 
