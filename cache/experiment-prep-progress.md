@@ -251,6 +251,7 @@ PY
 - [x] Task 22.5: LoTTE 400k LinUCB formal multi-seed
 - [x] Task 22.6: LoTTE 638k full-corpus incremental embedding append
 - [x] Task 22.7: LoTTE 638k dense baseline
+- [x] Task 22.8: LoTTE 638k bounded BM25 / hybrid baseline
 
 ## 后续任务规划
 
@@ -1491,6 +1492,52 @@ Smoke result:
   - 当前解释：
     - 638k dense baseline 显著低于 400k dense baseline Recall@10=`0.7718`，符合 corpus 扩大后 distractors 增多、检索难度上升的预期。
     - 该结果提供了 full-corpus dense 对照线；下一步应先决定是否生成 638k BM25/hybrid artifacts，再进行 638k LinUCB smoke。
+
+- 2026-05-18 Task 22.8 LoTTE 638k bounded BM25 / hybrid baseline：
+  - 目标：
+    - 在 full `638509` corpus 上补齐 BM25 ranking artifact 与 hybrid RRF baseline。
+    - 为后续 638k LinUCB 使用同一 dense/BM25/context artifact 基础做准备。
+  - 运行问题与修复：
+    - 初始 638k hybrid 在 BM25 artifact 构建阶段导致 WSL 内存和磁盘 I/O 压力：根因不是磁盘容量不足，而是完整 BM25 倒排索引在 6.2 GiB RAM 环境中触发 swap。
+    - 已停止异常进程；确认没有生成半成品结果目录或旧 BM25 artifact。
+    - `large_scale_artifacts.py` 已将 large-scale BM25 artifact engine 改为 `query_term_bounded_bm25_v1`：只对本次 selected queries 的词项统计 DF/IDF，并用两遍流式 scoring 为每个 query 维护 top-depth heap。
+    - 该实现对 selected queries 的 BM25 排名等价于完整 BM25 索引，因为非 query terms 对这些 query 的分数贡献为 0，但不再持有 full-corpus postings。
+    - `bm25_baseline.py` 同时保留 `SparseBM25.from_tokenized_iterable()`，避免额外保存 tokenized corpus list。
+  - command:
+    - `.venv/bin/python paper/experiments/scripts/hybrid_baseline.py --dataset lotte_technology_search_638k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --fusion-depth 100 --use-scale-store --output-dir paper/experiments/results/task22_8_lotte_638k_hybrid`
+  - 输出：
+    - `paper/experiments/results/task22_8_lotte_638k_hybrid/hybrid_baseline_summary.csv`
+    - `paper/experiments/results/task22_8_lotte_638k_hybrid/hybrid_lotte_technology_search_638k_metrics.json`
+    - `paper/experiments/results/task22_8_lotte_638k_hybrid/hybrid_lotte_technology_search_638k_rankings.json`
+    - BM25 ranking artifact: `paper/experiments/data/retrieval_artifacts/lotte_technology_search_638k__bm25_rankings__ef3b5ee03da34191.json`
+    - Dense ranking artifact reused: `paper/experiments/data/retrieval_artifacts/lotte_technology_search_638k__dense_rankings__1877c58f1a7d8e17.json`
+  - 运行结果：
+    - corpus chunks=`638509`
+    - queries=`596`
+    - skipped_no_gt=`0`
+    - GT query coverage=`1.0000`
+    - GT ref coverage=`1.0000`
+    - `corpus_embedding_cache_hit=True`
+    - `query_embedding_cache_hit=True`
+    - `dense_ranking_cache_hit=True`
+    - `bm25_ranking_cache_hit=False`
+    - `scale_store_enabled=True`
+    - elapsed=`157.984s`
+  - hybrid RRF metrics：
+    - Recall@1=`0.3540`
+    - Recall@5=`0.6174`
+    - Recall@10=`0.7181`
+    - MRR@10=`0.4675`
+    - nDCG@10=`0.3954`
+  - 对比解释：
+    - 638k hybrid RRF Recall@10=`0.7181`，略低于 638k dense Recall@10=`0.7282`。
+    - 这延续了 400k 观察：LoTTE technology/search 在当前 all-MiniLM dense 表征下偏 semantic-friendly，简单 BM25+dense RRF 不必然超过 dense。
+    - 但 Task22.8 的关键价值是补齐 full-corpus BM25 artifact，并证明 638k 静态 hybrid 可在本机资源约束下复现，后续 LinUCB 可直接复用 dense/BM25 ranking artifacts。
+  - 验证：
+    - `.venv/bin/python -m py_compile paper/experiments/scripts/bm25_baseline.py paper/experiments/scripts/large_scale_artifacts.py paper/experiments/scripts/hybrid_baseline.py`
+    - `.venv/bin/python -m unittest cache/test_bm25_baseline.py cache/test_large_scale_artifacts.py cache/test_artifact_integration.py`
+    - 额外 parity check：query-term bounded BM25 在 toy corpus/query 上与完整 `SparseBM25` top-k ranking 完全一致。
+    - 完成后内存恢复正常：available memory 约 `5.3 GiB`，swap used 约 `340 MiB`。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

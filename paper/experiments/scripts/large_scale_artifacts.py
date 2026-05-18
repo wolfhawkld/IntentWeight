@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import hashlib
+import heapq
 import importlib.util
 import json
 import time
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, List, Mapping, Sequence
 
@@ -247,6 +249,87 @@ def load_or_compute_dense_rankings(
     return rankings, metadata
 
 
+def _compute_query_term_bounded_bm25_rankings(
+    corpus: Sequence[Mapping],
+    queries: Sequence[Mapping],
+    *,
+    depth: int,
+    dataset: str,
+    progress_every: int,
+    k1: float = 1.5,
+    b: float = 0.75,
+) -> Dict[str, List[str]]:
+    """Compute exact BM25 rankings for selected queries without a full index.
+
+    The scorer only keeps statistics for terms that occur in the selected
+    queries. This is equivalent to full-corpus BM25 for those queries because
+    all other corpus terms contribute zero to their scores.
+    """
+    query_tokens_by_idx: List[set[str]] = [
+        set(bm25_baseline.tokenize(str(query.get("text", "")))) for query in queries
+    ]
+    query_terms = set().union(*query_tokens_by_idx) if query_tokens_by_idx else set()
+    term_to_query_indices: dict[str, list[int]] = defaultdict(list)
+    for query_idx, query_terms_for_query in enumerate(query_tokens_by_idx):
+        for term in query_terms_for_query:
+            term_to_query_indices[term].append(query_idx)
+
+    doc_lens: List[int] = []
+    dfs: Counter[str] = Counter()
+    for doc_idx, chunk in enumerate(corpus, start=1):
+        tokens = bm25_baseline.tokenize(str(chunk.get("text", "")))
+        doc_lens.append(len(tokens))
+        if query_terms:
+            dfs.update(set(tokens).intersection(query_terms))
+        if doc_idx == 1 or doc_idx % 100000 == 0 or doc_idx == len(corpus):
+            print(f"[{dataset}] BM25 term stats {doc_idx}/{len(corpus)}", flush=True)
+
+    n_docs = len(doc_lens)
+    avgdl = float(np.mean(np.asarray(doc_lens, dtype=np.float32))) if n_docs else 0.0
+    idf = {
+        term: float(np.log((n_docs - df + 0.5) / (df + 0.5) + 1.0))
+        for term, df in dfs.items()
+    }
+
+    heaps: list[list[tuple[float, int]]] = [[] for _ in queries]
+    print(f"[{dataset}] bounded BM25 scoring pass for {len(queries)} queries", flush=True)
+    for doc_idx, chunk in enumerate(corpus):
+        tokens = bm25_baseline.tokenize(str(chunk.get("text", "")))
+        counts = Counter(token for token in tokens if token in query_terms)
+        if counts and avgdl > 0.0:
+            doc_scores: dict[int, float] = {}
+            doc_len = float(doc_lens[doc_idx])
+            for term, freq in counts.items():
+                term_idf = idf.get(term)
+                if term_idf is None:
+                    continue
+                denom = freq + k1 * (1.0 - b + b * doc_len / avgdl)
+                contribution = term_idf * (freq * (k1 + 1.0) / denom)
+                for query_idx in term_to_query_indices.get(term, []):
+                    doc_scores[query_idx] = doc_scores.get(query_idx, 0.0) + contribution
+
+            for query_idx, score in doc_scores.items():
+                heap_entry = (float(score), -doc_idx)
+                heap = heaps[query_idx]
+                if len(heap) < depth:
+                    heapq.heappush(heap, heap_entry)
+                elif heap_entry > heap[0]:
+                    heapq.heapreplace(heap, heap_entry)
+
+        scanned = doc_idx + 1
+        if scanned == 1 or scanned % 100000 == 0 or scanned == len(corpus):
+            print(f"[{dataset}] BM25 scoring {scanned}/{len(corpus)}", flush=True)
+
+    chunk_ids = [_chunk_id(chunk) for chunk in corpus]
+    rankings: Dict[str, List[str]] = {}
+    for query_idx, query in enumerate(queries, start=1):
+        ordered = sorted(heaps[query_idx - 1], key=lambda item: (-item[0], -item[1]))
+        rankings[_query_id(query)] = [chunk_ids[-neg_doc_idx] for _, neg_doc_idx in ordered]
+        if query_idx == 1 or query_idx % progress_every == 0 or query_idx == len(queries):
+            print(f"[{dataset}] BM25 rankings materialized {query_idx}/{len(queries)}", flush=True)
+    return rankings
+
+
 def load_or_compute_bm25_rankings(
     corpus: Sequence[Mapping],
     queries: Sequence[Mapping],
@@ -268,7 +351,7 @@ def load_or_compute_bm25_rankings(
         corpus=corpus,
         queries=queries,
         model_name="sparse-bm25",
-        params={"depth": effective_depth, "ranking_engine": "sparse_bm25_v1"},
+        params={"depth": effective_depth, "ranking_engine": "query_term_bounded_bm25_v1"},
     )
     fingerprint = _payload_fingerprint(payload)
     ranking_path, metadata_path = _artifact_paths(
@@ -289,25 +372,18 @@ def load_or_compute_bm25_rankings(
     if progress_every <= 0:
         raise ValueError(f"progress_every must be positive, got {progress_every}")
 
-    chunk_ids = [_chunk_id(chunk) for chunk in corpus]
+    start = time.perf_counter()
     print(
-        f"[{dataset}] building BM25 tokenized corpus for {len(corpus)} chunks",
+        f"[{dataset}] bounded BM25 term-stat pass for {len(corpus)} chunks",
         flush=True,
     )
-    tokenized_corpus = [bm25_baseline.tokenize(str(chunk.get("text", ""))) for chunk in corpus]
-    start = time.perf_counter()
-    print(f"[{dataset}] fitting BM25 index", flush=True)
-    bm25 = bm25_baseline.SparseBM25(tokenized_corpus)
-    rankings: Dict[str, List[str]] = {}
-    for query_idx, query in enumerate(queries, start=1):
-        if query_idx == 1 or query_idx % progress_every == 0 or query_idx == len(queries):
-            print(
-                f"[{dataset}] computing BM25 rankings {query_idx}/{len(queries)}",
-                flush=True,
-            )
-        scores = bm25.get_scores(bm25_baseline.tokenize(str(query.get("text", ""))))
-        top_indices = bm25_baseline.top_k_sparse_indices(scores, effective_depth)
-        rankings[_query_id(query)] = [chunk_ids[idx] for idx in top_indices]
+    rankings = _compute_query_term_bounded_bm25_rankings(
+        corpus,
+        queries,
+        depth=effective_depth,
+        dataset=dataset,
+        progress_every=progress_every,
+    )
     elapsed_sec = time.perf_counter() - start
 
     cache_dir = Path(cache_dir)

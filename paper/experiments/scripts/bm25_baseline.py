@@ -62,21 +62,44 @@ class SparseBM25:
     """
 
     def __init__(self, tokenized_corpus: Sequence[Sequence[str]], *, k1: float = 1.5, b: float = 0.75):
+        self._build_from_tokenized_documents(tokenized_corpus, k1=k1, b=b)
+
+    @classmethod
+    def from_tokenized_iterable(
+        cls,
+        tokenized_documents: Iterable[Sequence[str]],
+        *,
+        k1: float = 1.5,
+        b: float = 0.75,
+    ) -> "SparseBM25":
+        scorer = cls.__new__(cls)
+        scorer._build_from_tokenized_documents(tokenized_documents, k1=k1, b=b)
+        return scorer
+
+    def _build_from_tokenized_documents(
+        self,
+        tokenized_documents: Iterable[Sequence[str]],
+        *,
+        k1: float,
+        b: float,
+    ) -> None:
         self.k1 = k1
         self.b = b
-        self.n_docs = len(tokenized_corpus)
-        self.doc_lens = np.array([len(doc) for doc in tokenized_corpus], dtype=np.float32)
-        self.avgdl = float(np.mean(self.doc_lens)) if self.n_docs else 0.0
+        doc_lens: List[int] = []
         self.postings: dict[str, list[tuple[int, int]]] = defaultdict(list)
         self.idf: dict[str, float] = {}
 
         dfs: Counter[str] = Counter()
-        for doc_idx, tokens in enumerate(tokenized_corpus):
+        for doc_idx, tokens in enumerate(tokenized_documents):
+            doc_lens.append(len(tokens))
             counts = Counter(tokens)
             for term, freq in counts.items():
                 self.postings[term].append((doc_idx, int(freq)))
                 dfs[term] += 1
 
+        self.n_docs = len(doc_lens)
+        self.doc_lens = np.array(doc_lens, dtype=np.float32)
+        self.avgdl = float(np.mean(self.doc_lens)) if self.n_docs else 0.0
         for term, df in dfs.items():
             self.idf[term] = float(np.log((self.n_docs - df + 0.5) / (df + 0.5) + 1.0))
 

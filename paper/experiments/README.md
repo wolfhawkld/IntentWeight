@@ -194,13 +194,19 @@ Dense and hybrid baselines can consume the canonical store directly:
   --output-dir paper/experiments/results/task22_7_lotte_638k_dense
 
 .venv/bin/python paper/experiments/scripts/hybrid_baseline.py \
-  --dataset lotte_technology_search_400k \
+  --dataset lotte_technology_search_638k \
   --query-split test \
   --model sentence-transformers/all-MiniLM-L6-v2 \
   --local-files-only --device cpu --batch-size 16 \
   --top-k 10 --ks 1,5,10 --fusion-depth 100 \
-  --use-scale-store
+  --use-scale-store \
+  --output-dir paper/experiments/results/task22_8_lotte_638k_hybrid
 ```
+
+For 638k LoTTE hybrid, BM25 ranking artifacts use a query-term bounded BM25
+engine. It computes exact BM25 rankings for the selected queries without
+holding a full-corpus inverted index in memory, which avoids WSL swap pressure
+on the local 6.2 GiB RAM environment.
 
 The cost-aware LinUCB runner also supports the same scale store:
 
@@ -805,9 +811,11 @@ Current status as of 2026-05-07:
   `R@10=0.7718`, hybrid RRF `R@10=0.7617`, full multi-route
   `R@10=0.8003`, and gated cost-aware `R@10=0.7836` with average source
   cost `233.22`.
-- Task22.6-22.7 LoTTE 638k full-corpus setup and dense baseline are complete:
+- Task22.6-22.8 LoTTE 638k full-corpus setup and static baselines are complete:
   canonical scale store now contains `638509` rows, and 638k dense baseline
   reaches `R@10=0.7282`, `MRR@10=0.5102`, `nDCG@10=0.4303` in `51.726s`.
+  The bounded-BM25 hybrid RRF baseline reaches `R@10=0.7181`,
+  `MRR@10=0.4675`, `nDCG@10=0.3954` in `157.984s`.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -839,7 +847,7 @@ Next roadmap:
 | 22.5 | LoTTE 400k LinUCB formal | Complete: full/gated above dense, gated reduces candidate cost |
 | 22.6 | LoTTE 638k full-corpus expansion | Complete: streaming append avoids full embedding recompute |
 | 22.7 | LoTTE 638k dense baseline | Complete: full-corpus dense baseline and ranking artifact generated |
-| 22.8 | LoTTE 638k BM25/hybrid artifacts | Next: decide whether to pay BM25 full-corpus cost before LinUCB |
+| 22.8 | LoTTE 638k BM25/hybrid artifacts | Complete: query-term bounded BM25 artifact plus full-corpus hybrid baseline |
 | 22.9 | LoTTE 638k LinUCB smoke/formal | Next: full-corpus adaptive routing validation |
 
 Example smoke commands:
