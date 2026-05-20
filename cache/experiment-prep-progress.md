@@ -252,6 +252,7 @@ PY
 - [x] Task 22.6: LoTTE 638k full-corpus incremental embedding append
 - [x] Task 22.7: LoTTE 638k dense baseline
 - [x] Task 22.8: LoTTE 638k bounded BM25 / hybrid baseline
+- [x] Task 22.9: LoTTE 638k LinUCB smoke/formal
 
 ## 后续任务规划
 
@@ -1538,6 +1539,37 @@ Smoke result:
     - `.venv/bin/python -m unittest cache/test_bm25_baseline.py cache/test_large_scale_artifacts.py cache/test_artifact_integration.py`
     - 额外 parity check：query-term bounded BM25 在 toy corpus/query 上与完整 `SparseBM25` top-k ranking 完全一致。
     - 完成后内存恢复正常：available memory 约 `5.3 GiB`，swap used 约 `340 MiB`。
+
+- 2026-05-20 Task 22.9 LoTTE 638k LinUCB smoke/formal：
+  - 目标：
+    - 在 full `638509` corpus 上验证 cost-aware LinUCB adaptive multi-route retrieval。
+    - 复用 Task22.7/22.8 的 dense/BM25 ranking artifacts 和 Task22.6 的 canonical scale store。
+    - 先运行单 seed smoke，确认 638k context cluster artifact 与 routing 路径可用；再运行 3 seeds × 3 epochs formal。
+  - smoke command:
+    - `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_638k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --seeds 13 --epochs 1 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-floor-k 3 --high-confidence-threshold 0.74 --mid-confidence-threshold 0.44 --routing-modes full_multi_route,gated_cost_aware --use-scale-store --output-dir paper/experiments/results/task22_9_lotte_638k_linucb_smoke`
+  - smoke 结果：
+    - full multi-route Recall@10=`0.7584`，last true reward=`0.3205`，avg source cost=`300.00`，dense query rate=`1.0000`
+    - gated cost-aware Recall@10=`0.7399`，last true reward=`0.3138`，avg source cost=`247.20`，dense query rate=`0.9346`
+    - smoke 结论：两种 LinUCB route 均高于 638k dense Recall@10=`0.7282`；gated 同时降低 source candidate cost。
+  - formal command:
+    - `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_638k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 16 --top-k 10 --ks 1,5,10 --seeds 13,17,19 --epochs 3 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-floor-k 3 --high-confidence-threshold 0.74 --mid-confidence-threshold 0.44 --routing-modes full_multi_route,gated_cost_aware --use-scale-store --output-dir paper/experiments/results/task22_9_lotte_638k_linucb_formal`
+  - formal 输出：
+    - `paper/experiments/results/task22_9_lotte_638k_linucb_formal/linucb_cost_summary.csv`
+    - `paper/experiments/results/task22_9_lotte_638k_linucb_formal/linucb_cost_tables.md`
+    - `paper/experiments/results/task22_9_lotte_638k_linucb_formal/linucb_cost_lotte-technology-search-638k_heldout-test_test_corpus-full_q596_prequential_metrics.json`
+    - `paper/experiments/results/task22_9_lotte_638k_linucb_formal/linucb_cost_lotte-technology-search-638k_heldout-test_test_corpus-full_q596_prequential_rankings.json`
+  - formal 结果：
+    - full multi-route：Recall@10 mean=`0.7612`，std=`0.0029`；MRR@10=`0.5153`；nDCG@10=`0.4358`；last true reward=`0.5034`；epoch true reward gain=`+0.2220`；avg source cost=`300.00`；dense query rate=`1.0000`
+    - gated cost-aware：Recall@10 mean=`0.7343`，std=`0.0048`；MRR@10=`0.5089`；nDCG@10=`0.4233`；last true reward=`0.4636`；epoch true reward gain=`+0.1946`；avg source cost=`236.22`；dense query rate=`0.9146`；dense saved rate=`0.0854`；LinUCB primary rate=`0.0854`；hybrid-lite rate=`0.3227`；full dense fallback rate=`0.5919`
+  - 与 638k static baselines 对比：
+    - dense Recall@10=`0.7282`
+    - hybrid RRF Recall@10=`0.7181`
+    - full multi-route LinUCB Recall@10=`0.7612`，比 dense 高 `+0.0330`
+    - gated cost-aware Recall@10=`0.7343`，比 dense 高 `+0.0061`，同时 source candidate cost 从 `300.00` 降至 `236.22`，约降低 `21.3%`
+  - 当前结论：
+    - Task22.9 是目前最强 large-scale 证据：在 LoTTE technology/search full 638k corpus 上，IntentWeight 的 LinUCB-guided multi-route retrieval 不仅超过 dense baseline，而且 gated routing 在超过 dense 的同时保留成本收益。
+    - 该结果支持论文主张：在大规模垂类 RAG 语料中，反馈驱动的 adaptive route policy 可以在 dense recall floor 之外进一步利用 cluster/BM25/feedback signals，提高 quality-cost trade-off。
+    - full multi-route 适合作为质量上界；gated cost-aware 适合作为工程部署路线，因为它逐步把 dense 从常驻主路降为高置信/低漂移场景下的可节省通道，同时保留 fallback。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

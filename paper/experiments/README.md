@@ -811,11 +811,15 @@ Current status as of 2026-05-07:
   `R@10=0.7718`, hybrid RRF `R@10=0.7617`, full multi-route
   `R@10=0.8003`, and gated cost-aware `R@10=0.7836` with average source
   cost `233.22`.
-- Task22.6-22.8 LoTTE 638k full-corpus setup and static baselines are complete:
+- Task22.6-22.9 LoTTE 638k full-corpus setup, static baselines, and LinUCB
+  validation are complete:
   canonical scale store now contains `638509` rows, and 638k dense baseline
   reaches `R@10=0.7282`, `MRR@10=0.5102`, `nDCG@10=0.4303` in `51.726s`.
   The bounded-BM25 hybrid RRF baseline reaches `R@10=0.7181`,
   `MRR@10=0.4675`, `nDCG@10=0.3954` in `157.984s`.
+  The 638k formal LinUCB run reaches full multi-route `R@10=0.7612` and
+  gated cost-aware `R@10=0.7343`; gated remains above dense while reducing
+  average source candidate cost from `300.00` to `236.22`.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -848,7 +852,7 @@ Next roadmap:
 | 22.6 | LoTTE 638k full-corpus expansion | Complete: streaming append avoids full embedding recompute |
 | 22.7 | LoTTE 638k dense baseline | Complete: full-corpus dense baseline and ranking artifact generated |
 | 22.8 | LoTTE 638k BM25/hybrid artifacts | Complete: query-term bounded BM25 artifact plus full-corpus hybrid baseline |
-| 22.9 | LoTTE 638k LinUCB smoke/formal | Next: full-corpus adaptive routing validation |
+| 22.9 | LoTTE 638k LinUCB smoke/formal | Complete: full/gated above dense; gated lowers source candidate cost |
 
 Example smoke commands:
 
