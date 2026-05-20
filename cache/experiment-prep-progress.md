@@ -253,6 +253,7 @@ PY
 - [x] Task 22.7: LoTTE 638k dense baseline
 - [x] Task 22.8: LoTTE 638k bounded BM25 / hybrid baseline
 - [x] Task 22.9: LoTTE 638k LinUCB smoke/formal
+- [x] Task 23: LoTTE scale-up paper-facing evidence summary
 
 ## 后续任务规划
 
@@ -1570,6 +1571,26 @@ Smoke result:
     - Task22.9 是目前最强 large-scale 证据：在 LoTTE technology/search full 638k corpus 上，IntentWeight 的 LinUCB-guided multi-route retrieval 不仅超过 dense baseline，而且 gated routing 在超过 dense 的同时保留成本收益。
     - 该结果支持论文主张：在大规模垂类 RAG 语料中，反馈驱动的 adaptive route policy 可以在 dense recall floor 之外进一步利用 cluster/BM25/feedback signals，提高 quality-cost trade-off。
     - full multi-route 适合作为质量上界；gated cost-aware 适合作为工程部署路线，因为它逐步把 dense 从常驻主路降为高置信/低漂移场景下的可节省通道，同时保留 fallback。
+
+- 2026-05-20 Task 23 LoTTE scale-up paper-facing evidence summary：
+  - 目标：
+    - 将 LoTTE technology/search `100k -> 200k -> 400k -> 638k` 的 static baseline、full multi-route LinUCB、gated cost-aware LinUCB 结果整理成论文可直接引用的 evidence table。
+    - 明确当前成本结论边界：gated 成本下降是相对 full multi-route 的 300 source candidates，不是相对 dense-only 的 100 candidates。
+    - 明确 artifact reuse 仅指 corpus/query embeddings、dense rankings、BM25 rankings、context cluster artifacts 等确定性中间产物，不复用 final evaluation statistics。
+  - 输出：
+    - `paper/experiments/task23_lotte_scaleup_summary.md`
+    - `paper/experiments/results/task23_lotte_scaleup_summary.csv`
+  - 核心 scale-up 表：
+    - 100k：dense R@10=`0.8674`，hybrid R@10=`0.8624`，full R@10=`0.8826`，gated R@10=`0.8440`，gated cost=`191.68`
+    - 200k：dense R@10=`0.7970`，hybrid R@10=`0.8003`，full R@10=`0.8300`，gated R@10=`0.8154`，gated cost=`232.01`
+    - 400k：dense R@10=`0.7718`，hybrid R@10=`0.7617`，full R@10=`0.8003`，gated R@10=`0.7836`，gated cost=`233.22`
+    - 638k：dense R@10=`0.7282`，hybrid R@10=`0.7181`，full R@10=`0.7612`，gated R@10=`0.7343`，gated cost=`236.22`
+  - 论文级解释：
+    - dense 是强 baseline，但随 nested corpus 增大从 R@10=`0.8674` 降到 `0.7282`。
+    - static hybrid RRF 不稳定：只有 200k 略高于 dense，100k/400k/638k 都低于 dense，说明固定融合不是核心贡献。
+    - full multi-route LinUCB 在四个 scale 全部高于 dense，支持 adaptive multi-route retrieval 的质量上界。
+    - gated cost-aware 在 200k/400k/638k 高于 dense，并相对 full multi-route 降低约 `21%-23%` source candidate cost；100k 原始 gated 低于 dense，但 Task20-S optimized fallback 已在 100k 上超过 dense。
+    - 推荐论文主张：IntentWeight 不是 dense 的无条件替代，而是在大规模垂类 RAG 中保留 dense recall floor/fallback，并通过 LinUCB 学习 dense、BM25、cluster-local route 的动态组合价值，从而提升 quality-cost trade-off。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

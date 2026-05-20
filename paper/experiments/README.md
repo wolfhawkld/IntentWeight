@@ -820,6 +820,12 @@ Current status as of 2026-05-07:
   The 638k formal LinUCB run reaches full multi-route `R@10=0.7612` and
   gated cost-aware `R@10=0.7343`; gated remains above dense while reducing
   average source candidate cost from `300.00` to `236.22`.
+- Task23 paper-facing LoTTE scale-up summary is complete:
+  `paper/experiments/task23_lotte_scaleup_summary.md` and
+  `paper/experiments/results/task23_lotte_scaleup_summary.csv`. The summary
+  explicitly separates deterministic artifact reuse from final metric reuse and
+  states the cost claim as cost reduction versus full multi-route, not versus
+  dense-only.
 
 Current LoTTE 100k manifold diagnostics:
 
@@ -853,6 +859,7 @@ Next roadmap:
 | 22.7 | LoTTE 638k dense baseline | Complete: full-corpus dense baseline and ranking artifact generated |
 | 22.8 | LoTTE 638k BM25/hybrid artifacts | Complete: query-term bounded BM25 artifact plus full-corpus hybrid baseline |
 | 22.9 | LoTTE 638k LinUCB smoke/formal | Complete: full/gated above dense; gated lowers source candidate cost |
+| 23 | Consolidate LoTTE scale-up evidence | Complete: paper-facing 100k/200k/400k/638k quality-cost tables |
 
 Example smoke commands:
 

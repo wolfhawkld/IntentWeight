@@ -2,6 +2,10 @@
 
 Updated: 2026-05-07
 
+Note: Task23 extends the LoTTE scale-up evidence through 400k and full 638k.
+For the latest large-scale quality-cost tables and paper-facing scale-up claim,
+use `paper/experiments/task23_lotte_scaleup_summary.md`.
+
 This document consolidates the experimental evidence from Task1-Task20 into a
 paper-facing argument. It should be read as a bounded claim: IntentWeight is not
 a universal replacement for dense retrieval. The supported claim is that
