@@ -254,6 +254,7 @@ PY
 - [x] Task 22.8: LoTTE 638k bounded BM25 / hybrid baseline
 - [x] Task 22.9: LoTTE 638k LinUCB smoke/formal
 - [x] Task 23: LoTTE scale-up paper-facing evidence summary
+- [x] Task 23.B: LoTTE 400k/638k standalone BM25 completion
 
 ## 后续任务规划
 
@@ -1591,6 +1592,30 @@ Smoke result:
     - full multi-route LinUCB 在四个 scale 全部高于 dense，支持 adaptive multi-route retrieval 的质量上界。
     - gated cost-aware 在 200k/400k/638k 高于 dense，并相对 full multi-route 降低约 `21%-23%` source candidate cost；100k 原始 gated 低于 dense，但 Task20-S optimized fallback 已在 100k 上超过 dense。
     - 推荐论文主张：IntentWeight 不是 dense 的无条件替代，而是在大规模垂类 RAG 中保留 dense recall floor/fallback，并通过 LinUCB 学习 dense、BM25、cluster-local route 的动态组合价值，从而提升 quality-cost trade-off。
+
+- 2026-05-20 Task 23.B LoTTE 400k/638k standalone BM25 completion：
+  - 目标：
+    - 补齐 LoTTE scale-up 表格中 400k 和 638k 的 BM25-only baseline metrics。
+    - 完成 `scale × baseline/method` 矩阵：100k/200k/400k/638k × BM25/dense/hybrid/full LinUCB/gated LinUCB。
+  - 实现：
+    - 新增 `paper/experiments/scripts/bm25_artifact_baseline.py`。
+    - 该脚本从 shared BM25 ranking artifact 评估 BM25-only metrics，不重新复用旧 final statistics。
+    - 400k 首次生成 query-term bounded BM25 artifact；638k 复用 Task22.8 已生成的 bounded BM25 artifact。
+  - commands:
+    - `.venv/bin/python paper/experiments/scripts/bm25_artifact_baseline.py --dataset lotte_technology_search_400k --query-split test --top-k 10 --ks 1,5,10 --depth 100 --output-dir paper/experiments/results/task23_bm25_scale_completion`
+    - `.venv/bin/python paper/experiments/scripts/bm25_artifact_baseline.py --dataset lotte_technology_search_638k --query-split test --top-k 10 --ks 1,5,10 --depth 100 --output-dir paper/experiments/results/task23_bm25_scale_completion`
+  - 输出：
+    - `paper/experiments/results/task23_bm25_scale_completion/bm25_lotte_technology_search_400k_metrics.json`
+    - `paper/experiments/results/task23_bm25_scale_completion/bm25_lotte_technology_search_400k_rankings.json`
+    - `paper/experiments/results/task23_bm25_scale_completion/bm25_lotte_technology_search_638k_metrics.json`
+    - `paper/experiments/results/task23_bm25_scale_completion/bm25_lotte_technology_search_638k_rankings.json`
+    - `paper/experiments/results/task23_bm25_scale_completion/bm25_baseline_summary.csv`
+  - 结果：
+    - 400k BM25-only：Recall@10=`0.5721`，MRR@10=`0.3714`，nDCG@10=`0.3167`，elapsed=`79.992s`
+    - 638k BM25-only：Recall@10=`0.5084`，MRR@10=`0.2910`，nDCG@10=`0.2451`，elapsed=`1.011s`，artifact cache hit=`True`
+  - 结论：
+    - BM25-only 在 400k/638k 明显低于 dense、hybrid 和 LinUCB，说明 BM25 是 lexical coverage route，不是最终质量提升的主要来源。
+    - Task23 summary 已更新为完整 scale-up 矩阵。
 
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：

@@ -826,6 +826,9 @@ Current status as of 2026-05-07:
   explicitly separates deterministic artifact reuse from final metric reuse and
   states the cost claim as cost reduction versus full multi-route, not versus
   dense-only.
+- Task23 BM25 scale completion is complete: standalone BM25-only metrics are
+  now materialized for LoTTE 400k (`R@10=0.5721`) and 638k (`R@10=0.5084`) from
+  shared BM25 ranking artifacts, completing the LoTTE scale × baseline matrix.
 
 Current LoTTE 100k manifold diagnostics:
 
