@@ -991,8 +991,8 @@ Task24 增加了审稿前修复项：
 - 不再把 legacy `Recall@K` 当成严格多证据 recall；论文正文优先写 `Hit@K`，并在可用时补 `evidence_recall@K`。
 - `prequential` 结果解释为模拟 test-time adaptation：每条 query 先评估，再用其模拟反馈更新策略；不能写成离线训练后独立 IID test。
 - 成本下降口径限定为相对 full multi-route source candidate cost，不是相对 dense-only 更低。
-- LoTTE 638k 新增 `static_nearest_ensemble`、`uniform_random_ensemble`、`epsilon_greedy_ensemble`，用于区分多路召回表面、静态几何 arm 选择和 LinUCB 反馈控制。
-- 论文主张应写成：dense/BM25/cluster 多路召回提供 coverage，LinUCB 提供 feedback-adaptive and cost-aware route control；不能说 LinUCB 单独解释所有 full-route quality gain。
+- LoTTE 638k 新增 `static_nearest_ensemble`、`static_nearest_gated`、`uniform_random_ensemble`、`epsilon_greedy_ensemble`，用于区分多路召回表面、静态几何 arm 选择、静态几何成本门控和 LinUCB 反馈控制。
+- `static_nearest_gated` 在 638k 上是强 baseline；论文主张应写成：dense/BM25/cluster 多路召回提供 coverage，静态几何已经能支持强 cost gate，LinUCB 的增量价值是 feedback-adaptive / trust-weighted / non-stationary route control。不能说 LinUCB 单独解释所有 full-route quality gain，也不能说当前实验已证明 LinUCB 对单次静态 cost gate 必不可少。
 
 ---
 

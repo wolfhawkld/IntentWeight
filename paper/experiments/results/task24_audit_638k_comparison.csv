@@ -5,5 +5,6 @@ hybrid_rrf,0.7181,,0.4675,0.3954,,,200,1.0000,none
 full_multi_route_linucb,0.7612,0.5192,0.5153,0.4358,0.5034,0.5136,300.00,1.0000,contextual_linucb
 gated_cost_aware_linucb,0.7343,0.4932,0.5089,0.4233,0.4636,0.4965,236.22,0.9146,contextual_linucb
 static_nearest_ensemble,0.7612,0.5154,0.5151,0.4354,0.7030,0.9016,300.00,1.0000,none
+static_nearest_gated,0.7500,0.5051,0.5145,0.4319,0.6941,0.9016,223.49,0.9972,static_geometry_gate
 uniform_random_ensemble,0.7634,0.5170,0.5155,0.4352,0.0990,0.1473,300.00,1.0000,none
 epsilon_greedy_ensemble,0.7578,0.5131,0.5144,0.4339,0.2136,0.2582,300.00,1.0000,non_contextual_bandit

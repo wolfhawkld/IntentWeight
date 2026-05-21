@@ -1656,6 +1656,37 @@ Smoke result:
     - `paper/experiments/results/task24_static_ensemble_638k/`
     - `paper/experiments/results/task24_online_baselines_638k/`
 
+- 2026-05-21 Task 24.C static nearest cost-gated control：
+  - 目标：
+    - 验证审稿风险点：cost gate 本身是否必须依赖 LinUCB，还是静态几何 nearest-centroid gate 已经足够强。
+  - 实现：
+    - 新增 routing mode `static_nearest_gated`。
+    - arm selection：nearest centroid，固定不学习。
+    - confidence proxy：selected centroids 与 query context 的最大相似度。
+    - route decision：复用 gated cost-aware 的 high/mid confidence threshold、dense-lite/BM25-lite、cluster-primary 和 full fallback 逻辑。
+    - policy update：不执行 LinUCB update，`total_feedback_updates=0`。
+  - command：
+    - `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_638k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10 --seeds 13,17,19 --epochs 3 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-weight 2.0 --bm25-weight 0.8 --cluster-weight 0.8 --rrf-k 60 --dense-floor-k 5 --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-weight 0.8 --bm25-lite-weight 0.5 --cluster-primary-weight 2.0 --dense-lite-floor-k 3 --high-confidence-threshold 0.74 --mid-confidence-threshold 0.44 --drift-threshold 1.0 --reward-drop-threshold 0.0 --confidence-feedback-floor 8.0 --routing-modes static_nearest_gated --feedback-mode trust_weighted --use-scale-store --output-dir paper/experiments/results/task24_static_gated_638k`
+  - 结果：
+    - `Hit@10=0.7500`
+    - `evidence_recall@10=0.5051`
+    - `MRR@10=0.5145`
+    - `nDCG@10=0.4319`
+    - `last true reward=0.6941`
+    - `selected_cluster_hit=0.9016`
+    - `avg_source_candidate_cost=223.49`
+    - `dense_query_rate=0.9972`
+    - `hybrid_lite_rate=0.5067`
+    - `full_dense_fallback_rate=0.4905`
+  - 对比：
+    - 当前 gated LinUCB：`Hit@10=0.7343`，`source cost=236.22`，`dense query rate=0.9146`，`selected_cluster_hit=0.4965`
+    - static nearest gated 在这个静态 638k benchmark 上质量和 source candidate cost 都更好，但几乎不降低 dense invocation。
+  - 结论修正：
+    - 该实验说明 static geometry gate 是强 baseline，且在 LoTTE 638k 静态评估里不弱于 gated LinUCB。
+    - 论文不能声称 LinUCB 对单次静态 cost gate 必不可少。
+    - LinUCB 的价值应进一步收窄为：反馈自进化、用户/场景非平稳适配、trust-weighted feedback、长期个性化和动态 route control。
+    - 如果论文要强证明 LinUCB 超过 static geometry gate，需要后续增加 non-stationary feedback 或 user-preference shift benchmark。
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。

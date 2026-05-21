@@ -52,6 +52,7 @@ ROUTING_MODES = (
     "full_multi_route",
     "gated_cost_aware",
     "static_nearest_ensemble",
+    "static_nearest_gated",
     "uniform_random_ensemble",
     "epsilon_greedy_ensemble",
 )
@@ -168,6 +169,16 @@ def selected_semantic_drift(context: np.ndarray, centroids: np.ndarray, selected
     return float(1.0 - best_similarity)
 
 
+def centroid_similarity_confidence(context: np.ndarray, centroids: np.ndarray, selected_arms: Sequence[int]) -> float:
+    """Use nearest selected-centroid similarity as a static confidence proxy."""
+    if not selected_arms:
+        return 0.0
+    selected_centroids = centroids[np.asarray(selected_arms, dtype=np.int32)]
+    similarities = selected_centroids @ context
+    best_similarity = float(np.max(similarities)) if similarities.size else 0.0
+    return float(min(1.0, max(0.0, best_similarity)))
+
+
 def nearest_centroid_arms(context: np.ndarray, centroids: np.ndarray, candidate_arms: int) -> List[int]:
     """Select fixed cluster arms by nearest centroid without policy learning."""
     if candidate_arms <= 0:
@@ -274,7 +285,7 @@ def decide_route(
             confidence,
             semantic_drift,
         )
-    if routing_mode != "gated_cost_aware":
+    if routing_mode not in {"gated_cost_aware", "static_nearest_gated"}:
         raise ValueError(f"Unsupported routing_mode: {routing_mode}")
 
     reward_drop = reward_drop_threshold > 0 and recent_reward_delta < -reward_drop_threshold
@@ -523,7 +534,7 @@ def run_prequential_seed(
                     boosts,
                     confidence_feedback_floor=confidence_feedback_floor,
                 )
-            elif routing_mode == "static_nearest_ensemble":
+            elif routing_mode in {"static_nearest_ensemble", "static_nearest_gated"}:
                 selected_arms = nearest_centroid_arms(context, centroids, candidate_arms)
                 confidence = 0.0
             elif routing_mode == "uniform_random_ensemble":
@@ -542,6 +553,8 @@ def run_prequential_seed(
             else:
                 raise ValueError(f"Unsupported routing_mode: {routing_mode}")
             semantic_drift = selected_semantic_drift(context, centroids, selected_arms)
+            if routing_mode == "static_nearest_gated":
+                confidence = centroid_similarity_confidence(context, centroids, selected_arms)
             recent_reward_delta = _recent_window_delta(observed_rewards, window_size)
             decision = decide_route(
                 routing_mode,
@@ -1017,12 +1030,13 @@ def run_dataset(
             "feedback_mode": feedback_mode,
             "feedback_source": (
                 "simulated_feedback_recorded_no_policy_update"
-                if routing_mode in {"static_nearest_ensemble", "uniform_random_ensemble"}
+                if routing_mode in {"static_nearest_ensemble", "static_nearest_gated", "uniform_random_ensemble"}
                 else "trust_weighted_simulated_user_feedback"
             ),
             "online_learning_scope": (
                 {
                     "static_nearest_ensemble": "static_nearest_centroid_multiroute_no_policy_update",
+                    "static_nearest_gated": "static_nearest_centroid_cost_gated_no_policy_update",
                     "uniform_random_ensemble": "uniform_random_multiroute_no_policy_update",
                     "epsilon_greedy_ensemble": "non_contextual_epsilon_greedy_multiroute",
                 }.get(routing_mode, "confidence_gated_cost_aware_routing")
@@ -1290,6 +1304,7 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "",
         "- `full_multi_route` keeps global dense, BM25, cluster-local retrieval, weighted RRF, and dense floor enabled.",
         "- `static_nearest_ensemble` uses the same dense/BM25/cluster fusion surface but selects cluster arms by nearest centroid and applies no feedback policy update.",
+        "- `static_nearest_gated` uses nearest-centroid arm selection plus the same cost-aware route shapes, with centroid similarity as a non-learned confidence proxy.",
         "- `uniform_random_ensemble` and `epsilon_greedy_ensemble` are non-contextual arm-selection baselines over the same multi-route retrieval surface.",
         "- `gated_cost_aware` shifts to LinUCB-primary or hybrid-lite routes when confidence is high and semantic drift is low; otherwise it uses full dense fallback.",
         "- `hit@k` is the query-level success metric historically reported as `recall@k`; `evidence_recall@k` reports the fraction of all ground-truth chunks retrieved.",

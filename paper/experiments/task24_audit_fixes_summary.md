@@ -33,6 +33,7 @@ All rows use LoTTE technology/search full `638509` corpus, `596` held-out test q
 | Full multi-route LinUCB | 0.7612 | 0.5192 | 0.5153 | 0.4358 | 0.5034 | 0.5136 | 300.00 | 1.0000 | contextual LinUCB |
 | Gated cost-aware LinUCB | 0.7343 | 0.4932 | 0.5089 | 0.4233 | 0.4636 | 0.4965 | 236.22 | 0.9146 | contextual LinUCB |
 | Static nearest ensemble | 0.7612 | 0.5154 | 0.5151 | 0.4354 | 0.7030 | 0.9016 | 300.00 | 1.0000 | none |
+| Static nearest gated | 0.7500 | 0.5051 | 0.5145 | 0.4319 | 0.6941 | 0.9016 | 223.49 | 0.9972 | static geometry gate |
 | Uniform random ensemble | 0.7634 | 0.5170 | 0.5155 | 0.4352 | 0.0990 | 0.1473 | 300.00 | 1.0000 | none |
 | Epsilon-greedy ensemble | 0.7578 | 0.5131 | 0.5144 | 0.4339 | 0.2136 | 0.2582 | 300.00 | 1.0000 | non-contextual bandit |
 
@@ -48,6 +49,8 @@ Third, static nearest centroid is a strong geometry baseline on LoTTE 638k. This
 
 Fourth, the cost-aware result remains useful but must be written carefully. Gated cost-aware LinUCB remains above dense-only Hit@10 (`0.7343` vs `0.7282`) while reducing source candidate cost relative to full multi-route (`236.22` vs `300.00`, about `21.3%`). It is not cheaper than dense-only in absolute source candidates.
 
+Fifth, the added `static_nearest_gated` control shows that a non-learned geometry gate is a strong cost-quality baseline on LoTTE 638k. It reaches `Hit@10=0.7500` with source cost `223.49`, outperforming the current gated LinUCB setting on static retrieval metrics. However, it barely reduces dense invocation (`dense_query_rate=0.9972`) and has no online adaptation. This means the paper should treat static geometry gating as a required baseline, and position LinUCB as the feedback-adaptive controller needed for non-stationary usage and personalized route optimization, not as the only possible cost gate.
+
 ## Paper Wording Fix
 
 Use this bounded claim:
@@ -60,12 +63,13 @@ Avoid this overclaim:
 
 ## Remaining Risk
 
-The strongest unresolved ablation is a static nearest-centroid cost-gated baseline, such as nearest-cluster plus BM25-lite/dense-lite without LinUCB confidence. If reviewers ask whether the cost gate itself needs LinUCB, this should be the next targeted experiment. It is not required before drafting, but the limitation should be acknowledged if not run.
+The static nearest-centroid cost-gated baseline has now been run, and it is strong. The remaining risk shifts from "missing ablation" to "claim positioning": the current LoTTE 638k evidence does not prove that LinUCB is necessary for a one-shot static cost gate. The paper should argue that LinUCB adds online adaptation, trust-weighted feedback learning, and future personalization on top of a geometry-aware retrieval surface. A future non-stationary or user-personalized benchmark would be the cleanest way to isolate that advantage.
 
 ## Source Files
 
 - Metric code: `paper/experiments/scripts/retrieval_metrics.py`
 - Routing code: `paper/experiments/scripts/linucb_cost_aware_routing.py`
 - Static ablation: `paper/experiments/results/task24_static_ensemble_638k/`
+- Static cost-gated ablation: `paper/experiments/results/task24_static_gated_638k/`
 - Naive online ablations: `paper/experiments/results/task24_online_baselines_638k/`
 - Existing 638k LinUCB formal run: `paper/experiments/results/task22_9_lotte_638k_linucb_formal/`

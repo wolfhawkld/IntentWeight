@@ -59,8 +59,9 @@ The corrected 638k interpretation is:
 
 - full multi-route and static nearest ensemble both reach `Hit@10=0.7612`;
 - static nearest has much stronger selected-cluster hit (`0.9016`) than random (`0.1473`) or epsilon-greedy (`0.2582`), supporting the usefulness of geometry;
+- static nearest gated reaches `Hit@10=0.7500` with source cost `223.49`, which is stronger than the current gated LinUCB setting on this static 638k benchmark;
 - gated LinUCB remains the cost-aware deployment point: `Hit@10=0.7343`, above dense-only `0.7282`, while reducing source candidate cost versus full multi-route from `300.00` to `236.22`;
-- do not claim LinUCB alone explains the full-route quality gain. Claim that LinUCB supplies feedback-adaptive, confidence-gated control over a strong multi-route retrieval surface.
+- do not claim LinUCB alone explains the full-route quality gain or that it is necessary for one-shot static geometry gating. Claim that LinUCB supplies feedback-adaptive, confidence-gated control over a strong multi-route retrieval surface, while static geometry gating is a strong non-learning baseline.
 
 ## Recommended Paper Tables
 

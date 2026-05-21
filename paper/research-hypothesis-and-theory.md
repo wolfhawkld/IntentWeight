@@ -509,6 +509,16 @@ policy is reliable. It should not be described as a method that unconditionally
 dominates dense-only retrieval or as proof that LinUCB alone explains all final
 retrieval gains.
 
+The static nearest-centroid cost gate is now a particularly important control.
+On LoTTE 638k it reaches `Hit@10=0.7500` with source candidate cost `223.49`,
+which is stronger than the current gated LinUCB configuration on this frozen
+benchmark. This does not invalidate the broader feedback-adaptive thesis, but it
+does change the burden of argument: the one-shot static large-scale result
+supports geometry-aware gating very strongly, while LinUCB's distinctive value
+must be framed around online adaptation, trust-weighted user feedback,
+non-stationary preferences, and route personalization rather than around being
+the only way to build a cost gate.
+
 ---
 
 ## Task 17 Direction: LoTTE Scale-Up

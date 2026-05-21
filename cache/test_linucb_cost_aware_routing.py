@@ -29,11 +29,11 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
     def test_parse_list_rejects_unknown_mode(self):
         self.assertEqual(
             linucb_cost.parse_list(
-                "full_multi_route,gated_cost_aware,static_nearest_ensemble",
+                "full_multi_route,gated_cost_aware,static_nearest_ensemble,static_nearest_gated",
                 linucb_cost.ROUTING_MODES,
                 label="routing",
             ),
-            ("full_multi_route", "gated_cost_aware", "static_nearest_ensemble"),
+            ("full_multi_route", "gated_cost_aware", "static_nearest_ensemble", "static_nearest_gated"),
         )
         with self.assertRaises(ValueError):
             linucb_cost.parse_list("bad", linucb_cost.ROUTING_MODES, label="routing")
@@ -48,6 +48,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
         context = np.asarray([1.0, 0.0], dtype=np.float32)
 
         self.assertEqual(linucb_cost.nearest_centroid_arms(context, centroids, candidate_arms=2), [0, 2])
+        self.assertEqual(linucb_cost.centroid_similarity_confidence(context, centroids, [0, 2]), 1.0)
 
     def test_epsilon_greedy_arms_prefers_empirical_reward_after_cold_start(self):
         rng = np.random.default_rng(7)
@@ -173,6 +174,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                     "full_multi_route",
                     "gated_cost_aware",
                     "static_nearest_ensemble",
+                    "static_nearest_gated",
                     "uniform_random_ensemble",
                     "epsilon_greedy_ensemble",
                 ),
@@ -232,6 +234,7 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                     "full_multi_route",
                     "gated_cost_aware",
                     "static_nearest_ensemble",
+                    "static_nearest_gated",
                     "uniform_random_ensemble",
                     "epsilon_greedy_ensemble",
                 ],
@@ -240,8 +243,10 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             static_row = rows[2]
             self.assertEqual(static_row["total_feedback_updates_mean"], 0.0)
             self.assertEqual(static_row["static_nearest_ensemble_rate_mean"], 1.0)
-            uniform_row = rows[3]
-            epsilon_row = rows[4]
+            static_gated_row = rows[3]
+            self.assertEqual(static_gated_row["total_feedback_updates_mean"], 0.0)
+            uniform_row = rows[4]
+            epsilon_row = rows[5]
             self.assertEqual(uniform_row["simple_bandit_updates_mean"], 0.0)
             self.assertGreater(epsilon_row["simple_bandit_updates_mean"], 0.0)
             self.assertTrue(rows[0]["artifact_cache_enabled"])
