@@ -933,13 +933,15 @@ Example smoke commands:
 | eManual | evidence retrieval | 可进入 evidence retrieval 主表 | RAGBench sentence-level chunks；必须显式记录 query split |
 | CUAD | evidence retrieval | 当前仅 smoke/sample | full corpus 较大；BM25/dense/hybrid 必须统一 sample 后才可横向比较 |
 | BANKING77 | intent retrieval proxy | 单独作为 intent/domain routing 子实验 | train utterances 是 corpus，test utterances 是 queries，同 intent train utterances 为 GT |
-| LoTTE | evidence retrieval | Task 17 large-scale 主候选 | 垂类 domain-search，适合验证大规模质量-成本 trade-off |
+| LoTTE | evidence retrieval | Task 22/23 large-scale 主表 | 垂类 domain-search，已完成 100k/200k/400k/638k scale-up 验证 |
 
 ### Static retrieval metrics
 
 当前静态检索指标为：
 
-- `Recall@K`: top-K 中命中任意 ground-truth chunk 即为 1。
+- `Hit@K`: top-K 中命中任意 ground-truth chunk 即为 1。
+- `Recall@K`: 历史结果文件中的 legacy 字段，当前等价于 query-level `Hit@K`，保留用于向后兼容。
+- `evidence_recall@K`: top-K 中命中的 ground-truth chunk 数 / 该 query 的全部 ground-truth chunk 数。
 - `MRR@K`: top-K 内第一个 relevant chunk 的 reciprocal rank。
 - `nDCG@K`: binary relevance，支持多个 ground-truth chunks。
 
@@ -982,6 +984,16 @@ Task 11-13 的在线学习实验必须先选定无泄漏协议：
 
 在线学习曲线应报告随机种子、mean/std、反馈预算、每轮 query 数和是否使用冷启动先验。
 
+### Task24 audit guardrails
+
+Task24 增加了审稿前修复项：
+
+- 不再把 legacy `Recall@K` 当成严格多证据 recall；论文正文优先写 `Hit@K`，并在可用时补 `evidence_recall@K`。
+- `prequential` 结果解释为模拟 test-time adaptation：每条 query 先评估，再用其模拟反馈更新策略；不能写成离线训练后独立 IID test。
+- 成本下降口径限定为相对 full multi-route source candidate cost，不是相对 dense-only 更低。
+- LoTTE 638k 新增 `static_nearest_ensemble`、`uniform_random_ensemble`、`epsilon_greedy_ensemble`，用于区分多路召回表面、静态几何 arm 选择和 LinUCB 反馈控制。
+- 论文主张应写成：dense/BM25/cluster 多路召回提供 coverage，LinUCB 提供 feedback-adaptive and cost-aware route control；不能说 LinUCB 单独解释所有 full-route quality gain。
+
 ---
 
 ## 注意事项
@@ -996,4 +1008,4 @@ Task 11-13 的在线学习实验必须先选定无泄漏协议：
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-05-11*
+*更新时间: 2026-05-21*

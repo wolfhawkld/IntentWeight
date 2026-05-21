@@ -4,7 +4,7 @@
 
 The processed query files use ``ground_truth_chunk_ids`` as relevance labels.
 This module evaluates ranked chunk-id lists against those labels and reports
-standard retrieval metrics: Recall@k, MRR@k, and nDCG@k.
+query-level Hit@k, standard evidence Recall@k, MRR@k, and nDCG@k.
 """
 from __future__ import annotations
 
@@ -32,11 +32,24 @@ def _ground_truth(query: Mapping) -> set[str]:
     return {str(chunk_id) for chunk_id in gt}
 
 
-def recall_at_k(ranking: Sequence[str], ground_truth: set[str], k: int) -> float:
-    """Binary Recall@k: 1 if any relevant chunk appears in top-k, else 0."""
+def hit_at_k(ranking: Sequence[str], ground_truth: set[str], k: int) -> float:
+    """Query-level Hit@k: 1 if any relevant chunk appears in top-k, else 0."""
     if not ground_truth:
         return 0.0
     return 1.0 if any(str(chunk_id) in ground_truth for chunk_id in ranking[:k]) else 0.0
+
+
+def evidence_recall_at_k(ranking: Sequence[str], ground_truth: set[str], k: int) -> float:
+    """Standard evidence Recall@k over all relevant chunks for a query."""
+    if not ground_truth:
+        return 0.0
+    retrieved = {str(chunk_id) for chunk_id in ranking[:k]}
+    return len(retrieved & ground_truth) / len(ground_truth)
+
+
+def recall_at_k(ranking: Sequence[str], ground_truth: set[str], k: int) -> float:
+    """Legacy binary Recall@k alias kept for backward-compatible result files."""
+    return hit_at_k(ranking, ground_truth, k)
 
 
 def mrr_at_k(ranking: Sequence[str], ground_truth: set[str], k: int) -> float:
@@ -76,6 +89,11 @@ def evaluate_rankings(
 ) -> Dict[str, float]:
     """Evaluate ranked retrieval results for a collection of queries.
 
+    ``hit@k`` is the query-level success metric historically stored as
+    ``recall@k`` in this project. ``evidence_recall@k`` is the standard IR
+    recall over all ground-truth chunks. The legacy ``recall@k`` key remains a
+    binary hit-rate alias so existing result readers keep working.
+
     Args:
         queries: Processed query records containing ``query_id`` and
             ``ground_truth_chunk_ids``.
@@ -92,7 +110,9 @@ def evaluate_rankings(
 
     totals: Dict[str, float] = {"num_queries": 0, "num_skipped_no_gt": 0}
     for k in ks:
+        totals[f"hit@{k}"] = 0.0
         totals[f"recall@{k}"] = 0.0
+        totals[f"evidence_recall@{k}"] = 0.0
         totals[f"mrr@{k}"] = 0.0
         totals[f"ndcg@{k}"] = 0.0
 
@@ -106,14 +126,19 @@ def evaluate_rankings(
         ranking = [str(chunk_id) for chunk_id in rankings.get(qid, [])]
         totals["num_queries"] += 1
         for k in ks:
-            totals[f"recall@{k}"] += recall_at_k(ranking, gt, k)
+            hit = hit_at_k(ranking, gt, k)
+            totals[f"hit@{k}"] += hit
+            totals[f"recall@{k}"] += hit
+            totals[f"evidence_recall@{k}"] += evidence_recall_at_k(ranking, gt, k)
             totals[f"mrr@{k}"] += mrr_at_k(ranking, gt, k)
             totals[f"ndcg@{k}"] += ndcg_at_k(ranking, gt, k)
 
     n = totals["num_queries"]
     if n:
         for k in ks:
+            totals[f"hit@{k}"] /= n
             totals[f"recall@{k}"] /= n
+            totals[f"evidence_recall@{k}"] /= n
             totals[f"mrr@{k}"] /= n
             totals[f"ndcg@{k}"] /= n
 

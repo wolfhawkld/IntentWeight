@@ -28,11 +28,36 @@ class FakeEncoder:
 class LinUCBCostAwareRoutingTests(unittest.TestCase):
     def test_parse_list_rejects_unknown_mode(self):
         self.assertEqual(
-            linucb_cost.parse_list("full_multi_route,gated_cost_aware", linucb_cost.ROUTING_MODES, label="routing"),
-            ("full_multi_route", "gated_cost_aware"),
+            linucb_cost.parse_list(
+                "full_multi_route,gated_cost_aware,static_nearest_ensemble",
+                linucb_cost.ROUTING_MODES,
+                label="routing",
+            ),
+            ("full_multi_route", "gated_cost_aware", "static_nearest_ensemble"),
         )
         with self.assertRaises(ValueError):
             linucb_cost.parse_list("bad", linucb_cost.ROUTING_MODES, label="routing")
+
+    def test_nearest_centroid_arms_is_stable(self):
+        centroids = np.asarray([
+            [1.0, 0.0],
+            [0.0, 1.0],
+            [1.0, 0.0],
+            [-1.0, 0.0],
+        ], dtype=np.float32)
+        context = np.asarray([1.0, 0.0], dtype=np.float32)
+
+        self.assertEqual(linucb_cost.nearest_centroid_arms(context, centroids, candidate_arms=2), [0, 2])
+
+    def test_epsilon_greedy_arms_prefers_empirical_reward_after_cold_start(self):
+        rng = np.random.default_rng(7)
+        rewards = np.asarray([0.1, 2.0, 0.3], dtype=np.float64)
+        pulls = np.asarray([1.0, 2.0, 1.0], dtype=np.float64)
+
+        self.assertEqual(
+            linucb_cost.epsilon_greedy_arms(rng, rewards, pulls, candidate_arms=2, epsilon=0.0),
+            [1, 2],
+        )
 
     def test_route_decision_uses_dense_only_as_needed(self):
         primary = linucb_cost.decide_route(
@@ -144,7 +169,13 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                 out_dir,
                 encoder,
                 model_name="fake-model",
-                routing_modes=("full_multi_route", "gated_cost_aware"),
+                routing_modes=(
+                    "full_multi_route",
+                    "gated_cost_aware",
+                    "static_nearest_ensemble",
+                    "uniform_random_ensemble",
+                    "epsilon_greedy_ensemble",
+                ),
                 feedback_mode="trust_weighted",
                 top_k=1,
                 ks=(1,),
@@ -195,8 +226,24 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             linucb_cost.update_summary(out_dir / "linucb_cost_summary.csv", rows)
             linucb_cost.write_markdown_table(out_dir / "linucb_cost_summary.csv", out_dir / "linucb_cost_tables.md")
 
-            self.assertEqual([row["routing_mode"] for row in rows], ["full_multi_route", "gated_cost_aware"])
+            self.assertEqual(
+                [row["routing_mode"] for row in rows],
+                [
+                    "full_multi_route",
+                    "gated_cost_aware",
+                    "static_nearest_ensemble",
+                    "uniform_random_ensemble",
+                    "epsilon_greedy_ensemble",
+                ],
+            )
             self.assertIn("avg_source_candidate_cost_mean", rows[0])
+            static_row = rows[2]
+            self.assertEqual(static_row["total_feedback_updates_mean"], 0.0)
+            self.assertEqual(static_row["static_nearest_ensemble_rate_mean"], 1.0)
+            uniform_row = rows[3]
+            epsilon_row = rows[4]
+            self.assertEqual(uniform_row["simple_bandit_updates_mean"], 0.0)
+            self.assertGreater(epsilon_row["simple_bandit_updates_mean"], 0.0)
             self.assertTrue(rows[0]["artifact_cache_enabled"])
             self.assertFalse(rows[0]["dense_ranking_cache_hit"])
             self.assertFalse(rows[0]["bm25_ranking_cache_hit"])

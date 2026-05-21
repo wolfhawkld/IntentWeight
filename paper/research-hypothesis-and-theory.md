@@ -338,11 +338,16 @@ routing, and feedback-updated arm selection. The tested question is whether the
 system can retrieve the correct evidence chunks, not whether a particular LLM can
 write the final answer.
 
-The evaluation therefore uses Recall@k, MRR@k, and nDCG@k over
-`ground_truth_chunk_ids`. Correct context is a necessary condition for grounded
-answer quality, but not a sufficient condition. End-to-end LLM answer relevance,
-faithfulness, citation correctness, and LLM-as-judge or RAGAS-style metrics
-remain future extensions.
+The evaluation therefore uses retrieval metrics over `ground_truth_chunk_ids`.
+For paper wording, `hit@k` is the primary query-level success metric: a query is
+successful if at least one GT chunk appears in the top-k ranking. Earlier result
+files stored this same binary query-level metric as `recall@k`; that legacy
+field is retained for backward compatibility. Standard evidence recall is now
+reported separately as `evidence_recall@k`, the fraction of all GT chunks
+retrieved in the top-k list. Correct context is a necessary condition for
+grounded answer quality, but not a sufficient condition. End-to-end LLM answer
+relevance, faithfulness, citation correctness, and LLM-as-judge or RAGAS-style
+metrics remain future extensions.
 
 Ignoring the LLM stage does not break the feedback loop. In the current
 prequential experiments, GT-derived reward is attached to retrieval outputs. In
@@ -477,6 +482,32 @@ stage 4: full dense fallback for low confidence, semantic drift, OOD, or negativ
 Task 16 therefore strengthens the engineering-value claim: IntentWeight is not
 only a way to learn retrieval policy from feedback, but also a path toward
 adaptive cost control once the policy has accumulated enough reliable feedback.
+
+---
+
+## Task 24 Audit Adjustment
+
+The academic-audit ablations add an important boundary condition. On LoTTE
+638k, final Hit@10 is strongly protected by the active dense/BM25 retrieval
+surface and dense floor. Static nearest-centroid, uniform-random, and
+epsilon-greedy ensemble routes can therefore land near full multi-route Hit@10
+even when their arm-selection quality is very different.
+
+This means final Hit@k should not be used alone to claim that LinUCB is the sole
+source of the quality gain. The paper should separate three layers:
+
+- coverage layer: dense, BM25, cluster-local retrieval, RRF, and dense floor;
+- arm/value layer: selected-cluster hit, true reward, reward gain, and feedback
+  update quality;
+- cost-routing layer: dense query rate, source candidate cost, fallback rate,
+  and quality-cost ratio.
+
+The corrected claim is therefore narrower and stronger: IntentWeight builds a
+robust multi-route retrieval surface, then uses contextual feedback learning to
+adapt route confidence and reduce dense-heavy retrieval cost when the learned
+policy is reliable. It should not be described as a method that unconditionally
+dominates dense-only retrieval or as proof that LinUCB alone explains all final
+retrieval gains.
 
 ---
 

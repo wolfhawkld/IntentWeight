@@ -1,6 +1,6 @@
 # Task23 LoTTE Scale-Up Evidence Summary
 
-Updated: 2026-05-20
+Updated: 2026-05-21
 
 This document consolidates the LoTTE technology/search scale-up evidence from 100k to the full 638k corpus. It is intended as the paper-facing bridge from individual task logs to the final experimental argument.
 
@@ -50,6 +50,17 @@ This document consolidates the LoTTE technology/search scale-up evidence from 10
 ## Paper-Ready Claim
 
 A bounded, evidence-supported claim is: IntentWeight does not replace dense retrieval unconditionally. Instead, in large-scale vertical-domain RAG, it uses dense as a recall floor/fallback while LinUCB learns how to combine dense, BM25, and cluster-local retrieval. Across LoTTE scale-up experiments, full multi-route LinUCB consistently exceeds dense-only Recall@10, and gated cost-aware routing preserves part of this gain while reducing the candidate cost of dense-heavy multi-route retrieval.
+
+## Task24 Post-Audit Note
+
+Task24 adds static and naive online ablations for the 638k setting. These results show that final query-level `Hit@10` can be heavily protected by global dense/BM25 and dense floor: static nearest, uniform random, and epsilon-greedy cluster-arm selectors all remain near full multi-route Hit@10 when the full retrieval surface is active. The paper should therefore treat the historical `Recall@10` field as query-level `Hit@10`, report `evidence_recall@10` where available, and separate final retrieval quality from arm-policy quality.
+
+The corrected 638k interpretation is:
+
+- full multi-route and static nearest ensemble both reach `Hit@10=0.7612`;
+- static nearest has much stronger selected-cluster hit (`0.9016`) than random (`0.1473`) or epsilon-greedy (`0.2582`), supporting the usefulness of geometry;
+- gated LinUCB remains the cost-aware deployment point: `Hit@10=0.7343`, above dense-only `0.7282`, while reducing source candidate cost versus full multi-route from `300.00` to `236.22`;
+- do not claim LinUCB alone explains the full-route quality gain. Claim that LinUCB supplies feedback-adaptive, confidence-gated control over a strong multi-route retrieval surface.
 
 ## Recommended Paper Tables
 

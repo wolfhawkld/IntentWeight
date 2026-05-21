@@ -1617,6 +1617,45 @@ Smoke result:
     - BM25-only 在 400k/638k 明显低于 dense、hybrid 和 LinUCB，说明 BM25 是 lexical coverage route，不是最终质量提升的主要来源。
     - Task23 summary 已更新为完整 scale-up 矩阵。
 
+- 2026-05-21 Task 24 academic audit fixes：
+  - 目标：
+    - 将外部 academic audit 中指出的高风险问题转为代码、实验和文档修复项。
+    - 修正 metric 口径、补静态/朴素在线消融、收窄 prequential/feedback/manifold/cost claims。
+  - 代码修复：
+    - `paper/experiments/scripts/retrieval_metrics.py`
+      - 新增 `hit_at_k`，并将旧 `recall_at_k` 明确保留为 binary query-level Hit@k alias。
+      - 新增 `evidence_recall_at_k`，用于标准 IR 口径的多 GT evidence recall。
+      - `evaluate_rankings` 现在同时输出 `hit@k`、legacy `recall@k`、`evidence_recall@k`、`mrr@k`、`ndcg@k`。
+    - `paper/experiments/scripts/linucb_cost_aware_routing.py`
+      - 新增 `static_nearest_ensemble`：同一 dense/BM25/cluster weighted RRF + dense floor，但 cluster arms 由 nearest centroid 固定选择，不做 policy update。
+      - 新增 `uniform_random_ensemble`：同一 retrieval surface，随机 cluster arms，不做 policy update。
+      - 新增 `epsilon_greedy_ensemble`：同一 retrieval surface，非上下文 epsilon-greedy arm learning。
+  - 验证：
+    - `.venv/bin/python -m py_compile paper/experiments/scripts/linucb_cost_aware_routing.py paper/experiments/scripts/retrieval_metrics.py`
+    - `.venv/bin/python -m unittest cache/test_linucb_cost_aware_routing.py cache/test_retrieval_metrics.py cache/test_bm25_baseline.py cache/test_dense_baseline.py cache/test_hybrid_baseline.py`
+    - 结果：`31 tests OK`。
+  - 638k static ensemble command：
+    - `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_638k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10 --seeds 13,17,19 --epochs 3 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-weight 2.0 --bm25-weight 0.8 --cluster-weight 0.8 --rrf-k 60 --dense-floor-k 5 --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-weight 0.8 --bm25-lite-weight 0.5 --cluster-primary-weight 2.0 --dense-lite-floor-k 3 --high-confidence-threshold 0.74 --mid-confidence-threshold 0.44 --drift-threshold 1.0 --reward-drop-threshold 0.0 --confidence-feedback-floor 8.0 --routing-modes static_nearest_ensemble --feedback-mode trust_weighted --use-scale-store --output-dir paper/experiments/results/task24_static_ensemble_638k`
+  - 638k naive online baseline command：
+    - `.venv/bin/python paper/experiments/scripts/linucb_cost_aware_routing.py --dataset lotte_technology_search_638k --query-split test --model sentence-transformers/all-MiniLM-L6-v2 --local-files-only --device cpu --batch-size 64 --top-k 10 --ks 1,5,10 --seeds 13,17,19 --epochs 3 --n-clusters 32 --context-dim 64 --candidate-arms 3 --dense-depth 100 --bm25-depth 100 --cluster-depth 100 --dense-weight 2.0 --bm25-weight 0.8 --cluster-weight 0.8 --rrf-k 60 --dense-floor-k 5 --dense-lite-depth 30 --bm25-lite-depth 20 --dense-lite-weight 0.8 --bm25-lite-weight 0.5 --cluster-primary-weight 2.0 --dense-lite-floor-k 3 --high-confidence-threshold 0.74 --mid-confidence-threshold 0.44 --drift-threshold 1.0 --reward-drop-threshold 0.0 --confidence-feedback-floor 8.0 --routing-modes uniform_random_ensemble,epsilon_greedy_ensemble --feedback-mode trust_weighted --epsilon-greedy-rate 0.1 --use-scale-store --output-dir paper/experiments/results/task24_online_baselines_638k`
+  - 638k audit comparison：
+    - Dense-only legacy Hit@10=`0.7282`
+    - Full multi-route LinUCB Hit@10=`0.7612`，evidence recall@10=`0.5192`，last true reward=`0.5034`，source cost=`300.00`
+    - Gated cost-aware LinUCB Hit@10=`0.7343`，evidence recall@10=`0.4932`，last true reward=`0.4636`，source cost=`236.22`，dense query rate=`0.9146`
+    - Static nearest ensemble Hit@10=`0.7612`，evidence recall@10=`0.5154`，last true reward=`0.7030`，selected cluster hit=`0.9016`，source cost=`300.00`
+    - Uniform random ensemble Hit@10=`0.7634`，evidence recall@10=`0.5170`，last true reward=`0.0990`，selected cluster hit=`0.1473`
+    - Epsilon-greedy ensemble Hit@10=`0.7578`，evidence recall@10=`0.5131`，last true reward=`0.2136`，selected cluster hit=`0.2582`
+  - 结论修正：
+    - dense/BM25/dense floor 会强保护 final Hit@10，因此 final Hit@10 不能单独证明 LinUCB 是 full-route 质量提升的唯一来源。
+    - static nearest centroid 在 LoTTE 638k 上很强，支持几何/流形结构有用，但也要求论文降低“LinUCB 单独贡献”的表述强度。
+    - LinUCB 的主要论文价值应写为 feedback-adaptive and cost-aware controller：在强多路召回表面上学习何时降低 dense-heavy route 的比重。
+    - 成本结论继续限定为“相对 full multi-route 降低 source candidate cost”，不是相对 dense-only 更低。
+  - 输出：
+    - `paper/experiments/task24_audit_fixes_summary.md`
+    - `paper/experiments/results/task24_audit_638k_comparison.csv`
+    - `paper/experiments/results/task24_static_ensemble_638k/`
+    - `paper/experiments/results/task24_online_baselines_638k/`
+
 - 2026-05-06 后续任务规划记录：
   - 当前总判断：
     - 现有数据支持“方法成立但不是无条件替代 dense”的结论。

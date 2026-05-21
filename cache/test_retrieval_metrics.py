@@ -15,7 +15,7 @@ spec.loader.exec_module(retrieval_metrics)
 
 
 class RetrievalMetricsTests(unittest.TestCase):
-    def test_evaluate_rankings_computes_recall_mrr_and_ndcg_at_k(self):
+    def test_evaluate_rankings_computes_hit_recall_mrr_and_ndcg_at_k(self):
         queries = [
             {"query_id": "q1", "ground_truth_chunk_ids": ["a", "b"]},
             {"query_id": "q2", "ground_truth_chunk_ids": ["x"]},
@@ -30,8 +30,12 @@ class RetrievalMetricsTests(unittest.TestCase):
         metrics = retrieval_metrics.evaluate_rankings(queries, rankings, ks=(1, 3))
 
         self.assertEqual(metrics["num_queries"], 3)
+        self.assertAlmostEqual(metrics["hit@1"], 1 / 3)
+        self.assertAlmostEqual(metrics["hit@3"], 2 / 3)
         self.assertAlmostEqual(metrics["recall@1"], 1 / 3)
         self.assertAlmostEqual(metrics["recall@3"], 2 / 3)
+        self.assertAlmostEqual(metrics["evidence_recall@1"], 1 / 3)
+        self.assertAlmostEqual(metrics["evidence_recall@3"], (1 / 2 + 1 + 0) / 3)
         self.assertAlmostEqual(metrics["mrr@3"], (1 / 2 + 1 + 0) / 3)
 
         q1_dcg = 1 / math.log2(2 + 1)
@@ -53,7 +57,9 @@ class RetrievalMetricsTests(unittest.TestCase):
 
         self.assertEqual(metrics["num_queries"], 1)
         self.assertEqual(metrics["num_skipped_no_gt"], 1)
+        self.assertAlmostEqual(metrics["hit@1"], 1.0)
         self.assertAlmostEqual(metrics["recall@1"], 1.0)
+        self.assertAlmostEqual(metrics["evidence_recall@1"], 1.0)
         self.assertAlmostEqual(metrics["mrr@1"], 1.0)
         self.assertAlmostEqual(metrics["ndcg@1"], 1.0)
 
@@ -65,9 +71,19 @@ class RetrievalMetricsTests(unittest.TestCase):
         metrics = retrieval_metrics.evaluate_rankings(queries, {}, ks=(5,))
 
         self.assertEqual(metrics["num_queries"], 1)
+        self.assertAlmostEqual(metrics["hit@5"], 0.0)
         self.assertAlmostEqual(metrics["recall@5"], 0.0)
+        self.assertAlmostEqual(metrics["evidence_recall@5"], 0.0)
         self.assertAlmostEqual(metrics["mrr@5"], 0.0)
         self.assertAlmostEqual(metrics["ndcg@5"], 0.0)
+
+    def test_legacy_recall_at_k_aliases_hit_at_k(self):
+        ranking = ["a", "b"]
+        ground_truth = {"b", "c"}
+
+        self.assertEqual(retrieval_metrics.hit_at_k(ranking, ground_truth, 1), 0.0)
+        self.assertEqual(retrieval_metrics.recall_at_k(ranking, ground_truth, 2), 1.0)
+        self.assertEqual(retrieval_metrics.evidence_recall_at_k(ranking, ground_truth, 2), 0.5)
 
 
 if __name__ == "__main__":

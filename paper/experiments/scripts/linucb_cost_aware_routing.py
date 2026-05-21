@@ -48,7 +48,13 @@ DEFAULT_ARTIFACT_CACHE_DIR = large_scale_artifacts.DEFAULT_ARTIFACT_CACHE_DIR
 DEFAULT_SCALE_STORE_DIR = dense_baseline.DEFAULT_SCALE_STORE_DIR
 DEFAULT_DATASETS = global_linucb.DEFAULT_DATASETS
 DEFAULT_MODEL = global_linucb.DEFAULT_MODEL
-ROUTING_MODES = ("full_multi_route", "gated_cost_aware")
+ROUTING_MODES = (
+    "full_multi_route",
+    "gated_cost_aware",
+    "static_nearest_ensemble",
+    "uniform_random_ensemble",
+    "epsilon_greedy_ensemble",
+)
 FEEDBACK_MODES = linucb_trust.FEEDBACK_MODES
 
 
@@ -162,6 +168,60 @@ def selected_semantic_drift(context: np.ndarray, centroids: np.ndarray, selected
     return float(1.0 - best_similarity)
 
 
+def nearest_centroid_arms(context: np.ndarray, centroids: np.ndarray, candidate_arms: int) -> List[int]:
+    """Select fixed cluster arms by nearest centroid without policy learning."""
+    if candidate_arms <= 0:
+        raise ValueError(f"candidate_arms must be positive, got {candidate_arms}")
+    if centroids.size == 0:
+        return []
+    similarities = centroids @ context
+    order = np.lexsort((np.arange(len(similarities)), -similarities))
+    return [int(arm) for arm in order[: min(candidate_arms, len(order))]]
+
+
+def uniform_random_arms(rng: np.random.Generator, n_arms: int, candidate_arms: int) -> List[int]:
+    """Select cluster arms uniformly without replacement."""
+    if candidate_arms <= 0:
+        raise ValueError(f"candidate_arms must be positive, got {candidate_arms}")
+    if n_arms <= 0:
+        return []
+    size = min(candidate_arms, n_arms)
+    return [int(arm) for arm in rng.choice(n_arms, size=size, replace=False).tolist()]
+
+
+def empirical_arm_values(reward_sums: np.ndarray, pull_counts: np.ndarray) -> np.ndarray:
+    values = np.zeros_like(reward_sums, dtype=np.float64)
+    observed = pull_counts > 0
+    values[observed] = reward_sums[observed] / pull_counts[observed]
+    return values
+
+
+def epsilon_greedy_arms(
+    rng: np.random.Generator,
+    reward_sums: np.ndarray,
+    pull_counts: np.ndarray,
+    candidate_arms: int,
+    epsilon: float,
+) -> List[int]:
+    """Select arms with a non-contextual epsilon-greedy baseline."""
+    if candidate_arms <= 0:
+        raise ValueError(f"candidate_arms must be positive, got {candidate_arms}")
+    if not 0.0 <= epsilon <= 1.0:
+        raise ValueError(f"epsilon must be in [0, 1], got {epsilon}")
+    n_arms = int(len(reward_sums))
+    if n_arms <= 0:
+        return []
+    size = min(candidate_arms, n_arms)
+    cold = np.flatnonzero(pull_counts <= 0)
+    if cold.size >= size:
+        return [int(arm) for arm in rng.choice(cold, size=size, replace=False).tolist()]
+    if rng.random() < epsilon:
+        return uniform_random_arms(rng, n_arms, candidate_arms)
+    values = empirical_arm_values(reward_sums, pull_counts)
+    order = np.lexsort((np.arange(n_arms), -values))
+    return [int(arm) for arm in order[:size]]
+
+
 def decide_route(
     routing_mode: str,
     *,
@@ -190,6 +250,20 @@ def decide_route(
         return RoutingDecision(
             "full_multi_route",
             "full_multi_route",
+            dense_depth,
+            bm25_depth,
+            cluster_depth,
+            dense_weight,
+            bm25_weight,
+            cluster_weight,
+            dense_floor_k,
+            confidence,
+            semantic_drift,
+        )
+    if routing_mode in {"static_nearest_ensemble", "uniform_random_ensemble", "epsilon_greedy_ensemble"}:
+        return RoutingDecision(
+            routing_mode,
+            routing_mode,
             dense_depth,
             bm25_depth,
             cluster_depth,
@@ -322,6 +396,7 @@ def run_prequential_seed(
     high_accuracy: float,
     low_accuracy: float,
     window_size: int,
+    epsilon_greedy_rate: float = 0.1,
     shared_context_artifacts: Mapping[str, np.ndarray] | None = None,
     dense_rankings_by_qid: Mapping[str, Sequence[str]] | None = None,
     bm25_rankings_by_qid: Mapping[str, Sequence[str]] | None = None,
@@ -360,6 +435,11 @@ def run_prequential_seed(
         alpha_min=alpha_min,
         seed=seed,
     )
+    linucb_learning_enabled = routing_mode in {"full_multi_route", "gated_cost_aware"}
+    simple_bandit_enabled = routing_mode == "epsilon_greedy_ensemble"
+    simple_reward_sums = np.zeros(n_effective_arms, dtype=np.float64)
+    simple_pull_counts = np.zeros(n_effective_arms, dtype=np.float64)
+    simple_bandit_updates = 0
 
     rng = np.random.default_rng(seed)
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
@@ -391,12 +471,18 @@ def run_prequential_seed(
     bm25_query_flags: List[float] = []
     route_counts = {
         "full_multi_route": 0,
+        "static_nearest_ensemble": 0,
+        "uniform_random_ensemble": 0,
+        "epsilon_greedy_ensemble": 0,
         "full_dense_fallback": 0,
         "hybrid_lite": 0,
         "linucb_primary": 0,
     }
     route_reason_counts = {
         "full_multi_route": 0,
+        "static_nearest_ensemble": 0,
+        "uniform_random_ensemble": 0,
+        "epsilon_greedy_ensemble": 0,
         "linucb_primary_ready": 0,
         "hybrid_lite_ready": 0,
         "fallback_low_confidence": 0,
@@ -419,23 +505,42 @@ def run_prequential_seed(
             query = queries[query_idx]
             qid = _query_id(query)
             context = query_context[query_idx]
-            selected_arms, boosts = manifold_linucb.select_arms_with_local_feedback(
-                policy,
-                context,
-                candidate_arms=candidate_arms,
-                feedback_contexts=feedback_contexts,
-                feedback_arm_rewards=feedback_arm_rewards,
-                feedback_k=feedback_k,
-                feedback_tau=feedback_tau,
-                feedback_weight=feedback_weight,
-            )
-            confidence, _, _ = policy_confidence(
-                policy,
-                context,
-                selected_arms,
-                boosts,
-                confidence_feedback_floor=confidence_feedback_floor,
-            )
+            if linucb_learning_enabled:
+                selected_arms, boosts = manifold_linucb.select_arms_with_local_feedback(
+                    policy,
+                    context,
+                    candidate_arms=candidate_arms,
+                    feedback_contexts=feedback_contexts,
+                    feedback_arm_rewards=feedback_arm_rewards,
+                    feedback_k=feedback_k,
+                    feedback_tau=feedback_tau,
+                    feedback_weight=feedback_weight,
+                )
+                confidence, _, _ = policy_confidence(
+                    policy,
+                    context,
+                    selected_arms,
+                    boosts,
+                    confidence_feedback_floor=confidence_feedback_floor,
+                )
+            elif routing_mode == "static_nearest_ensemble":
+                selected_arms = nearest_centroid_arms(context, centroids, candidate_arms)
+                confidence = 0.0
+            elif routing_mode == "uniform_random_ensemble":
+                selected_arms = uniform_random_arms(rng, n_effective_arms, candidate_arms)
+                confidence = 0.0
+            elif routing_mode == "epsilon_greedy_ensemble":
+                selected_arms = epsilon_greedy_arms(
+                    rng,
+                    simple_reward_sums,
+                    simple_pull_counts,
+                    candidate_arms,
+                    epsilon_greedy_rate,
+                )
+                values = empirical_arm_values(simple_reward_sums, simple_pull_counts)
+                confidence = float(np.mean([values[int(arm)] for arm in selected_arms])) if selected_arms else 0.0
+            else:
+                raise ValueError(f"Unsupported routing_mode: {routing_mode}")
             semantic_drift = selected_semantic_drift(context, centroids, selected_arms)
             recent_reward_delta = _recent_window_delta(observed_rewards, window_size)
             decision = decide_route(
@@ -543,7 +648,11 @@ def run_prequential_seed(
                 arm_memory_rewards[int(source_arm)] = memory_reward
                 selected_true_rewards.append(float(true_reward))
                 selected_observed_rewards.append(float(observation.observed_reward))
-                if update_weight > 0:
+                if simple_bandit_enabled and update_weight > 0:
+                    simple_reward_sums[int(source_arm)] += float(update_weight * observation.observed_reward)
+                    simple_pull_counts[int(source_arm)] += float(update_weight)
+                    simple_bandit_updates += 1
+                if linucb_learning_enabled and update_weight > 0:
                     for target_arm, propagation_weight in manifold_linucb.arm_propagation_weights(
                         centroids,
                         source_arm,
@@ -558,7 +667,7 @@ def run_prequential_seed(
                             cross_arm_update_weight += weight
                             propagated_updates += 1
 
-            if feedback_mode != "none":
+            if linucb_learning_enabled and feedback_mode != "none":
                 feedback_contexts.append(context.copy())
                 feedback_arm_rewards.append(arm_memory_rewards)
 
@@ -617,9 +726,15 @@ def run_prequential_seed(
         "selected_cluster_hit_rate": _mean(selected_cluster_hits),
         "soft_fused_hit_rate": _mean(final_hits),
         "full_multi_route_rate": route_counts["full_multi_route"] / num_interactions,
+        "static_nearest_ensemble_rate": route_counts["static_nearest_ensemble"] / num_interactions,
+        "uniform_random_ensemble_rate": route_counts["uniform_random_ensemble"] / num_interactions,
+        "epsilon_greedy_ensemble_rate": route_counts["epsilon_greedy_ensemble"] / num_interactions,
         "full_dense_fallback_rate": route_counts["full_dense_fallback"] / num_interactions,
         "hybrid_lite_rate": route_counts["hybrid_lite"] / num_interactions,
         "linucb_primary_rate": route_counts["linucb_primary"] / num_interactions,
+        "static_nearest_ensemble_reason_rate": route_reason_counts["static_nearest_ensemble"] / num_interactions,
+        "uniform_random_ensemble_reason_rate": route_reason_counts["uniform_random_ensemble"] / num_interactions,
+        "epsilon_greedy_ensemble_reason_rate": route_reason_counts["epsilon_greedy_ensemble"] / num_interactions,
         "fallback_low_confidence_rate": route_reason_counts["fallback_low_confidence"] / num_interactions,
         "fallback_high_drift_rate": route_reason_counts["fallback_high_drift"] / num_interactions,
         "fallback_reward_drop_rate": route_reason_counts["fallback_reward_drop"] / num_interactions,
@@ -637,6 +752,7 @@ def run_prequential_seed(
         "final_effective_alpha": float(policy.effective_alpha),
         "n_effective_arms": n_effective_arms,
         "total_feedback_updates": int(policy.total_feedback),
+        "simple_bandit_updates": int(simple_bandit_updates),
         "total_update_weight": float(total_update_weight),
         "cross_arm_update_weight": float(cross_arm_update_weight),
         "propagated_updates": int(propagated_updates),
@@ -700,6 +816,7 @@ def run_dataset(
     high_accuracy: float,
     low_accuracy: float,
     window_size: int,
+    epsilon_greedy_rate: float = 0.1,
     max_queries: int | None = None,
     max_corpus: int | None = None,
     query_split: str | None = None,
@@ -882,6 +999,7 @@ def run_dataset(
                 high_accuracy=high_accuracy,
                 low_accuracy=low_accuracy,
                 window_size=window_size,
+                epsilon_greedy_rate=epsilon_greedy_rate,
                 shared_context_artifacts=context_artifacts_by_seed.get(int(seed)),
                 dense_rankings_by_qid=dense_rankings_by_qid,
                 bm25_rankings_by_qid=bm25_rankings_by_qid,
@@ -897,8 +1015,18 @@ def run_dataset(
             "protocol": "prequential_cost_aware_feedback",
             "routing_mode": routing_mode,
             "feedback_mode": feedback_mode,
-            "feedback_source": "trust_weighted_simulated_user_feedback",
-            "online_learning_scope": "confidence_gated_cost_aware_routing",
+            "feedback_source": (
+                "simulated_feedback_recorded_no_policy_update"
+                if routing_mode in {"static_nearest_ensemble", "uniform_random_ensemble"}
+                else "trust_weighted_simulated_user_feedback"
+            ),
+            "online_learning_scope": (
+                {
+                    "static_nearest_ensemble": "static_nearest_centroid_multiroute_no_policy_update",
+                    "uniform_random_ensemble": "uniform_random_multiroute_no_policy_update",
+                    "epsilon_greedy_ensemble": "non_contextual_epsilon_greedy_multiroute",
+                }.get(routing_mode, "confidence_gated_cost_aware_routing")
+            ),
             "manifold_neighbor_engine": "cpu_exact_numpy",
             "fusion": "weighted_rrf",
             "top_k": top_k,
@@ -918,6 +1046,7 @@ def run_dataset(
             "feedback_k": feedback_k,
             "feedback_tau": feedback_tau,
             "feedback_weight": feedback_weight,
+            "epsilon_greedy_rate": epsilon_greedy_rate,
             "dense_depth": dense_depth,
             "bm25_depth": bm25_depth,
             "cluster_depth": cluster_depth,
@@ -1065,6 +1194,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "drift_threshold",
         "reward_drop_threshold",
         "confidence_feedback_floor",
+        "epsilon_greedy_rate",
         "embedding_cache_enabled",
         "corpus_embedding_cache_hit",
         "query_embedding_cache_hit",
@@ -1113,12 +1243,17 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "scope",
         "query_split",
         "num_queries",
+        "hit@10_mean",
         "recall@10_mean",
+        "evidence_recall@10_mean",
         "quality_cost_ratio@10_mean",
         "last_epoch_true_reward_mean",
         "avg_source_candidate_cost_mean",
         "dense_query_rate_mean",
         "dense_saved_rate_mean",
+        "static_nearest_ensemble_rate_mean",
+        "uniform_random_ensemble_rate_mean",
+        "epsilon_greedy_ensemble_rate_mean",
         "linucb_primary_rate_mean",
         "hybrid_lite_rate_mean",
         "full_dense_fallback_rate_mean",
@@ -1142,7 +1277,7 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
                         value = str(int(float(value)))
                     except ValueError:
                         pass
-                elif column.endswith("_mean") or column.startswith("recall@"):
+                elif column.endswith("_mean") or column.startswith("recall@") or column.startswith("hit@"):
                     try:
                         value = f"{float(value):.4f}"
                     except ValueError:
@@ -1154,7 +1289,10 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "## Notes",
         "",
         "- `full_multi_route` keeps global dense, BM25, cluster-local retrieval, weighted RRF, and dense floor enabled.",
+        "- `static_nearest_ensemble` uses the same dense/BM25/cluster fusion surface but selects cluster arms by nearest centroid and applies no feedback policy update.",
+        "- `uniform_random_ensemble` and `epsilon_greedy_ensemble` are non-contextual arm-selection baselines over the same multi-route retrieval surface.",
         "- `gated_cost_aware` shifts to LinUCB-primary or hybrid-lite routes when confidence is high and semantic drift is low; otherwise it uses full dense fallback.",
+        "- `hit@k` is the query-level success metric historically reported as `recall@k`; `evidence_recall@k` reports the fraction of all ground-truth chunks retrieved.",
         "- Cost is reported as source candidate count before fusion; dense query rate captures how often global dense retrieval is still executed.",
     ])
     markdown_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -1225,6 +1363,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--high-accuracy", type=float, default=0.9)
     parser.add_argument("--low-accuracy", type=float, default=0.55)
     parser.add_argument("--window-size", type=int, default=50)
+    parser.add_argument("--epsilon-greedy-rate", type=float, default=0.1)
     parser.add_argument("--max-queries", type=int, default=None)
     parser.add_argument("--max-corpus", type=int, default=None)
     parser.add_argument("--query-split", default=None)
@@ -1295,6 +1434,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             high_accuracy=args.high_accuracy,
             low_accuracy=args.low_accuracy,
             window_size=args.window_size,
+            epsilon_greedy_rate=args.epsilon_greedy_rate,
             max_queries=args.max_queries,
             max_corpus=args.max_corpus,
             query_split=args.query_split,
