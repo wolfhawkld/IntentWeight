@@ -171,4 +171,95 @@ cost_reward  → 用于 cost gating 决策
 
 ---
 
-*分析日期: 2026-05-22*
+## 7. 修复后的收敛速度预期
+
+### 修复前 vs 修复后对比
+
+```
+修复前（虚高 reward）：
+  reward 来源 = dense floor 保护后的最终排名质量
+  特点：几乎每轮都拿到较高 reward（不管 arm 选得好不好）
+  结果：θ^T x 快速膨胀 → confidence 快速上升 → 3 epochs 就"收敛"
+  问题：收敛到了错误的目标（学的是"有 dense 保护时哪个 arm 分高"）
+
+修复后（route-specific reward）：
+  reward 来源 = cluster 路径独立检索是否命中 GT
+  特点：选错 arm → reward=0（严格），选对 arm → reward=1（准确）
+  结果：初期大量低 reward → 学习信号稀疏但正确 → 需要更多轮
+  优势：收敛到了正确的目标（真正学会哪个 arm 包含相关文档）
+```
+
+### 预期轮次估计
+
+| 场景 | 当前(3 epochs) | 修复后估计 |
+|------|---------------|-----------|
+| LoTTE 100k (cluster 紧密) | 1788 次"收敛" | 可能 5-8 epochs (3000-5000 次) |
+| LoTTE 638k (cluster 稀疏) | 1788 次"收敛" | 可能 8-15 epochs (5000-9000 次) |
+
+修复后收敛更慢的原因：
+1. **Reward 信号更稀疏**：cluster-only recall 低于 final-ranking recall（无 dense floor 加成），正向 reward 更少
+2. **冷启动更困难**：无膨胀 confidence，门控在学会之前保持关闭（这是**正确**行为）
+3. **但每次更新信息量更大**：每个正向 reward 真正意味着"这个 arm 是对的"，信噪比更高
+
+### 加速策略：Warm Start
+
+不需要从零开始。用 static nearest centroid 作为初始化先验：
+
+```python
+# 初始化：用几何最近作为先验
+for arm in range(n_arms):
+    prior_contexts = queries_nearest_to_centroid[arm]
+    for ctx in prior_contexts:
+        policy.A[arm] += ctx @ ctx.T  # 注入几何先验
+        policy.b[arm] += 0.7 * ctx    # 适度正向先验
+```
+
+这样 LinUCB 起步就在 static nearest 的水平（~0.90 cluster hit），后续反馈只需做 fine-tune：
+- 纠正"几何近但实际不相关"的 case
+- 发现"几何远但实际有关联"的 case
+- 适配个性化/非平稳偏好
+
+### 学习曲线预期（论文可用）
+
+```
+Cluster Hit
+  ^
+  |   ●●●●● static nearest baseline (0.9016, 无学习，水平线)
+  |  .●...........●●●●●●●●●● (warm-start LinUCB: 起步高，微调后持平或略超)
+  |
+  |                    .●●●●● (cold-start LinUCB: 慢但最终接近)
+  |                 .●
+  |              .●
+  |           .●
+  |  ●●●●●●●           (当前 LinUCB: 0.5136，虚假收敛)
+  |
+  +----------------------------→ interactions
+     500  1000  2000  3000  5000
+```
+
+### 为什么慢收敛是好事
+
+1. **学习曲线可以画出清晰的故事**：初期低于 static nearest → 交叉点 → 最终收敛≈或略超
+2. **交叉点之后的增益就是 LinUCB 的真正贡献**——超越纯几何的自适应能力
+3. **Warm start 可以兼顾收敛速度和最终质量**：起步即 0.90，fine-tune 到 0.90+
+4. **论文要的不是"快"，是"对"**：之前的快速收敛是假象，修复后的慢收敛是真实学习
+
+### 对实验计划的补充
+
+| 实验 | 设置 | 预期 |
+|------|------|------|
+| E5: Cold-start 学习曲线 | Route-specific reward，从零开始，跑 10-15 epochs | 画出完整收敛曲线 |
+| E6: Warm-start 学习曲线 | Route-specific reward，static nearest 先验初始化 | 起步高，验证 fine-tune 增益 |
+| E7: Epoch-wise 对比 | 每 epoch 记录 cluster hit / Hit@10 / cost | 对比修复前后的收敛轨迹 |
+
+成功标准补充：
+```
+Cold-start:  在 5000 次交互内 cluster hit 达到 0.80+
+Warm-start:  在 2000 次交互内 cluster hit 保持 0.85+ 且开始有cost saving
+学习曲线:    能清晰展示 "交叉 static nearest" 的拐点
+```
+
+---
+
+*分析日期: 2026-05-22*  
+*更新: 补充收敛速度预期和 warm-start 加速策略*
