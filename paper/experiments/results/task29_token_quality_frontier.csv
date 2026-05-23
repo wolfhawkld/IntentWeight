@@ -1,0 +1,11 @@
+section,scale,config,run_type,seed_count,final_context_policy,final_context_high_k,final_context_mid_k,hit_at_10,avg_context_tokens_at_10,token_ratio_vs_dense,token_saving_pct,hit_delta_vs_dense_pp,hit_per_1k_context_tokens,interpretation
+scale_frontier,100k,dense,formal,1,fixed_top10,10,10,0.8674,1472.39,1.0000,0.00,0.00,0.5891,dense baseline
+scale_frontier,100k,task29_C,formal_mean,3,confidence_topk,8,10,0.8652,1401.24,0.9517,4.83,-0.22,0.6175,near-dense quality with lower final context tokens
+scale_frontier,200k,dense,formal,1,fixed_top10,10,10,0.7970,1444.12,1.0000,0.00,0.00,0.5519,dense baseline
+scale_frontier,200k,task29_C,formal_mean,3,confidence_topk,8,10,0.8249,1376.46,0.9531,4.69,2.80,0.5993,above-dense quality with lower final context tokens
+scale_frontier,400k,dense,formal,1,fixed_top10,10,10,0.7718,1482.30,1.0000,0.00,0.00,0.5207,dense baseline
+scale_frontier,400k,task29_C,formal_mean,3,confidence_topk,8,10,0.7819,1403.43,0.9468,5.32,1.01,0.5571,above-dense quality with lower final context tokens
+strategy_frontier,100k,dense,smoke_baseline,1,fixed_top10,10,10,0.8674,1472.39,1.0000,0.00,0.00,0.5891,dense baseline
+strategy_frontier,100k,task29_A,smoke_seed13,1,confidence_topk,5,7,0.8339,999.38,0.6787,32.13,-3.36,0.8344,aggressive compaction; large token saving with clear quality loss
+strategy_frontier,100k,task29_B,smoke_seed13,1,confidence_topk,7,9,0.8490,1261.91,0.8570,14.30,-1.85,0.6728,moderate compaction; medium token saving with moderate quality loss
+strategy_frontier,100k,task29_C,smoke_seed13,1,confidence_topk,8,10,0.8624,1391.59,0.9451,5.49,-0.50,0.6197,conservative compaction; small token saving with near-dense quality

@@ -1130,6 +1130,20 @@ scale-store corpus embeddings：
 保守的 confidence-based final context compaction 可以稳定降低最终 context
 token，且在更大 corpus 上有机会同时超过 dense 的召回质量。
 
+Task29.2 将上述结果整理为 token-quality frontier：
+
+| Scale | Method | Hit@10 | Avg Context Tokens@10 | Token Ratio | Hit Delta |
+|---|---|---:|---:|---:|---:|
+| 100k | Task29-C mean | 0.8652 | 1401.24 | 0.9517x | -0.22 pp |
+| 200k | Task29-C mean | 0.8249 | 1376.46 | 0.9531x | +2.80 pp |
+| 400k | Task29-C mean | 0.7819 | 1403.43 | 0.9468x | +1.01 pp |
+
+同时，100k A/B/C smoke frontier 说明 compaction 越激进，token saving 越大，
+但召回损失也越明显。论文主结果应使用保守的 Task29-C；A/B 可作为
+quality-cost frontier 消融。整理文件：
+`paper/experiments/task29_2_token_quality_frontier.md`，
+CSV 为 `paper/experiments/results/task29_token_quality_frontier.csv`。
+
 ---
 
 ## 注意事项

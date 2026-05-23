@@ -101,6 +101,22 @@ pattern. The retrieval-quality delta varies with scale, but the conservative
 confidence compaction policy never shows the strong quality collapse seen in
 the aggressive A/B smoke settings.
 
+## Task29.2 Frontier Consolidation
+
+Task29.2 consolidates the scale and strategy results into a paper-facing
+token-quality frontier.
+
+| Scale | Method | Hit@10 | Avg Context Tokens@10 | Token Ratio vs Dense | Hit Delta vs Dense |
+|---|---|---:|---:|---:|---:|
+| 100k | Task29-C mean | 0.8652 | 1401.24 | 0.9517 | -0.0022 |
+| 200k | Task29-C mean | 0.8249 | 1376.46 | 0.9531 | +0.0280 |
+| 400k | Task29-C mean | 0.7819 | 1403.43 | 0.9468 | +0.0101 |
+
+The consolidated frontier supports using Task29-C as the main paper result and
+Task29-A/B as ablations. Detailed frontier tables are stored in
+`paper/experiments/task29_2_token_quality_frontier.md` and
+`paper/experiments/results/task29_token_quality_frontier.csv`.
+
 ## Interpretation
 
 Task29 changes the cost claim from the earlier source-candidate proxy to a real
