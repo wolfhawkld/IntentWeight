@@ -156,6 +156,36 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
         self.assertEqual(cold_confidence, 0.0)
         self.assertAlmostEqual(warm_confidence, 0.75)
 
+    def test_final_context_policy_compacts_only_confident_lite_routes(self):
+        compact = linucb_cost.decide_final_context(
+            "confidence_topk",
+            confidence=0.9,
+            semantic_drift=0.1,
+            route="linucb_primary",
+            top_k=10,
+            final_context_high_k=4,
+            final_context_mid_k=7,
+            high_confidence_threshold=0.8,
+            mid_confidence_threshold=0.5,
+            drift_threshold=1.0,
+        )
+        fallback = linucb_cost.decide_final_context(
+            "confidence_topk",
+            confidence=0.9,
+            semantic_drift=0.1,
+            route="full_dense_fallback",
+            top_k=10,
+            final_context_high_k=4,
+            final_context_mid_k=7,
+            high_confidence_threshold=0.8,
+            mid_confidence_threshold=0.5,
+            drift_threshold=1.0,
+        )
+
+        self.assertEqual(compact.final_k, 4)
+        self.assertEqual(compact.reason, "high_confidence_compact")
+        self.assertEqual(fallback.final_k, 10)
+
     def test_run_dataset_writes_cost_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmpdir = Path(tmp)
@@ -266,6 +296,8 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             self.assertEqual(rows[0]["confidence_mode"], "route_quality")
             self.assertIn("last_epoch_final_true_reward_mean", rows[0])
             self.assertIn("last_epoch_route_true_reward_mean", rows[0])
+            self.assertEqual(rows[0]["final_context_policy"], "fixed_topk")
+            self.assertIn("avg_final_context_k_mean", rows[0])
             static_row = rows[2]
             self.assertEqual(static_row["total_feedback_updates_mean"], 0.0)
             self.assertEqual(static_row["static_nearest_ensemble_rate_mean"], 1.0)

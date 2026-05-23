@@ -1070,6 +1070,41 @@ token 下降。论文中不能声称 IntentWeight 已证明 LLM token cost 低�
 若要证明 token cost 优势，需要后续设计 variable top-k、token-budgeted context
 packing 或 confidence-based evidence compression。
 
+### Task29 confidence-based final context policy
+
+Task29 正式把 Task28 的修正落到实验策略上：不再只减少 retrieval-stage
+candidate，而是让 LinUCB 在高置信 route 下直接减少最终送入 LLM 的 context
+chunk 数。
+
+新增 `final_context_policy=confidence_topk`：
+
+- `fixed_topk`：保持此前固定 top-k。
+- `confidence_topk`：只有当 route 为 `linucb_primary` 或 `hybrid_lite`，且
+  confidence/semantic drift 通过 gate 时，才压缩最终 context。
+- dense fallback 不压缩，继续作为低置信兜底。
+
+LoTTE 100k smoke frontier：
+
+- A：high `k=5`，mid `k=7`：`Hit@10=0.8339`，
+  `avg_context_tokens@10=999.38`，为 dense 的 `0.6787x`。
+- B：high `k=7`，mid `k=9`：`Hit@10=0.8490`，
+  `avg_context_tokens@10=1261.91`，为 dense 的 `0.8570x`。
+- C：high `k=8`，mid `k=10`：`Hit@10=0.8624`，
+  `avg_context_tokens@10=1391.59`，为 dense 的 `0.9451x`。
+
+Task29-C 三 seed formal：
+
+- Dense top-10 baseline：`Hit@10=0.8674`，
+  `avg_context_tokens@10=1472.39`。
+- Task29-C mean：`Hit@10=0.8652`，
+  `avg_context_tokens@10=1401.24`，为 dense 的 `0.9517x`。
+
+结论：保守的 confidence-based final context compaction 可以在 LoTTE 100k 上
+把最终 context tokens 降低约 `4.8%`，同时保持 near-dense quality
+（`Hit@10` 平均仅低约 `0.22` 个百分点）。这证明了真实 token-cost
+优化机制可行，但也说明更激进的 token saving 会带来明确召回损失。
+详细记录见 `paper/experiments/task29_confidence_context_policy_summary.md`。
+
 ---
 
 ## 注意事项
@@ -1084,4 +1119,4 @@ packing 或 confidence-based evidence compression。
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-05-21*
+*更新时间: 2026-05-23*

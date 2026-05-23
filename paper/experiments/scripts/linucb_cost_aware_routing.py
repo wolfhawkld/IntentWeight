@@ -64,6 +64,10 @@ CONFIDENCE_MODES = (
     "value",
     "route_quality",
 )
+FINAL_CONTEXT_POLICIES = (
+    "fixed_topk",
+    "confidence_topk",
+)
 FEEDBACK_MODES = linucb_trust.FEEDBACK_MODES
 
 
@@ -79,6 +83,11 @@ class RoutingDecision(NamedTuple):
     dense_floor_k: int
     confidence: float
     semantic_drift: float
+
+
+class FinalContextDecision(NamedTuple):
+    final_k: int
+    reason: str
 
 
 def parse_ints(value: str) -> tuple[int, ...]:
@@ -370,6 +379,38 @@ def decide_route(
     )
 
 
+def decide_final_context(
+    final_context_policy: str,
+    *,
+    confidence: float,
+    semantic_drift: float,
+    route: str,
+    top_k: int,
+    final_context_high_k: int,
+    final_context_mid_k: int,
+    high_confidence_threshold: float,
+    mid_confidence_threshold: float,
+    drift_threshold: float,
+) -> FinalContextDecision:
+    """Choose how many final ranked chunks are sent to the generation context."""
+    if final_context_policy not in FINAL_CONTEXT_POLICIES:
+        raise ValueError(f"Unsupported final_context_policy: {final_context_policy}")
+    if top_k <= 0:
+        raise ValueError(f"top_k must be positive, got {top_k}")
+    if min(final_context_high_k, final_context_mid_k) <= 0:
+        raise ValueError("final context k values must be positive")
+    if final_context_policy == "fixed_topk":
+        return FinalContextDecision(top_k, "fixed_topk")
+
+    route_is_lite = route in {"linucb_primary", "hybrid_lite"}
+    drift_ok = semantic_drift <= drift_threshold
+    if route_is_lite and drift_ok and confidence >= high_confidence_threshold:
+        return FinalContextDecision(min(top_k, final_context_high_k), "high_confidence_compact")
+    if route_is_lite and drift_ok and confidence >= mid_confidence_threshold:
+        return FinalContextDecision(min(top_k, final_context_mid_k), "mid_confidence_compact")
+    return FinalContextDecision(top_k, "fallback_full_topk")
+
+
 def source_cost(dense_ranking: Sequence[str], bm25_ranking: Sequence[str], cluster_ranking: Sequence[str]) -> int:
     return int(len(dense_ranking) + len(bm25_ranking) + len(cluster_ranking))
 
@@ -435,6 +476,9 @@ def run_prequential_seed(
     drift_threshold: float,
     reward_drop_threshold: float,
     confidence_feedback_floor: float,
+    final_context_policy: str,
+    final_context_high_k: int,
+    final_context_mid_k: int,
     high_trust_prob: float,
     high_trust: float,
     low_trust: float,
@@ -454,6 +498,8 @@ def run_prequential_seed(
         raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
     if confidence_mode not in CONFIDENCE_MODES:
         raise ValueError(f"Unsupported confidence_mode: {confidence_mode}")
+    if final_context_policy not in FINAL_CONTEXT_POLICIES:
+        raise ValueError(f"Unsupported final_context_policy: {final_context_policy}")
     if epochs <= 0:
         raise ValueError(f"epochs must be positive, got {epochs}")
     if min(top_k, cluster_depth) <= 0:
@@ -525,6 +571,13 @@ def run_prequential_seed(
     cluster_candidates: List[float] = []
     dense_query_flags: List[float] = []
     bm25_query_flags: List[float] = []
+    final_context_ks: List[float] = []
+    final_context_reason_counts = {
+        "fixed_topk": 0,
+        "high_confidence_compact": 0,
+        "mid_confidence_compact": 0,
+        "fallback_full_topk": 0,
+    }
     route_counts = {
         "full_multi_route": 0,
         "static_nearest_ensemble": 0,
@@ -678,7 +731,22 @@ def run_prequential_seed(
                 dense_floor_k=decision.dense_floor_k,
                 top_k=top_k,
             )
+            final_context_decision = decide_final_context(
+                final_context_policy,
+                confidence=confidence,
+                semantic_drift=semantic_drift,
+                route=decision.route,
+                top_k=top_k,
+                final_context_high_k=final_context_high_k,
+                final_context_mid_k=final_context_mid_k,
+                high_confidence_threshold=high_confidence_threshold,
+                mid_confidence_threshold=mid_confidence_threshold,
+                drift_threshold=drift_threshold,
+            )
+            ranking = ranking[: final_context_decision.final_k]
             rankings[qid] = ranking
+            final_context_ks.append(float(final_context_decision.final_k))
+            final_context_reason_counts[final_context_decision.reason] += 1
 
             gt = _ground_truth(query)
             final_hit = _has_hit(ranking, gt, k=top_k)
@@ -786,6 +854,7 @@ def run_prequential_seed(
         "feedback_mode": feedback_mode,
         "reward_attribution": reward_attribution,
         "confidence_mode": confidence_mode,
+        "final_context_policy": final_context_policy,
         "epochs": epochs,
         "num_interactions": len(source_costs),
         "avg_true_feedback_reward": _mean(true_rewards),
@@ -818,6 +887,17 @@ def run_prequential_seed(
         "dense_query_rate": _mean(dense_query_flags),
         "bm25_query_rate": _mean(bm25_query_flags),
         "avg_confidence": _mean(confidences),
+        "avg_final_context_k": _mean(final_context_ks),
+        "compact_context_rate": (
+            (
+                final_context_reason_counts["high_confidence_compact"]
+                + final_context_reason_counts["mid_confidence_compact"]
+            )
+            / num_interactions
+        ),
+        "high_confidence_compact_rate": final_context_reason_counts["high_confidence_compact"] / num_interactions,
+        "mid_confidence_compact_rate": final_context_reason_counts["mid_confidence_compact"] / num_interactions,
+        "fallback_full_topk_context_rate": final_context_reason_counts["fallback_full_topk"] / num_interactions,
         "avg_semantic_drift": _mean(semantic_drifts),
         "selected_cluster_hit_rate": _mean(selected_cluster_hits),
         "soft_fused_hit_rate": _mean(final_hits),
@@ -920,6 +1000,9 @@ def run_dataset(
     drift_threshold: float,
     reward_drop_threshold: float,
     confidence_feedback_floor: float,
+    final_context_policy: str = "fixed_topk",
+    final_context_high_k: int = 5,
+    final_context_mid_k: int = 7,
     high_trust_prob: float,
     high_trust: float,
     low_trust: float,
@@ -946,6 +1029,8 @@ def run_dataset(
         raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
     if confidence_mode not in CONFIDENCE_MODES:
         raise ValueError(f"Unsupported confidence_mode: {confidence_mode}")
+    if final_context_policy not in FINAL_CONTEXT_POLICIES:
+        raise ValueError(f"Unsupported final_context_policy: {final_context_policy}")
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
     queries = experiment_guardrails.apply_query_controls(queries_all, query_split=query_split, max_queries=max_queries)
@@ -1117,6 +1202,9 @@ def run_dataset(
                 drift_threshold=drift_threshold,
                 reward_drop_threshold=reward_drop_threshold,
                 confidence_feedback_floor=confidence_feedback_floor,
+                final_context_policy=final_context_policy,
+                final_context_high_k=final_context_high_k,
+                final_context_mid_k=final_context_mid_k,
                 high_trust_prob=high_trust_prob,
                 high_trust=high_trust,
                 low_trust=low_trust,
@@ -1141,6 +1229,7 @@ def run_dataset(
             "feedback_mode": feedback_mode,
             "reward_attribution": reward_attribution,
             "confidence_mode": confidence_mode,
+            "final_context_policy": final_context_policy,
             "feedback_source": (
                 "simulated_feedback_recorded_no_policy_update"
                 if routing_mode in {"static_nearest_ensemble", "static_nearest_gated", "uniform_random_ensemble"}
@@ -1193,6 +1282,8 @@ def run_dataset(
             "drift_threshold": drift_threshold,
             "reward_drop_threshold": reward_drop_threshold,
             "confidence_feedback_floor": confidence_feedback_floor,
+            "final_context_high_k": final_context_high_k,
+            "final_context_mid_k": final_context_mid_k,
             "high_trust_prob": high_trust_prob,
             "high_trust": high_trust,
             "low_trust": low_trust,
@@ -1262,7 +1353,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
     new_rows = list(rows)
     if not new_rows:
         return
-    existing: Dict[tuple[str, str, str, str, str, str, str, str, str], Mapping] = {}
+    existing: Dict[tuple[str, str, str, str, str, str, str, str, str, str], Mapping] = {}
     if summary_path.exists():
         with summary_path.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
@@ -1274,6 +1365,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
                     row.get("routing_mode", ""),
                     row.get("reward_attribution", ""),
                     row.get("confidence_mode", ""),
+                    row.get("final_context_policy", ""),
                     row.get("scope", ""),
                     row.get("query_split", ""),
                     row.get("num_queries", ""),
@@ -1286,6 +1378,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
             str(row.get("routing_mode", "")),
             str(row.get("reward_attribution", "")),
             str(row.get("confidence_mode", "")),
+            str(row.get("final_context_policy", "")),
             str(row.get("scope", "")),
             str(row.get("query_split", "")),
             str(row.get("num_queries", "")),
@@ -1298,6 +1391,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "feedback_mode",
         "reward_attribution",
         "confidence_mode",
+        "final_context_policy",
         "model",
         "protocol",
         "task_type",
@@ -1327,6 +1421,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "drift_threshold",
         "reward_drop_threshold",
         "confidence_feedback_floor",
+        "final_context_high_k",
+        "final_context_mid_k",
         "epsilon_greedy_rate",
         "embedding_cache_enabled",
         "corpus_embedding_cache_hit",
@@ -1375,6 +1471,7 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "routing_mode",
         "reward_attribution",
         "confidence_mode",
+        "final_context_policy",
         "scope",
         "query_split",
         "num_queries",
@@ -1386,6 +1483,11 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "last_epoch_final_true_reward_mean",
         "last_epoch_route_true_reward_mean",
         "avg_source_candidate_cost_mean",
+        "avg_final_context_k_mean",
+        "compact_context_rate_mean",
+        "high_confidence_compact_rate_mean",
+        "mid_confidence_compact_rate_mean",
+        "fallback_full_topk_context_rate_mean",
         "dense_query_rate_mean",
         "dense_saved_rate_mean",
         "static_nearest_ensemble_rate_mean",
@@ -1432,6 +1534,7 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "- `gated_cost_aware` shifts to LinUCB-primary or hybrid-lite routes when confidence is high and semantic drift is low; otherwise it uses full dense fallback.",
         "- `reward_attribution=cluster_only` updates LinUCB from the selected cluster route alone, separating policy credit from dense/BM25 rescue hits.",
         "- `confidence_mode=route_quality` gates from historical cluster-route reward instead of the LinUCB value estimate.",
+        "- `final_context_policy=confidence_topk` reduces final context chunk count only when the selected LinUCB route is confident; it is measured separately from retrieval-stage source cost.",
         "- `hit@k` is the query-level success metric historically reported as `recall@k`; `evidence_recall@k` reports the fraction of all ground-truth chunks retrieved.",
         "- Cost is reported as source candidate count before fusion; dense query rate captures how often global dense retrieval is still executed.",
     ])
@@ -1463,6 +1566,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--feedback-mode", default="trust_weighted", choices=FEEDBACK_MODES)
     parser.add_argument("--reward-attribution", default="final_fused", choices=REWARD_ATTRIBUTIONS)
     parser.add_argument("--confidence-mode", default="value", choices=CONFIDENCE_MODES)
+    parser.add_argument("--final-context-policy", default="fixed_topk", choices=FINAL_CONTEXT_POLICIES)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--ks", default="1,5,10")
@@ -1499,6 +1603,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--drift-threshold", type=float, default=1.0)
     parser.add_argument("--reward-drop-threshold", type=float, default=0.0)
     parser.add_argument("--confidence-feedback-floor", type=float, default=8.0)
+    parser.add_argument("--final-context-high-k", type=int, default=5)
+    parser.add_argument("--final-context-mid-k", type=int, default=7)
     parser.add_argument("--high-trust-prob", type=float, default=0.7)
     parser.add_argument("--high-trust", type=float, default=1.0)
     parser.add_argument("--low-trust", type=float, default=0.25)
@@ -1572,6 +1678,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             drift_threshold=args.drift_threshold,
             reward_drop_threshold=args.reward_drop_threshold,
             confidence_feedback_floor=args.confidence_feedback_floor,
+            final_context_policy=args.final_context_policy,
+            final_context_high_k=args.final_context_high_k,
+            final_context_mid_k=args.final_context_mid_k,
             high_trust_prob=args.high_trust_prob,
             high_trust=args.high_trust,
             low_trust=args.low_trust,
@@ -1603,6 +1712,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"recall@10={row.get('recall@10_mean', 0.0):.4f} "
                 f"last_reward={row.get('last_epoch_true_reward_mean', 0.0):.4f} "
                 f"avg_cost={row.get('avg_source_candidate_cost_mean', 0.0):.2f} "
+                f"avg_final_k={row.get('avg_final_context_k_mean', 0.0):.2f} "
                 f"dense_rate={row.get('dense_query_rate_mean', 0.0):.4f} "
                 f"primary_rate={row.get('linucb_primary_rate_mean', 0.0):.4f}"
             )
