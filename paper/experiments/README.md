@@ -865,6 +865,7 @@ Next roadmap:
 | 23 | Consolidate LoTTE scale-up evidence | Complete: paper-facing 100k/200k/400k/638k quality-cost tables |
 | 24 | Add audit guardrails and static controls | Complete: metric naming fixed; static/naive controls added for 638k |
 | 25 | Separate final fused reward from route-level credit | Complete: cluster-only credit improves selected route quality on LoTTE 100k |
+| 26 | Test low-cost dense fallback after route-level learning | Complete: quality-cost frontier; near-dense quality at lower cost than Task25, sub-dense cost with quality loss |
 
 Example smoke commands:
 
@@ -1007,6 +1008,22 @@ Task25 修复并验证了 LinUCB reward 归因口径：
 
 Task25 结果记录在 `paper/experiments/task25_credit_assignment_summary.md` 和
 `paper/experiments/task25_credit_assignment_comparison.csv`。
+
+### Task26 low-cost routing
+
+Task26 在 Task25 的 `cluster_only/value` 基础上降低 dense/BM25/cluster 深度，
+验证 LinUCB route 变强后是否能进一步降成本：
+
+- Task25 cluster-credit reference: `Hit@10=0.8764`, avg source cost `181.47`。
+- Task26 B cost-balanced: `Hit@10=0.8579`, avg source cost `121.00`, last-epoch cost `104.30`，接近 pure dense top-100 成本但质量低于 dense。
+- Task26 E quality-first: `Hit@10=0.8663`, avg source cost `166.33`, last-epoch cost `140.04`，几乎贴近 dense 100k baseline `0.8674`，但成本仍高于 pure dense。
+- Task26 A cost-first smoke: avg source cost `84.38`，已经低于 dense top-100 成本，但 `Hit@10=0.8523`，质量损失明显。
+
+结论：目前证据支持 quality-cost frontier，而不是无条件替代 dense。
+IntentWeight 可以在 dense-heavy 高质量和 cluster-heavy 低成本之间调节；
+越激进降低 dense，成本越低，但 Hit@10 会下降。详细记录见
+`paper/experiments/task26_low_cost_routing_summary.md` 和
+`paper/experiments/task26_low_cost_routing_comparison.csv`。
 
 ---
 

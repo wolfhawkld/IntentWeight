@@ -544,6 +544,29 @@ cluster route's own selection quality under route-level credit assignment.
 The experimental `route_quality` confidence mode is currently too conservative
 and should be treated as a diagnostic rather than the default main setting.
 
+## Task 26 Low-Cost Routing Boundary
+
+Task26 tests whether the stronger route-level LinUCB signal can be used to
+lower dense/BM25 dependence. The result is a quality-cost frontier rather than
+a single dominance point.
+
+On LoTTE 100k, the Task25 `cluster_only/value` reference reaches
+`Hit@10=0.8764` with average source candidate cost `181.47`. A Task26
+quality-first low-cost setting reduces the lite-route dense and BM25 depths and
+reaches `Hit@10=0.8663` with cost `166.33`, nearly matching the dense baseline
+`Hit@10=0.8674` while reducing cost relative to Task25. A more aggressive
+balanced setting reaches cost `121.00`, close to dense's top-100 candidate
+budget, but drops to `Hit@10=0.8579`. The cost-first smoke setting can go below
+dense's candidate budget at cost `84.38`, but gives up more quality
+(`Hit@10=0.8523`).
+
+The theoretical interpretation is that LinUCB does not eliminate the
+coverage-efficiency-accuracy trade-off. Instead, route-level feedback makes the
+cluster route reliable enough to move the operating point along that trade-off.
+Dense remains a recall floor for quality-preserving operation, while lower-cost
+cluster-heavy operation is available when the application is more cost
+sensitive.
+
 ---
 
 ## Task 17 Direction: LoTTE Scale-Up
