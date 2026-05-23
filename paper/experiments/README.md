@@ -866,6 +866,7 @@ Next roadmap:
 | 24 | Add audit guardrails and static controls | Complete: metric naming fixed; static/naive controls added for 638k |
 | 25 | Separate final fused reward from route-level credit | Complete: cluster-only credit improves selected route quality on LoTTE 100k |
 | 26 | Test low-cost dense fallback after route-level learning | Complete: quality-cost frontier; near-dense quality at lower cost than Task25, sub-dense cost with quality loss |
+| 27 | Test dense-LinUCB two-route trade-off with BM25 disabled | Complete: sub-dense candidate cost is possible, but dense-level quality is not yet preserved |
 
 Example smoke commands:
 
@@ -1024,6 +1025,26 @@ IntentWeight 可以在 dense-heavy 高质量和 cluster-heavy 低成本之间调
 越激进降低 dense，成本越低，但 Hit@10 会下降。详细记录见
 `paper/experiments/task26_low_cost_routing_summary.md` 和
 `paper/experiments/task26_low_cost_routing_comparison.csv`。
+
+### Task27 dense-LinUCB two-route trade-off
+
+Task27 关闭 BM25，只在 global dense 与 LinUCB cluster route 之间做 trade-off。
+代码已允许 `bm25_depth=0` / `bm25_lite_depth=0`，此时不会生成或读取 BM25
+artifact，BM25 候选成本为 0。
+
+主要结果：
+
+- Pure dense 100k baseline: `Hit@10=0.8674`, source candidate cost `100`。
+- Task27 B formal: `Hit@10=0.8535`, avg source cost `97.76`, last-epoch cost `89.25`。成本低于 dense，但质量明显低于 dense。
+- Task27 C formal: `Hit@10=0.8535`, avg source cost `107.18`, last-epoch cost `99.35`。稍高于 dense 成本，也没有补回质量。
+- Task27 F quality smoke: `Hit@10=0.8624`, avg source cost `132.59`。更接近 dense，但成本不再低于 dense。
+
+结论：二路 dense-LinUCB 可以把 candidate cost 压到 pure dense 以下，但当前
+LoTTE 100k 上还不能在该成本预算下保持 dense-level quality。该结果应作为
+边界实验写入论文：IntentWeight 当前支持可调 quality-cost frontier，而不是
+保证低于 dense 成本且无损替代 dense。详细记录见
+`paper/experiments/task27_dense_linucb_tradeoff_summary.md` 和
+`paper/experiments/task27_dense_linucb_tradeoff_comparison.csv`。
 
 ---
 

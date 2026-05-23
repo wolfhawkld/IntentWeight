@@ -285,6 +285,98 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
             self.assertTrue((out_dir / "linucb_cost_summary.csv").exists())
             self.assertTrue((out_dir / "linucb_cost_tables.md").exists())
 
+    def test_run_dataset_allows_bm25_disabled(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            data_dir = tmpdir / "processed"
+            out_dir = tmpdir / "results"
+            data_dir.mkdir()
+            corpus = [
+                {"chunk_id": "c_alpha", "text": "alpha document"},
+                {"chunk_id": "c_beta", "text": "beta document"},
+                {"chunk_id": "c_gamma", "text": "gamma document"},
+            ]
+            queries = [
+                {
+                    "query_id": "q_alpha",
+                    "text": "alpha query",
+                    "ground_truth_chunk_ids": ["c_alpha"],
+                    "split": "test",
+                },
+            ]
+            (data_dir / "toy_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / "toy_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+            encoder = FakeEncoder({
+                "alpha document": [1.0, 0.0],
+                "beta document": [0.0, 1.0],
+                "gamma document": [-1.0, 0.0],
+                "alpha query": [1.0, 0.0],
+            })
+
+            rows = linucb_cost.run_dataset(
+                "toy",
+                data_dir,
+                out_dir,
+                encoder,
+                model_name="fake-model",
+                routing_modes=("gated_cost_aware",),
+                feedback_mode="trust_weighted",
+                reward_attribution="cluster_only",
+                confidence_mode="value",
+                top_k=1,
+                ks=(1,),
+                batch_size=2,
+                seeds=(1,),
+                epochs=1,
+                n_clusters=2,
+                context_dim=2,
+                candidate_arms=1,
+                alpha=1.0,
+                alpha_decay=0.01,
+                alpha_min=0.3,
+                arm_neighbor_k=2,
+                arm_decay_sigma=0.75,
+                propagation_strength=0.25,
+                feedback_k=2,
+                feedback_tau=0.75,
+                feedback_weight=0.35,
+                dense_depth=1,
+                bm25_depth=0,
+                cluster_depth=1,
+                dense_weight=1.0,
+                bm25_weight=0.0,
+                cluster_weight=1.0,
+                rrf_k=60,
+                dense_floor_k=0,
+                dense_lite_depth=0,
+                bm25_lite_depth=0,
+                dense_lite_weight=0.0,
+                bm25_lite_weight=0.0,
+                cluster_primary_weight=1.0,
+                dense_lite_floor_k=0,
+                high_confidence_threshold=0.65,
+                mid_confidence_threshold=0.35,
+                drift_threshold=1.0,
+                reward_drop_threshold=0.0,
+                confidence_feedback_floor=1.0,
+                high_trust_prob=1.0,
+                high_trust=1.0,
+                low_trust=0.25,
+                high_accuracy=1.0,
+                low_accuracy=0.55,
+                window_size=1,
+                query_split="test",
+                artifact_cache_dir=tmpdir / "artifacts",
+                use_artifact_cache=True,
+            )
+
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["bm25_depth"], 0)
+            self.assertEqual(rows[0]["bm25_lite_depth"], 0)
+            self.assertEqual(rows[0]["avg_bm25_candidates_mean"], 0.0)
+            self.assertTrue(rows[0]["artifact_cache_enabled"])
+            self.assertFalse(rows[0]["bm25_ranking_cache_hit"])
+
     def test_run_dataset_can_load_corpus_embeddings_from_scale_store(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmpdir = Path(tmp)

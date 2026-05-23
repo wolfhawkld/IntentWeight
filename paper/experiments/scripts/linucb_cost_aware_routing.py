@@ -456,8 +456,10 @@ def run_prequential_seed(
         raise ValueError(f"Unsupported confidence_mode: {confidence_mode}")
     if epochs <= 0:
         raise ValueError(f"epochs must be positive, got {epochs}")
-    if min(top_k, dense_depth, bm25_depth, cluster_depth) <= 0:
-        raise ValueError("top_k and full source depths must be positive")
+    if min(top_k, cluster_depth) <= 0:
+        raise ValueError("top_k and cluster_depth must be positive")
+    if min(dense_depth, bm25_depth, dense_lite_depth, bm25_lite_depth, dense_floor_k, dense_lite_floor_k) < 0:
+        raise ValueError("dense/BM25 depths and dense floors must be non-negative")
 
     if shared_context_artifacts is not None:
         corpus_context = np.asarray(shared_context_artifacts["corpus_context"], dtype=np.float32)
@@ -495,8 +497,9 @@ def run_prequential_seed(
     rng = np.random.default_rng(seed)
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
     arm_labels_by_chunk = {chunk_id: int(label) for chunk_id, label in zip(chunk_ids, arm_labels)}
+    max_bm25_depth_needed = max(bm25_depth, bm25_lite_depth)
     bm25 = None
-    if bm25_rankings_by_qid is None:
+    if bm25_rankings_by_qid is None and max_bm25_depth_needed > 0:
         tokenized_corpus = [bm25_baseline.tokenize(str(chunk.get("text", ""))) for chunk in corpus]
         bm25 = bm25_baseline.SparseBM25(tokenized_corpus)
 
@@ -1020,26 +1023,34 @@ def run_dataset(
     context_cache_by_seed: Dict[int, Dict[str, object]] = {}
     context_artifacts_by_seed: Dict[int, Mapping[str, np.ndarray]] = {}
     if use_artifact_cache:
-        dense_rankings_by_qid, dense_ranking_cache = large_scale_artifacts.load_or_compute_dense_rankings(
-            corpus,
-            queries,
-            corpus_embeddings,
-            query_embeddings,
-            dataset=dataset,
-            model_name=model_name,
-            depth=max_dense_artifact_depth,
-            cache_dir=artifact_dir,
-            batch_size=batch_size,
-            force=force_artifact_cache,
-        )
-        bm25_rankings_by_qid, bm25_ranking_cache = large_scale_artifacts.load_or_compute_bm25_rankings(
-            corpus,
-            queries,
-            dataset=dataset,
-            depth=max_bm25_artifact_depth,
-            cache_dir=artifact_dir,
-            force=force_artifact_cache,
-        )
+        if max_dense_artifact_depth > 0:
+            dense_rankings_by_qid, dense_ranking_cache = large_scale_artifacts.load_or_compute_dense_rankings(
+                corpus,
+                queries,
+                corpus_embeddings,
+                query_embeddings,
+                dataset=dataset,
+                model_name=model_name,
+                depth=max_dense_artifact_depth,
+                cache_dir=artifact_dir,
+                batch_size=batch_size,
+                force=force_artifact_cache,
+            )
+        else:
+            dense_rankings_by_qid = {}
+            dense_ranking_cache = {"cache_hit": False, "cache_enabled": False, "disabled": True}
+        if max_bm25_artifact_depth > 0:
+            bm25_rankings_by_qid, bm25_ranking_cache = large_scale_artifacts.load_or_compute_bm25_rankings(
+                corpus,
+                queries,
+                dataset=dataset,
+                depth=max_bm25_artifact_depth,
+                cache_dir=artifact_dir,
+                force=force_artifact_cache,
+            )
+        else:
+            bm25_rankings_by_qid = {}
+            bm25_ranking_cache = {"cache_hit": False, "cache_enabled": False, "disabled": True}
         for seed in seeds:
             artifacts, context_cache = large_scale_artifacts.load_or_compute_context_clusters(
                 corpus,

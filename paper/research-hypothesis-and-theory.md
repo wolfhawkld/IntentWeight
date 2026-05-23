@@ -567,6 +567,26 @@ Dense remains a recall floor for quality-preserving operation, while lower-cost
 cluster-heavy operation is available when the application is more cost
 sensitive.
 
+## Task 27 Dense-LinUCB Two-Route Boundary
+
+Task27 tests a stricter hypothesis: remove BM25 and trade off only between
+global dense retrieval and the learned LinUCB cluster route. This isolates the
+core mechanism more cleanly, because source candidate cost becomes dense
+candidates plus cluster candidates only.
+
+The result is a useful boundary condition. On LoTTE 100k, the best formal
+sub-dense-cost two-route setting reaches `Hit@10=0.8535` with source candidate
+cost `97.76`, below the dense top-100 candidate budget but still below dense
+quality (`Hit@10=0.8674`). A more quality-oriented two-route smoke reaches
+`Hit@10=0.8624`, closer to dense, but its cost rises to `132.59`.
+
+This means the current evidence does not support the strongest claim that
+LinUCB plus sparse dense fallback can already replace pure dense at lower
+candidate cost without quality loss. It does support a more defensible claim:
+route-level LinUCB creates a controllable low-cost route, and the system can
+move along a quality-cost frontier by changing how much dense recall floor is
+retained.
+
 ---
 
 ## Task 17 Direction: LoTTE Scale-Up
