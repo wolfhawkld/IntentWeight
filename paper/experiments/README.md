@@ -1105,6 +1105,18 @@ Task29-C 三 seed formal：
 优化机制可行，但也说明更激进的 token saving 会带来明确召回损失。
 详细记录见 `paper/experiments/task29_confidence_context_policy_summary.md`。
 
+Task29.1 LoTTE 200k scale-up 使用同一套 Task29-C 策略：
+
+- Dense top-10 baseline：`Hit@10=0.7970`，
+  `avg_context_tokens@10=1444.12`。
+- Task29-C mean：`Hit@10=0.8249`，
+  `avg_context_tokens@10=1376.46`，为 dense 的 `0.9531x`。
+
+200k 结果更强：final context tokens 下降约 `4.7%`，同时 `Hit@10` 高于
+dense-only 约 `2.8` 个百分点。这支持一个更具体的论文判断：当 corpus 规模
+增大、pure dense top-10 优势下降时，feedback-guided LinUCB route control
+更可能同时带来 near-/above-dense quality 与真实 final-context-token 节省。
+
 ---
 
 ## 注意事项

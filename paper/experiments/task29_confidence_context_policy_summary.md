@@ -39,7 +39,7 @@ tokens but loses more retrieval coverage.
 
 ## Task29-C Formal Result
 
-Three-seed formal run: seeds 13, 17, 19.
+LoTTE 100k three-seed formal run: seeds 13, 17, 19.
 
 | Run | Hit@10 | Avg Context Tokens@10 | Token Ratio vs Dense | Hit Delta vs Dense |
 |---|---:|---:|---:|---:|
@@ -55,6 +55,29 @@ Task29-C therefore shows a conservative, paper-safe token-cost result:
 > tokens by about 4.8% on average while preserving near-dense retrieval quality
 > (`Hit@10` within about 0.22 percentage points of dense-only).
 
+## Task29.1 LoTTE 200k Scale-Up
+
+The same conservative Task29-C policy was then run on LoTTE 200k with the same
+three seeds.
+
+| Run | Hit@10 | Avg Context Tokens@10 | Token Ratio vs Dense | Hit Delta vs Dense |
+|---|---:|---:|---:|---:|
+| Dense top-10 | 0.7970 | 1444.12 | 1.0000 | 0.0000 |
+| Task29-C seed 13 | 0.8339 | 1376.87 | 0.9534 | +0.0369 |
+| Task29-C seed 17 | 0.8188 | 1371.66 | 0.9498 | +0.0218 |
+| Task29-C seed 19 | 0.8221 | 1380.85 | 0.9562 | +0.0252 |
+| Task29-C mean | 0.8249 | 1376.46 | 0.9531 | +0.0280 |
+
+The 200k result strengthens the efficiency claim:
+
+> On a larger LoTTE corpus, confidence-based final context compaction reduces
+> final context tokens by about 4.7% while improving `Hit@10` over dense-only by
+> about 2.8 percentage points.
+
+This suggests that the policy can become more useful as corpus scale increases,
+where pure dense top-10 becomes less dominant and feedback-guided route control
+can preserve better evidence coverage with fewer final context tokens.
+
 ## Interpretation
 
 Task29 changes the cost claim from the earlier source-candidate proxy to a real
@@ -65,6 +88,8 @@ yet, but it does prove the mechanism is viable:
 - Confidence-gated final context compaction can reduce final tokens directly.
 - Conservative compaction preserves near-dense quality.
 - Aggressive compaction offers larger token savings at a clear quality cost.
+- The 200k scale-up shows the same conservative policy can outperform dense
+  quality while still reducing final context tokens.
 
 This is the correct direction for the paper's efficiency claim: IntentWeight
 should be described as a feedback-improved retrieval controller that can trade
@@ -79,3 +104,6 @@ method that automatically saves tokens from multi-route retrieval alone.
 - Formal result dir: `paper/experiments/results/task29_100k_confidence_topk_C_formal/`
 - Formal token table:
   `paper/experiments/results/task29_100k_confidence_topk_C_formal/context_tokens.md`
+- 200k formal result dir: `paper/experiments/results/task29_200k_confidence_topk_C_formal/`
+- 200k formal token table:
+  `paper/experiments/results/task29_200k_confidence_topk_C_formal/context_tokens.md`
