@@ -1117,6 +1117,19 @@ dense-only 约 `2.8` 个百分点。这支持一个更具体的论文判断：�
 增大、pure dense top-10 优势下降时，feedback-guided LinUCB route control
 更可能同时带来 near-/above-dense quality 与真实 final-context-token 节省。
 
+Task29.1 LoTTE 400k scale-up 继续使用同一套 Task29-C 策略，并复用 canonical
+scale-store corpus embeddings：
+
+- Dense top-10 baseline：`Hit@10=0.7718`，
+  `avg_context_tokens@10=1482.30`。
+- Task29-C mean：`Hit@10=0.7819`，
+  `avg_context_tokens@10=1403.43`，为 dense 的 `0.9468x`。
+
+400k 结果继续支持该方向：final context tokens 下降约 `5.3%`，同时 `Hit@10`
+高于 dense-only 约 `1.0` 个百分点。100k/200k/400k 三组共同说明：
+保守的 confidence-based final context compaction 可以稳定降低最终 context
+token，且在更大 corpus 上有机会同时超过 dense 的召回质量。
+
 ---
 
 ## 注意事项

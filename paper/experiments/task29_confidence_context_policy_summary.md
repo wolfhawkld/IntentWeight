@@ -78,6 +78,29 @@ This suggests that the policy can become more useful as corpus scale increases,
 where pure dense top-10 becomes less dominant and feedback-guided route control
 can preserve better evidence coverage with fewer final context tokens.
 
+## Task29.1 LoTTE 400k Scale-Up
+
+The same Task29-C policy was also run on LoTTE 400k using the canonical scale
+store corpus embeddings.
+
+| Run | Hit@10 | Avg Context Tokens@10 | Token Ratio vs Dense | Hit Delta vs Dense |
+|---|---:|---:|---:|---:|
+| Dense top-10 | 0.7718 | 1482.30 | 1.0000 | 0.0000 |
+| Task29-C seed 13 | 0.7802 | 1401.14 | 0.9453 | +0.0084 |
+| Task29-C seed 17 | 0.7869 | 1373.53 | 0.9266 | +0.0151 |
+| Task29-C seed 19 | 0.7785 | 1435.61 | 0.9685 | +0.0067 |
+| Task29-C mean | 0.7819 | 1403.43 | 0.9468 | +0.0101 |
+
+The 400k result remains positive:
+
+> On LoTTE 400k, Task29-C reduces final context tokens by about 5.3% while
+> improving `Hit@10` over dense-only by about 1.0 percentage point.
+
+Together, the 100k/200k/400k runs show a consistent final-context-token saving
+pattern. The retrieval-quality delta varies with scale, but the conservative
+confidence compaction policy never shows the strong quality collapse seen in
+the aggressive A/B smoke settings.
+
 ## Interpretation
 
 Task29 changes the cost claim from the earlier source-candidate proxy to a real
@@ -90,6 +113,8 @@ yet, but it does prove the mechanism is viable:
 - Aggressive compaction offers larger token savings at a clear quality cost.
 - The 200k scale-up shows the same conservative policy can outperform dense
   quality while still reducing final context tokens.
+- The 400k scale-up keeps the same direction: lower final tokens and above-dense
+  `Hit@10`.
 
 This is the correct direction for the paper's efficiency claim: IntentWeight
 should be described as a feedback-improved retrieval controller that can trade
@@ -107,3 +132,6 @@ method that automatically saves tokens from multi-route retrieval alone.
 - 200k formal result dir: `paper/experiments/results/task29_200k_confidence_topk_C_formal/`
 - 200k formal token table:
   `paper/experiments/results/task29_200k_confidence_topk_C_formal/context_tokens.md`
+- 400k formal result dir: `paper/experiments/results/task29_400k_confidence_topk_C_formal/`
+- 400k formal token table:
+  `paper/experiments/results/task29_400k_confidence_topk_C_formal/context_tokens.md`
