@@ -4,6 +4,10 @@ Updated: 2026-05-21
 
 This document consolidates the LoTTE technology/search scale-up evidence from 100k to the full 638k corpus. It is intended as the paper-facing bridge from individual task logs to the final experimental argument.
 
+Post-Task28 correction: `Gated Cost`, `Cost ↓ vs Full`, and related cost
+claims in this file are source candidate count proxies. They are not final LLM
+context token costs. Task28 must be cited for final top-k token measurements.
+
 ## Scope
 
 - Dataset family: LoTTE technology/search.

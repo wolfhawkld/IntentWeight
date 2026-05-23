@@ -4,6 +4,11 @@ Updated: 2026-05-21
 
 Task24 converts the academic audit into concrete fixes before paper writing. The goal is not to add a new headline result, but to remove avoidable reviewer risks in metric naming, ablation completeness, protocol wording, cost claims, and feedback/manifold interpretation.
 
+Post-Task28 correction: Task24's cost guardrail is extended. Source candidate
+cost is only a retrieval-stage candidate-count proxy; it is not final LLM
+context token cost. Token-cost claims require Task28-style final top-k token
+measurement.
+
 ## Implemented Fixes
 
 1. Metric naming is now explicit:

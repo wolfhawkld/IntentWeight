@@ -6,6 +6,12 @@ Note: Task23 extends the LoTTE scale-up evidence through 400k and full 638k.
 For the latest large-scale quality-cost tables and paper-facing scale-up claim,
 use `paper/experiments/task23_lotte_scaleup_summary.md`.
 
+Post-Task28 correction: all `Avg source cost`, `dense/candidate cost`, and
+`quality-cost` statements in this document refer to retrieval-stage source
+candidate counts, not final LLM context tokens. Task28 shows that these
+candidate-count reductions do not automatically reduce fixed top-10 context
+tokens.
+
 This document consolidates the experimental evidence from Task1-Task20 into a
 paper-facing argument. It should be read as a bounded claim: IntentWeight is not
 a universal replacement for dense retrieval. The supported claim is that

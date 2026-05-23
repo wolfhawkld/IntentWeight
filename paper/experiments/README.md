@@ -867,6 +867,7 @@ Next roadmap:
 | 25 | Separate final fused reward from route-level credit | Complete: cluster-only credit improves selected route quality on LoTTE 100k |
 | 26 | Test low-cost dense fallback after route-level learning | Complete: quality-cost frontier; near-dense quality at lower cost than Task25, sub-dense cost with quality loss |
 | 27 | Test dense-LinUCB two-route trade-off with BM25 disabled | Complete: sub-dense candidate cost is possible, but dense-level quality is not yet preserved |
+| 28 | Recompute final context token cost | Complete: candidate-count savings do not translate into top-10 token savings |
 
 Example smoke commands:
 
@@ -1045,6 +1046,29 @@ LoTTE 100k 上还不能在该成本预算下保持 dense-level quality。该结�
 保证低于 dense 成本且无损替代 dense。详细记录见
 `paper/experiments/task27_dense_linucb_tradeoff_summary.md` 和
 `paper/experiments/task27_dense_linucb_tradeoff_comparison.csv`。
+
+### Task28 final context token-cost correction
+
+Task28 复算了 saved rankings 的 final top-10 context tokens。此前所有
+`avg_source_candidate_cost` 都是 retrieval-stage candidate-count proxy，不是
+LLM context token cost。
+
+LoTTE 100k `cl100k_base` 复算结果：
+
+- Dense-only: `Hit@10=0.8674`, `avg_context_tokens@10=1472.39`。
+- Task19-D: `Hit@10=0.8770`, `avg_context_tokens@10=1518.44`, `1.0313x` dense。
+- Task19-E: `Hit@10=0.8865`, `avg_context_tokens@10=1549.83`, `1.0526x` dense。
+- Task20-S: `Hit@10=0.8747`, `avg_context_tokens@10=1516.24`, `1.0298x` dense。
+- Task25 cluster-credit: `Hit@10=0.8764`, `avg_context_tokens@10=1550.65`, `1.0532x` dense。
+- Task26-B: `Hit@10=0.8579`, `avg_context_tokens@10=1517.60`, `1.0307x` dense。
+- Task26-E: `Hit@10=0.8663`, `avg_context_tokens@10=1530.35`, `1.0394x` dense。
+- Task27-B: `Hit@10=0.8535`, `avg_context_tokens@10=1479.17`, `1.0046x` dense。
+
+结论：当前固定 top-10 generation 下，候选数下降没有转化为 final context
+token 下降。论文中不能声称 IntentWeight 已证明 LLM token cost 低于 dense。
+目前成立的是 retrieval candidate reduction / dense invocation reduction。
+若要证明 token cost 优势，需要后续设计 variable top-k、token-budgeted context
+packing 或 confidence-based evidence compression。
 
 ---
 

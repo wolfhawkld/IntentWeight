@@ -59,6 +59,19 @@ The current evidence supports these claims:
   frontier between dense-heavy quality preservation and low-cost cluster-heavy
   retrieval.
 
+## Post-Task28 Token-Cost Correction
+
+Task26's `Avg Cost` column is source candidate count, not final LLM context
+tokens. Task28 recomputed final top-10 context tokens for the formal Task26
+runs:
+
+- Task26-B: `avg_context_tokens@10=1517.60`, `1.0307x` dense.
+- Task26-E: `avg_context_tokens@10=1530.35`, `1.0394x` dense.
+
+Therefore Task26 does not prove token-cost savings. It proves retrieval-stage
+candidate reduction. Under the fixed top-10 final context policy, token savings
+are absent.
+
 Recommended paper wording:
 
 > After route-level credit assignment, the LinUCB cluster route becomes strong

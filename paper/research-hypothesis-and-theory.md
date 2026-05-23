@@ -587,6 +587,32 @@ route-level LinUCB creates a controllable low-cost route, and the system can
 move along a quality-cost frontier by changing how much dense recall floor is
 retained.
 
+## Task 28 Final Context Token-Cost Correction
+
+Task28 distinguishes retrieval-stage source candidate cost from final LLM
+context token cost. Earlier cost-aware tasks reported candidate-count proxies:
+dense top-100 equals `100`, and full multi-route top-100 from three sources
+equals `300`. These numbers do not measure final tokens sent to the generator.
+
+Recomputing LoTTE 100k saved rankings with `cl100k_base` over final top-10
+retrieved chunk text shows that candidate reductions do not currently translate
+into context-token savings:
+
+- dense-only: `Hit@10=0.8674`, `avg_context_tokens@10=1472.39`;
+- Task19-D: `Hit@10=0.8770`, `avg_context_tokens@10=1518.44`;
+- Task19-E: `Hit@10=0.8865`, `avg_context_tokens@10=1549.83`;
+- Task20-S: `Hit@10=0.8747`, `avg_context_tokens@10=1516.24`;
+- Task25 cluster-credit: `Hit@10=0.8764`, `avg_context_tokens@10=1550.65`;
+- Task26-E: `Hit@10=0.8663`, `avg_context_tokens@10=1530.35`;
+- Task27-B: `Hit@10=0.8535`, `avg_context_tokens@10=1479.17`.
+
+Therefore the paper should not claim that the current IntentWeight experiments
+reduce LLM input token cost. The validated cost claim is narrower:
+IntentWeight can reduce retrieval-stage source candidates and dense invocation
+rate under certain gates. Token-cost reduction remains a future optimization
+that requires changing the final context policy, such as variable top-k,
+token-budgeted packing, or confidence-based evidence compression.
+
 ---
 
 ## Task 17 Direction: LoTTE Scale-Up

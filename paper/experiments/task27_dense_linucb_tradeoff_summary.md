@@ -62,6 +62,20 @@ Task27 should be reported as a boundary experiment. It strengthens the paper by
 showing that the authors tested the most direct cost hypothesis and did not
 overclaim it.
 
+## Post-Task28 Token-Cost Correction
+
+Task27's cost target was source candidate count, not final LLM context tokens.
+Task28 recomputed final top-10 context tokens:
+
+- Task27-B formal: `avg_context_tokens@10=1479.17`, `1.0046x` dense.
+- Task27-C formal: `avg_context_tokens@10=1494.21`, `1.0148x` dense.
+- Task27-F smoke: `avg_context_tokens@10=1521.45`, `1.0333x` dense.
+
+Thus even the sub-dense source-candidate setting does not produce meaningful
+final context token savings under fixed top-10 generation. Task27 remains valid
+as a retrieval-candidate boundary experiment, but not as evidence of LLM token
+cost superiority.
+
 Recommended wording:
 
 > We further tested a two-route variant that removes BM25 and trades off only

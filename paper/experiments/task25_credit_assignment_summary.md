@@ -7,6 +7,10 @@ hit the answer, the selected cluster arm could still receive positive feedback,
 inflating confidence without proving that the cluster-local route itself was
 responsible.
 
+Post-Task28 correction: Task25's cost numbers are source candidate count
+proxies. Task25 remains valid as route-level credit-assignment evidence, but it
+does not prove final LLM context token savings.
+
 ## Implementation
 
 `linucb_cost_aware_routing.py` now separates three signals:
