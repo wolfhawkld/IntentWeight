@@ -56,6 +56,14 @@ ROUTING_MODES = (
     "uniform_random_ensemble",
     "epsilon_greedy_ensemble",
 )
+REWARD_ATTRIBUTIONS = (
+    "final_fused",
+    "cluster_only",
+)
+CONFIDENCE_MODES = (
+    "value",
+    "route_quality",
+)
 FEEDBACK_MODES = linucb_trust.FEEDBACK_MODES
 
 
@@ -158,6 +166,30 @@ def policy_confidence(
     bounded_margin = min(1.0, max(0.0, margin))
     confidence = maturity * (0.85 * bounded_value + 0.15 * bounded_margin)
     return float(min(1.0, max(0.0, confidence))), best_value, margin
+
+
+def route_quality_confidence(
+    selected_arms: Sequence[int],
+    reward_sums: np.ndarray,
+    pull_counts: np.ndarray,
+    *,
+    confidence_feedback_floor: float,
+) -> float:
+    """Estimate confidence from historical cluster-route reward of selected arms."""
+    if confidence_feedback_floor <= 0:
+        raise ValueError(f"confidence_feedback_floor must be positive, got {confidence_feedback_floor}")
+    if not selected_arms:
+        return 0.0
+    selected = np.asarray([int(arm) for arm in selected_arms], dtype=np.int32)
+    counts = pull_counts[selected]
+    values = np.zeros(len(selected), dtype=np.float64)
+    observed = counts > 0
+    if np.any(observed):
+        values[observed] = reward_sums[selected[observed]] / counts[observed]
+    mean_value = float(np.mean(values)) if values.size else 0.0
+    mean_pulls = float(np.mean(counts)) if counts.size else 0.0
+    maturity = min(1.0, mean_pulls / float(confidence_feedback_floor))
+    return float(min(1.0, max(0.0, mean_value * maturity)))
 
 
 def selected_semantic_drift(context: np.ndarray, centroids: np.ndarray, selected_arms: Sequence[int]) -> float:
@@ -367,6 +399,8 @@ def run_prequential_seed(
     seed: int,
     routing_mode: str,
     feedback_mode: str,
+    reward_attribution: str,
+    confidence_mode: str,
     epochs: int,
     top_k: int,
     ks: Sequence[int],
@@ -416,6 +450,10 @@ def run_prequential_seed(
         raise ValueError(f"Unsupported routing_mode: {routing_mode}")
     if feedback_mode not in FEEDBACK_MODES:
         raise ValueError(f"Unsupported feedback_mode: {feedback_mode}")
+    if reward_attribution not in REWARD_ATTRIBUTIONS:
+        raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
+    if confidence_mode not in CONFIDENCE_MODES:
+        raise ValueError(f"Unsupported confidence_mode: {confidence_mode}")
     if epochs <= 0:
         raise ValueError(f"epochs must be positive, got {epochs}")
     if min(top_k, dense_depth, bm25_depth, cluster_depth) <= 0:
@@ -451,6 +489,8 @@ def run_prequential_seed(
     simple_reward_sums = np.zeros(n_effective_arms, dtype=np.float64)
     simple_pull_counts = np.zeros(n_effective_arms, dtype=np.float64)
     simple_bandit_updates = 0
+    route_reward_sums = np.zeros(n_effective_arms, dtype=np.float64)
+    route_pull_counts = np.zeros(n_effective_arms, dtype=np.float64)
 
     rng = np.random.default_rng(seed)
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
@@ -469,6 +509,8 @@ def run_prequential_seed(
 
     true_rewards: List[float] = []
     observed_rewards: List[float] = []
+    final_true_rewards: List[float] = []
+    route_true_rewards: List[float] = []
     selected_cluster_hits: List[float] = []
     final_hits: List[float] = []
     confidences: List[float] = []
@@ -506,6 +548,8 @@ def run_prequential_seed(
         epoch_indices = np.arange(len(queries))
         rng.shuffle(epoch_indices)
         epoch_true_rewards: List[float] = []
+        epoch_final_true_rewards: List[float] = []
+        epoch_route_true_rewards: List[float] = []
         epoch_hits: List[float] = []
         epoch_costs: List[float] = []
         epoch_confidences: List[float] = []
@@ -527,13 +571,21 @@ def run_prequential_seed(
                     feedback_tau=feedback_tau,
                     feedback_weight=feedback_weight,
                 )
-                confidence, _, _ = policy_confidence(
-                    policy,
-                    context,
-                    selected_arms,
-                    boosts,
-                    confidence_feedback_floor=confidence_feedback_floor,
-                )
+                if confidence_mode == "route_quality":
+                    confidence = route_quality_confidence(
+                        selected_arms,
+                        route_reward_sums,
+                        route_pull_counts,
+                        confidence_feedback_floor=confidence_feedback_floor,
+                    )
+                else:
+                    confidence, _, _ = policy_confidence(
+                        policy,
+                        context,
+                        selected_arms,
+                        boosts,
+                        confidence_feedback_floor=confidence_feedback_floor,
+                    )
             elif routing_mode in {"static_nearest_ensemble", "static_nearest_gated"}:
                 selected_arms = nearest_centroid_arms(context, centroids, candidate_arms)
                 confidence = 0.0
@@ -642,10 +694,14 @@ def run_prequential_seed(
             final_hits.append(float(final_hit))
 
             arm_memory_rewards: Dict[int, float] = {}
-            selected_true_rewards: List[float] = []
+            selected_update_true_rewards: List[float] = []
+            selected_final_true_rewards: List[float] = []
+            selected_route_true_rewards: List[float] = []
             selected_observed_rewards: List[float] = []
             for source_arm in selected_arms:
-                true_reward = global_linucb._arm_reward(ranking, gt, source_arm, arm_labels_by_chunk)
+                final_true_reward = global_linucb._arm_reward(ranking, gt, source_arm, arm_labels_by_chunk)
+                route_true_reward = global_linucb._arm_reward(cluster_ranking, gt, source_arm, arm_labels_by_chunk)
+                true_reward = route_true_reward if reward_attribution == "cluster_only" else final_true_reward
                 observation = linucb_trust.simulate_user_feedback(
                     true_reward,
                     rng,
@@ -659,8 +715,12 @@ def run_prequential_seed(
                 update_weight = linucb_trust.update_weight_for_mode(feedback_mode, observation)
                 memory_reward = linucb_trust.memory_reward_for_mode(feedback_mode, observation)
                 arm_memory_rewards[int(source_arm)] = memory_reward
-                selected_true_rewards.append(float(true_reward))
+                selected_update_true_rewards.append(float(true_reward))
+                selected_final_true_rewards.append(float(final_true_reward))
+                selected_route_true_rewards.append(float(route_true_reward))
                 selected_observed_rewards.append(float(observation.observed_reward))
+                route_reward_sums[int(source_arm)] += float(route_true_reward)
+                route_pull_counts[int(source_arm)] += 1.0
                 if simple_bandit_enabled and update_weight > 0:
                     simple_reward_sums[int(source_arm)] += float(update_weight * observation.observed_reward)
                     simple_pull_counts[int(source_arm)] += float(update_weight)
@@ -684,11 +744,17 @@ def run_prequential_seed(
                 feedback_contexts.append(context.copy())
                 feedback_arm_rewards.append(arm_memory_rewards)
 
-            interaction_true = max(selected_true_rewards) if selected_true_rewards else 0.0
+            interaction_true = max(selected_update_true_rewards) if selected_update_true_rewards else 0.0
+            interaction_final_true = max(selected_final_true_rewards) if selected_final_true_rewards else 0.0
+            interaction_route_true = max(selected_route_true_rewards) if selected_route_true_rewards else 0.0
             interaction_observed = max(selected_observed_rewards) if selected_observed_rewards else 0.0
             true_rewards.append(float(interaction_true))
+            final_true_rewards.append(float(interaction_final_true))
+            route_true_rewards.append(float(interaction_route_true))
             observed_rewards.append(float(interaction_observed))
             epoch_true_rewards.append(float(interaction_true))
+            epoch_final_true_rewards.append(float(interaction_final_true))
+            epoch_route_true_rewards.append(float(interaction_route_true))
             epoch_hits.append(float(final_hit))
             epoch_costs.append(interaction_cost)
             epoch_confidences.append(float(confidence))
@@ -697,6 +763,8 @@ def run_prequential_seed(
         epoch_rows.append({
             "epoch": float(epoch + 1),
             "true_reward": _mean(epoch_true_rewards),
+            "final_true_reward": _mean(epoch_final_true_rewards),
+            "route_true_reward": _mean(epoch_route_true_rewards),
             "hit_rate": _mean(epoch_hits),
             "source_cost": _mean(epoch_costs),
             "confidence": _mean(epoch_confidences),
@@ -713,12 +781,24 @@ def run_prequential_seed(
         "seed": seed,
         "routing_mode": routing_mode,
         "feedback_mode": feedback_mode,
+        "reward_attribution": reward_attribution,
+        "confidence_mode": confidence_mode,
         "epochs": epochs,
         "num_interactions": len(source_costs),
         "avg_true_feedback_reward": _mean(true_rewards),
         "avg_observed_feedback_reward": _mean(observed_rewards),
+        "avg_final_true_reward": _mean(final_true_rewards),
+        "avg_route_true_reward": _mean(route_true_rewards),
         "last_epoch_true_reward": float(last_epoch.get("true_reward", 0.0)),
         "epoch_true_reward_gain": float(last_epoch.get("true_reward", 0.0) - first_epoch.get("true_reward", 0.0)),
+        "last_epoch_final_true_reward": float(last_epoch.get("final_true_reward", 0.0)),
+        "epoch_final_true_reward_gain": float(
+            last_epoch.get("final_true_reward", 0.0) - first_epoch.get("final_true_reward", 0.0)
+        ),
+        "last_epoch_route_true_reward": float(last_epoch.get("route_true_reward", 0.0)),
+        "epoch_route_true_reward_gain": float(
+            last_epoch.get("route_true_reward", 0.0) - first_epoch.get("route_true_reward", 0.0)
+        ),
         "last_epoch_hit_rate": float(last_epoch.get("hit_rate", 0.0)),
         "epoch_hit_rate_gain": float(last_epoch.get("hit_rate", 0.0) - first_epoch.get("hit_rate", 0.0)),
         "last_epoch_source_cost": float(last_epoch.get("source_cost", 0.0)),
@@ -757,6 +837,18 @@ def run_prequential_seed(
         "window_true_reward_gain": float(
             _window_mean(true_rewards, window_size, tail=True) - _window_mean(true_rewards, window_size, tail=False)
         ),
+        "first_window_final_true_reward": _window_mean(final_true_rewards, window_size, tail=False),
+        "last_window_final_true_reward": _window_mean(final_true_rewards, window_size, tail=True),
+        "window_final_true_reward_gain": float(
+            _window_mean(final_true_rewards, window_size, tail=True)
+            - _window_mean(final_true_rewards, window_size, tail=False)
+        ),
+        "first_window_route_true_reward": _window_mean(route_true_rewards, window_size, tail=False),
+        "last_window_route_true_reward": _window_mean(route_true_rewards, window_size, tail=True),
+        "window_route_true_reward_gain": float(
+            _window_mean(route_true_rewards, window_size, tail=True)
+            - _window_mean(route_true_rewards, window_size, tail=False)
+        ),
         "first_window_source_cost": _window_mean(source_costs, window_size, tail=False),
         "last_window_source_cost": _window_mean(source_costs, window_size, tail=True),
         "window_source_cost_delta": float(
@@ -787,6 +879,8 @@ def run_dataset(
     model_name: str,
     routing_modes: Sequence[str],
     feedback_mode: str,
+    reward_attribution: str,
+    confidence_mode: str,
     top_k: int,
     ks: Sequence[int],
     batch_size: int,
@@ -845,6 +939,10 @@ def run_dataset(
     use_scale_store: bool = False,
     scale_store_canonical_name: str = "lotte_technology_search",
 ) -> List[Dict[str, object]]:
+    if reward_attribution not in REWARD_ATTRIBUTIONS:
+        raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
+    if confidence_mode not in CONFIDENCE_MODES:
+        raise ValueError(f"Unsupported confidence_mode: {confidence_mode}")
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
     queries = experiment_guardrails.apply_query_controls(queries_all, query_split=query_split, max_queries=max_queries)
@@ -972,6 +1070,8 @@ def run_dataset(
                 seed=seed,
                 routing_mode=routing_mode,
                 feedback_mode=feedback_mode,
+                reward_attribution=reward_attribution,
+                confidence_mode=confidence_mode,
                 epochs=epochs,
                 top_k=top_k,
                 ks=ks,
@@ -1028,6 +1128,8 @@ def run_dataset(
             "protocol": "prequential_cost_aware_feedback",
             "routing_mode": routing_mode,
             "feedback_mode": feedback_mode,
+            "reward_attribution": reward_attribution,
+            "confidence_mode": confidence_mode,
             "feedback_source": (
                 "simulated_feedback_recorded_no_policy_update"
                 if routing_mode in {"static_nearest_ensemble", "static_nearest_gated", "uniform_random_ensemble"}
@@ -1149,7 +1251,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
     new_rows = list(rows)
     if not new_rows:
         return
-    existing: Dict[tuple[str, str, str, str, str, str, str], Mapping] = {}
+    existing: Dict[tuple[str, str, str, str, str, str, str, str, str], Mapping] = {}
     if summary_path.exists():
         with summary_path.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
@@ -1159,6 +1261,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
                     row.get("method", ""),
                     row.get("model", ""),
                     row.get("routing_mode", ""),
+                    row.get("reward_attribution", ""),
+                    row.get("confidence_mode", ""),
                     row.get("scope", ""),
                     row.get("query_split", ""),
                     row.get("num_queries", ""),
@@ -1169,6 +1273,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
             str(row["method"]),
             str(row.get("model", "")),
             str(row.get("routing_mode", "")),
+            str(row.get("reward_attribution", "")),
+            str(row.get("confidence_mode", "")),
             str(row.get("scope", "")),
             str(row.get("query_split", "")),
             str(row.get("num_queries", "")),
@@ -1179,6 +1285,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "method",
         "routing_mode",
         "feedback_mode",
+        "reward_attribution",
+        "confidence_mode",
         "model",
         "protocol",
         "task_type",
@@ -1254,6 +1362,8 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
     columns = [
         "dataset",
         "routing_mode",
+        "reward_attribution",
+        "confidence_mode",
         "scope",
         "query_split",
         "num_queries",
@@ -1262,6 +1372,8 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "evidence_recall@10_mean",
         "quality_cost_ratio@10_mean",
         "last_epoch_true_reward_mean",
+        "last_epoch_final_true_reward_mean",
+        "last_epoch_route_true_reward_mean",
         "avg_source_candidate_cost_mean",
         "dense_query_rate_mean",
         "dense_saved_rate_mean",
@@ -1307,6 +1419,8 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "- `static_nearest_gated` uses nearest-centroid arm selection plus the same cost-aware route shapes, with centroid similarity as a non-learned confidence proxy.",
         "- `uniform_random_ensemble` and `epsilon_greedy_ensemble` are non-contextual arm-selection baselines over the same multi-route retrieval surface.",
         "- `gated_cost_aware` shifts to LinUCB-primary or hybrid-lite routes when confidence is high and semantic drift is low; otherwise it uses full dense fallback.",
+        "- `reward_attribution=cluster_only` updates LinUCB from the selected cluster route alone, separating policy credit from dense/BM25 rescue hits.",
+        "- `confidence_mode=route_quality` gates from historical cluster-route reward instead of the LinUCB value estimate.",
         "- `hit@k` is the query-level success metric historically reported as `recall@k`; `evidence_recall@k` reports the fraction of all ground-truth chunks retrieved.",
         "- Cost is reported as source candidate count before fusion; dense query rate captures how often global dense retrieval is still executed.",
     ])
@@ -1336,6 +1450,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--scale-store-canonical-name", default="lotte_technology_search")
     parser.add_argument("--routing-modes", default="full_multi_route,gated_cost_aware")
     parser.add_argument("--feedback-mode", default="trust_weighted", choices=FEEDBACK_MODES)
+    parser.add_argument("--reward-attribution", default="final_fused", choices=REWARD_ATTRIBUTIONS)
+    parser.add_argument("--confidence-mode", default="value", choices=CONFIDENCE_MODES)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--ks", default="1,5,10")
@@ -1407,6 +1523,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             model_name=args.model,
             routing_modes=routing_modes,
             feedback_mode=args.feedback_mode,
+            reward_attribution=args.reward_attribution,
+            confidence_mode=args.confidence_mode,
             top_k=args.top_k,
             ks=ks,
             batch_size=args.batch_size,
@@ -1469,6 +1587,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         for row in rows:
             print(
                 f"  mode={row['routing_mode']} queries={row.get('num_queries')} "
+                f"reward_attr={row.get('reward_attribution')} "
+                f"confidence={row.get('confidence_mode')} "
                 f"recall@10={row.get('recall@10_mean', 0.0):.4f} "
                 f"last_reward={row.get('last_epoch_true_reward_mean', 0.0):.4f} "
                 f"avg_cost={row.get('avg_source_candidate_cost_mean', 0.0):.2f} "

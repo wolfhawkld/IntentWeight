@@ -863,6 +863,8 @@ Next roadmap:
 | 22.8 | LoTTE 638k BM25/hybrid artifacts | Complete: query-term bounded BM25 artifact plus full-corpus hybrid baseline |
 | 22.9 | LoTTE 638k LinUCB smoke/formal | Complete: full/gated above dense; gated lowers source candidate cost |
 | 23 | Consolidate LoTTE scale-up evidence | Complete: paper-facing 100k/200k/400k/638k quality-cost tables |
+| 24 | Add audit guardrails and static controls | Complete: metric naming fixed; static/naive controls added for 638k |
+| 25 | Separate final fused reward from route-level credit | Complete: cluster-only credit improves selected route quality on LoTTE 100k |
 
 Example smoke commands:
 
@@ -993,6 +995,18 @@ Task24 增加了审稿前修复项：
 - 成本下降口径限定为相对 full multi-route source candidate cost，不是相对 dense-only 更低。
 - LoTTE 638k 新增 `static_nearest_ensemble`、`static_nearest_gated`、`uniform_random_ensemble`、`epsilon_greedy_ensemble`，用于区分多路召回表面、静态几何 arm 选择、静态几何成本门控和 LinUCB 反馈控制。
 - `static_nearest_gated` 在 638k 上是强 baseline；论文主张应写成：dense/BM25/cluster 多路召回提供 coverage，静态几何已经能支持强 cost gate，LinUCB 的增量价值是 feedback-adaptive / trust-weighted / non-stationary route control。不能说 LinUCB 单独解释所有 full-route quality gain，也不能说当前实验已证明 LinUCB 对单次静态 cost gate 必不可少。
+
+### Task25 credit assignment guardrail
+
+Task25 修复并验证了 LinUCB reward 归因口径：
+
+- 历史默认 `reward_attribution=final_fused` 仍保留，用于复现旧实验；但该口径会把 dense/BM25 rescue 命中也归因给所选 cluster arm。
+- 新增 `reward_attribution=cluster_only`，用所选 cluster route 自身的 ranking reward 更新 LinUCB，从而避免 fused-ranking credit inflation。
+- 新增 `confidence_mode=route_quality` 作为诊断 gate。100k smoke 显示它目前过于保守，几乎全量 fallback，因此当前主配置仍建议使用 `cluster_only/value`。
+- LoTTE 100k 多 seed、8 epoch 对比显示：`cluster_only/value` 的 last route reward 从旧口径 `0.8076` 提升到 `0.8328`，selected cluster hit 从 `0.6908` 提升到 `0.7223`，平均 source candidate cost 从 `193.92` 降到 `181.47`；最终 Hit@10 从 `0.8826` 小幅降至 `0.8764`。这说明 LinUCB route 自身确实变好，但 dense/BM25 recall floor 对最终质量仍然重要。
+
+Task25 结果记录在 `paper/experiments/task25_credit_assignment_summary.md` 和
+`paper/experiments/task25_credit_assignment_comparison.csv`。
 
 ---
 

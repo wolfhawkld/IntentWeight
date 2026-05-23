@@ -136,6 +136,26 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
         )
         self.assertGreater(confidence, 0.0)
 
+    def test_route_quality_confidence_uses_route_history_and_maturity(self):
+        reward_sums = np.asarray([2.0, 0.0, 1.0], dtype=np.float64)
+        pulls = np.asarray([2.0, 0.0, 2.0], dtype=np.float64)
+
+        cold_confidence = linucb_cost.route_quality_confidence(
+            [1],
+            reward_sums,
+            pulls,
+            confidence_feedback_floor=2.0,
+        )
+        warm_confidence = linucb_cost.route_quality_confidence(
+            [0, 2],
+            reward_sums,
+            pulls,
+            confidence_feedback_floor=2.0,
+        )
+
+        self.assertEqual(cold_confidence, 0.0)
+        self.assertAlmostEqual(warm_confidence, 0.75)
+
     def test_run_dataset_writes_cost_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmpdir = Path(tmp)
@@ -179,6 +199,8 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                     "epsilon_greedy_ensemble",
                 ),
                 feedback_mode="trust_weighted",
+                reward_attribution="cluster_only",
+                confidence_mode="route_quality",
                 top_k=1,
                 ks=(1,),
                 batch_size=2,
@@ -240,6 +262,10 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                 ],
             )
             self.assertIn("avg_source_candidate_cost_mean", rows[0])
+            self.assertEqual(rows[0]["reward_attribution"], "cluster_only")
+            self.assertEqual(rows[0]["confidence_mode"], "route_quality")
+            self.assertIn("last_epoch_final_true_reward_mean", rows[0])
+            self.assertIn("last_epoch_route_true_reward_mean", rows[0])
             static_row = rows[2]
             self.assertEqual(static_row["total_feedback_updates_mean"], 0.0)
             self.assertEqual(static_row["static_nearest_ensemble_rate_mean"], 1.0)
@@ -316,6 +342,8 @@ class LinUCBCostAwareRoutingTests(unittest.TestCase):
                 model_name="fake-model",
                 routing_modes=("full_multi_route",),
                 feedback_mode="trust_weighted",
+                reward_attribution="final_fused",
+                confidence_mode="value",
                 top_k=1,
                 ks=(1,),
                 batch_size=2,

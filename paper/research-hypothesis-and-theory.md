@@ -519,6 +519,31 @@ must be framed around online adaptation, trust-weighted user feedback,
 non-stationary preferences, and route personalization rather than around being
 the only way to build a cost gate.
 
+## Task 25 Credit Assignment Adjustment
+
+Task25 further tightens the LinUCB claim by separating final fused retrieval
+quality from route-specific learning credit. Earlier gated runs updated LinUCB
+from reward computed on the final dense/BM25/cluster fused ranking. This is
+useful for end-to-end system reward, but it can also assign positive feedback
+to a selected cluster arm when the actual hit came from dense floor or BM25
+rescue.
+
+The Task25 implementation therefore records both `final_true_reward` and
+`route_true_reward`, and adds `reward_attribution=cluster_only`. Under this
+stricter setting, LinUCB receives feedback only from the selected cluster route
+itself. On LoTTE 100k with `seeds=13,17,19` and `epochs=8`, the stricter
+`cluster_only/value` configuration improves last-epoch route reward from
+`0.8076` to `0.8328` and selected-cluster hit from `0.6908` to `0.7223`, while
+reducing source candidate cost from `193.92` to `181.47`. Final Hit@10 is
+slightly lower (`0.8764` versus `0.8826`), which is expected because the policy
+is no longer being reinforced directly by dense/BM25 rescue hits.
+
+This makes the paper argument cleaner: dense/BM25 still provide an important
+recall floor for final answer quality, but LinUCB can be shown to improve the
+cluster route's own selection quality under route-level credit assignment.
+The experimental `route_quality` confidence mode is currently too conservative
+and should be treated as a diagnostic rather than the default main setting.
+
 ---
 
 ## Task 17 Direction: LoTTE Scale-Up
