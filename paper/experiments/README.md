@@ -743,6 +743,11 @@ learn useful route value from trust-weighted feedback and expose a controllable
 quality-cost frontier; it should not be claimed as a universal low-cost
 replacement for dense retrieval.
 
+Task 28.1 later backfills these historical Task16-25 cost claims with final
+context-token measurements. The candidate-cost values in Task16-25 should be
+read as source-candidate or dense-invocation proxies, not as final LLM context
+token savings.
+
 Task 22 extends LoTTE incrementally beyond the 100k reference. Task22.2 generated
 and evaluated a 200k corpus (`201010` chunks, `596` test queries, `2045` GT
 refs, 100% GT coverage):
@@ -868,6 +873,7 @@ Next roadmap:
 | 26 | Test low-cost dense fallback after route-level learning | Complete: quality-cost frontier; near-dense quality at lower cost than Task25, sub-dense cost with quality loss |
 | 27 | Test dense-LinUCB two-route trade-off with BM25 disabled | Complete: sub-dense candidate cost is possible, but dense-level quality is not yet preserved |
 | 28 | Recompute final context token cost | Complete: candidate-count savings do not translate into top-10 token savings |
+| 28.1 | Backfill historical Task16-25 final context tokens | Complete: old candidate-cost claims are now separated from final context token metrics |
 
 Example smoke commands:
 
@@ -1070,6 +1076,27 @@ token 下降。论文中不能声称 IntentWeight 已证明 LLM token cost 低�
 若要证明 token cost 优势，需要后续设计 variable top-k、token-budgeted context
 packing 或 confidence-based evidence compression。
 
+Task28.1 将这个修正回填到历史 Task16-25 saved rankings，覆盖 Banking77、
+CUAD、eManual、LoTTE sample、LoTTE 100k/200k/400k/638k，共 `106` 条
+per-run 记录和 `48` 条聚合记录。结果记录在
+`paper/experiments/task28_1_context_token_backfill_summary.md` 和
+`paper/experiments/results/task28_1_context_token_backfill.md`。
+
+代表性结论：
+
+- Banking77 gated cost-aware: `Hit@10=0.9813`，context token 为 dense 的
+  `0.9978x`，source candidate cost 为 `142.51`。
+- LoTTE 100k Task20-S: `Hit@10=0.8747`，context token 为 dense 的 `1.0298x`，
+  source candidate cost 为 `227.29`。
+- LoTTE 100k Task25 cluster-credit: `Hit@10=0.8764`，context token 为 dense
+  的 `1.0532x`，source candidate cost 为 `181.47`。
+- LoTTE 638k Task22 formal gated: `Hit@10=0.7343`，context token 为 dense 的
+  `1.0487x`，source candidate cost 为 `236.22`。
+
+因此，Task16-27 的成本结论应写为 source-candidate / dense-query reduction。
+最终 prompt/context token cost 的正面证据从 Task29 的
+`final_context_policy=confidence_topk` 开始。
+
 ### Task29 confidence-based final context policy
 
 Task29 正式把 Task28 的修正落到实验策略上：不再只减少 retrieval-stage
@@ -1158,4 +1185,4 @@ CSV 为 `paper/experiments/results/task29_token_quality_frontier.csv`。
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-05-23*
+*更新时间: 2026-05-24*
