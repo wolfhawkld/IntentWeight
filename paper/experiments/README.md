@@ -874,6 +874,9 @@ Next roadmap:
 | 27 | Test dense-LinUCB two-route trade-off with BM25 disabled | Complete: sub-dense candidate cost is possible, but dense-level quality is not yet preserved |
 | 28 | Recompute final context token cost | Complete: candidate-count savings do not translate into top-10 token savings |
 | 28.1 | Backfill historical Task16-25 final context tokens | Complete: old candidate-cost claims are now separated from final context token metrics |
+| 29 | Confidence-based final context policy | Complete: 100k/200k/400k/638k final-context-token frontier |
+| 29.3 | Seed variance / CI for Task29-C | Complete: token saving is stable across 100k/200k/400k/638k |
+| 30 | LoTTE multi-scale geometry validation | Complete: geometry remains usable at scale but is diagnostic, not sufficient alone |
 
 Example smoke commands:
 
@@ -1199,6 +1202,34 @@ Task29.3 补充了 Task29-C 的 seed-level variance / 95% CI。所有区间均�
 Task29.3 支持的论文口径是：Task29-C 的 token saving 不是单个 seed 的偶然
 结果；四个规模上的均值均保持正向，且 638k 的 token saving 区间较窄。
 详细记录见 `paper/experiments/results/task29_3_seed_variance_ci.md`。
+
+### Task30 LoTTE multi-scale geometry validation
+
+Task30 补充了正式写论文前的流形几何验证尝试。它不重跑 retrieval 或 LinUCB，
+而是复用 canonical scale-store embeddings、shared PCA/KMeans context
+artifacts，以及 Task29-C token-quality frontier，检查 LoTTE 100k/200k/400k/638k
+上的几何信号是否能支持 piecewise relevance-manifold 解释。
+
+| Scale | PCA dim90 sample | PCA var@64 sample | Nearest cluster hit@3 | Context retention@10 | Dense Hit@10 | Task29-C Hit@10 | Token Saving |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 100k | 182 | 0.6437 | 0.8870 | 0.9033 | 0.8674 | 0.8652 | 4.83% |
+| 200k | 186 | 0.6292 | 0.8697 | 0.8947 | 0.7970 | 0.8249 | 4.69% |
+| 400k | 190 | 0.6110 | 0.9016 | 0.8826 | 0.7718 | 0.7819 | 5.32% |
+| 638k | 196 | 0.5867 | 0.9016 | 0.8571 | 0.7282 | 0.7466 | 4.86% |
+
+解释：
+
+- LoTTE 随规模增大表现出更复杂的几何结构：sample `PCA dim90` 从 `182`
+  增至 `196`，`PCA var@64` 从 `0.6437` 降至 `0.5867`。
+- 但 nearest-cluster GT routing signal 没有消失，`nearest_cluster_hit@3`
+  稳定在高 `0.8` 到 `0.9` 区间。
+- PCA/context geometry alone 的 retention 从 `0.9033` 降到 `0.8571`，说明
+  geometry 适合作为 route-control signal，但不能单独替代 dense retrieval。
+- Task30 支持“分片相关性流形”作为解释性假设和诊断框架；不能写成几何指标
+  单独保证召回提升的定理。
+
+详细记录见 `paper/experiments/task30_lotte_geometry_scale_validation.md` 和
+`paper/experiments/results/task30_lotte_geometry_scale_validation.md`。
 
 ---
 
