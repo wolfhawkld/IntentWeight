@@ -877,6 +877,7 @@ Next roadmap:
 | 29 | Confidence-based final context policy | Complete: 100k/200k/400k/638k final-context-token frontier |
 | 29.3 | Seed variance / CI for Task29-C | Complete: token saving is stable across 100k/200k/400k/638k |
 | 30 | LoTTE multi-scale geometry validation | Complete: geometry remains usable at scale but is diagnostic, not sufficient alone |
+| 31 | Paper evidence package | Complete: final claim ledger, main tables, limitations, and paper structure guidance |
 
 Example smoke commands:
 
@@ -1230,6 +1231,24 @@ artifacts，以及 Task29-C token-quality frontier，检查 LoTTE 100k/200k/400k
 
 详细记录见 `paper/experiments/task30_lotte_geometry_scale_validation.md` 和
 `paper/experiments/results/task30_lotte_geometry_scale_validation.md`。
+
+### Task31 paper evidence package
+
+Task31 是正式写论文前的总控证据包，不新增实验。它把 Task1-30 的结果整理成：
+
+- final thesis；
+- claim ledger；
+- main Task29 token-quality result table；
+- feedback / geometry / cost 分层证据；
+- dataset roles；
+- paper section outline；
+- reviewer risk checklist；
+- final English / Chinese paper claim wording。
+
+正式写论文时优先使用 `paper/experiments/task31_paper_evidence_package.md` 作为
+入口，再回溯引用各 task 的详细结果。Task31 的核心结论是：论文主张应放在
+“feedback-driven adaptive retrieval controller + confidence-based final context
+compaction”，而不是“无条件替代 dense”或“candidate cost 等于 token cost”。
 
 ---
 
