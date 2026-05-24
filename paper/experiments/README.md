@@ -1157,6 +1157,19 @@ scale-store corpus embeddings：
 保守的 confidence-based final context compaction 可以稳定降低最终 context
 token，且在更大 corpus 上有机会同时超过 dense 的召回质量。
 
+Task29.1 LoTTE 638k full-corpus scale-up 使用同一套 Task29-C 策略，并复用
+canonical scale store 与 shared retrieval artifacts：
+
+- Dense top-10 baseline：`Hit@10=0.7282`，
+  `avg_context_tokens@10=1525.62`。
+- Task29-C mean：`Hit@10=0.7466`，
+  `avg_context_tokens@10=1451.49`，为 dense 的 `0.9514x`。
+
+638k 结果完成了 LoTTE 全量规模链路：final context tokens 下降约 `4.9%`，
+同时 `Hit@10` 高于 dense-only 约 `1.85` 个百分点。100k/200k/400k/638k
+共同说明：保守的 confidence-based final context compaction 可以稳定降低最终
+context token，并且在更大 corpus 上保持 above-dense quality。
+
 Task29.2 将上述结果整理为 token-quality frontier：
 
 | Scale | Method | Hit@10 | Avg Context Tokens@10 | Token Ratio | Hit Delta |
@@ -1164,6 +1177,7 @@ Task29.2 将上述结果整理为 token-quality frontier：
 | 100k | Task29-C mean | 0.8652 | 1401.24 | 0.9517x | -0.22 pp |
 | 200k | Task29-C mean | 0.8249 | 1376.46 | 0.9531x | +2.80 pp |
 | 400k | Task29-C mean | 0.7819 | 1403.43 | 0.9468x | +1.01 pp |
+| 638k | Task29-C mean | 0.7466 | 1451.49 | 0.9514x | +1.85 pp |
 
 同时，100k A/B/C smoke frontier 说明 compaction 越激进，token saving 越大，
 但召回损失也越明显。论文主结果应使用保守的 Task29-C；A/B 可作为

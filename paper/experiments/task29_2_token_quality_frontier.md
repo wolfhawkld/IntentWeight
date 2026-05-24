@@ -24,6 +24,8 @@ Task29-C uses the conservative final context policy:
 | 200k | Task29-C mean | 0.8249 | 1376.46 | 0.9531 | 4.69% | +2.80 pp | 0.5993 |
 | 400k | Dense top-10 | 0.7718 | 1482.30 | 1.0000 | 0.00% | 0.00 pp | 0.5207 |
 | 400k | Task29-C mean | 0.7819 | 1403.43 | 0.9468 | 5.32% | +1.01 pp | 0.5571 |
+| 638k | Dense top-10 | 0.7282 | 1525.62 | 1.0000 | 0.00% | 0.00 pp | 0.4773 |
+| 638k | Task29-C mean | 0.7466 | 1451.49 | 0.9514 | 4.86% | +1.85 pp | 0.5144 |
 
 ## 100k Strategy Frontier
 
@@ -47,7 +49,7 @@ The frontier supports three claims:
    automatically translate to LLM input savings.
 2. Confidence-based final context control does reduce final context tokens
    directly. The conservative Task29-C policy reduces final context tokens by
-   about 4.7-5.3% across 100k, 200k, and 400k.
+   about 4.7-5.3% across 100k, 200k, 400k, and 638k.
 3. The quality-cost trade-off is controllable. Aggressive compaction saves many
    more tokens but has visible recall loss; conservative compaction gives a
    smaller but paper-safe saving and preserves near-/above-dense quality.
@@ -63,7 +65,7 @@ The most paper-safe summary is:
 ## Paper Usage
 
 Use Task29-C as the main result because it is conservative and has three-seed
-formal runs at 100k/200k/400k.
+formal runs at 100k/200k/400k/638k.
 
 Use Task29-A/B only as a Pareto frontier or ablation showing the expected
 trade-off between token saving and evidence coverage.
@@ -81,3 +83,5 @@ token reduction.
   `paper/experiments/results/task29_200k_confidence_topk_C_formal/context_tokens.md`
 - 400k formal token table:
   `paper/experiments/results/task29_400k_confidence_topk_C_formal/context_tokens.md`
+- 638k formal token table:
+  `paper/experiments/results/task29_638k_confidence_topk_C_formal/context_tokens.md`

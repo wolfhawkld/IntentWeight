@@ -5,6 +5,8 @@ scale_frontier,200k,dense,formal,1,fixed_top10,10,10,0.7970,1444.12,1.0000,0.00,
 scale_frontier,200k,task29_C,formal_mean,3,confidence_topk,8,10,0.8249,1376.46,0.9531,4.69,2.80,0.5993,above-dense quality with lower final context tokens
 scale_frontier,400k,dense,formal,1,fixed_top10,10,10,0.7718,1482.30,1.0000,0.00,0.00,0.5207,dense baseline
 scale_frontier,400k,task29_C,formal_mean,3,confidence_topk,8,10,0.7819,1403.43,0.9468,5.32,1.01,0.5571,above-dense quality with lower final context tokens
+scale_frontier,638k,dense,formal,1,fixed_top10,10,10,0.7282,1525.62,1.0000,0.00,0.00,0.4773,dense baseline
+scale_frontier,638k,task29_C,formal_mean,3,confidence_topk,8,10,0.7466,1451.49,0.9514,4.86,1.85,0.5144,above-dense quality with lower final context tokens
 strategy_frontier,100k,dense,smoke_baseline,1,fixed_top10,10,10,0.8674,1472.39,1.0000,0.00,0.00,0.5891,dense baseline
 strategy_frontier,100k,task29_A,smoke_seed13,1,confidence_topk,5,7,0.8339,999.38,0.6787,32.13,-3.36,0.8344,aggressive compaction; large token saving with clear quality loss
 strategy_frontier,100k,task29_B,smoke_seed13,1,confidence_topk,7,9,0.8490,1261.91,0.8570,14.30,-1.85,0.6728,moderate compaction; medium token saving with moderate quality loss

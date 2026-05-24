@@ -101,6 +101,29 @@ pattern. The retrieval-quality delta varies with scale, but the conservative
 confidence compaction policy never shows the strong quality collapse seen in
 the aggressive A/B smoke settings.
 
+## Task29.1 LoTTE 638k Scale-Up
+
+The same Task29-C policy was finally run on the full LoTTE technology/search
+test corpus slice (`638509` chunks) using the canonical scale store and shared
+retrieval artifacts.
+
+| Run | Hit@10 | Avg Context Tokens@10 | Token Ratio vs Dense | Hit Delta vs Dense |
+|---|---:|---:|---:|---:|
+| Dense top-10 | 0.7282 | 1525.62 | 1.0000 | 0.0000 |
+| Task29-C seed 13 | 0.7567 | 1455.79 | 0.9542 | +0.0285 |
+| Task29-C seed 17 | 0.7399 | 1448.44 | 0.9494 | +0.0117 |
+| Task29-C seed 19 | 0.7433 | 1450.23 | 0.9506 | +0.0151 |
+| Task29-C mean | 0.7466 | 1451.49 | 0.9514 | +0.0185 |
+
+The 638k result completes the scale-up chain:
+
+> On LoTTE 638k, Task29-C reduces final context tokens by about 4.9% while
+> improving `Hit@10` over dense-only by about 1.85 percentage points.
+
+This is the strongest large-scale token-quality result so far because it uses
+the full available LoTTE technology/search corpus size while preserving the same
+conservative final-context policy.
+
 ## Task29.2 Frontier Consolidation
 
 Task29.2 consolidates the scale and strategy results into a paper-facing
@@ -111,6 +134,7 @@ token-quality frontier.
 | 100k | Task29-C mean | 0.8652 | 1401.24 | 0.9517 | -0.0022 |
 | 200k | Task29-C mean | 0.8249 | 1376.46 | 0.9531 | +0.0280 |
 | 400k | Task29-C mean | 0.7819 | 1403.43 | 0.9468 | +0.0101 |
+| 638k | Task29-C mean | 0.7466 | 1451.49 | 0.9514 | +0.0185 |
 
 The consolidated frontier supports using Task29-C as the main paper result and
 Task29-A/B as ablations. Detailed frontier tables are stored in
@@ -131,6 +155,8 @@ yet, but it does prove the mechanism is viable:
   quality while still reducing final context tokens.
 - The 400k scale-up keeps the same direction: lower final tokens and above-dense
   `Hit@10`.
+- The 638k full-corpus scale-up completes the pattern with lower final tokens
+  and above-dense `Hit@10` on the largest LoTTE setting.
 
 This is the correct direction for the paper's efficiency claim: IntentWeight
 should be described as a feedback-improved retrieval controller that can trade
@@ -151,3 +177,6 @@ method that automatically saves tokens from multi-route retrieval alone.
 - 400k formal result dir: `paper/experiments/results/task29_400k_confidence_topk_C_formal/`
 - 400k formal token table:
   `paper/experiments/results/task29_400k_confidence_topk_C_formal/context_tokens.md`
+- 638k formal result dir: `paper/experiments/results/task29_638k_confidence_topk_C_formal/`
+- 638k formal token table:
+  `paper/experiments/results/task29_638k_confidence_topk_C_formal/context_tokens.md`
