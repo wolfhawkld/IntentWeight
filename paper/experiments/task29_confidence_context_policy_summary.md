@@ -141,6 +141,30 @@ Task29-A/B as ablations. Detailed frontier tables are stored in
 `paper/experiments/task29_2_token_quality_frontier.md` and
 `paper/experiments/results/task29_token_quality_frontier.csv`.
 
+## Task29.3 Seed Variance and Confidence Intervals
+
+Task29.3 adds cross-seed stability diagnostics for Task29-C across all four
+LoTTE scales. The intervals are two-sided 95% t intervals over seeds
+`13,17,19`, so they should be treated as stability diagnostics rather than
+strong inferential proof.
+
+| Scale | Task29-C Hit@10 mean | Hit@10 95% CI | Token saving mean | Token saving 95% CI |
+|---|---:|---:|---:|---:|
+| 100k | 0.8652 | [0.8565, 0.8739] | 4.83% | [2.89%, 6.77%] |
+| 200k | 0.8249 | [0.8052, 0.8446] | 4.69% | [3.89%, 5.48%] |
+| 400k | 0.7819 | [0.7709, 0.7929] | 5.32% | [0.11%, 10.53%] |
+| 638k | 0.7466 | [0.7246, 0.7687] | 4.86% | [4.24%, 5.48%] |
+
+The 638k full-corpus token saving is particularly stable across seeds, with
+average final context tokens `1451.49` and a 95% CI of `[1441.97, 1461.00]`.
+The 400k token interval is wider because its seed-level context length varies
+more, but its mean still follows the same lower-token / above-dense-quality
+direction.
+
+Detailed tables are stored in
+`paper/experiments/results/task29_3_seed_variance_ci.md` and
+`paper/experiments/results/task29_3_seed_variance_ci.csv`.
+
 ## Interpretation
 
 Task29 changes the cost claim from the earlier source-candidate proxy to a real
@@ -157,6 +181,9 @@ yet, but it does prove the mechanism is viable:
   `Hit@10`.
 - The 638k full-corpus scale-up completes the pattern with lower final tokens
   and above-dense `Hit@10` on the largest LoTTE setting.
+- Task29.3 shows that this result is not driven by a single lucky seed; token
+  saving remains positive across all reported scales, although the CI bands
+  should be interpreted cautiously because each scale has only three seeds.
 
 This is the correct direction for the paper's efficiency claim: IntentWeight
 should be described as a feedback-improved retrieval controller that can trade
@@ -180,3 +207,5 @@ method that automatically saves tokens from multi-route retrieval alone.
 - 638k formal result dir: `paper/experiments/results/task29_638k_confidence_topk_C_formal/`
 - 638k formal token table:
   `paper/experiments/results/task29_638k_confidence_topk_C_formal/context_tokens.md`
+- Seed variance / CI summary:
+  `paper/experiments/results/task29_3_seed_variance_ci.md`

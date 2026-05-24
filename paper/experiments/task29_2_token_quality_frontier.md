@@ -62,6 +62,12 @@ The most paper-safe summary is:
 > preserving near-dense quality, and on larger LoTTE scales it can outperform
 > dense-only retrieval with fewer final context tokens.
 
+Task29.3 adds seed-level stability diagnostics for this frontier. Across
+100k/200k/400k/638k, Task29-C token saving remains positive in the three-seed
+means, with mean savings in the narrow `4.69%` to `5.32%` band. Because each
+scale only has three seeds, the confidence intervals are reported as stability
+diagnostics, not as strong statistical significance claims.
+
 ## Paper Usage
 
 Use Task29-C as the main result because it is conservative and has three-seed
@@ -85,3 +91,5 @@ token reduction.
   `paper/experiments/results/task29_400k_confidence_topk_C_formal/context_tokens.md`
 - 638k formal token table:
   `paper/experiments/results/task29_638k_confidence_topk_C_formal/context_tokens.md`
+- Seed variance / CI table:
+  `paper/experiments/results/task29_3_seed_variance_ci.md`

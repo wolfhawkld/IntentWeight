@@ -1185,6 +1185,21 @@ quality-cost frontier 消融。整理文件：
 `paper/experiments/task29_2_token_quality_frontier.md`，
 CSV 为 `paper/experiments/results/task29_token_quality_frontier.csv`。
 
+Task29.3 补充了 Task29-C 的 seed-level variance / 95% CI。所有区间均基于
+`13,17,19` 三个 seed 的 two-sided t interval，因此应作为工程稳定性诊断，
+不能单独当作强统计显著性证明：
+
+| Scale | Task29-C Hit@10 mean | Hit@10 95% CI | Token saving mean | Token saving 95% CI |
+|---|---:|---:|---:|---:|
+| 100k | 0.8652 | [0.8565, 0.8739] | 4.83% | [2.89%, 6.77%] |
+| 200k | 0.8249 | [0.8052, 0.8446] | 4.69% | [3.89%, 5.48%] |
+| 400k | 0.7819 | [0.7709, 0.7929] | 5.32% | [0.11%, 10.53%] |
+| 638k | 0.7466 | [0.7246, 0.7687] | 4.86% | [4.24%, 5.48%] |
+
+Task29.3 支持的论文口径是：Task29-C 的 token saving 不是单个 seed 的偶然
+结果；四个规模上的均值均保持正向，且 638k 的 token saving 区间较窄。
+详细记录见 `paper/experiments/results/task29_3_seed_variance_ci.md`。
+
 ---
 
 ## 注意事项
