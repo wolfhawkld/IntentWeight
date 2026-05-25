@@ -1,0 +1,45 @@
+# Abstract Draft
+
+Updated: 2026-05-25
+
+## Primary Draft
+
+Retrieval-augmented generation systems must retrieve enough evidence to preserve
+answer quality while limiting latency, noise, and final context cost. This
+trade-off is especially difficult in vertical-domain corpora, where relevance is
+shaped by domain terminology, local semantic neighborhoods, and evolving user
+intent. We propose IntentWeight, a feedback-driven adaptive retrieval controller
+for vertical-domain RAG. IntentWeight combines dense retrieval, BM25 lexical
+recall, and cluster-local retrieval under a piecewise relevance-manifold
+assumption, and uses trust-weighted LinUCB to learn route preferences from
+simulated feedback. A confidence-based final context policy then compacts the
+retrieved evidence sent to the generator while preserving dense fallback under
+low confidence. On LoTTE technology/search, evaluated from 100k to 638k corpus
+chunks, the conservative policy reduces final retrieved context tokens by
+approximately 4.7-5.3% while preserving near-dense Hit@10 at 100k and exceeding
+dense-only Hit@10 at 200k, 400k, and 638k. Geometry diagnostics and ablations
+show that local cluster structure provides useful routing signal, while dense
+retrieval remains an important recall floor. These results position IntentWeight
+not as a universal replacement for dense retrieval, but as an adaptive
+quality-cost controller for large-scale vertical-domain RAG.
+
+## Shorter Variant
+
+We present IntentWeight, a feedback-driven adaptive retrieval controller for
+vertical-domain RAG. Instead of relying on a single fixed retriever, IntentWeight
+routes queries over dense, BM25, and cluster-local retrieval surfaces, learns
+route value with trust-weighted LinUCB, and applies confidence-based final
+context compaction. On LoTTE technology/search up to 638k corpus chunks, the
+conservative policy reduces final retrieved context tokens by 4.7-5.3% while
+achieving near- or above-dense Hit@10. The results support a bounded claim:
+feedback and geometry can help control retrieval quality and context budget, but
+dense retrieval remains a necessary recall floor.
+
+## Abstract Claim Checklist
+
+- Mentions vertical-domain RAG and the retrieval trade-off.
+- States that feedback is simulated, not real human feedback.
+- Reports final context-token reduction, not source-candidate reduction.
+- Uses LoTTE scale-up as the main evidence.
+- Avoids universal dense replacement claims.
+- Avoids end-to-end LLM answer-quality claims.

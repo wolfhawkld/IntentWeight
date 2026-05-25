@@ -878,6 +878,7 @@ Next roadmap:
 | 29.3 | Seed variance / CI for Task29-C | Complete: token saving is stable across 100k/200k/400k/638k |
 | 30 | LoTTE multi-scale geometry validation | Complete: geometry remains usable at scale but is diagnostic, not sufficient alone |
 | 31 | Paper evidence package | Complete: final claim ledger, main tables, limitations, and paper structure guidance |
+| 32 | Paper draft skeleton | Complete: outline, abstract, introduction, method, experiments, and limitations drafts under `paper/draft/` |
 
 Example smoke commands:
 
@@ -1250,6 +1251,22 @@ Task31 是正式写论文前的总控证据包，不新增实验。它把 Task1-
 “feedback-driven adaptive retrieval controller + confidence-based final context
 compaction”，而不是“无条件替代 dense”或“candidate cost 等于 token cost”。
 
+### Task32 paper draft skeleton
+
+Task32 开始正式论文写作阶段，在 `paper/draft/` 下建立可迭代的初稿骨架：
+
+- `paper/draft/README.md`：写作入口、证据来源和当前主张边界。
+- `paper/draft/outline.md`：标题候选、核心 thesis、贡献、章节结构和图表计划。
+- `paper/draft/abstract.md`：摘要初稿和短版摘要。
+- `paper/draft/introduction.md`：Introduction 初稿，明确 RAG trade-off、垂类分片相关性流形假设、IntentWeight 控制器定位和贡献。
+- `paper/draft/method.md`：Method 初稿，覆盖 multi-route surface、KMeans fixed arms、LinUCB、trust-weighted feedback、route-level credit、final context compaction。
+- `paper/draft/experiments.md`：Experiments 初稿，记录 dataset roles、protocol、Task29 主表、Task29.3 CI、Task30 geometry 和 limitation cases。
+- `paper/draft/limitations.md`：Limitations 初稿，明确 simulated feedback、retrieval-only、dense baseline、geometry framing、KMeans 选择和 token cost 口径。
+
+Task32 不新增实验，也不修改结果文件。它把 Task31 证据包转成论文草稿结构，
+后续正式写作应继续以 `paper/experiments/task31_paper_evidence_package.md` 为
+证据总入口。
+
 ---
 
 ## 注意事项
@@ -1264,4 +1281,4 @@ compaction”，而不是“无条件替代 dense”或“candidate cost 等于 
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-05-24*
+*更新时间: 2026-05-25*
