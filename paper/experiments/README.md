@@ -879,6 +879,7 @@ Next roadmap:
 | 30 | LoTTE multi-scale geometry validation | Complete: geometry remains usable at scale but is diagnostic, not sufficient alone |
 | 31 | Paper evidence package | Complete: final claim ledger, main tables, limitations, and paper structure guidance |
 | 32 | Paper draft skeleton | Complete: outline, abstract, introduction, method, experiments, and limitations drafts under `paper/draft/` |
+| 33 | Pre-writing validation backlog | Planned: multi-embedding robustness, feedback sensitivity, clean ablation, protocol defense, LLM smoke, optional more seeds |
 
 Example smoke commands:
 
@@ -1266,6 +1267,27 @@ Task32 开始正式论文写作阶段，在 `paper/draft/` 下建立可迭代的
 Task32 不新增实验，也不修改结果文件。它把 Task31 证据包转成论文草稿结构，
 后续正式写作应继续以 `paper/experiments/task31_paper_evidence_package.md` 为
 证据总入口。
+
+### Task33 pre-writing validation backlog
+
+Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表这些实验已经完成。
+计划文件为 `paper/experiments/task33_pre_writing_validation_backlog.md`。
+
+优先级如下：
+
+1. multi-embedding robustness：至少补一个不同 embedding family 的 LoTTE 100k
+   dense / Task29-C / geometry 对照，降低 single-embedding baseline 风险。
+2. feedback simulation sensitivity：覆盖 no/mild/strong noise、equal noisy、
+   trust-weighted 等设置，证明 self-evolution 不是单一手调反馈配置的偶然结果。
+3. clean ablation table：整理 dense、BM25、hybrid、cluster/static geometry、
+   no-feedback、equal-feedback、trust-feedback、Task29-C 的贡献归因。
+4. protocol defense write-up：在论文草稿中明确 prequential 是先评估后更新的
+   simulated test-time adaptation，不是 IID offline test。
+5. small end-to-end LLM generation smoke：可选但建议，用 50-100 条 LoTTE query
+   检查 Task29-C 压缩 context 是否明显损害生成质量。
+6. optional additional seeds：如算力允许，为关键 Task29-C 配置补到 5 seeds。
+
+最低完成集建议为 1-4；第 5 项是强加分项，第 6 项为稳定性补强项。
 
 ---
 
