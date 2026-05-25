@@ -45,11 +45,12 @@ Task33.6 is useful but optional.
 The current main dense baseline uses only
 `sentence-transformers/all-MiniLM-L6-v2`. Reviewers may argue that the result is
 specific to one embedding model and that a stronger dense encoder could reduce
-or eliminate IntentWeight's measured gain.
+or eliminate IntentWeight's measured gain. This is currently the most important
+remaining experimental robustness risk before final paper writing.
 
 ### Planned Test
 
-Run a robustness check on LoTTE, starting with 100k:
+Run a robustness check on LoTTE with one additional embedding family:
 
 - dense-only baseline with at least one additional embedding family;
 - Task29-C final context policy under the same embedding;
@@ -58,9 +59,40 @@ Run a robustness check on LoTTE, starting with 100k:
 
 Preferred additional models, subject to local availability:
 
-- `intfloat/e5-base-v2` or another E5 family model;
-- `BAAI/bge-base-en-v1.5` or another BGE family model;
-- `thenlper/gte-base` or another GTE family model.
+1. `BAAI/bge-base-en-v1.5` or another BGE English model;
+2. `thenlper/gte-base` or another GTE family model;
+3. `intfloat/e5-base-v2` or another E5 family model.
+
+`BAAI/bge-base-en-v1.5` is the preferred first robustness model because it is a
+widely used stronger retrieval embedding family and is suitable for the English
+LoTTE technology/search task. The locally cached `BAAI/bge-large-zh-v1.5` should
+not be used for the LoTTE main robustness check because it is a Chinese model.
+
+### Execution Adjustment After Initial Attempt
+
+Do not start with the full LoTTE 100k run on CPU. A first attempt to run
+`BAAI/bge-base-en-v1.5` on LoTTE 100k was stopped manually after about 1 hour
+and 14 minutes. The process was still active and consuming roughly 700% CPU and
+about 2 GB memory, so this was a compute-cost issue rather than an experiment
+logic failure. No dense results or BGE embedding cache files were produced.
+
+BGE base is expected to be much slower than `all-MiniLM-L6-v2` because it is a
+BERT-base-level model with 12 layers and 768-dimensional embeddings, while
+MiniLM is a much smaller 6-layer, 384-dimensional model. Therefore, Task33.1
+should proceed in staged form:
+
+1. **Task33.1a**: LoTTE 20k or 50k BGE smoke.
+2. **Task33.1b**: If the smoke run is healthy, run LoTTE 100k BGE overnight or
+   during a long compute window.
+3. **Task33.1c**: Only consider 200k+ BGE if 100k adds meaningful paper value
+   and compute budget is acceptable.
+
+For Task33.1a, run the same evaluation types but on the smaller scale:
+
+- BGE dense-only;
+- BGE Task29-C single-seed first, then three seeds if the run is tractable;
+- BGE geometry diagnostics;
+- final context-token comparison.
 
 ### Acceptance Criteria
 
@@ -76,6 +108,9 @@ The result does not need to beat dense under every model. It should answer:
 
 Use as robustness / sensitivity analysis. Do not replace the main LoTTE
 scale-up table unless the extra embedding run is completed across all scales.
+If BGE dense becomes stronger and IntentWeight no longer exceeds it, the result
+can still support the bounded claim if IntentWeight remains near-dense while
+reducing final context tokens.
 
 ## Task33.2 Feedback Simulation Sensitivity
 
@@ -236,7 +271,8 @@ main claim if Task33.1 and Task33.2 are completed.
 
 Before final paper writing, aim to have:
 
-- at least one additional embedding-model robustness check;
+- at least one additional embedding-model robustness check, preferably staged
+  BGE 20k/50k first and BGE 100k only if compute allows;
 - feedback sensitivity results over multiple noise/trust settings;
 - a clean ablation table with contribution attribution;
 - a protocol defense subsection in the draft;
