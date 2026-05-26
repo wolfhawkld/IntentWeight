@@ -1280,6 +1280,10 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
    `sentence-transformers/multi-qa-MiniLM-L6-cos-v1` 做 LoTTE 100k
    CPU-friendly robustness；`nomic-ai/nomic-embed-text-v1.5` 作为开源强模型
    smoke；BGE 降级为 GPU/overnight optional。
+   Task33.1a 已完成：multi-qa dense `Hit@10=0.8809`，Task29-C mean
+   `Hit@10=0.8853`，final context token saving `3.35%`，
+   `nearest_cluster_hit@3=0.8826`。详见
+   `paper/experiments/task33_1a_multiqa_minilm_robustness_summary.md`。
 2. feedback simulation sensitivity：覆盖 no/mild/strong noise、equal noisy、
    trust-weighted 等设置，证明 self-evolution 不是单一手调反馈配置的偶然结果。
 3. clean ablation table：整理 dense、BM25、hybrid、cluster/static geometry、

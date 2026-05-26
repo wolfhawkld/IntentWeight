@@ -87,7 +87,8 @@ MiniLM is a much smaller 6-layer, 384-dimensional model. Local micro-benchmark
 showed BGE base at about 6-7x slower than MiniLM on the current CPU. Therefore,
 Task33.1 should proceed in staged form:
 
-1. **Task33.1a**: LoTTE 100k with `multi-qa-MiniLM-L6-cos-v1`.
+1. **Task33.1a**: LoTTE 100k with `multi-qa-MiniLM-L6-cos-v1`. Complete; see
+   `paper/experiments/task33_1a_multiqa_minilm_robustness_summary.md`.
 2. **Task33.1b**: LoTTE 20k or 50k with `nomic-embed-text-v1.5`, after adding
    prefix / `trust_remote_code` / optional Matryoshka support.
 3. **Task33.1c**: Optional LoTTE 100k BGE on GPU or overnight CPU, only if it
@@ -99,6 +100,20 @@ For Task33.1a, run the same evaluation types as the main MiniLM chain:
 - Task29-C single-seed first, then three seeds if the run is tractable;
 - geometry diagnostics;
 - final context-token comparison.
+
+Task33.1a result:
+
+- multi-qa dense Hit@10: `0.8809`;
+- Task29-C mean Hit@10: `0.8853`;
+- Hit delta vs multi-qa dense: `+0.45` percentage points;
+- dense avg context tokens@10: `1514.51`;
+- Task29-C mean avg context tokens@10: `1463.71`;
+- final context token saving: `3.35%`;
+- nearest_cluster_hit@3: `0.8826`;
+- context_recall_retention@10: `0.9352`.
+
+This supports the robustness claim that IntentWeight is not tied to the exact
+`all-MiniLM-L6-v2` encoder. It should not be used as an embedding benchmark.
 
 ### Acceptance Criteria
 
@@ -277,8 +292,9 @@ main claim if Task33.1 and Task33.2 are completed.
 
 Before final paper writing, aim to have:
 
-- at least one additional embedding-model robustness check, preferably staged
-  `multi-qa-MiniLM-L6-cos-v1` first and Nomic/BGE only if compute allows;
+- at least one additional embedding-model robustness check. Task33.1a now
+  satisfies the minimum CPU-friendly robustness requirement; Nomic/BGE remain
+  optional if compute allows;
 - feedback sensitivity results over multiple noise/trust settings;
 - a clean ablation table with contribution attribution;
 - a protocol defense subsection in the draft;
