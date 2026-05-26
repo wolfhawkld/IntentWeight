@@ -310,6 +310,11 @@ deployment study.
 
 ## Task33.5 Small End-to-End LLM Generation Smoke
 
+Status: handoff prepared. The executable script is
+`paper/experiments/scripts/task33_5_llm_generation_smoke.py`, and the Azure
+execution handoff is recorded in
+`paper/experiments/task33_5_llm_generation_smoke_handoff.md`.
+
 ### Risk Addressed
 
 Current experiments stop at retrieval and retrieved context tokens. Reviewers
