@@ -1293,8 +1293,14 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
    从 `0.7480` 降到 `0.6708`；trust_mild 达到 `Hit@10=0.8775`、final
    context token ratio `0.9255x`；strong noise 会破坏策略，应作为 limitation。
    详见 `paper/experiments/task33_2_feedback_sensitivity_summary.md`。
-3. clean ablation table：整理 dense、BM25、hybrid、cluster/static geometry、
-   no-feedback、equal-feedback、trust-feedback、Task29-C 的贡献归因。
+3. clean ablation table：Task33.3 已完成，详见
+   `paper/experiments/task33_3_clean_ablation_table.md`。表格整理了
+   dense-only、BM25-only、dense+BM25 hybrid、static KMeans geometry、
+   no-feedback、equal-feedback、trust-feedback、trust-mild、Task29-C 和
+   oracle feedback。核心归因是：dense 是质量地板；BM25/static hybrid
+   提供路线多样性但不能直接省 token；KMeans geometry 提供 route signal；
+   LinUCB 需要可靠 feedback 才能体现自进化；trust-weighting 改善 credit
+   assignment；final context compaction 才是最终 token saving 机制。
 4. protocol defense write-up：在论文草稿中明确 prequential 是先评估后更新的
    simulated test-time adaptation，不是 IID offline test。
 5. small end-to-end LLM generation smoke：可选但建议，用 50-100 条 LoTTE query

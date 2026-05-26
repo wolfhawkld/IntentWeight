@@ -198,6 +198,9 @@ Use to support:
 
 ## Task33.3 Clean Ablation Table
 
+Status: complete. Detailed results are recorded in
+`paper/experiments/task33_3_clean_ablation_table.md`.
+
 ### Risk Addressed
 
 The project has many experiments. Reviewers may struggle to identify which
@@ -234,6 +237,29 @@ The table should make component attribution clear:
 - BM25 and cluster routes contribute coverage and routing alternatives;
 - feedback improves route policy metrics;
 - final context policy is the actual token-saving mechanism.
+
+### Result
+
+Task33.3 produced a LoTTE 100k paper-facing ablation table that covers
+dense-only, BM25-only, dense+BM25 hybrid, static KMeans geometry diagnostics,
+no-feedback gated routing, equal noisy feedback, trust-weighted feedback,
+trust-weighted mild noise, Task29-C final policy, and oracle feedback.
+
+Key attribution:
+
+- dense-only remains the quality floor: Hit@10 `0.8674`, token ratio `1.0000x`;
+- BM25-only and static hybrid do not reduce token cost as standalone baselines;
+  BM25 reaches Hit@10 `0.7232`, while hybrid reaches `0.8624` with token ratio
+  `1.1583x`;
+- static KMeans geometry has nearest-cluster hit@3 `0.8809`, so it provides a
+  route signal but is not itself a full ranking method;
+- no-feedback gated routing has high Hit@10 only because dense rate is
+  `1.0000` and LinUCB primary rate is `0.0000`;
+- trust-weighted feedback improves the route policy over equal noisy feedback:
+  selected-cluster hit `0.5979 -> 0.7223`, last true reward
+  `0.7517 -> 0.8328`, and token ratio `0.9670x -> 0.9505x`;
+- Task29-C remains the conservative multi-scale paper policy, while oracle and
+  trust-mild show the upper ceiling under cleaner feedback.
 
 ## Task33.4 Protocol Defense Write-Up
 

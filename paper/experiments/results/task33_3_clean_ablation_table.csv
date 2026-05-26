@@ -1,0 +1,11 @@
+component,role,hit@10,mrr@10,ndcg@10,evidence_recall@10,avg_context_tokens@10,token_ratio_vs_dense,hit_delta_vs_dense,dense_rate,linucb_primary_rate,selected_cluster_hit,last_true_reward,source_candidate_cost,final_context_k,interpretation
+Dense-only,Quality floor / semantic baseline,0.8674,0.7081,0.6487,0.7026,1472.39,1.0000,0.0000,,,,,,10.00,Strong semantic baseline and comparison anchor.
+BM25-only,Lexical baseline,0.7232,0.5545,0.4768,0.5240,1745.12,1.1852,-0.1443,,,,,,10.00,Useful lexical route but weak as standalone retriever on LoTTE.
+Dense+BM25 hybrid,Static multi-route fusion,0.8624,0.6973,0.6216,0.6848,1705.46,1.1583,-0.0050,,,,,,10.00,Static fusion is near dense but costs more final context tokens.
+Static KMeans geometry,Geometry routing diagnostic,,,,,,,,,,0.8809,,,,"Nearest-cluster hit@3 is high; geometry provides route signal but is not a standalone final ranking result."
+No feedback gated routing,Dense/full fallback control,0.8826,0.7106,0.6566,0.7246,1561.15,1.0603,0.0151,1.0000,0.0000,0.1553,0.1516,300.00,10.00,"High quality comes from dense fallback, not LinUCB self-evolution."
+Equal noisy feedback,Noisy feedback without trust,0.8641,0.7035,0.6143,0.6604,1423.84,0.9670,-0.0034,0.7480,0.2520,0.5979,0.7517,185.53,9.50,Feedback starts route learning but noisy equal weighting weakens the policy.
+Trust-weighted feedback,Trust scoring under default noise,0.8641,0.7094,0.6212,0.6661,1399.51,0.9505,-0.0034,0.6708,0.3292,0.7223,0.8328,181.47,9.34,"Trust weighting improves route reward, cluster hit, dense reduction, and token cost versus equal noisy feedback."
+Trust-weighted mild noise,Best controlled-noise feedback point,0.8775,0.7130,0.6289,0.6795,1362.68,0.9255,0.0101,0.5826,0.4174,0.7908,0.8820,173.30,9.17,Mild reliable feedback preserves/improves Hit@10 while reducing final context tokens.
+Task29-C final policy,Recommended conservative policy,0.8652,0.7088,0.6251,0.6737,1401.24,0.9517,-0.0022,0.6708,0.3292,0.7223,0.8328,209.13,9.34,Main paper policy; near-dense quality with conservative token saving.
+Oracle feedback,Feedback upper bound,0.8758,0.7149,0.6275,0.6768,1327.03,0.9013,0.0084,0.4345,0.5655,0.8386,0.8932,160.27,8.87,Upper bound showing what cleaner feedback can unlock.
