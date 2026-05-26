@@ -263,6 +263,10 @@ Key attribution:
 
 ## Task33.4 Protocol Defense Write-Up
 
+Status: complete. Dedicated protocol text is recorded in
+`paper/experiments/task33_4_protocol_defense.md` and incorporated into
+`paper/draft/experiments.md` and `paper/draft/method.md`.
+
 ### Risk Addressed
 
 The prequential protocol can be misunderstood as leakage if it is not described
@@ -284,6 +288,25 @@ Add a dedicated protocol subsection to the paper draft:
 The paper should make it difficult for a reviewer to claim hidden future-label
 leakage. The limitation should remain explicit: real human feedback is future
 work.
+
+### Result
+
+Task33.4 expands the paper draft protocol section around the no-leakage
+prequential sequence:
+
+1. freeze current policy state;
+2. rank the current query;
+3. evaluate the produced ranking;
+4. convert that query's ground truth into simulated feedback only after
+   evaluation;
+5. update LinUCB for later queries.
+
+The draft now explicitly states that feedback for `q_t` cannot improve the
+ranking of `q_t`, future query feedback is unavailable to the current policy,
+and the result should be interpreted as controlled test-time adaptation rather
+than offline IID generalization. It also keeps the limitation clear: simulated
+feedback validates the mechanism but does not replace a real human-feedback
+deployment study.
 
 ## Task33.5 Small End-to-End LLM Generation Smoke
 
@@ -347,7 +370,8 @@ Before final paper writing, aim to have:
 - feedback sensitivity results over multiple noise/trust settings. Task33.2
   satisfies this requirement on LoTTE 100k with the main paper evidence model;
 - a clean ablation table with contribution attribution;
-- a protocol defense subsection in the draft;
+- a protocol defense subsection in the draft. Task33.4 satisfies this
+  requirement;
 - optionally, a small LLM generation smoke;
 - optionally, additional seeds for the main context policy.
 

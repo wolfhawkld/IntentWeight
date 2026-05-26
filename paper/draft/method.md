@@ -75,8 +75,10 @@ The policy selects the top candidate arms by score. The selected arms define the
 cluster-local retrieval path and also provide confidence signals for later
 context compaction.
 
-The evaluation uses a prequential protocol: each query is first evaluated, then
-the simulated feedback for that query updates the policy. This should be
+The evaluation uses a no-leakage prequential protocol: each query is ranked and
+evaluated before the simulated feedback for that query updates the policy. The
+feedback for `q_t` can only affect later queries through the next policy state;
+it cannot change the ranking already produced for `q_t`. This should be
 described as simulated test-time adaptation, not as offline IID held-out
 generalization.
 
@@ -144,7 +146,8 @@ Input: query q_t, corpus D, route artifacts, LinUCB state
 4. Fuse route rankings.
 5. Apply confidence-based final context policy.
 6. Evaluate retrieval quality for q_t.
-7. Update LinUCB with trust-weighted simulated feedback.
+7. Only after evaluation, convert the ground-truth label into simulated
+   feedback and update LinUCB for later queries.
 
 Output: final retrieved context C_t and updated policy state
 ```

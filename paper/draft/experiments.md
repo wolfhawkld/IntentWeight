@@ -60,12 +60,44 @@ invocation rate are auxiliary retrieval-stage diagnostics.
 
 ## Protocol
 
-LinUCB experiments use a prequential simulated-feedback protocol. For each
-query, the current policy first retrieves and is evaluated. The query's
-ground-truth-derived simulated feedback is then used to update the policy.
+### Prequential Simulated-Feedback Protocol
 
-This protocol tests simulated test-time adaptation. It should not be described
-as offline training followed by independent IID test evaluation.
+LinUCB experiments use a no-leakage prequential simulated-feedback protocol.
+For each query `q_t`, the current policy state is frozen before retrieval. The
+system ranks candidates, constructs the final context, and is evaluated against
+the ground-truth evidence. Only after this evaluation is the ground-truth label
+converted into simulated feedback and used to update the LinUCB state for later
+queries.
+
+This means the feedback for `q_t` cannot improve the ranking of `q_t` itself.
+Earlier feedback can influence later queries, but future query feedback is not
+available to the current policy. Saved rankings and final metrics are therefore
+produced before the corresponding query update.
+
+The protocol evaluates simulated test-time adaptation rather than offline IID
+generalization. It should not be described as training a bandit on the test set
+and then evaluating on the same examples. The correct interpretation is that a
+retrieval controller is deployed over a query stream and adapts after each
+interaction.
+
+### Feedback Source and Limitations
+
+The feedback signal is controlled and ground-truth-derived. Oracle feedback is
+used only as an upper bound. Equal noisy and trust-weighted modes simulate
+imperfect user feedback with different reliability assumptions. Trust weighting
+changes how strongly a feedback event updates the route policy, but it does not
+give the current query access to its answer label before ranking.
+
+This setup validates the route-learning mechanism under controlled feedback
+quality. It does not claim that real user feedback has already been collected,
+nor that delayed, biased, or adversarial human feedback would have the same
+effect without additional deployment safeguards.
+
+The protocol can be summarized as:
+
+> Each query is evaluated before its simulated feedback updates the policy.
+> The experiment tests controlled test-time adaptation and prevents
+> future-label leakage into the current ranking.
 
 ## Main Result: LoTTE Token-Quality Frontier
 
@@ -179,3 +211,4 @@ Recommended ordering in the results section:
 - Historical token correction: `paper/experiments/task28_1_context_token_backfill_summary.md`
 - Credit assignment: `paper/experiments/task25_credit_assignment_summary.md`
 - LoTTE scale-up: `paper/experiments/task23_lotte_scaleup_summary.md`
+- Protocol defense: `paper/experiments/task33_4_protocol_defense.md`

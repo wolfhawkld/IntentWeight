@@ -1301,8 +1301,13 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
    提供路线多样性但不能直接省 token；KMeans geometry 提供 route signal；
    LinUCB 需要可靠 feedback 才能体现自进化；trust-weighting 改善 credit
    assignment；final context compaction 才是最终 token saving 机制。
-4. protocol defense write-up：在论文草稿中明确 prequential 是先评估后更新的
-   simulated test-time adaptation，不是 IID offline test。
+4. protocol defense write-up：Task33.4 已完成，详见
+   `paper/experiments/task33_4_protocol_defense.md`，并已写入
+   `paper/draft/experiments.md` 和 `paper/draft/method.md`。核心口径是：
+   每条 query 先冻结当前 policy、完成 ranking 和 evaluation，然后才把该
+   query 的 GT 转成 simulated feedback 更新 LinUCB；当前 query 的 feedback
+   不能反向改善当前 ranking，future query feedback 也不可见。因此该协议是
+   no-leakage prequential simulated test-time adaptation，不是 offline IID test。
 5. small end-to-end LLM generation smoke：可选但建议，用 50-100 条 LoTTE query
    检查 Task29-C 压缩 context 是否明显损害生成质量。
 6. optional additional seeds：如算力允许，为关键 Task29-C 配置补到 5 seeds。
