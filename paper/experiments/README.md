@@ -1275,9 +1275,11 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
 
 优先级如下：
 
-1. multi-embedding robustness：优先使用 `BAAI/bge-base-en-v1.5` 做 LoTTE
-   staged robustness。由于 BGE base 在 CPU 上明显慢于 MiniLM，先跑 20k/50k
-   smoke，再决定是否 overnight 跑 100k dense / Task29-C / geometry 对照。
+1. multi-embedding robustness：模型选择矩阵见
+   `paper/experiments/task33_1_embedding_model_selection.md`。优先使用
+   `sentence-transformers/multi-qa-MiniLM-L6-cos-v1` 做 LoTTE 100k
+   CPU-friendly robustness；`nomic-ai/nomic-embed-text-v1.5` 作为开源强模型
+   smoke；BGE 降级为 GPU/overnight optional。
 2. feedback simulation sensitivity：覆盖 no/mild/strong noise、equal noisy、
    trust-weighted 等设置，证明 self-evolution 不是单一手调反馈配置的偶然结果。
 3. clean ablation table：整理 dense、BM25、hybrid、cluster/static geometry、

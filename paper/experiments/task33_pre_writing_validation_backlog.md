@@ -40,6 +40,9 @@ Task33.6 is useful but optional.
 
 ## Task33.1 Multi-Embedding Robustness
 
+Detailed selection rationale is recorded in
+`paper/experiments/task33_1_embedding_model_selection.md`.
+
 ### Risk Addressed
 
 The current main dense baseline uses only
@@ -59,18 +62,20 @@ Run a robustness check on LoTTE with one additional embedding family:
 
 Preferred additional models, subject to local availability:
 
-1. `BAAI/bge-base-en-v1.5` or another BGE English model;
-2. `thenlper/gte-base` or another GTE family model;
-3. `intfloat/e5-base-v2` or another E5 family model.
+1. `sentence-transformers/multi-qa-MiniLM-L6-cos-v1` for CPU-friendly
+   MiniLM-family robustness;
+2. `nomic-ai/nomic-embed-text-v1.5` for open-source strong-model robustness;
+3. `BAAI/bge-base-en-v1.5` only as a GPU or overnight optional run.
 
-`BAAI/bge-base-en-v1.5` is the preferred first robustness model because it is a
-widely used stronger retrieval embedding family and is suitable for the English
-LoTTE technology/search task. The locally cached `BAAI/bge-large-zh-v1.5` should
-not be used for the LoTTE main robustness check because it is a Chinese model.
+This ordering is intentional. The paper does not benchmark embedding models.
+Task33.1 only needs to show that IntentWeight is not tied to one exact encoder.
+Therefore, a QA-tuned MiniLM-family model is the most efficient first
+robustness check, while Nomic is a useful second-stage open-source strong-model
+check.
 
 ### Execution Adjustment After Initial Attempt
 
-Do not start with the full LoTTE 100k run on CPU. A first attempt to run
+Do not start with the full LoTTE 100k BGE run on CPU. A first attempt to run
 `BAAI/bge-base-en-v1.5` on LoTTE 100k was stopped manually after about 1 hour
 and 14 minutes. The process was still active and consuming roughly 700% CPU and
 about 2 GB memory, so this was a compute-cost issue rather than an experiment
@@ -78,20 +83,21 @@ logic failure. No dense results or BGE embedding cache files were produced.
 
 BGE base is expected to be much slower than `all-MiniLM-L6-v2` because it is a
 BERT-base-level model with 12 layers and 768-dimensional embeddings, while
-MiniLM is a much smaller 6-layer, 384-dimensional model. Therefore, Task33.1
-should proceed in staged form:
+MiniLM is a much smaller 6-layer, 384-dimensional model. Local micro-benchmark
+showed BGE base at about 6-7x slower than MiniLM on the current CPU. Therefore,
+Task33.1 should proceed in staged form:
 
-1. **Task33.1a**: LoTTE 20k or 50k BGE smoke.
-2. **Task33.1b**: If the smoke run is healthy, run LoTTE 100k BGE overnight or
-   during a long compute window.
-3. **Task33.1c**: Only consider 200k+ BGE if 100k adds meaningful paper value
-   and compute budget is acceptable.
+1. **Task33.1a**: LoTTE 100k with `multi-qa-MiniLM-L6-cos-v1`.
+2. **Task33.1b**: LoTTE 20k or 50k with `nomic-embed-text-v1.5`, after adding
+   prefix / `trust_remote_code` / optional Matryoshka support.
+3. **Task33.1c**: Optional LoTTE 100k BGE on GPU or overnight CPU, only if it
+   adds meaningful paper value.
 
-For Task33.1a, run the same evaluation types but on the smaller scale:
+For Task33.1a, run the same evaluation types as the main MiniLM chain:
 
-- BGE dense-only;
-- BGE Task29-C single-seed first, then three seeds if the run is tractable;
-- BGE geometry diagnostics;
+- dense-only;
+- Task29-C single-seed first, then three seeds if the run is tractable;
+- geometry diagnostics;
 - final context-token comparison.
 
 ### Acceptance Criteria
@@ -272,7 +278,7 @@ main claim if Task33.1 and Task33.2 are completed.
 Before final paper writing, aim to have:
 
 - at least one additional embedding-model robustness check, preferably staged
-  BGE 20k/50k first and BGE 100k only if compute allows;
+  `multi-qa-MiniLM-L6-cos-v1` first and Nomic/BGE only if compute allows;
 - feedback sensitivity results over multiple noise/trust settings;
 - a clean ablation table with contribution attribution;
 - a protocol defense subsection in the draft;
