@@ -135,6 +135,9 @@ reducing final context tokens.
 
 ## Task33.2 Feedback Simulation Sensitivity
 
+Status: complete. Detailed results are recorded in
+`paper/experiments/task33_2_feedback_sensitivity_summary.md`.
+
 ### Risk Addressed
 
 Feedback is simulated. This is acceptable for controlled bandit validation, but
@@ -164,6 +167,26 @@ Primary metrics:
 Trust-weighted feedback should be more stable than equal/noisy feedback in
 reasonable noise ranges. If strong noise breaks the policy, report that as the
 expected limitation and motivate trust scoring.
+
+### Result
+
+Task33.2 was run on LoTTE technology/search 100k with the main paper evidence
+model, `sentence-transformers/all-MiniLM-L6-v2`, using three seeds and eight
+prequential epochs. The result supports the expected sensitivity pattern:
+
+- no-feedback keeps high Hit@10 only by relying on dense/full fallback and does
+  not demonstrate self-evolution;
+- oracle feedback gives the clean upper bound, with selected-cluster hit
+  `0.8386`, dense rate `0.4345`, and source candidate cost `160.27`;
+- trust-weighted default feedback improves policy internals over equal noisy
+  feedback: last true reward rises from `0.7517` to `0.8328`, selected-cluster
+  hit from `0.5979` to `0.7223`, and dense rate falls from `0.7480` to
+  `0.6708`;
+- mild trust-weighted feedback is the strongest controlled-noise result:
+  Hit@10 `0.8775`, last true reward `0.8820`, selected-cluster hit `0.7908`,
+  final context token ratio `0.9255x` versus dense;
+- strong noise degrades the policy, which should be reported as a limitation
+  and motivation for user trust scoring plus conservative fallback.
 
 ### Paper Use
 
@@ -295,7 +318,8 @@ Before final paper writing, aim to have:
 - at least one additional embedding-model robustness check. Task33.1a now
   satisfies the minimum CPU-friendly robustness requirement; Nomic/BGE remain
   optional if compute allows;
-- feedback sensitivity results over multiple noise/trust settings;
+- feedback sensitivity results over multiple noise/trust settings. Task33.2
+  satisfies this requirement on LoTTE 100k with the main paper evidence model;
 - a clean ablation table with contribution attribution;
 - a protocol defense subsection in the draft;
 - optionally, a small LLM generation smoke;

@@ -1285,7 +1285,14 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
    `nearest_cluster_hit@3=0.8826`。详见
    `paper/experiments/task33_1a_multiqa_minilm_robustness_summary.md`。
 2. feedback simulation sensitivity：覆盖 no/mild/strong noise、equal noisy、
-   trust-weighted 等设置，证明 self-evolution 不是单一手调反馈配置的偶然结果。
+   trust-weighted 等设置。Task33.2 已完成，使用主证据模型
+   `sentence-transformers/all-MiniLM-L6-v2` 在 LoTTE 100k 上验证：
+   no-feedback 主要依赖 dense/full fallback，不代表自进化；oracle 是上界；
+   trust_default 相比 equal_default 将 last true reward 从 `0.7517` 提升到
+   `0.8328`，selected-cluster hit 从 `0.5979` 提升到 `0.7223`，dense rate
+   从 `0.7480` 降到 `0.6708`；trust_mild 达到 `Hit@10=0.8775`、final
+   context token ratio `0.9255x`；strong noise 会破坏策略，应作为 limitation。
+   详见 `paper/experiments/task33_2_feedback_sensitivity_summary.md`。
 3. clean ablation table：整理 dense、BM25、hybrid、cluster/static geometry、
    no-feedback、equal-feedback、trust-feedback、Task29-C 的贡献归因。
 4. protocol defense write-up：在论文草稿中明确 prequential 是先评估后更新的
