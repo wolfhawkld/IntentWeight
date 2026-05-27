@@ -48,7 +48,7 @@ export AZURE_OPENAI_API_KEY="YOUR_KEY"
   --treatment-seed 13 \
   --top-k 10 \
   --temperature 0 \
-  --max-output-tokens 512 \
+  --max-output-tokens 2048 \
   --reasoning-effort low \
   --output-dir paper/experiments/results/task33_5_llm_generation_smoke \
   --execute
@@ -59,6 +59,34 @@ If that Azure deployment only supports Chat Completions, switch:
 ```bash
   --api-mode chat-completions
 ```
+
+## DeepSeek / OpenAI-Compatible Command
+
+DeepSeek uses an OpenAI-compatible API style. Use this command for
+`deepseek-v4-flash`:
+
+```bash
+export DEEPSEEK_API_KEY="YOUR_KEY"
+
+.venv/bin/python paper/experiments/scripts/task33_5_llm_generation_smoke.py \
+  --provider deepseek \
+  --api-mode chat-completions \
+  --base-url https://api.deepseek.com \
+  --model deepseek-v4-flash \
+  --sample-size 60 \
+  --treatment-seed 13 \
+  --top-k 10 \
+  --temperature 0 \
+  --max-output-tokens 512 \
+  --thinking enabled \
+  --reasoning-effort high \
+  --judge-retries 2 \
+  --output-dir paper/experiments/results/task33_5_llm_generation_smoke \
+  --execute
+```
+
+For a small endpoint check, reduce `--sample-size` to `5` and use a separate
+output directory.
 
 For a no-cost request preview:
 
@@ -81,11 +109,23 @@ For a no-cost request preview:
 - `--api-mode responses`: uses `client.responses.create`.
 - `--api-mode chat-completions`: fallback if the Azure deployment exposes Chat
   Completions only.
+- `--provider deepseek`: OpenAI-compatible DeepSeek endpoint mode.
+- `--base-url`: compatible endpoint base URL, for example
+  `https://api.deepseek.com`.
+- `--thinking enabled`: explicitly enables DeepSeek thinking mode through
+  `extra_body={"thinking": {"type": "enabled"}}`.
+- `--reasoning-effort high`: DeepSeek thinking effort. Use `max` only if you
+  want a more expensive validation run.
 - `--sample-size 60`: recommended smoke size. Use 20 first if checking cost.
 - `--treatment-seed 13`: fixed Task29-C seed for the smoke. Keep this stable for
   reproducibility.
 - `--temperature 0`: deterministic generation.
-- `--max-output-tokens 512`: enough for short JSON answers and judgments.
+- `--max-output-tokens 512`: enough for short JSON answers on non-thinking
+  models.
+- `--max-output-tokens 2048`: recommended for DeepSeek thinking mode because
+  reasoning tokens share the output budget with the final JSON.
+- `--judge-retries 2`: retries only the judge call when the returned content is
+  empty or not valid JSON.
 
 ## Outputs
 

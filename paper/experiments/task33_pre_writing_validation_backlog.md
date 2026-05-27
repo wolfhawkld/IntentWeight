@@ -310,10 +310,10 @@ deployment study.
 
 ## Task33.5 Small End-to-End LLM Generation Smoke
 
-Status: handoff prepared. The executable script is
-`paper/experiments/scripts/task33_5_llm_generation_smoke.py`, and the Azure
-execution handoff is recorded in
-`paper/experiments/task33_5_llm_generation_smoke_handoff.md`.
+Status: complete. The executable script is
+`paper/experiments/scripts/task33_5_llm_generation_smoke.py`, and the completed
+DeepSeek thinking-mode result is recorded in
+`paper/experiments/task33_5_llm_generation_smoke_summary.md`.
 
 ### Risk Addressed
 
@@ -341,6 +341,27 @@ This is not intended to become the main experiment. It should be a sanity check:
 - if answer quality is comparable, it strengthens the context-compaction claim;
 - if answer quality drops, the paper can keep the claim at retrieval/context
   level and report generation as future work.
+
+### Result
+
+Task33.5 ran a 60-query LoTTE 100k generation smoke using `deepseek-v4-flash`
+with thinking enabled. Dense top-10 and Task29-C compressed context were used to
+generate paired answers, and the same model judged each pair against reference
+evidence.
+
+Results:
+
+- valid judge rows: `60 / 60`;
+- winner counts: `tie=32`, `dense=14`, `Task29-C=14`;
+- answer score mean: dense `4.4000`, Task29-C `4.2833`;
+- faithfulness mean: dense `4.6500`, Task29-C `4.6333`;
+- answer relevance mean: dense `4.6500`, Task29-C `4.4500`;
+- sampled retrieval hit rate: both `0.7500`;
+- prompt context token proxy ratio: Task29-C `0.9321x` dense.
+
+The result supports the bounded claim that Task29-C context compaction does not
+cause obvious downstream answer-quality degradation in this small smoke test.
+It should not be overclaimed as a full end-to-end human-quality evaluation.
 
 ### Paper Use
 

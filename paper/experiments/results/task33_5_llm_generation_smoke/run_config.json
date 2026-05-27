@@ -1,0 +1,20 @@
+{
+  "api_mode": "chat-completions",
+  "azure_api_version": "2025-04-01-preview",
+  "azure_deployment": null,
+  "azure_endpoint": null,
+  "base_url": "https://api.deepseek.com",
+  "dense_ranking": "paper/experiments/results/dense_lotte_technology_search_100k_rankings.json",
+  "dry_run": false,
+  "execute": true,
+  "judge_retries": 2,
+  "max_output_tokens": 2048,
+  "model": "deepseek-v4-flash",
+  "provider": "deepseek",
+  "reasoning_effort": "high",
+  "sample_size": 60,
+  "thinking": "enabled",
+  "top_k": 10,
+  "treatment_ranking": "paper/experiments/results/task29_100k_confidence_topk_C_formal/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+  "treatment_seed": "13"
+}

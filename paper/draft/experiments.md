@@ -174,6 +174,27 @@ Avoid:
 
 > Feedback alone explains all retrieval gains.
 
+## Downstream Generation Smoke
+
+Task33.5 adds a small LLM generation sanity check. It compares dense top-10
+context with Task29-C compressed context on 60 sampled LoTTE 100k queries using
+`deepseek-v4-flash` with thinking enabled.
+
+| Method | Answer score | Faithfulness | Answer relevance | Win count | Context token proxy ratio |
+|---|---:|---:|---:|---:|---:|
+| Dense top-10 | 4.4000 | 4.6500 | 4.6500 | 14 | 1.0000 |
+| Task29-C | 4.2833 | 4.6333 | 4.4500 | 14 | 0.9321 |
+| Tie | - | - | - | 32 | - |
+
+Interpretation:
+
+- The smoke does not show obvious answer-quality degradation from Task29-C
+  context compaction.
+- Dense has a small average-score and relevance edge, so this should not be
+  overclaimed as Task29-C beating dense in generated answer quality.
+- The result is a downstream sanity check, not a replacement for the retrieval
+  and final-context-token experiments.
+
 ## Failure and Limitation Cases
 
 ### eManual
@@ -212,3 +233,4 @@ Recommended ordering in the results section:
 - Credit assignment: `paper/experiments/task25_credit_assignment_summary.md`
 - LoTTE scale-up: `paper/experiments/task23_lotte_scaleup_summary.md`
 - Protocol defense: `paper/experiments/task33_4_protocol_defense.md`
+- LLM generation smoke: `paper/experiments/task33_5_llm_generation_smoke_summary.md`

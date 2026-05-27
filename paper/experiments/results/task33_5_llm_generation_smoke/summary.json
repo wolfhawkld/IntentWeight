@@ -1,0 +1,16 @@
+{
+  "dense_answer_relevance_mean": 4.65,
+  "dense_faithfulness_mean": 4.65,
+  "dense_score_mean": 4.4,
+  "invalid_judge_count": 0,
+  "num_queries": 60,
+  "treatment_answer_relevance_mean": 4.45,
+  "treatment_faithfulness_mean": 4.633333333333334,
+  "treatment_score_mean": 4.283333333333333,
+  "valid_judge_count": 60,
+  "winner_counts": {
+    "dense": 14,
+    "tie": 32,
+    "treatment": 14
+  }
+}

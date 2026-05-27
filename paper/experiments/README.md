@@ -1308,11 +1308,14 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
    query 的 GT 转成 simulated feedback 更新 LinUCB；当前 query 的 feedback
    不能反向改善当前 ranking，future query feedback 也不可见。因此该协议是
    no-leakage prequential simulated test-time adaptation，不是 offline IID test。
-5. small end-to-end LLM generation smoke：handoff 已准备，脚本为
-   `paper/experiments/scripts/task33_5_llm_generation_smoke.py`，Azure 执行说明见
-   `paper/experiments/task33_5_llm_generation_smoke_handoff.md`。该任务用于
-   小样本检查 dense top-10 与 Task29-C compressed context 进入 LLM 后的答案质量
-   是否接近；它是 sanity check，不替代 retrieval/token 主实验。
+5. small end-to-end LLM generation smoke：Task33.5 已完成，详见
+   `paper/experiments/task33_5_llm_generation_smoke_summary.md`。使用
+   `deepseek-v4-flash` thinking mode 对 LoTTE 100k 的 60 条 query 进行了
+   dense top-10 vs Task29-C compressed context 生成质量 smoke。judge 全部有效
+   `60/60`，winner counts 为 `tie=32`、`dense=14`、`Task29-C=14`；
+   faithfulness 基本持平，Task29-C sampled prompt context token proxy 为
+   `0.9321x` dense。该结果支持“没有明显生成质量退化”的 sanity-check 结论，
+   但不替代 retrieval/token 主实验。
 6. optional additional seeds：如算力允许，为关键 Task29-C 配置补到 5 seeds。
 
 最低完成集建议为 1-4；第 5 项是强加分项，第 6 项为稳定性补强项。

@@ -301,6 +301,19 @@ def create_client(args: argparse.Namespace) -> Any:
             api_version=args.azure_api_version,
         )
 
+    if args.provider in {"compatible", "deepseek"}:
+        base_url = args.base_url
+        api_key = args.api_key
+        if args.provider == "deepseek":
+            base_url = base_url or os.environ.get("DEEPSEEK_BASE_URL") or "https://api.deepseek.com"
+            api_key = api_key or os.environ.get("DEEPSEEK_API_KEY")
+        else:
+            base_url = base_url or os.environ.get("OPENAI_COMPATIBLE_BASE_URL")
+            api_key = api_key or os.environ.get("OPENAI_COMPATIBLE_API_KEY") or os.environ.get("OPENAI_API_KEY")
+        if not base_url:
+            raise RuntimeError("Compatible provider requires --base-url or OPENAI_COMPATIBLE_BASE_URL")
+        return OpenAI(api_key=api_key, base_url=base_url)
+
     return OpenAI(api_key=args.api_key or os.environ.get("OPENAI_API_KEY"))
 
 
@@ -323,15 +336,26 @@ def call_responses(client: Any, *, model: str, instructions: str, prompt: str, a
 
 
 def call_chat_completions(client: Any, *, model: str, instructions: str, prompt: str, args: argparse.Namespace) -> tuple[str, Dict[str, Any]]:
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
+    request: Dict[str, Any] = {
+        "model": model,
+        "messages": [
             {"role": "system", "content": instructions},
             {"role": "user", "content": prompt},
         ],
-        max_completion_tokens=args.max_output_tokens,
-        temperature=args.temperature,
-    )
+    }
+    if args.provider in {"compatible", "deepseek"}:
+        request["max_tokens"] = args.max_output_tokens
+    else:
+        request["max_completion_tokens"] = args.max_output_tokens
+    if not (args.provider == "deepseek" and args.thinking == "enabled"):
+        request["temperature"] = args.temperature
+    if args.response_format_json:
+        request["response_format"] = {"type": "json_object"}
+    if args.provider == "deepseek" and args.thinking:
+        request["extra_body"] = {"thinking": {"type": args.thinking}}
+        if args.reasoning_effort:
+            request["reasoning_effort"] = args.reasoning_effort
+    response = client.chat.completions.create(**request)
     text = response.choices[0].message.content or ""
     usage = getattr(response, "usage", None)
     usage_dict = usage.model_dump() if hasattr(usage, "model_dump") else dict(usage or {})
@@ -429,9 +453,14 @@ def run(args: argparse.Namespace) -> int:
         "provider": args.provider,
         "api_mode": args.api_mode,
         "model": args.model,
+        "base_url": args.base_url,
         "azure_deployment": args.azure_deployment,
         "azure_endpoint": args.azure_endpoint,
         "azure_api_version": args.azure_api_version,
+        "thinking": args.thinking,
+        "reasoning_effort": args.reasoning_effort,
+        "max_output_tokens": args.max_output_tokens,
+        "judge_retries": args.judge_retries,
         "sample_size": len(rows),
         "top_k": args.top_k,
         "dry_run": args.dry_run,
@@ -481,13 +510,22 @@ def run(args: argparse.Namespace) -> int:
             "treatment_answer_text": treatment_answer_text,
         }
         time.sleep(args.request_sleep)
-        judge_text, judge_usage = call_model(
-            client,
-            instructions=JUDGE_INSTRUCTIONS,
-            prompt=judge_prompt(judge_record),
-            args=args,
-        )
-        parsed_judge = try_parse_json(judge_text)
+        judge_text = ""
+        judge_usage: Dict[str, Any] = {}
+        parsed_judge = None
+        base_judge_prompt = judge_prompt(judge_record)
+        for attempt in range(args.judge_retries + 1):
+            retry_suffix = "" if attempt == 0 else "\n\nReturn only one complete JSON object. Do not omit any required key."
+            judge_text, judge_usage = call_model(
+                client,
+                instructions=JUDGE_INSTRUCTIONS,
+                prompt=base_judge_prompt + retry_suffix,
+                args=args,
+            )
+            parsed_judge = try_parse_json(judge_text)
+            if isinstance(parsed_judge, dict):
+                break
+            time.sleep(args.request_sleep)
         output = {
             **judge_record,
             "dense_answer_json": try_parse_json(dense_answer_text),
@@ -517,6 +555,8 @@ def as_float(value: Any) -> float | None:
 def write_summary(output_dir: Path, rows: Sequence[Mapping[str, Any]]) -> None:
     summary: Dict[str, Any] = {"num_queries": len(rows)}
     judge_rows = [row.get("judge_json") for row in rows if isinstance(row.get("judge_json"), dict)]
+    summary["valid_judge_count"] = len(judge_rows)
+    summary["invalid_judge_count"] = len(rows) - len(judge_rows)
     if judge_rows:
         for key in (
             "dense_score",
@@ -569,17 +609,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--preview-count", type=int, default=3)
 
-    parser.add_argument("--provider", choices=("openai", "azure"), default="azure")
+    parser.add_argument("--provider", choices=("openai", "azure", "compatible", "deepseek"), default="azure")
     parser.add_argument("--api-mode", choices=("responses", "chat-completions"), default="responses")
     parser.add_argument("--model", default="gpt-5.1")
+    parser.add_argument("--base-url", default=None, help="OpenAI-compatible base URL, e.g. https://api.deepseek.com")
     parser.add_argument("--azure-deployment", default=None, help="Azure deployment name. Defaults to --model if omitted.")
     parser.add_argument("--azure-endpoint", default=None, help="Azure endpoint, e.g. https://xxx.openai.azure.com")
     parser.add_argument("--azure-api-version", default="2025-04-01-preview")
     parser.add_argument("--api-key", default=None)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-output-tokens", type=int, default=512)
-    parser.add_argument("--reasoning-effort", default="low", choices=("minimal", "low", "medium", "high", ""))
+    parser.add_argument("--response-format-json", action="store_true", default=True)
+    parser.add_argument("--thinking", default="enabled", choices=("enabled", "disabled", ""))
+    parser.add_argument("--reasoning-effort", default="high", choices=("minimal", "low", "medium", "high", "max", ""))
     parser.add_argument("--request-sleep", type=float, default=0.2)
+    parser.add_argument("--judge-retries", type=int, default=2)
     parser.add_argument("--dry-run", action="store_true", default=True)
     parser.add_argument("--execute", action="store_true", help="Actually call the configured model endpoint.")
     args = parser.parse_args(argv)
