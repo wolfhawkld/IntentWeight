@@ -14,12 +14,14 @@ under a feedback signal, but it does not prove the same behavior under real
 human feedback. Real deployments must handle delayed feedback, biased implicit
 signals, adversarial or low-quality users, and non-stationary intent.
 
-## Retrieval Layer Only
+## Limited Generation Evaluation
 
-The experiments stop at retrieval and final retrieved context tokens. They do
-not evaluate end-to-end LLM answer generation, answer faithfulness, or user
-satisfaction. The supported claim is about evidence retrieval and retrieved
-context budget, not generated answer quality.
+The main experiments evaluate retrieval and final retrieved context tokens.
+Task33.5 adds a 60-query LLM generation smoke test showing no obvious answer
+quality degradation from Task29-C context compaction, but this is not a full
+end-to-end human evaluation. The supported main claim remains evidence
+retrieval and retrieved context budget, not generated answer superiority or
+user satisfaction.
 
 ## Dense Remains Strong
 
@@ -46,15 +48,19 @@ current LinUCB setup.
 
 ## Limited Encoder Coverage
 
-The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. The paper
-should not generalize the result to stronger domain-specific encoders, rerankers,
-or late-interaction models without additional experiments.
+The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. Task33.1a
+adds a CPU-friendly robustness check with
+`sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, but the paper should still
+not generalize the result to stronger domain-specific encoders, rerankers, or
+late-interaction models without additional experiments.
 
 ## Seed Count
 
-Task29.3 reports three-seed confidence intervals. These are useful engineering
+Task29.3 reports three-seed confidence intervals across LoTTE 100k-638k, and
+Task33.6 extends LoTTE 100k to five seeds. These are useful engineering
 stability diagnostics, but they should not be over-framed as strong statistical
-significance proof.
+significance proof, especially at the larger scales that remain three-seed
+experiments.
 
 ## Dataset-Specific Caveats
 
@@ -89,7 +95,7 @@ reductions.
 Future work should evaluate:
 
 - real user feedback with trust scoring and delayed-feedback handling;
-- end-to-end LLM answer quality and citation faithfulness;
+- larger end-to-end LLM answer-quality and citation-faithfulness studies;
 - stronger dense encoders and rerankers;
 - graph or density-based dynamic clustering under bandit-compatible arm
   management;

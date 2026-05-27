@@ -1,6 +1,6 @@
 # Task31 Paper Evidence Package
 
-Updated: 2026-05-24
+Updated: 2026-05-27
 
 Task31 is the paper-writing handoff document. It consolidates the current
 experimental evidence into claims, tables, limitations, and section-level
@@ -35,7 +35,9 @@ The paper should emphasize:
 | LinUCB alone explains all quality gains | Not supported | Task24 static/naive ablations | Avoid |
 | Candidate cost reduction implies LLM token saving | Rejected | Task28/28.1 | Explicitly correct |
 | Method universally dominates dense | Not supported | eManual, CUAD, Task27 | Avoid |
-| Results measure end-to-end LLM answer quality | Not yet supported | Current tests stop at retrieval/context | Limitation |
+| Full end-to-end LLM answer quality is proven | Not supported | Task33.5 is a small smoke only | Avoid; use only as sanity check |
+| Task29-C does not obviously degrade downstream generation quality | Weak smoke support | Task33.5 60-query generation smoke | Optional appendix / sanity check |
+| Result is tied to one exact encoder | Reduced risk | Task33.1a multi-qa MiniLM robustness | Robustness, not universal encoder claim |
 
 ## Main Result Table
 
@@ -62,16 +64,23 @@ Seed-level stability from Task29.3:
 Use the confidence intervals as engineering stability diagnostics. With only
 three seeds, do not frame them as strong statistical significance proof.
 
+Task33.6 extends the LoTTE 100k Task29-C setting from three to five seeds. The
+five-seed mean is Hit@10 `0.8708` versus dense `0.8674`, with final context
+token ratio `0.9507x`. The Hit delta CI overlaps zero, so this strengthens
+stability but does not justify a statistical-superiority claim at 100k.
+
 ## Mechanism Evidence
 
 | Mechanism | Supporting Tasks | Evidence | Interpretation |
 |---|---|---|---|
 | Multi-route retrieval surface | Task13.5, Task18, Task22/23 | Full multi-route exceeds dense across LoTTE 100k/200k/400k/638k | Dense/BM25/cluster fusion improves coverage when dense remains available |
-| Trust-weighted feedback | Task15 | Last true reward and selected-cluster hit improve under trust weighting | Simulated feedback can optimize the policy value field |
+| Trust-weighted feedback | Task15, Task25, Task33.2 | Last true reward and selected-cluster hit improve under trust weighting | Simulated feedback can optimize the policy value field |
 | Route-level credit assignment | Task25 | `cluster_only/value` raises selected-cluster hit from 0.6908 to 0.7223 on LoTTE 100k | LinUCB can improve the selected cluster route itself |
 | Static geometry baseline | Task24 | Static nearest has selected-cluster hit 0.9016 on 638k | Geometry is strong and must be treated as a baseline, not hidden inside LinUCB |
 | Final context compaction | Task29 | Task29-C lowers final context tokens at all LoTTE scales | The true token-saving mechanism is final context-budget control |
 | Geometry validation | Task30 | Nearest-cluster hit@3 stays around 0.87-0.90 across LoTTE scales | Manifold framing is diagnostically supported |
+| Embedding robustness | Task33.1a | Multi-qa MiniLM preserves the bounded claim on LoTTE 100k | Not tied to one exact MiniLM encoder |
+| Downstream generation smoke | Task33.5 | Dense and Task29-C have equal non-tie wins on 60 LoTTE queries | No obvious degradation; not full answer-quality proof |
 
 ## Geometry Evidence
 
@@ -142,7 +151,7 @@ Include:
 Avoid:
 
 - claiming real human feedback was used;
-- claiming end-to-end LLM answer quality;
+- claiming full end-to-end LLM answer-quality superiority;
 - claiming universal superiority over dense retrieval.
 
 ### Introduction
@@ -179,7 +188,8 @@ Suggested table order:
 3. Feedback self-evolution: none/equal/trust/oracle or route reward metrics.
 4. LoTTE source-candidate scale-up and ablations.
 5. Task29 final context-token frontier.
-6. Geometry diagnostics and failure cases.
+6. Robustness and sanity checks from Task33.
+7. Geometry diagnostics and failure cases.
 
 ### Discussion
 
@@ -189,8 +199,8 @@ Emphasize:
 - geometry helps route control but is not enough alone;
 - final token savings require explicit final context compaction;
 - online user feedback in production should be trust-weighted and guarded;
-- future work should test real human feedback, stronger dense encoders, and
-  end-to-end LLM answer generation.
+- future work should test real human feedback, stronger dense encoders, larger
+  generation studies, and end-to-end human evaluation.
 
 ## Reviewer Risk Checklist
 
@@ -202,8 +212,9 @@ Emphasize:
 | "Feedback is simulated" | State explicitly; treat as controlled policy-learning validation |
 | "Static geometry baseline is strong" | Include Task24; position LinUCB as adaptive controller, not sole source of one-shot gain |
 | "Manifold claim is vague" | Use Task14/30 diagnostics and bounded language |
-| "Only retrieval, no LLM generation" | Limit claims to evidence retrieval and final retrieved context tokens |
-| "Only three seeds" | Present CI as stability diagnostics |
+| "Only retrieval, no LLM generation" | Task33.5 adds a small LLM smoke; still limit main claim to retrieval/context tokens |
+| "Only one encoder" | Task33.1a adds a multi-qa MiniLM-family robustness check; still avoid universal encoder claims |
+| "Only three seeds" | Task33.6 adds five-seed LoTTE 100k stability; larger scales remain three-seed diagnostics |
 
 ## Final Paper Claim
 
@@ -233,3 +244,9 @@ Recommended Chinese wording:
 - Academic audit fixes: `paper/experiments/task24_audit_fixes_summary.md`
 - Credit assignment: `paper/experiments/task25_credit_assignment_summary.md`
 - LoTTE source-candidate scale-up: `paper/experiments/task23_lotte_scaleup_summary.md`
+- Multi-embedding robustness: `paper/experiments/task33_1a_multiqa_minilm_robustness_summary.md`
+- Feedback sensitivity: `paper/experiments/task33_2_feedback_sensitivity_summary.md`
+- Clean ablation table: `paper/experiments/task33_3_clean_ablation_table.md`
+- LLM generation smoke: `paper/experiments/task33_5_llm_generation_smoke_summary.md`
+- Additional seed stability: `paper/experiments/task33_6_additional_seeds_summary.md`
+- Pre-writing consistency audit: `paper/experiments/task33_7_pre_writing_consistency_audit.md`

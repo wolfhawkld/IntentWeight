@@ -76,9 +76,10 @@ formal runs at 100k/200k/400k/638k.
 Use Task29-A/B only as a Pareto frontier or ablation showing the expected
 trade-off between token saving and evidence coverage.
 
-Avoid claiming end-to-end LLM cost savings unless a later experiment measures
-full prompt and output tokens. The supported claim is final retrieved context
-token reduction.
+Avoid claiming full end-to-end LLM cost savings unless a later experiment
+measures full prompt and output tokens. Task33.5 adds a small prompt-context
+proxy and generation-quality smoke, but the main supported claim remains final
+retrieved context token reduction.
 
 ## Artifacts
 

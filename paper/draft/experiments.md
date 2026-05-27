@@ -243,3 +243,5 @@ Recommended ordering in the results section:
 - LLM generation smoke: `paper/experiments/task33_5_llm_generation_smoke_summary.md`
 - Additional seed stability:
   `paper/experiments/task33_6_additional_seeds_summary.md`
+- Pre-writing consistency audit:
+  `paper/experiments/task33_7_pre_writing_consistency_audit.md`

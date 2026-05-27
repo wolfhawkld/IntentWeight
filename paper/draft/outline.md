@@ -107,8 +107,9 @@ Suggested buckets:
 
 - Static baselines and multi-route scale-up.
 - Task29 final context-token frontier.
-- Seed stability from Task29.3.
-- Feedback self-evolution evidence from Task15/25.
+- Seed stability from Task29.3 and Task33.6.
+- Feedback self-evolution evidence from Task15/25/33.2.
+- Encoder robustness and LLM generation smoke from Task33.1a and Task33.5.
 - Geometry diagnostics from Task30.
 - Failure and limitation cases: eManual and CUAD.
 
@@ -124,9 +125,11 @@ Suggested buckets:
 ### 7. Limitations and Future Work
 
 - Simulated feedback, no real human feedback yet.
-- No end-to-end LLM generation evaluation yet.
-- Only one dense encoder in current main experiments.
-- Three seed stability diagnostics, not strong significance proof.
+- Only a small LLM generation smoke, not full human/end-to-end validation.
+- Main experiments use one dense encoder, with one MiniLM-family robustness
+  check.
+- Three seed stability diagnostics across all scales, plus five seeds on
+  LoTTE 100k; not strong significance proof.
 - Geometry diagnostics support an assumption, not a theorem.
 
 ## Figure Plan
@@ -151,7 +154,8 @@ Suggested buckets:
 4. Task29.3 seed CI table.
 5. Task30 geometry table.
 6. Feedback and credit-assignment ablation table.
-7. Limitation case table for eManual and CUAD.
+7. Robustness/sanity table for Task33.1a, Task33.5, and Task33.6.
+8. Limitation case table for eManual and CUAD.
 
 ## Claim Boundaries
 

@@ -3,9 +3,10 @@
 Updated: 2026-05-25
 
 This directory starts the paper-writing phase after Task31 consolidated the
-experimental evidence. The draft uses `paper/experiments/task31_paper_evidence_package.md`
-as the source of truth for claims, tables, limitations, and reviewer-risk
-boundaries.
+experimental evidence. The draft uses
+`paper/experiments/task31_paper_evidence_package.md` and the Task33.7
+pre-writing audit as the source of truth for claims, tables, limitations, and
+reviewer-risk boundaries.
 
 ## Draft Files
 
@@ -39,3 +40,11 @@ retrieval. The supported claim is narrower and stronger:
 - Historical cost correction: `paper/experiments/task28_1_context_token_backfill_summary.md`
 - Credit assignment: `paper/experiments/task25_credit_assignment_summary.md`
 - Scale-up summary: `paper/experiments/task23_lotte_scaleup_summary.md`
+- Pre-writing consistency audit:
+  `paper/experiments/task33_7_pre_writing_consistency_audit.md`
+- Multi-embedding robustness:
+  `paper/experiments/task33_1a_multiqa_minilm_robustness_summary.md`
+- LLM generation smoke:
+  `paper/experiments/task33_5_llm_generation_smoke_summary.md`
+- Five-seed 100k stability:
+  `paper/experiments/task33_6_additional_seeds_summary.md`

@@ -3,9 +3,9 @@
 Updated: 2026-05-25
 
 Task33 records the remaining validation and writing-prep work before the formal
-paper draft is expanded from the Task32 skeleton. These items are not evidence
-yet. They are the planned risk-reduction tasks that should be completed before
-the final paper-writing pass.
+paper draft is expanded from the Task32 skeleton. It began as a planned
+risk-reduction backlog; the sections below now include completion status and
+paper-facing results for the tasks that were executed.
 
 ## Why This Backlog Exists
 
@@ -33,10 +33,12 @@ Recommended order:
 4. Task33.4 Protocol defense write-up.
 5. Task33.5 Small end-to-end LLM generation smoke.
 6. Task33.6 Optional additional seeds.
+7. Task33.7 Pre-writing consistency audit.
 
 If time is limited, the minimum pre-writing completion set is Task33.1,
 Task33.2, Task33.3, and Task33.4. Task33.5 is a strong paper-quality add-on.
-Task33.6 is useful but optional.
+Task33.6 is useful but optional. Task33.7 is a final documentation audit after
+the validation tasks are complete.
 
 ## Task33.1 Multi-Embedding Robustness
 
@@ -317,8 +319,9 @@ DeepSeek thinking-mode result is recorded in
 
 ### Risk Addressed
 
-Current experiments stop at retrieval and retrieved context tokens. Reviewers
-may ask whether smaller context hurts actual answer generation.
+Before Task33.5, the experiments stopped at retrieval and retrieved context
+tokens. Reviewers may ask whether smaller context hurts actual answer
+generation.
 
 ### Planned Test
 
@@ -414,6 +417,34 @@ This strengthens the stability claim: Task29-C remains dense-level on quality
 while saving final retrieved context tokens. It does not justify a statistical
 significance claim that Task29-C beats dense on LoTTE 100k.
 
+## Task33.7 Pre-Writing Consistency Audit
+
+Status: complete. Detailed results are recorded in
+`paper/experiments/task33_7_pre_writing_consistency_audit.md`.
+
+### Risk Addressed
+
+After Task33.1-33.6, earlier handoff documents still contained some stale
+language around generation evaluation, encoder coverage, and seed count.
+Task33.7 checks that the paper-facing evidence chain uses a single claim
+boundary and consistent metric vocabulary.
+
+### Result
+
+Task33.7 confirms that the current evidence chain is internally consistent
+after updating the Task31 evidence package and draft limitations/outline:
+
+- main efficiency claims use final retrieved context tokens;
+- `Hit@K`, legacy `Recall@K`, and `evidence_recall@K` are separated;
+- Task33.1a is framed as same-resource-class encoder robustness, not a broad
+  embedding benchmark;
+- Task33.5 is framed as a small LLM generation smoke, not full answer-quality
+  validation;
+- Task33.6 is framed as stability evidence, not statistical superiority.
+
+Task33.7 should be used as the final claim-to-evidence map before formal paper
+writing.
+
 ## Summary of Pre-Writing Completion Criteria
 
 Before final paper writing, aim to have:
@@ -430,6 +461,8 @@ Before final paper writing, aim to have:
   add-on;
 - additional seeds for the main context policy. Task33.6 extends LoTTE 100k
   Task29-C from three to five seeds and supports the stability conclusion.
+- a pre-writing consistency audit. Task33.7 provides the final claim-to-evidence
+  map and metric guardrails for the writing phase.
 
 The final paper should keep the current bounded claim: IntentWeight is a
 feedback-driven adaptive retrieval controller and context-budget controller, not

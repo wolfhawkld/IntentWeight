@@ -1270,7 +1270,8 @@ Task32 不新增实验，也不修改结果文件。它把 Task31 证据包转�
 
 ### Task33 pre-writing validation backlog
 
-Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表这些实验已经完成。
+Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前该 section 已更新为
+完成状态和写作口径索引。
 计划文件为 `paper/experiments/task33_pre_writing_validation_backlog.md`。
 
 优先级如下：
@@ -1322,8 +1323,13 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
    `Hit@10=0.8674`，final context token ratio `0.9507x`，约节省 `4.93%`
    final retrieved context tokens。Hit delta 的 95% CI 跨过 0，因此该项只用于
    稳定性补强，不用于声称统计显著优于 dense。
+7. pre-writing consistency audit：Task33.7 已完成，详见
+   `paper/experiments/task33_7_pre_writing_consistency_audit.md`。该项不新增
+   实验，而是统一正式写作前的 claim boundary、metric vocabulary、
+   claim-to-evidence map 和 reviewer-risk guardrails。
 
-最低完成集 1-4 已完成；第 5 项强加分项和第 6 项稳定性补强项也已完成。
+最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项和第 7 项写作前
+一致性审计也已完成。
 
 ---
 

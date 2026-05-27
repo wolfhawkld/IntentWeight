@@ -184,6 +184,9 @@ yet, but it does prove the mechanism is viable:
 - Task29.3 shows that this result is not driven by a single lucky seed; token
   saving remains positive across all reported scales, although the CI bands
   should be interpreted cautiously because each scale has only three seeds.
+- Task33.6 later extends the LoTTE 100k Task29-C setting to five seeds; the
+  conclusion remains stable, but the 100k Hit@10 delta should still not be
+  framed as statistically significant.
 
 This is the correct direction for the paper's efficiency claim: IntentWeight
 should be described as a feedback-improved retrieval controller that can trade
