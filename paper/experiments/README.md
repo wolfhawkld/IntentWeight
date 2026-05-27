@@ -1316,9 +1316,14 @@ Task33 记录正式扩写论文前仍建议补齐的风险缓解项，不代表�
    faithfulness 基本持平，Task29-C sampled prompt context token proxy 为
    `0.9321x` dense。该结果支持“没有明显生成质量退化”的 sanity-check 结论，
    但不替代 retrieval/token 主实验。
-6. optional additional seeds：如算力允许，为关键 Task29-C 配置补到 5 seeds。
+6. optional additional seeds：Task33.6 已完成，详见
+   `paper/experiments/task33_6_additional_seeds_summary.md`。LoTTE 100k
+   Task29-C 从 3 seeds 扩展到 5 seeds 后，mean `Hit@10=0.8708`，dense
+   `Hit@10=0.8674`，final context token ratio `0.9507x`，约节省 `4.93%`
+   final retrieved context tokens。Hit delta 的 95% CI 跨过 0，因此该项只用于
+   稳定性补强，不用于声称统计显著优于 dense。
 
-最低完成集建议为 1-4；第 5 项是强加分项，第 6 项为稳定性补强项。
+最低完成集 1-4 已完成；第 5 项强加分项和第 6 项稳定性补强项也已完成。
 
 ---
 

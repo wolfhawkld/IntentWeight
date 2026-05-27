@@ -370,6 +370,9 @@ human-quality evaluation.
 
 ## Task33.6 Optional Additional Seeds
 
+Status: complete. Detailed results are recorded in
+`paper/experiments/task33_6_additional_seeds_summary.md`.
+
 ### Risk Addressed
 
 Task29.3 currently uses three seeds. That is useful but limited.
@@ -386,6 +389,31 @@ If compute allows, add two more seeds for the most important configuration:
 Use this only to strengthen stability diagnostics. It is not required for the
 main claim if Task33.1 and Task33.2 are completed.
 
+### Result
+
+Task33.6 added LoTTE 100k Task29-C seeds `23` and `29`, extending the key
+configuration from three seeds to five seeds.
+
+Combined five-seed result:
+
+- Hit@10: `0.8708`;
+- dense Hit@10: `0.8674`;
+- Hit delta vs dense: `+0.34` percentage points;
+- avg final context tokens@10: `1399.83`;
+- dense avg final context tokens@10: `1472.39`;
+- final context token ratio: `0.9507x`;
+- final context token saving: `4.93%`.
+
+Five-seed intervals should be interpreted as engineering stability diagnostics:
+
+- Hit@10 95% CI: `[0.8592, 0.8824]`;
+- token ratio 95% CI: `[0.9406x, 0.9608x]`;
+- Hit delta vs dense 95% CI: `[-0.82, +1.50]` percentage points.
+
+This strengthens the stability claim: Task29-C remains dense-level on quality
+while saving final retrieved context tokens. It does not justify a statistical
+significance claim that Task29-C beats dense on LoTTE 100k.
+
 ## Summary of Pre-Writing Completion Criteria
 
 Before final paper writing, aim to have:
@@ -398,8 +426,10 @@ Before final paper writing, aim to have:
 - a clean ablation table with contribution attribution;
 - a protocol defense subsection in the draft. Task33.4 satisfies this
   requirement;
-- optionally, a small LLM generation smoke;
-- optionally, additional seeds for the main context policy.
+- a small LLM generation smoke. Task33.5 satisfies this optional paper-quality
+  add-on;
+- additional seeds for the main context policy. Task33.6 extends LoTTE 100k
+  Task29-C from three to five seeds and supports the stability conclusion.
 
 The final paper should keep the current bounded claim: IntentWeight is a
 feedback-driven adaptive retrieval controller and context-budget controller, not

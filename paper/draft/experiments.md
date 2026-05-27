@@ -132,6 +132,13 @@ not strong statistical significance proof.
 | 400k | 0.7819 | [0.7709, 0.7929] | 5.32% | [0.11%, 10.53%] |
 | 638k | 0.7466 | [0.7246, 0.7687] | 4.86% | [4.24%, 5.48%] |
 
+Task33.6 further extends the LoTTE 100k Task29-C setting from three to five
+seeds. The five-seed mean is Hit@10 `0.8708` versus dense `0.8674`, with final
+context token ratio `0.9507x`. The five-seed Hit delta confidence interval
+overlaps zero (`[-0.82, +1.50]` percentage points), so this should be used only
+as stability evidence: token saving remains directionally stable while quality
+stays dense-level.
+
 ## Geometry Diagnostics
 
 Task30 validates whether LoTTE retains usable local geometry as scale grows.
@@ -234,3 +241,5 @@ Recommended ordering in the results section:
 - LoTTE scale-up: `paper/experiments/task23_lotte_scaleup_summary.md`
 - Protocol defense: `paper/experiments/task33_4_protocol_defense.md`
 - LLM generation smoke: `paper/experiments/task33_5_llm_generation_smoke_summary.md`
+- Additional seed stability:
+  `paper/experiments/task33_6_additional_seeds_summary.md`
