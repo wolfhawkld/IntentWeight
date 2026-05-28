@@ -5,20 +5,20 @@
 Task29-C is the main token-efficiency result because it directly measures final
 retrieved context tokens. It is selected as the conservative end of the
 Task29-A/B/C token-quality frontier. Task29-A and Task29-B show that more
-aggressive context reduction is possible at a visible Hit@10 cost, while
-Task29-C prioritizes quality preservation over maximum token saving.
+aggressive context reduction is possible at a visible $\mathrm{Hit@10}$ cost,
+while Task29-C prioritizes quality preservation over maximum token saving.
 
-| Scale | Corpus | Dense Hit@10 | Task29-C Hit@10 | Hit delta | Dense tokens@10 | Task29-C tokens@10 | Token saving |
+| Scale | Corpus | Dense $\mathrm{Hit@10}$ | Task29-C $\mathrm{Hit@10}$ | Hit delta | Dense $\mathrm{Tokens@10}$ | Task29-C $\mathrm{Tokens@10}$ | Token saving |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | LoTTE 100k | 101311 | 0.8674 | 0.8652 | -0.22 pp | 1472.39 | 1401.24 | 4.83% |
 | LoTTE 200k | 201010 | 0.7970 | 0.8249 | +2.80 pp | 1444.12 | 1376.46 | 4.69% |
 | LoTTE 400k | 400674 | 0.7718 | 0.7819 | +1.01 pp | 1482.30 | 1403.43 | 5.32% |
 | LoTTE 638k | 638509 | 0.7282 | 0.7466 | +1.85 pp | 1525.62 | 1451.49 | 4.86% |
 
-The 100k result is near dense, with a small Hit@10 drop. At 200k, 400k, and
-638k, Task29-C has mean Hit@10 above dense while using fewer final context
-tokens. The result should be framed as conservative final context compaction,
-not as aggressive dense replacement.
+The 100k result is near dense, with a small $\mathrm{Hit@10}$ drop. At 200k,
+400k, and 638k, Task29-C has mean $\mathrm{Hit@10}$ above dense while using
+fewer final context tokens. The result should be framed as conservative final
+context compaction, not as aggressive dense replacement.
 
 ## 5.2 Seed Stability
 
@@ -26,7 +26,7 @@ Task29.3 reports three-seed stability diagnostics for Task29-C. With only three
 seeds, these intervals should be presented as engineering stability diagnostics,
 not as strong statistical significance proof.
 
-| Scale | Task29-C Hit@10 mean | Hit@10 95% CI | Token saving mean | Token saving 95% CI |
+| Scale | Task29-C $\mathrm{Hit@10}$ mean | $\mathrm{Hit@10}$ 95% CI | Token saving mean | Token saving 95% CI |
 |---|---:|---:|---:|---:|
 | 100k | 0.8652 | [0.8565, 0.8739] | 4.83% | [2.89%, 6.77%] |
 | 200k | 0.8249 | [0.8052, 0.8446] | 4.69% | [3.89%, 5.48%] |
@@ -35,15 +35,15 @@ not as strong statistical significance proof.
 
 The 400k token-saving interval is wider than the other scales. We interpret
 this as seed-level variance in route confidence and context-budget control, not
-as a contradiction of the overall direction. CI-level confirmation of Hit@10
-improvement is strongest at 200k. The 400k and 638k rows should be reported as
-mean above-dense results with limited seed counts.
+as a contradiction of the overall direction. CI-level confirmation of
+$\mathrm{Hit@10}$ improvement is strongest at 200k. The 400k and 638k rows
+should be reported as mean above-dense results with limited seed counts.
 
 Task33.6 extends the LoTTE 100k Task29-C setting from three to five seeds. The
-five-seed mean is Hit@10 `0.8708` versus dense `0.8674`, with final context
-token ratio `0.9507x`. The Hit delta confidence interval overlaps zero, so this
-strengthens stability but does not justify a statistical-superiority claim at
-100k.
+five-seed mean is $\mathrm{Hit@10}=0.8708$ versus dense $0.8674$, with final
+context token ratio $0.9507\times$. The Hit delta confidence interval overlaps
+zero, so this strengthens stability but does not justify a
+statistical-superiority claim at 100k.
 
 ## 5.3 Component Ablation
 
@@ -51,7 +51,7 @@ Task33.3 converts the LoTTE 100k evidence into a paper-facing ablation table.
 The table clarifies which components provide the quality floor, routing signal,
 feedback adaptation, and final token saving.
 
-| Component | Role | Hit@10 | Evidence recall@10 | Tokens@10 | Token ratio | Dense rate | LinUCB rate | Cluster hit | Last reward |
+| Component | Role | $\mathrm{Hit@10}$ | $\mathrm{EvidenceRecall@10}$ | $\mathrm{Tokens@10}$ | Token ratio | Dense rate | LinUCB rate | Cluster hit | Last reward |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Dense-only | Quality floor | 0.8674 | 0.7026 | 1472.39 | 1.0000 | - | - | - | - |
 | BM25-only | Lexical baseline | 0.7232 | 0.5240 | 1745.12 | 1.1852 | - | - | - | - |
@@ -65,24 +65,25 @@ feedback adaptation, and final token saving.
 
 Dense-only remains the quality floor. BM25-only is weaker as a standalone
 retriever, and static dense+BM25 hybrid is near dense but uses more final
-context tokens. No-feedback gated routing has high Hit@10 because it falls back
-to full dense/multi-route retrieval; it does not learn efficient route control.
+context tokens. No-feedback gated routing has high $\mathrm{Hit@10}$ because it
+falls back to full dense/multi-route retrieval; it does not learn efficient
+route control.
 Trust-weighted feedback improves policy internals relative to equal noisy
 feedback, especially selected-cluster hit and last true reward. The oracle row
 shows the upper bound under clean feedback.
 
 ## 5.4 Feedback Self-Evolution
 
-The feedback experiments show that final Hit@10 can be saturated by dense and
-BM25 rescue routes, making feedback gains less visible in the fused final
-ranking. The strongest evidence for LinUCB self-evolution is therefore in route
-policy metrics rather than only final Hit@10.
+The feedback experiments show that final $\mathrm{Hit@10}$ can be saturated by
+dense and BM25 rescue routes, making feedback gains less visible in the fused
+final ranking. The strongest evidence for LinUCB self-evolution is therefore in
+route-policy metrics rather than only final $\mathrm{Hit@10}$.
 
 Under default noisy feedback, trust weighting improves selected-cluster hit from
-`0.5979` to `0.7223` and last true reward from `0.7517` to `0.8328` relative to
+$0.5979$ to $0.7223$ and last true reward from $0.7517$ to $0.8328$ relative to
 equal noisy feedback. Under mild trust-weighted noise, selected-cluster hit
-reaches `0.7908`, last true reward reaches `0.8820`, dense rate falls to
-`0.5826`, and final context token ratio falls to `0.9255x`.
+reaches $0.7908$, last true reward reaches $0.8820$, dense rate falls to
+$0.5826$, and final context token ratio falls to $0.9255\times$.
 
 This supports the feedback self-evolution claim in a bounded form: controlled
 trust-weighted simulated feedback improves the route-policy value field. It
@@ -92,18 +93,18 @@ does not prove that real human feedback has already been solved.
 
 Task30 validates whether LoTTE retains usable local geometry as scale grows.
 
-| Scale | PCA dim90 sample | PCA var@64 sample | Nearest cluster hit@3 | Context retention@10 | Task29 Hit delta |
+| Scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Task29 Hit delta |
 |---|---:|---:|---:|---:|---:|
 | 100k | 182 | 0.6437 | 0.8870 | 0.9033 | -0.22 pp |
 | 200k | 186 | 0.6292 | 0.8697 | 0.8947 | +2.80 pp |
 | 400k | 190 | 0.6110 | 0.9016 | 0.8826 | +1.01 pp |
 | 638k | 196 | 0.5867 | 0.9016 | 0.8571 | +1.85 pp |
 
-Nearest-cluster hit@3 remains high, around 0.87-0.90, suggesting local geometry
-is useful for routing. PCA dim90 increases and PCA var@64 decreases with scale,
-suggesting the representation geometry becomes more complex. Context retention
-declines with scale, showing that geometry alone should not replace dense
-retrieval.
+$\mathrm{NearestClusterHit@3}$ remains high, around 0.87-0.90, suggesting
+local geometry is useful for routing. $\mathrm{PCAdim90}$ increases and
+$\mathrm{PCAvar@64}$ decreases with scale, suggesting the representation
+geometry becomes more complex. Context retention declines with scale, showing
+that geometry alone should not replace dense retrieval.
 
 These diagnostics support the piecewise relevance-manifold framing as a useful
 motivation and diagnostic, not as a theorem.
@@ -113,8 +114,8 @@ motivation and diagnostic, not as a theorem.
 Task33.1a tests whether the result depends on the exact `all-MiniLM-L6-v2`
 encoder. With `sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, a QA-tuned
 MiniLM-family encoder, the dense baseline becomes stronger on LoTTE 100k:
-Hit@10 increases to `0.8809`. IntentWeight Task29-C still reaches mean Hit@10
-`0.8853` and reduces final context tokens by `3.35%`.
+$\mathrm{Hit@10}$ increases to $0.8809$. IntentWeight Task29-C still reaches
+mean $\mathrm{Hit@10}=0.8853$ and reduces final context tokens by $3.35\%$.
 
 This reduces the single-encoder risk but does not eliminate it. The result
 shows same-resource-class robustness within a MiniLM family; it does not prove

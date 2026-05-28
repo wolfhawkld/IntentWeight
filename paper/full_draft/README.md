@@ -38,10 +38,11 @@ The paper should keep the bounded claim:
 > controller for manifold-structured vertical-domain data, instantiated in a
 > retrieval-augmented question-answering setting. It reduces final retrieved
 > context tokens by about 4.7-5.3% on LoTTE technology/search 100k-638k while
-> preserving dense-level Hit@10. Mean Hit@10 is above dense on 200k, 400k, and
-> 638k, but the paper should not claim universal or statistically significant
-> dominance, nor should it imply that the current experiments cover every
-> possible knowledge-carrier format beyond the tested retrieval setting.
+> preserving dense-level $\mathrm{Hit@10}$. Mean $\mathrm{Hit@10}$ is above
+> dense on 200k, 400k, and 638k, but the paper should not claim universal or
+> statistically significant dominance, nor should it imply that the current
+> experiments cover every possible knowledge-carrier format beyond the tested
+> retrieval setting.
 > Broader agent-memory, graph, tree, or tool-context applications should be
 > framed as motivation and future work unless separately evaluated.
 
@@ -56,3 +57,9 @@ pass should:
 - convert markdown tables into LaTeX once the venue template is chosen;
 - add figures for the system diagram, token-quality frontier, and geometry
   diagnostics.
+
+## Math Style
+
+Formula notation in this draft should use Markdown-compatible LaTeX syntax:
+inline math with `$...$` and display math with `$$...$$`. This keeps equations
+readable in Markdown while preserving a direct migration path to LaTeX.

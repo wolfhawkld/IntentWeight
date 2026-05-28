@@ -22,24 +22,25 @@ satisfaction.
 Dense-only retrieval remains a strong baseline. IntentWeight should not be
 claimed as a universal replacement for dense retrieval. The evidence supports a
 controller that can reduce final context tokens while preserving dense-level
-Hit@10 in the main LoTTE setting, and that can expose a quality-cost frontier
-across routes.
+$\mathrm{Hit@10}$ in the main LoTTE setting, and that can expose a quality-cost
+frontier across routes.
 
 ## 7.4 Evidence Completeness Trade-Off
 
-The main retrieval headline is query-level Hit@10. Final context compaction can
-preserve whether at least one relevant chunk is retrieved while reducing the
-fraction of all ground-truth chunks retrieved. For tasks that require complete
-evidence collection, such as legal review, medical evidence synthesis, or
-exhaustive compliance analysis, a more conservative context policy or no
-compaction may be preferable.
+The main retrieval headline is query-level $\mathrm{Hit@10}$. Final context
+compaction can preserve whether at least one relevant chunk is retrieved while
+reducing the fraction of all ground-truth chunks retrieved. For tasks that
+require complete evidence collection, such as legal review, medical evidence
+synthesis, or exhaustive compliance analysis, a more conservative context
+policy or no compaction may be preferable.
 
 ## 7.5 Geometry Is Diagnostic, Not a Proof
 
 The piecewise relevance-manifold framing is supported by diagnostics such as
-nearest-cluster hit@3, PCA spectrum, and context retention. These diagnostics do
-not prove a mathematical manifold theorem. They show that local geometry is
-informative for routing on LoTTE, while dense retrieval remains necessary.
+$\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These
+diagnostics do not prove a mathematical manifold theorem. They show that local
+geometry is informative for routing on LoTTE, while dense retrieval remains
+necessary.
 
 ## 7.6 KMeans Is an Experimental Arm Design
 

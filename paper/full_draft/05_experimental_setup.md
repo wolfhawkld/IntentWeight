@@ -38,16 +38,57 @@ the proposed method.
 
 Retrieval quality is measured with:
 
-- `Hit@K`: whether any ground-truth chunk appears in the top K.
-- `evidence_recall@K`: fraction of all ground-truth chunks retrieved.
-- `MRR@K`: reciprocal rank of the first relevant chunk.
-- `nDCG@K`: binary relevance ranking quality.
+- $\mathrm{Hit@K}$: whether any ground-truth chunk appears in the top $K$.
+- $\mathrm{EvidenceRecall@K}$: fraction of all ground-truth chunks retrieved.
+- $\mathrm{MRR@K}$: reciprocal rank of the first relevant chunk.
+- $\mathrm{nDCG@K}$: binary relevance ranking quality.
 
-The main headline uses query-level `Hit@10`. This choice reflects the target
-use case: retrieving at least one usable evidence chunk for RAG generation under
-a smaller context budget. It does not imply complete evidence collection.
-`evidence_recall@10` is reported separately where multi-evidence coverage is
-important.
+For query $q_t$, let $G_t$ be the set of ground-truth chunks and let $R_t^K$
+be the top-$K$ retrieved chunks. The query-level hit metric is:
+
+$$
+\mathrm{Hit@K}(q_t) =
+\mathbb{1}\left[ R_t^K \cap G_t \neq \varnothing \right].
+$$
+
+The evidence-recall metric is:
+
+$$
+\mathrm{EvidenceRecall@K}(q_t) =
+\frac{\left| R_t^K \cap G_t \right|}{\left|G_t\right|}.
+$$
+
+For mean reciprocal rank, let $\rho_t$ be the rank of the first relevant chunk
+within the top-$K$ list, or $\infty$ if no relevant chunk is retrieved:
+
+$$
+\mathrm{MRR@K}(q_t) =
+\begin{cases}
+\frac{1}{\rho_t}, & \rho_t \le K, \\
+0, & \rho_t = \infty.
+\end{cases}
+$$
+
+For binary relevance, let $\mathrm{rel}_{t,j} \in \{0,1\}$ denote whether the
+chunk at rank $j$ for query $q_t$ is relevant. We compute:
+
+$$
+\mathrm{DCG@K}(q_t) =
+\sum_{j=1}^{K} \frac{\mathrm{rel}_{t,j}}{\log_2(j+1)},
+$$
+
+$$
+\mathrm{nDCG@K}(q_t) =
+\frac{\mathrm{DCG@K}(q_t)}{\mathrm{IDCG@K}(q_t)}.
+$$
+
+If $\mathrm{IDCG@K}(q_t)=0$, we set $\mathrm{nDCG@K}(q_t)=0$.
+
+The main headline uses query-level $\mathrm{Hit@10}$. This choice reflects the
+target use case: retrieving at least one usable evidence chunk for RAG
+generation under a smaller context budget. It does not imply complete evidence
+collection. $\mathrm{EvidenceRecall@10}$ is reported separately where
+multi-evidence coverage is important.
 
 Cost and efficiency are separated into three layers:
 
@@ -57,6 +98,15 @@ Cost and efficiency are separated into three layers:
 
 The main cost result uses final context tokens. Source candidate cost and dense
 invocation rate are retrieval-stage diagnostics.
+
+Let $C_t$ be the final retrieved context selected for query $q_t$ and let
+$\mathrm{tok}(d)$ be the token count of chunk $d$. The final context token cost
+is:
+
+$$
+\mathrm{Tokens}(C_t) =
+\sum_{d \in C_t} \mathrm{tok}(d).
+$$
 
 ## 4.4 Prequential Simulated Feedback
 

@@ -2,11 +2,11 @@
 
 ## 3.1 Problem Formulation
 
-Let a RAG corpus be a set of chunks `D = {d_i}` and a query stream be
-`Q = {q_t}`. For each query, a retrieval system returns an ordered context
-`C_t = [d_1, ..., d_k]` that will be passed to a downstream generator. The
-objective is to preserve retrieval quality while controlling both retrieval cost
-and final context cost.
+Let a RAG corpus be a set of chunks $D = \{d_i\}_{i=1}^{N}$ and a query
+stream $Q = \{q_t\}_{t=1}^{T}$. For each query $q_t$, a retrieval system
+returns an ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be
+passed to a downstream generator. The objective is to preserve retrieval
+quality while controlling both retrieval cost and final context cost.
 
 IntentWeight treats retrieval as a route-control problem. For each query, the
 system chooses how much to rely on global dense retrieval, lexical BM25 recall,
@@ -68,17 +68,21 @@ rescue cases where the cluster route misses relevant evidence.
 
 ## 3.5 LinUCB Route Policy
 
-For each query `q_t`, IntentWeight computes a context feature vector `x_t`.
-Features include query embedding projections, route confidence signals, and
-local geometry signals. For each arm `a`, LinUCB maintains a linear value model:
+For each query $q_t$, IntentWeight computes a context feature vector
+$x_t \in \mathbb{R}^{p}$. Features include query embedding projections, route
+confidence signals, and local geometry signals. For each arm
+$a \in \mathcal{A}$, LinUCB maintains a linear value model:
 
-```text
-theta_a = A_a^{-1} b_a
-score(q_t, a) = theta_a^T x_t + alpha * sqrt(x_t^T A_a^{-1} x_t)
-```
+$$
+\begin{aligned}
+\hat{\theta}_a &= A_a^{-1} b_a, \\
+s_t(a) &= \hat{\theta}_a^\top x_t
+        + \alpha \sqrt{x_t^\top A_a^{-1} x_t}.
+\end{aligned}
+$$
 
 The first term estimates the arm value under the current query context. The
-second term is an exploration bonus. The parameter `alpha` controls the
+second term is an exploration bonus. The parameter $\alpha$ controls the
 exploration-exploitation balance: larger values encourage the policy to explore
 arms whose value estimate is uncertain.
 
@@ -95,12 +99,18 @@ feedback memory. Lower-trust feedback has a weaker effect.
 
 Conceptually:
 
-```text
-reward_t = quality_signal_t - cost_penalty_t
-weighted_reward_t = trust_t * reward_t
-A_a <- A_a + trust_t * x_t x_t^T
-b_a <- b_a + weighted_reward_t * x_t
-```
+$$
+\begin{aligned}
+r_t &= g_t - \lambda c_t, \\
+\tilde{r}_t &= \tau_t r_t, \\
+A_a &\leftarrow A_a + \tau_t x_t x_t^\top, \\
+b_a &\leftarrow b_a + \tilde{r}_t x_t.
+\end{aligned}
+$$
+
+Here, $g_t$ is the retrieval-quality signal, $c_t$ is the cost penalty,
+$\lambda$ controls the quality-cost trade-off, $\tau_t$ is the feedback trust
+weight, and $\tilde{r}_t$ is the weighted reward applied to the selected arm.
 
 The current experiments do not claim that real human feedback was collected.
 They show that under controlled simulated feedback, the route policy can
@@ -123,13 +133,13 @@ assignment tests whether the adaptive component itself is improving.
 
 ## 3.8 Prequential Adaptation Protocol
 
-The evaluation uses a no-leakage prequential protocol. For each query `q_t`,
+The evaluation uses a no-leakage prequential protocol. For each query $q_t$,
 the current policy state is frozen before retrieval. The system ranks
 candidates, constructs the final context, and is evaluated against ground-truth
 evidence. Only after this evaluation is the ground-truth label converted into
 simulated feedback and used to update the LinUCB state for later queries.
 
-This means feedback for `q_t` cannot improve the ranking of `q_t` itself.
+This means feedback for $q_t$ cannot improve the ranking of $q_t$ itself.
 Earlier feedback can influence later queries, but future query feedback is not
 available to the current policy. The protocol should therefore be described as
 simulated test-time adaptation, not as offline IID held-out generalization.
@@ -152,8 +162,8 @@ The conservative `confidence_topk` policy works as follows:
 1. If route confidence is low or semantic drift is high, keep dense fallback and
    the normal top-10 context.
 2. If LinUCB confidence is high, reduce final context size from the default
-   top-10 to `k=8`.
-3. If confidence is mid-level, keep `k=10` as a safety tier rather than calling
+   top-10 to $k=8$.
+3. If confidence is mid-level, keep $k=10$ as a safety tier rather than calling
    it true compression.
 4. Report the actual retrieved context token count, not only candidate counts.
 
@@ -165,25 +175,21 @@ computation unless the global dense route is actually skipped.
 
 The main result uses the conservative Task29-C policy. It reduces final context
 tokens by about 4.7-5.3% across LoTTE 100k, 200k, 400k, and 638k while
-preserving dense-level Hit@10, with mean above-dense Hit@10 on 200k, 400k, and
-638k.
+preserving dense-level $\mathrm{Hit@10}$, with mean above-dense
+$\mathrm{Hit@10}$ on 200k, 400k, and 638k.
 
 ## 3.10 Algorithm Sketch
 
-```text
-Input: query q_t, corpus D, route artifacts, LinUCB state
+Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 
-1. Embed q_t and compute context features x_t.
-2. Score cluster arms with LinUCB.
-3. Retrieve candidates from:
-   a. global dense route,
-   b. global BM25 route,
-   c. dense search within selected cluster arms.
+1. Embed $q_t$ and compute context features $x_t$.
+2. Score cluster arms with LinUCB using $s_t(a)$.
+3. Retrieve candidates from the global dense route, the global BM25 route, and
+   dense search within selected cluster arms.
 4. Fuse route rankings.
 5. Apply confidence-based final context policy.
-6. Evaluate retrieval quality for q_t.
+6. Evaluate retrieval quality for $q_t$.
 7. Only after evaluation, convert the ground-truth label into simulated
    feedback and update LinUCB for later queries.
 
-Output: final retrieved context C_t and updated policy state.
-```
+Output: final retrieved context $C_t$ and updated policy state.
