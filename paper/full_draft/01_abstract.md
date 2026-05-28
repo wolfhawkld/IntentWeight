@@ -12,12 +12,14 @@ route preferences from simulated feedback. A confidence-based final context
 policy then compacts the selected evidence sent to the generator while
 preserving dense fallback under low confidence. We instantiate this framework in
 a retrieval-augmented question-answering setting on LoTTE technology/search,
-evaluated from 100k to 638k corpus chunks. The conservative policy reduces final
-retrieved context tokens by approximately 4.7-5.3% while preserving near-dense
-Hit@10 at 100k and achieving mean above-dense Hit@10 at 200k, 400k, and 638k.
-Geometry diagnostics and ablations show that local cluster structure provides
-useful routing signal, while dense retrieval remains an important recall floor.
-A 60-query downstream generation smoke test shows no obvious answer-quality
-degradation from the compressed context. These results position IntentWeight
-not as a universal replacement for dense retrieval, but as an adaptive
-quality-cost controller for evidence selection over structured domain data.
+evaluated from 100k to 638k corpus chunks; our empirical claims are limited to
+this retrieval-augmented QA setting rather than all possible knowledge-carrier
+formats. The conservative policy reduces final retrieved context tokens by
+approximately 4.7-5.3% while preserving near-dense Hit@10 at 100k and achieving
+mean above-dense Hit@10 at 200k, 400k, and 638k. Geometry diagnostics and
+ablations show that local cluster structure provides useful routing signal,
+while dense retrieval remains an important recall floor. A 60-query downstream
+generation smoke test shows no obvious answer-quality degradation from the
+compressed context. These results position IntentWeight not as a universal
+replacement for dense retrieval, but as an adaptive quality-cost controller for
+evidence selection over structured domain data.

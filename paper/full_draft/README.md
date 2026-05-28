@@ -42,6 +42,8 @@ The paper should keep the bounded claim:
 > 638k, but the paper should not claim universal or statistically significant
 > dominance, nor should it imply that the current experiments cover every
 > possible knowledge-carrier format beyond the tested retrieval setting.
+> Broader agent-memory, graph, tree, or tool-context applications should be
+> framed as motivation and future work unless separately evaluated.
 
 ## Next Editing Pass
 
