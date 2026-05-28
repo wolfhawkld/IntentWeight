@@ -1145,10 +1145,10 @@ Task29.1 LoTTE 200k scale-up 使用同一套 Task29-C 策略：
 - Task29-C mean：`Hit@10=0.8249`，
   `avg_context_tokens@10=1376.46`，为 dense 的 `0.9531x`。
 
-200k 结果更强：final context tokens 下降约 `4.7%`，同时 `Hit@10` 高于
-dense-only 约 `2.8` 个百分点。这支持一个更具体的论文判断：当 corpus 规模
-增大、pure dense top-10 优势下降时，feedback-guided LinUCB route control
-更可能同时带来 near-/above-dense quality 与真实 final-context-token 节省。
+200k 结果更强：final context tokens 下降约 `4.7%`，同时 mean `Hit@10`
+高于 dense-only 约 `2.8` 个百分点。这支持一个更具体的论文判断：当 corpus
+规模增大、pure dense top-10 优势下降时，feedback-guided LinUCB route
+control 更可能同时带来 dense-level quality 与真实 final-context-token 节省。
 
 Task29.1 LoTTE 400k scale-up 继续使用同一套 Task29-C 策略，并复用 canonical
 scale-store corpus embeddings：
@@ -1158,10 +1158,10 @@ scale-store corpus embeddings：
 - Task29-C mean：`Hit@10=0.7819`，
   `avg_context_tokens@10=1403.43`，为 dense 的 `0.9468x`。
 
-400k 结果继续支持该方向：final context tokens 下降约 `5.3%`，同时 `Hit@10`
-高于 dense-only 约 `1.0` 个百分点。100k/200k/400k 三组共同说明：
+400k 结果继续支持该方向：final context tokens 下降约 `5.3%`，同时 mean
+`Hit@10` 高于 dense-only 约 `1.0` 个百分点。100k/200k/400k 三组共同说明：
 保守的 confidence-based final context compaction 可以稳定降低最终 context
-token，且在更大 corpus 上有机会同时超过 dense 的召回质量。
+token，且在更大 corpus 上有机会保持 dense-level 召回质量。
 
 Task29.1 LoTTE 638k full-corpus scale-up 使用同一套 Task29-C 策略，并复用
 canonical scale store 与 shared retrieval artifacts：
@@ -1172,9 +1172,9 @@ canonical scale store 与 shared retrieval artifacts：
   `avg_context_tokens@10=1451.49`，为 dense 的 `0.9514x`。
 
 638k 结果完成了 LoTTE 全量规模链路：final context tokens 下降约 `4.9%`，
-同时 `Hit@10` 高于 dense-only 约 `1.85` 个百分点。100k/200k/400k/638k
+同时 mean `Hit@10` 高于 dense-only 约 `1.85` 个百分点。100k/200k/400k/638k
 共同说明：保守的 confidence-based final context compaction 可以稳定降低最终
-context token，并且在更大 corpus 上保持 above-dense quality。
+context token，并且在更大 corpus 上保持 dense-level quality。
 
 Task29.2 将上述结果整理为 token-quality frontier：
 
@@ -1327,9 +1327,14 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
    `paper/experiments/task33_7_pre_writing_consistency_audit.md`。该项不新增
    实验，而是统一正式写作前的 claim boundary、metric vocabulary、
    claim-to-evidence map 和 reviewer-risk guardrails。
+8. review defense revision：Task34 已完成，详见
+   `paper/experiments/task34_review_defense_revision_plan.md`。该项吸收 Opus
+   review 中最关键的写作防御点：400k CI 方差、Task29-C conservative
+   rationale、mean-above-dense 措辞、effective compaction rate、multi-epoch
+   disclosure，以及 evidence_recall trade-off。
 
-最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项和第 7 项写作前
-一致性审计也已完成。
+最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
+一致性审计和第 8 项 review 防御修订也已完成。
 
 ---
 

@@ -11,7 +11,7 @@ The experiments test four claims:
 2. Trust-weighted feedback can improve LinUCB route-policy quality.
 3. Geometry provides useful routing signal, but cannot replace dense retrieval.
 4. Confidence-based final context compaction can reduce retrieved context tokens
-   while preserving near- or above-dense Hit@10.
+   while preserving dense-level Hit@10.
 
 ## Dataset Roles
 
@@ -80,6 +80,12 @@ and then evaluating on the same examples. The correct interpretation is that a
 retrieval controller is deployed over a query stream and adapts after each
 interaction.
 
+Some LinUCB experiments use multiple prequential epochs over the same query
+stream to simulate repeated interactions. This setting should be disclosed
+explicitly: it is useful for measuring route-policy self-evolution, but it is
+not an IID held-out generalization protocol. In each epoch, the query is still
+ranked before that query's feedback is applied.
+
 ### Feedback Source and Limitations
 
 The feedback signal is controlled and ground-truth-derived. Oracle feedback is
@@ -102,7 +108,10 @@ The protocol can be summarized as:
 ## Main Result: LoTTE Token-Quality Frontier
 
 Task29-C is the paper's main token-efficiency result because it directly
-measures final retrieved context tokens.
+measures final retrieved context tokens. It is selected as the conservative end
+of the Task29-A/B/C token-quality frontier: Task29-A and Task29-B show that more
+aggressive context reduction is possible at a visible Hit@10 cost, while
+Task29-C prioritizes quality preservation over maximum token saving.
 
 | Scale | Corpus | Dense Hit@10 | Task29-C Hit@10 | Hit Delta | Dense Tokens@10 | Task29-C Tokens@10 | Token Saving |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -114,8 +123,8 @@ measures final retrieved context tokens.
 Interpretation:
 
 - The 100k result is near-dense, with a small Hit@10 drop.
-- The 200k, 400k, and 638k results are above dense while using fewer final
-  context tokens.
+- The 200k, 400k, and 638k results have mean Hit@10 above dense while using
+  fewer final context tokens.
 - The result should be framed as conservative final context compaction, not as
   aggressive dense replacement.
 
@@ -131,6 +140,12 @@ not strong statistical significance proof.
 | 200k | 0.8249 | [0.8052, 0.8446] | 4.69% | [3.89%, 5.48%] |
 | 400k | 0.7819 | [0.7709, 0.7929] | 5.32% | [0.11%, 10.53%] |
 | 638k | 0.7466 | [0.7246, 0.7687] | 4.86% | [4.24%, 5.48%] |
+
+The 400k token-saving interval is wider than the other scales. This should be
+described as seed-level variance in routing confidence and context-budget
+control, not as a contradiction of the overall direction. CI-level confirmation
+of Hit@10 improvement is strongest at 200k; the 400k and 638k rows should be
+reported as mean above-dense results with limited seed counts.
 
 Task33.6 further extends the LoTTE 100k Task29-C setting from three to five
 seeds. The five-seed mean is Hit@10 `0.8708` versus dense `0.8674`, with final
@@ -171,6 +186,9 @@ Important interpretation:
   selected-cluster hit rate.
 - Task25's cluster-only reward attribution is important because it avoids
   crediting the selected cluster arm for dense/BM25 rescue hits.
+- No-feedback gated routing can have high Hit@10 because it falls back to full
+  dense/multi-route retrieval. That row is a safety/fallback control, not
+  evidence that feedback is unnecessary.
 
 Recommended paper wording:
 
@@ -180,6 +198,15 @@ Recommended paper wording:
 Avoid:
 
 > Feedback alone explains all retrieval gains.
+
+## Context Compaction Trade-Off
+
+Task29-C is optimized for query-level `Hit@10`, meaning at least one relevant
+chunk appears in the final context. Because the policy sometimes sends fewer
+chunks, `evidence_recall@10` can be lower than dense-only retrieval when a query
+has multiple GT chunks. This is an expected trade-off: the conservative policy
+targets usable evidence under a smaller context budget, not complete evidence
+collection for every query.
 
 ## Downstream Generation Smoke
 

@@ -14,7 +14,7 @@ cluster-local retrieval, and LinUCB route selection under a piecewise
 query-document relevance-manifold assumption. The strongest current evidence is
 not that the method universally beats dense retrieval, but that it can use
 feedback and route confidence to control final context budget while preserving
-near-/above-dense retrieval quality on large-scale vertical-domain retrieval.
+dense-level retrieval quality on large-scale vertical-domain retrieval.
 
 The paper should emphasize:
 
@@ -29,7 +29,7 @@ The paper should emphasize:
 | Claim | Status | Evidence | Paper Wording |
 |---|---|---|---|
 | IntentWeight can reduce final retrieved context tokens while preserving retrieval quality | Strong | Task29-C 100k/200k/400k/638k, Task29.3 CI | Main efficiency claim |
-| IntentWeight can beat dense-only on larger LoTTE scales while using fewer final context tokens | Strong on LoTTE 200k/400k/638k | Task29.1/29.2 | Main large-scale result |
+| IntentWeight has mean above-dense Hit@10 on larger LoTTE scales while using fewer final context tokens | Strong as mean result on LoTTE 200k/400k/638k; CI-level confirmation strongest at 200k | Task29.1/29.2/29.3 | Main large-scale result |
 | Trust-weighted feedback improves the learned route policy | Strong as simulated online evidence | Task15, Task25 route-level credit | Feedback self-evolution claim |
 | Geometry is useful for route control | Supported diagnostically | Task14, Task24 static nearest, Task30 | Theoretical support, not theorem |
 | LinUCB alone explains all quality gains | Not supported | Task24 static/naive ablations | Avoid |
@@ -63,6 +63,9 @@ Seed-level stability from Task29.3:
 
 Use the confidence intervals as engineering stability diagnostics. With only
 three seeds, do not frame them as strong statistical significance proof.
+The 400k token-saving CI is notably wider than the other scales and should be
+acknowledged as seed-level variance in route confidence and context-budget
+control.
 
 Task33.6 extends the LoTTE 100k Task29-C setting from three to five seeds. The
 five-seed mean is Hit@10 `0.8708` versus dense `0.8674`, with final context
@@ -73,7 +76,7 @@ stability but does not justify a statistical-superiority claim at 100k.
 
 | Mechanism | Supporting Tasks | Evidence | Interpretation |
 |---|---|---|---|
-| Multi-route retrieval surface | Task13.5, Task18, Task22/23 | Full multi-route exceeds dense across LoTTE 100k/200k/400k/638k | Dense/BM25/cluster fusion improves coverage when dense remains available |
+| Multi-route retrieval surface | Task13.5, Task18, Task22/23 | Full multi-route improves coverage in large LoTTE settings when dense remains available | Dense/BM25/cluster fusion improves coverage but does not replace dense |
 | Trust-weighted feedback | Task15, Task25, Task33.2 | Last true reward and selected-cluster hit improve under trust weighting | Simulated feedback can optimize the policy value field |
 | Route-level credit assignment | Task25 | `cluster_only/value` raises selected-cluster hit from 0.6908 to 0.7223 on LoTTE 100k | LinUCB can improve the selected cluster route itself |
 | Static geometry baseline | Task24 | Static nearest has selected-cluster hit 0.9016 on 638k | Geometry is strong and must be treated as a baseline, not hidden inside LinUCB |
@@ -118,8 +121,8 @@ layers separate:
 Strong statement:
 
 > Confidence-based final context compaction reduces retrieved context tokens by
-> about 4.7-5.3% across LoTTE 100k-638k while preserving near-/above-dense
-> Hit@10.
+> about 4.7-5.3% across LoTTE 100k-638k while preserving dense-level Hit@10;
+> mean Hit@10 is above dense on 200k, 400k, and 638k.
 
 Do not write:
 
@@ -146,7 +149,8 @@ Include:
 - method combines dense, BM25, cluster-local retrieval, trust-weighted feedback,
   and confidence-based final context control;
 - on LoTTE up to 638k chunks, conservative context control reduces final
-  retrieved context tokens by about 4.7-5.3% and is above dense on 200k/400k/638k.
+  retrieved context tokens by about 4.7-5.3% and has mean above-dense Hit@10 on
+  200k/400k/638k.
 
 Avoid:
 
@@ -198,6 +202,10 @@ Emphasize:
 - dense remains a strong recall floor;
 - geometry helps route control but is not enough alone;
 - final token savings require explicit final context compaction;
+- Task29-C is the conservative operating point on a quality-token frontier, not
+  the maximum-saving policy;
+- query-level Hit@10 is the headline; evidence completeness can drop under
+  compaction and should be discussed for complete-evidence applications;
 - online user feedback in production should be trust-weighted and guarded;
 - future work should test real human feedback, stronger dense encoders, larger
   generation studies, and end-to-end human evaluation.
@@ -215,6 +223,9 @@ Emphasize:
 | "Only retrieval, no LLM generation" | Task33.5 adds a small LLM smoke; still limit main claim to retrieval/context tokens |
 | "Only one encoder" | Task33.1a adds a multi-qa MiniLM-family robustness check; still avoid universal encoder claims |
 | "Only three seeds" | Task33.6 adds five-seed LoTTE 100k stability; larger scales remain three-seed diagnostics |
+| "400k CI is wide" | Acknowledge higher seed variance in route confidence/context compaction; avoid significance claims |
+| "No-feedback row is strong" | Explain that no-feedback falls back to full dense/multi-route retrieval and does not learn efficient routing |
+| "evidence_recall drops" | State that compaction optimizes query-level usable evidence, not exhaustive evidence collection |
 
 ## Final Paper Claim
 
@@ -226,13 +237,13 @@ Recommended English wording:
 > route learning and confidence-based final context compaction. Experiments on
 > LoTTE technology/search up to 638k corpus chunks show that the conservative
 > policy reduces final retrieved context tokens by approximately 4.7-5.3% and
-> achieves above-dense Hit@10 on 200k, 400k, and 638k scales. Diagnostics and
+> has mean above-dense Hit@10 on 200k, 400k, and 638k scales. Diagnostics and
 > ablations indicate that geometry provides useful routing signal, while dense
 > remains an important recall floor.
 
 Recommended Chinese wording:
 
-> IntentWeight 是一种面向垂类 RAG 的反馈驱动自适应检索控制器。它在分片相关性流形假设下，将 dense、BM25、聚类局部召回、可信反馈加权 LinUCB 路由学习，以及基于置信度的最终 context 压缩结合起来。LoTTE technology/search 在最高 638k 语料规模上的实验显示，保守策略可将最终检索 context token 降低约 4.7-5.3%，并在 200k、400k、638k 规模上取得高于 dense-only 的 Hit@10。诊断和消融表明，几何结构能够提供有效路由信号，但 dense 仍是重要召回兜底。
+> IntentWeight 是一种面向垂类 RAG 的反馈驱动自适应检索控制器。它在分片相关性流形假设下，将 dense、BM25、聚类局部召回、可信反馈加权 LinUCB 路由学习，以及基于置信度的最终 context 压缩结合起来。LoTTE technology/search 在最高 638k 语料规模上的实验显示，保守策略可将最终检索 context token 降低约 4.7-5.3%，并在 200k、400k、638k 规模上取得均值高于 dense-only 的 Hit@10。诊断和消融表明，几何结构能够提供有效路由信号，但 dense 仍是重要召回兜底。
 
 ## Source Artifacts
 

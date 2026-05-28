@@ -54,8 +54,9 @@ the main large-scale vertical-domain evidence benchmark. On LoTTE, we scale from
 `sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Under the
 conservative Task29-C final context policy, IntentWeight reduces final retrieved
 context tokens by approximately 4.7-5.3% across all scales. It preserves
-near-dense Hit@10 at 100k and exceeds dense-only Hit@10 at 200k, 400k, and
-638k.
+near-dense Hit@10 at 100k and has mean Hit@10 above dense-only retrieval at
+200k, 400k, and 638k. We treat these as bounded mean improvements rather than
+universal or statistically significant dominance claims.
 
 The contributions of this paper are:
 
@@ -65,8 +66,8 @@ The contributions of this paper are:
    retrieval, BM25 lexical recall, cluster-local retrieval, trust-weighted
    LinUCB route learning, and confidence-based final context compaction.
 3. We provide large-scale LoTTE evidence that conservative context compaction
-   can reduce final retrieved context tokens while preserving near- or
-   above-dense Hit@10.
+   can reduce final retrieved context tokens while preserving dense-level
+   Hit@10.
 4. We add geometry diagnostics and ablations showing that local cluster
    structure is useful for routing, but not sufficient to replace dense
    retrieval.

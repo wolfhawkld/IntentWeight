@@ -27,9 +27,18 @@ user satisfaction.
 
 Dense-only retrieval remains a strong baseline. IntentWeight should not be
 claimed as a universal replacement for dense retrieval. The evidence supports a
-controller that can reduce final context tokens while preserving near- or
-above-dense Hit@10 in the main LoTTE setting, and that can expose a quality-cost
-frontier across routes.
+controller that can reduce final context tokens while preserving dense-level
+Hit@10 in the main LoTTE setting, and that can expose a quality-cost frontier
+across routes.
+
+## Evidence Completeness Trade-Off
+
+The main retrieval headline is query-level `Hit@10`. Final context compaction
+can preserve whether at least one relevant chunk is retrieved while reducing the
+fraction of all ground-truth chunks retrieved (`evidence_recall@10`). For tasks
+that require complete evidence collection, such as legal review, medical
+evidence synthesis, or exhaustive compliance analysis, a more conservative
+context policy or no compaction may be preferable.
 
 ## Geometry Is Diagnostic, Not a Proof
 
@@ -60,7 +69,9 @@ Task29.3 reports three-seed confidence intervals across LoTTE 100k-638k, and
 Task33.6 extends LoTTE 100k to five seeds. These are useful engineering
 stability diagnostics, but they should not be over-framed as strong statistical
 significance proof, especially at the larger scales that remain three-seed
-experiments.
+experiments. The LoTTE 400k token-saving interval is notably wider than the
+other scales and should be interpreted as seed-level variance in route
+confidence and context-budget control.
 
 ## Dataset-Specific Caveats
 

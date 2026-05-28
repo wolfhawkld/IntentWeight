@@ -4,9 +4,9 @@ Updated: 2026-05-25
 
 This directory starts the paper-writing phase after Task31 consolidated the
 experimental evidence. The draft uses
-`paper/experiments/task31_paper_evidence_package.md` and the Task33.7
-pre-writing audit as the source of truth for claims, tables, limitations, and
-reviewer-risk boundaries.
+`paper/experiments/task31_paper_evidence_package.md`, the Task33.7 pre-writing
+audit, and the Task34 review-defense revision plan as the source of truth for
+claims, tables, limitations, and reviewer-risk boundaries.
 
 ## Draft Files
 
@@ -29,7 +29,7 @@ retrieval. The supported claim is narrower and stronger:
 > with trust-weighted LinUCB route learning and confidence-based final context
 > compaction. On LoTTE technology/search up to 638k corpus chunks, the
 > conservative policy reduces final retrieved context tokens by about 4.7-5.3%
-> while preserving near- or above-dense Hit@10.
+> while preserving dense-level Hit@10.
 
 ## Evidence Sources
 
@@ -48,3 +48,5 @@ retrieval. The supported claim is narrower and stronger:
   `paper/experiments/task33_5_llm_generation_smoke_summary.md`
 - Five-seed 100k stability:
   `paper/experiments/task33_6_additional_seeds_summary.md`
+- Review defense revision:
+  `paper/experiments/task34_review_defense_revision_plan.md`

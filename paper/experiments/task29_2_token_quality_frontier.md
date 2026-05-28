@@ -13,8 +13,12 @@ LLM summarization/compression prompts.
 Task29-C uses the conservative final context policy:
 
 - high-confidence LinUCB route: final `k=8`
-- mid-confidence LinUCB route: final `k=10`
+- mid-confidence LinUCB route: final `k=10` safety tier
 - dense fallback: final `k=10`
+
+Because `mid_k=10` keeps the same final context size as dense top-10, only
+high-confidence `k=8` cases are effective context compression. The broader
+non-fallback routing rate should not be reported as a true compaction rate.
 
 | Scale | Method | Hit@10 | Avg Context Tokens@10 | Token Ratio vs Dense | Token Saving | Hit Delta vs Dense | Hit / 1k Tokens |
 |---|---|---:|---:|---:|---:|---:|---:|
@@ -52,7 +56,11 @@ The frontier supports three claims:
    about 4.7-5.3% across 100k, 200k, 400k, and 638k.
 3. The quality-cost trade-off is controllable. Aggressive compaction saves many
    more tokens but has visible recall loss; conservative compaction gives a
-   smaller but paper-safe saving and preserves near-/above-dense quality.
+   smaller but paper-safe saving and preserves dense-level quality.
+
+Task29-C is selected as the conservative operating point on this frontier. It is
+not the maximum-saving configuration; it is the configuration that prioritizes
+quality preservation before being applied to the larger LoTTE scales.
 
 The most paper-safe summary is:
 
@@ -67,6 +75,10 @@ Task29.3 adds seed-level stability diagnostics for this frontier. Across
 means, with mean savings in the narrow `4.69%` to `5.32%` band. Because each
 scale only has three seeds, the confidence intervals are reported as stability
 diagnostics, not as strong statistical significance claims.
+
+The 400k token-saving interval is wider than the other scales, indicating
+greater seed-level variance in route confidence and context compaction. This
+should be acknowledged in the paper rather than hidden.
 
 ## Paper Usage
 

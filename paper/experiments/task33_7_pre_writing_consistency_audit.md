@@ -17,7 +17,7 @@ The paper-ready claim should stay bounded:
 > IntentWeight is a feedback-driven adaptive retrieval and context-budget
 > controller for vertical-domain RAG. On LoTTE technology/search 100k-638k, the
 > conservative Task29-C policy reduces final retrieved context tokens by about
-> 4.7-5.3% while preserving dense-level Hit@10, with above-dense mean Hit@10 on
+> 4.7-5.3% while preserving dense-level Hit@10, with mean above-dense Hit@10 on
 > 200k, 400k, and 638k. Feedback, geometry, and route confidence provide useful
 > control signals, but dense retrieval remains an important recall floor.
 
@@ -45,8 +45,12 @@ Main cost claims must use final context tokens, not source candidate counts.
 | Claim | Evidence | Safe wording | Avoid |
 |---|---|---|---|
 | Conservative context control reduces final retrieved context tokens while preserving retrieval quality | Task29.2, Task29.3, Task33.6 | Task29-C reduces final context tokens by about 4.7-5.3% across LoTTE scales while preserving dense-level Hit@10 | Candidate-cost reductions prove lower LLM cost |
-| IntentWeight is above dense on larger LoTTE scales | Task29.2, Task29.3 | Mean Hit@10 is above dense on 200k, 400k, and 638k while using fewer final context tokens | It significantly beats dense at every scale |
+| IntentWeight has mean above-dense Hit@10 on larger LoTTE scales | Task29.2, Task29.3 | Mean Hit@10 is above dense on 200k, 400k, and 638k while using fewer final context tokens | It significantly beats dense at every scale |
 | LoTTE 100k is stable but not a statistical superiority result | Task29.3, Task33.6 | Three-seed 100k is near dense; five-seed 100k is slightly above dense on mean but CI overlaps zero | 100k proves statistically significant improvement over dense |
+| Task29-C is the main operating point | Task29-A/B/C frontier | Task29-C is the conservative frontier point that prioritizes quality preservation | It was selected arbitrarily after seeing all scale results |
+| Effective compaction rate is smaller than broad routing rate | Task29-C configuration | Only high-confidence `k=8` cases are true compression; mid-confidence `k=10` is a safety tier | All non-fallback routes are context compaction |
+| Multi-epoch adaptation is disclosed | LinUCB protocol and Task33.2/33.3 | Multi-epoch runs simulate repeated interaction and update after each query in each pass | It is IID held-out generalization |
+| Evidence completeness can trade off against context saving | Task33.3 ablation | Hit@10 is the headline; `evidence_recall@10` may be lower under compaction | The method improves all retrieval metrics uniformly |
 | Trust-weighted feedback improves the adaptive policy | Task25, Task33.2, Task33.3 | Under controlled simulated feedback, trust weighting improves last true reward, selected-cluster hit, dense fallback reduction, and token efficiency | Real human feedback has already been validated |
 | Geometry is useful for routing | Task30, Task33.1a geometry, Task33.3 static KMeans row | Local cluster geometry is informative and supports a piecewise relevance-manifold framing | The manifold hypothesis is mathematically proven |
 | Dense remains necessary | Task24, Task29, Task33.3, eManual/CUAD analyses | Dense is a recall floor and fallback, not an obsolete baseline | IntentWeight replaces dense retrieval |
@@ -112,6 +116,7 @@ Source artifact:
 | Simulated feedback | Task33.2 noise/trust sensitivity and no-leakage protocol | No real user-feedback deployment |
 | Single main encoder | Task33.1a multi-qa MiniLM robustness | No full-scale BGE/Nomic/domain-specific reranker study |
 | Statistical strength | Task29.3 three-seed CIs and Task33.6 five-seed 100k extension | Limited seed count, especially at larger scales |
+| 400k variance | Task29.3 reports wider 400k token-saving CI | Acknowledge higher seed-level variance in writing |
 | Manifold framing | Task30 diagnostics and Task33.3 geometry ablation | Diagnostic support only, not proof |
 | Generation quality | Task33.5 LLM smoke | Small sample, one model, LLM-as-judge |
 | Generalization | LoTTE is main positive evidence; eManual/CUAD are limitations | More vertical corpora would strengthen external validity |

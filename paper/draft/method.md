@@ -50,6 +50,8 @@ deliberate experimental choice:
 
 - LinUCB requires a fixed number of arms.
 - Fixed arms improve reproducibility across seeds and scales.
+- The same arm count is used across LoTTE scales to keep the LinUCB state space
+  comparable, even though larger corpora therefore contain more chunks per arm.
 - KMeans is fast enough for large-scale LoTTE runs.
 
 The paper should not claim that KMeans is the best clustering algorithm for
@@ -71,6 +73,10 @@ theta_a = A_a^{-1} b_a
 score(q_t, a) = theta_a^T x_t + alpha * sqrt(x_t^T A_a^{-1} x_t)
 ```
 
+Here `alpha` controls the exploration-exploitation balance: larger values give
+more weight to arms whose value estimate is uncertain and encourage exploration
+of under-sampled local regions.
+
 The policy selects the top candidate arms by score. The selected arms define the
 cluster-local retrieval path and also provide confidence signals for later
 context compaction.
@@ -81,6 +87,13 @@ feedback for `q_t` can only affect later queries through the next policy state;
 it cannot change the ranking already produced for `q_t`. This should be
 described as simulated test-time adaptation, not as offline IID held-out
 generalization.
+
+The main repeated-feedback experiments use multiple prequential epochs over the
+same query stream to simulate repeated interactions. Each pass still preserves
+the same ordering discipline: the current query is ranked and evaluated before
+its feedback updates later policy state. The multi-epoch result should therefore
+be interpreted as controlled repeated-interaction adaptation, not as a
+single-pass held-out generalization score.
 
 ## Trust-Weighted Feedback
 
@@ -124,13 +137,22 @@ The conservative `confidence_topk` policy works as follows:
 
 1. If route confidence is low or semantic drift is high, keep dense fallback and
    the normal top-k context.
-2. If LinUCB or hybrid-lite confidence is sufficient, reduce final context size
-   from the default top-10 to a smaller top-k.
-3. Report the actual retrieved context token count, not only candidate counts.
+2. If LinUCB confidence is high, reduce final context size from the default
+   top-10 to `k=8`.
+3. If confidence is mid-level, keep `k=10` as a safety tier rather than calling
+   it true compression.
+4. Report the actual retrieved context token count, not only candidate counts.
+
+For Task29-C, the effective compaction rate is therefore the high-confidence
+compression rate, not the broader rate of queries that enter a non-fallback
+route. Hybrid-lite can reduce dense influence in fusion while retaining dense
+candidates as a safety net; it should not be described as reducing dense
+computation unless the global dense route is actually skipped.
 
 The main paper result uses the conservative Task29-C policy. It reduces final
 context tokens by about 4.7-5.3% across LoTTE 100k/200k/400k/638k while
-preserving near- or above-dense Hit@10.
+preserving dense-level Hit@10, with mean above-dense Hit@10 on 200k, 400k, and
+638k.
 
 ## Algorithm Sketch
 
@@ -161,4 +183,5 @@ Output: final retrieved context C_t and updated policy state
 - The retrieval metrics use query-level `Hit@K` as the primary headline. Legacy
   `Recall@K` fields are treated as equivalent to Hit@K in historical files.
 - `evidence_recall@K` should be reported separately when multi-evidence recall
-  is needed.
+  is needed. Context compaction can preserve query-level Hit@K while lowering
+  evidence completeness when multiple GT chunks are expected.

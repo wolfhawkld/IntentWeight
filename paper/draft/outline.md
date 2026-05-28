@@ -24,8 +24,8 @@ context compaction.
 
 The current evidence supports a bounded claim:
 
-- IntentWeight preserves near-dense quality on LoTTE 100k and exceeds dense on
-  LoTTE 200k, 400k, and 638k.
+- IntentWeight preserves near-dense quality on LoTTE 100k and has mean Hit@10
+  above dense on LoTTE 200k, 400k, and 638k.
 - It reduces final retrieved context tokens by about 4.7-5.3% across these
   LoTTE scales under the conservative Task29-C policy.
 - It exposes a quality-cost frontier rather than universally dominating dense
@@ -39,7 +39,7 @@ The current evidence supports a bounded claim:
    as a routing signal, improve large-scale retrieval quality relative to
    dense-only retrieval?
 3. Can confidence-based route control reduce final retrieved context tokens
-   while preserving near- or above-dense Hit@10?
+   while preserving dense-level Hit@10?
 4. Do geometry diagnostics support the piecewise relevance-manifold framing,
    and where does that framing break down?
 
@@ -72,7 +72,7 @@ The current evidence supports a bounded claim:
 - IntentWeight learns to route over this structure instead of using one fixed
   retrieval path.
 - State bounded result: 4.7-5.3% final context-token reduction on LoTTE
-  100k-638k, above dense on 200k/400k/638k.
+  100k-638k, with mean Hit@10 above dense on 200k/400k/638k.
 
 ### 2. Related Work
 

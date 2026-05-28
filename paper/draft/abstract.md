@@ -16,12 +16,12 @@ simulated feedback. A confidence-based final context policy then compacts the
 retrieved evidence sent to the generator while preserving dense fallback under
 low confidence. On LoTTE technology/search, evaluated from 100k to 638k corpus
 chunks, the conservative policy reduces final retrieved context tokens by
-approximately 4.7-5.3% while preserving near-dense Hit@10 at 100k and exceeding
-dense-only Hit@10 at 200k, 400k, and 638k. Geometry diagnostics and ablations
-show that local cluster structure provides useful routing signal, while dense
-retrieval remains an important recall floor. These results position IntentWeight
-not as a universal replacement for dense retrieval, but as an adaptive
-quality-cost controller for large-scale vertical-domain RAG.
+approximately 4.7-5.3% while preserving near-dense Hit@10 at 100k and achieving
+mean above-dense Hit@10 at 200k, 400k, and 638k. Geometry diagnostics and
+ablations show that local cluster structure provides useful routing signal,
+while dense retrieval remains an important recall floor. These results position
+IntentWeight not as a universal replacement for dense retrieval, but as an
+adaptive quality-cost controller for large-scale vertical-domain RAG.
 
 ## Shorter Variant
 
@@ -31,9 +31,9 @@ routes queries over dense, BM25, and cluster-local retrieval surfaces, learns
 route value with trust-weighted LinUCB, and applies confidence-based final
 context compaction. On LoTTE technology/search up to 638k corpus chunks, the
 conservative policy reduces final retrieved context tokens by 4.7-5.3% while
-achieving near- or above-dense Hit@10. The results support a bounded claim:
-feedback and geometry can help control retrieval quality and context budget, but
-dense retrieval remains a necessary recall floor.
+preserving dense-level Hit@10. The results support a bounded claim: feedback and
+geometry can help control retrieval quality and context budget, but dense
+retrieval remains a necessary recall floor.
 
 ## Abstract Claim Checklist
 
@@ -42,4 +42,6 @@ dense retrieval remains a necessary recall floor.
 - Reports final context-token reduction, not source-candidate reduction.
 - Uses LoTTE scale-up as the main evidence.
 - Avoids universal dense replacement claims.
+- Avoids statistically significant improvement claims where CI does not support
+  them.
 - Avoids end-to-end LLM answer-quality claims.
