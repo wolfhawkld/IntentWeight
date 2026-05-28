@@ -34,11 +34,14 @@ Use the following evidence documents when editing the full draft:
 
 The paper should keep the bounded claim:
 
-> IntentWeight is a feedback-driven adaptive retrieval and context-budget
-> controller for vertical-domain RAG. It reduces final retrieved context tokens
-> by about 4.7-5.3% on LoTTE technology/search 100k-638k while preserving
-> dense-level Hit@10. Mean Hit@10 is above dense on 200k, 400k, and 638k, but
-> the paper should not claim universal or statistically significant dominance.
+> IntentWeight is a feedback-guided evidence selection and context-budget
+> controller for manifold-structured vertical-domain data, instantiated in a
+> retrieval-augmented question-answering setting. It reduces final retrieved
+> context tokens by about 4.7-5.3% on LoTTE technology/search 100k-638k while
+> preserving dense-level Hit@10. Mean Hit@10 is above dense on 200k, 400k, and
+> 638k, but the paper should not claim universal or statistically significant
+> dominance, nor should it imply that the current experiments cover every
+> possible knowledge-carrier format beyond the tested retrieval setting.
 
 ## Next Editing Pass
 

@@ -2,21 +2,21 @@
 
 ## Recommended Title
 
-IntentWeight: Feedback-Driven Adaptive Retrieval Control for Vertical-Domain RAG
+IntentWeight: Feedback-Guided Evidence Selection over Manifold-Structured Domain Data
 
 ## Short Title
 
-IntentWeight for Adaptive RAG Retrieval Control
+IntentWeight for Feedback-Guided Evidence Selection
 
 ## Alternative Titles
 
-1. Contextual Bandit Routing for Efficient Vertical-Domain RAG
-2. Adaptive Multi-Route Retrieval under a Piecewise Relevance-Manifold Assumption
-3. Feedback-Driven Context-Budget Control for Retrieval-Augmented Generation
+1. Manifold-Aware Feedback Optimization for Token-Efficient Evidence Selection
+2. Adaptive Evidence Routing under a Piecewise Relevance-Manifold Assumption
+3. Contextual Bandit Control for Quality-Cost Trade-offs in Knowledge-Augmented Agents
 
 ## One-Sentence Thesis
 
-IntentWeight treats vertical-domain RAG retrieval as an adaptive route-control
-problem, using dense, BM25, cluster-local retrieval, trust-weighted LinUCB, and
-confidence-based context compaction to preserve dense-level retrieval quality
-while reducing final retrieved context tokens.
+IntentWeight treats evidence selection over structured domain data as an
+adaptive route-control problem, using dense, lexical, cluster-local, and
+trust-weighted feedback signals to preserve answer-supporting evidence while
+reducing final context tokens in a retrieval-augmented agent implementation.
