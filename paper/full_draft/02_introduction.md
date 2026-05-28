@@ -60,12 +60,12 @@ We evaluate IntentWeight on multiple datasets and use LoTTE technology/search
 as the main large-scale vertical-domain evidence benchmark. On LoTTE, we scale
 from 100k to 638k corpus chunks and compare against dense-only retrieval using
 `sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Under the
-conservative Task29-C final context policy, IntentWeight reduces final retrieved
-context tokens by approximately 4.7-5.3% across all scales. It preserves
-near-dense $\mathrm{Hit@10}$ at 100k and has mean $\mathrm{Hit@10}$ above
-dense-only retrieval at 200k, 400k, and 638k. We treat these as bounded mean
-improvements rather than universal or statistically significant dominance
-claims.
+conservative confidence-based final context policy, IntentWeight reduces final
+retrieved context tokens by approximately 4.7-5.3% across all scales. It
+preserves near-dense $\mathrm{Hit@10}$ at 100k and has mean
+$\mathrm{Hit@10}$ above dense-only retrieval at 200k, 400k, and 638k. We treat
+these as bounded mean improvements rather than universal or statistically
+significant dominance claims.
 
 The contributions of this paper are:
 

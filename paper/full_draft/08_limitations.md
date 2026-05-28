@@ -11,11 +11,11 @@ signals, adversarial or low-quality users, and non-stationary intent.
 ## 7.2 Limited Generation Evaluation
 
 The main experiments evaluate retrieval and final retrieved context tokens.
-Task33.5 adds a 60-query LLM generation smoke test showing no obvious answer
-quality degradation from Task29-C context compaction, but this is not a full
-end-to-end human evaluation. The supported main claim remains evidence retrieval
-and retrieved context budget, not generated answer superiority or user
-satisfaction.
+A 60-query LLM generation smoke test shows no obvious answer-quality
+degradation from conservative context compaction, but this is not a full
+end-to-end human evaluation. The supported main claim remains evidence
+retrieval and retrieved context budget, not generated answer superiority or
+user satisfaction.
 
 ## 7.3 Dense Remains Strong
 
@@ -52,8 +52,8 @@ counts complicate the current LinUCB setup.
 
 ## 7.7 Limited Encoder and Domain Coverage
 
-The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. Task33.1a
-adds a CPU-friendly robustness check with
+The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. The
+paper adds a CPU-friendly encoder robustness check with
 `sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, but the paper should not
 generalize the result to stronger domain-specific encoders, rerankers, or
 late-interaction models without additional experiments.
@@ -63,12 +63,13 @@ LoTTE domains or other vertical corpora would strengthen external validity.
 
 ## 7.8 Seed Count and 400k Variance
 
-Task29.3 reports three-seed confidence intervals across LoTTE 100k-638k, and
-Task33.6 extends LoTTE 100k to five seeds. These are useful engineering
-stability diagnostics, but they should not be over-framed as strong statistical
-significance proof. The LoTTE 400k token-saving interval is notably wider than
-the other scales and should be interpreted as seed-level variance in route
-confidence and context-budget control.
+The stability analysis reports three-seed confidence intervals across LoTTE
+100k-638k, and an additional robustness check extends LoTTE 100k to five seeds.
+These are useful engineering stability diagnostics, but they should not be
+over-framed as strong statistical significance proof. The LoTTE 400k
+token-saving interval is notably wider than the other scales and should be
+interpreted as seed-level variance in route confidence and context-budget
+control.
 
 ## 7.9 Future Work
 

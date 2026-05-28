@@ -153,9 +153,9 @@ generalization results.
 
 ## 3.9 Confidence-Based Final Context Compaction
 
-Task28 showed that reducing source candidates does not automatically reduce
-final context tokens. IntentWeight therefore adds an explicit final context
-policy.
+Preliminary token-cost analysis showed that reducing source candidates does not
+automatically reduce final context tokens. IntentWeight therefore adds an
+explicit final context policy.
 
 The conservative `confidence_topk` policy works as follows:
 
@@ -167,15 +167,15 @@ The conservative `confidence_topk` policy works as follows:
    it true compression.
 4. Report the actual retrieved context token count, not only candidate counts.
 
-For Task29-C, the effective compaction rate is therefore the high-confidence
-compression rate, not the broader rate of queries that enter a non-fallback
-route. Hybrid-lite can reduce dense influence in fusion while retaining dense
-candidates as a safety net; it should not be described as reducing dense
-computation unless the global dense route is actually skipped.
+For the conservative policy, the effective compaction rate is therefore the
+high-confidence compression rate, not the broader rate of queries that enter a
+non-fallback route. Hybrid-lite can reduce dense influence in fusion while
+retaining dense candidates as a safety net; it should not be described as
+reducing dense computation unless the global dense route is actually skipped.
 
-The main result uses the conservative Task29-C policy. It reduces final context
-tokens by about 4.7-5.3% across LoTTE 100k, 200k, 400k, and 638k while
-preserving dense-level $\mathrm{Hit@10}$, with mean above-dense
+The main result uses this conservative confidence-based policy. It reduces
+final context tokens by about 4.7-5.3% across LoTTE 100k, 200k, 400k, and 638k
+while preserving dense-level $\mathrm{Hit@10}$, with mean above-dense
 $\mathrm{Hit@10}$ on 200k, 400k, and 638k.
 
 ## 3.10 Algorithm Sketch

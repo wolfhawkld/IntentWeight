@@ -3,7 +3,7 @@
 Updated: 2026-05-28
 
 This directory contains the first complete paper draft assembled after the
-Task31 evidence package, Task33 validation work, and Task34 review-defense
+paper evidence package, pre-writing validation work, and review-defense
 revision.
 
 ## Draft Files
@@ -19,16 +19,16 @@ revision.
 - `08_limitations.md`: limitations and future work.
 - `09_conclusion.md`: conclusion.
 
-## Source of Truth
+## Internal Evidence Sources
 
-Use the following evidence documents when editing the full draft:
+Use the experiment summaries under `paper/experiments/` when editing the full
+draft. The most important internal evidence groups are:
 
-- `paper/experiments/task31_paper_evidence_package.md`
-- `paper/experiments/task33_7_pre_writing_consistency_audit.md`
-- `paper/experiments/task34_review_defense_revision_plan.md`
-- `paper/experiments/task29_2_token_quality_frontier.md`
-- `paper/experiments/task33_3_clean_ablation_table.md`
-- `paper/experiments/task30_lotte_geometry_scale_validation.md`
+- paper evidence package and consistency audit;
+- review-defense revision plan;
+- token-quality frontier and context-token analyses;
+- clean component ablation table;
+- LoTTE geometry scale validation.
 
 ## Claim Boundary
 

@@ -5,9 +5,9 @@
 IntentWeight supports a bounded but useful claim. It is a feedback-driven
 adaptive retrieval controller that can control final context budget while
 preserving dense-level retrieval quality. On LoTTE technology/search, the
-conservative Task29-C policy reduces final retrieved context tokens by about
-4.7-5.3% from 100k to 638k corpus chunks. Mean $\mathrm{Hit@10}$ is above
-dense-only retrieval on 200k, 400k, and 638k.
+conservative confidence-based context policy reduces final retrieved context
+tokens by about 4.7-5.3% from 100k to 638k corpus chunks. Mean
+$\mathrm{Hit@10}$ is above dense-only retrieval on 200k, 400k, and 638k.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. The value of
@@ -23,11 +23,12 @@ retrieval because it surfaces longer or noisier chunks. The token-saving
 mechanism is therefore not "more routes." It is confidence-based final context
 control.
 
-Task29-C is intentionally conservative. It compresses only high-confidence
-cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is why the saving
-is modest but stable. More aggressive configurations save more tokens, but they
-produce visible $\mathrm{Hit@10}$ loss. Task29-C should therefore be
-interpreted as a safe operating point on a token-quality frontier.
+The main confidence-based policy is intentionally conservative. It compresses
+only high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$.
+This is why the saving is modest but stable. More aggressive configurations
+save more tokens, but they produce visible $\mathrm{Hit@10}$ loss. The
+conservative policy should therefore be interpreted as a safe operating point
+on a token-quality frontier.
 
 ## 6.3 Feedback Improves the Policy Field
 
