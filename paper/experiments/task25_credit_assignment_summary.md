@@ -1,5 +1,10 @@
 # Task25 Credit Assignment Summary
 
+> **Paper-use status: supporting evidence.**
+> Use this file for route-level credit assignment and LinUCB self-evolution
+> evidence. Do not use its cost columns as final LLM context-token savings; they
+> are source-candidate proxies unless paired with Task28/Task28.1 token metrics.
+
 Task25 addresses the audit concern that the gated LinUCB policy could receive
 credit for dense/BM25 rescue hits. Earlier cost-aware routing updated LinUCB
 with reward computed from the final fused ranking. When dense floor or BM25

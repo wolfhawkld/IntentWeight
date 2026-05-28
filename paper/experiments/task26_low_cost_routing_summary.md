@@ -1,5 +1,11 @@
 # Task26 Low-Cost Routing Summary
 
+> **Paper-use status: boundary/negative evidence.**
+> This file tests candidate-cost reduction after route-level credit assignment.
+> It should not be used as positive evidence for final LLM context-token
+> savings. Use it only to show that source-candidate reductions create a
+> quality-cost frontier and that aggressive dense reduction can lose quality.
+
 Task26 tests the follow-up hypothesis from Task25: once route-level credit
 assignment shows that LinUCB cluster selection can improve, can the system
 reduce dense/BM25 dependence and lower source-candidate cost?

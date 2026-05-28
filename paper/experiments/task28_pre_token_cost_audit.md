@@ -1,5 +1,11 @@
 # Pre-Task28 Token-Cost Scope Audit
 
+> **Paper-use status: historical/superseded guardrail.**
+> This audit predicted the token-cost overclaim risk before final context token
+> measurements were completed. For current paper-facing corrections, use
+> `task28_context_token_cost_summary.md` and
+> `task28_1_context_token_backfill_summary.md`.
+
 This audit marks prior tasks that used `cost`, `cost reduction`, or
 `quality-cost frontier` language before final LLM context tokens were measured.
 The current `avg_source_candidate_cost` metric is an unweighted retrieval-stage

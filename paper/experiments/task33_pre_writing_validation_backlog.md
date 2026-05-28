@@ -2,6 +2,11 @@
 
 Updated: 2026-05-25
 
+> **Paper-use status: internal backlog.**
+> This file is project management context, not paper evidence. Use completed
+> task summaries and `task_paper_use_status.md` when deciding what belongs in
+> the paper.
+
 Task33 records the remaining validation and writing-prep work before the formal
 paper draft is expanded from the Task32 skeleton. It began as a planned
 risk-reduction backlog; the sections below now include completion status and

@@ -1,5 +1,10 @@
 # Task28.1 Historical Context Token Backfill
 
+> **Paper-use status: supporting guardrail.**
+> Use this file to backstop the correction that Task16-27 source-candidate
+> savings generally do not imply final context-token savings. It should not be
+> cited as the main positive token-saving evidence.
+
 Task28 corrected the cost interpretation on a focused LoTTE 100k set. Task28.1
 extends the same correction to saved historical Task16-25 artifacts without
 rerunning retrieval. It reads existing final rankings, counts retrieved chunk

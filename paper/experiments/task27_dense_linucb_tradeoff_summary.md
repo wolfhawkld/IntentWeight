@@ -1,5 +1,11 @@
 # Task27 Dense-LinUCB Trade-off Summary
 
+> **Paper-use status: boundary/negative evidence.**
+> This file tests a stricter two-route dense-vs-LinUCB cost hypothesis. It is
+> not positive evidence for token-cost savings or dense replacement: the
+> sub-dense source-candidate setting loses retrieval quality, and final context
+> token savings are not demonstrated.
+
 Task27 tests a sharper version of the cost hypothesis: remove BM25 from the
 main route and trade off only between global dense and the learned LinUCB
 cluster route. The target is stricter than Task26:

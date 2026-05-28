@@ -2,6 +2,10 @@
 
 Updated: 2026-05-26
 
+> **Paper-use status: internal handoff/superseded.**
+> This file records execution instructions and handoff notes. Use
+> `task33_5_llm_generation_smoke_summary.md` for paper-facing results.
+
 Task33.5 is a small downstream sanity check. It verifies whether Task29-C's
 compressed retrieved context can still support LLM answer generation compared
 with dense top-10 context.

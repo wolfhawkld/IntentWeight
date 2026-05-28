@@ -2,6 +2,14 @@
 
 Updated: 2026-05-07
 
+> **Paper-use status: historical/superseded.**
+> This summary predates later token-cost corrections, LoTTE 638k final-context
+> experiments, clean ablations, and the full paper draft. Keep it for
+> provenance only. For current paper-facing claims, use
+> `task31_paper_evidence_package.md`,
+> `task33_7_pre_writing_consistency_audit.md`,
+> `task34_review_defense_revision_plan.md`, and `paper/full_draft/`.
+
 Note: Task23 extends the LoTTE scale-up evidence through 400k and full 638k.
 For the latest large-scale quality-cost tables and paper-facing scale-up claim,
 use `paper/experiments/task23_lotte_scaleup_summary.md`.

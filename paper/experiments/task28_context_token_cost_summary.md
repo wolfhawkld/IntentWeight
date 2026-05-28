@@ -1,5 +1,10 @@
 # Task28 Final Context Token-Cost Summary
 
+> **Paper-use status: supporting guardrail.**
+> Use this file to explain why historical source-candidate reductions are not
+> enough for token-cost claims. It is not the positive final token-saving
+> result; use the confidence-based final context policy results for that.
+
 Task28 corrects the cost interpretation used in earlier routing tasks. Previous
 tasks reported `avg_source_candidate_cost`, an unweighted retrieval-stage
 candidate-count proxy. That proxy does not measure final LLM context tokens.

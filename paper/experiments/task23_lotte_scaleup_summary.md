@@ -2,6 +2,13 @@
 
 Updated: 2026-05-21
 
+> **Paper-use status: partially superseded.**
+> Use this file only for historical scale-up provenance and retrieval-stage
+> candidate-cost behavior. Do not use it as the final paper table for
+> context-token savings. For paper-facing token-cost claims, use
+> `task29_2_token_quality_frontier.md`; for geometry-scale claims, use
+> `task30_lotte_geometry_scale_validation.md`.
+
 This document consolidates the LoTTE technology/search scale-up evidence from 100k to the full 638k corpus. It is intended as the paper-facing bridge from individual task logs to the final experimental argument.
 
 Post-Task28 correction: `Gated Cost`, `Cost ↓ vs Full`, and related cost

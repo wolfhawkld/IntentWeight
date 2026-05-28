@@ -3,6 +3,16 @@
 
 ---
 
+## Paper-Use Status
+
+Before using any task summary in the paper draft, check
+`paper/experiments/task_paper_use_status.md`. It marks which task documents are
+main evidence, supporting evidence, boundary/negative evidence, historical or
+superseded, and internal handoff/backlog only.
+
+In particular, historical candidate-cost summaries before the final context
+token correction must not be cited as evidence of lower LLM context-token cost.
+
 ## 目录结构
 ## Directory Structure
 
