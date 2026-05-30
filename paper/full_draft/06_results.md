@@ -9,6 +9,8 @@ More aggressive policies show that stronger context reduction is possible at a
 visible $\mathrm{Hit@10}$ cost, while the conservative policy prioritizes
 quality preservation over maximum token saving.
 
+**Table 2. LoTTE token-quality frontier for the conservative context policy.**
+
 | Scale | Corpus | Dense $\mathrm{Hit@10}$ | Conservative policy $\mathrm{Hit@10}$ | Hit delta | Dense $\mathrm{Tokens@10}$ | Conservative policy $\mathrm{Tokens@10}$ | Token saving |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | LoTTE 100k | 101311 | 0.8674 | 0.8652 | -0.22 pp | 1472.39 | 1401.24 | 4.83% |
@@ -23,10 +25,17 @@ conservative final context compaction, not as aggressive dense replacement.
 
 ## 5.2 Seed Stability
 
+This section is appendix-facing in a conference-length version. The main text
+should summarize the direction and keep the detailed interval table in the
+appendix unless space permits.
+
 The multi-seed stability analysis reports three-seed diagnostics for the
 conservative policy. With only three seeds, these intervals should be presented
 as engineering stability diagnostics, not as strong statistical significance
 proof.
+
+**Appendix Table A1. Multi-seed stability diagnostics for the conservative
+context policy.**
 
 | Scale | Conservative policy $\mathrm{Hit@10}$ mean | $\mathrm{Hit@10}$ 95% CI | Token saving mean | Token saving 95% CI |
 |---|---:|---:|---:|---:|
@@ -52,6 +61,8 @@ justify a statistical-superiority claim at 100k.
 The component ablation table summarizes which parts of the system provide the
 quality floor, routing signal, feedback adaptation, and final token saving on
 LoTTE 100k.
+
+**Table 3. LoTTE 100k component ablation.**
 
 | Component | Role | $\mathrm{Hit@10}$ | $\mathrm{EvidenceRecall@10}$ | $\mathrm{Tokens@10}$ | Token ratio | Dense rate | LinUCB rate | Cluster hit | Last reward |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -81,6 +92,15 @@ dense and BM25 rescue routes, making feedback gains less visible in the fused
 final ranking. The strongest evidence for LinUCB self-evolution is therefore in
 route-policy metrics rather than only final $\mathrm{Hit@10}$.
 
+**Table 4. Feedback self-evolution summary on LoTTE 100k.**
+
+| Feedback mode | $\mathrm{Hit@10}$ | Token ratio | Dense rate | LinUCB rate | Selected-cluster hit | Last true reward |
+|---|---:|---:|---:|---:|---:|---:|
+| Equal noisy feedback | 0.8641 | 0.9670 | 0.7480 | 0.2520 | 0.5979 | 0.7517 |
+| Trust-weighted feedback | 0.8641 | 0.9505 | 0.6708 | 0.3292 | 0.7223 | 0.8328 |
+| Trust-weighted mild noise | 0.8775 | 0.9255 | 0.5826 | 0.4174 | 0.7908 | 0.8820 |
+| Oracle feedback | 0.8758 | 0.9013 | 0.4345 | 0.5655 | 0.8386 | 0.8932 |
+
 Under default noisy feedback, trust weighting improves selected-cluster hit from
 $0.5979$ to $0.7223$ and last true reward from $0.7517$ to $0.8328$ relative to
 equal noisy feedback. Under mild trust-weighted noise, selected-cluster hit
@@ -97,6 +117,12 @@ The main paper claim is evaluated on LoTTE because it provides the cleanest
 large-scale vertical retrieval setting for token-quality analysis. Other
 datasets are used as supporting evidence and boundary cases rather than as
 equal main benchmarks.
+
+This section is appendix-facing in a conference-length version. A short main
+text paragraph can summarize the secondary evidence and boundary cases, while
+the full table can move to the appendix.
+
+**Appendix Table D1. Secondary dataset evidence and boundary cases.**
 
 | Dataset | Role | Dense/reference $\mathrm{Hit@10}$ | Supporting / diagnostic result | Paper interpretation |
 |---|---|---|---|---|
@@ -126,6 +152,8 @@ sample, so it should be reported only as a stress/limitation result.
 The geometry scale diagnostic validates whether LoTTE retains usable local
 geometry as scale grows.
 
+**Table 5. LoTTE geometry diagnostics across corpus scale.**
+
 | Scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Conservative policy hit delta |
 |---|---:|---:|---:|---:|---:|
 | 100k | 182 | 0.6437 | 0.8870 | 0.9033 | -0.22 pp |
@@ -144,6 +172,8 @@ motivation and diagnostic, not as a theorem.
 
 ## 5.7 Encoder Robustness
 
+This section is appendix-facing in a conference-length version.
+
 The encoder robustness check tests whether the result depends on the exact
 `all-MiniLM-L6-v2` encoder. With
 `sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, a QA-tuned MiniLM-family
@@ -161,6 +191,11 @@ the claim for all stronger encoders, rerankers, or late-interaction models.
 The downstream generation smoke test compares dense top-10 context with the
 compressed conservative-policy context on 60 sampled LoTTE 100k queries using
 `deepseek-v4-flash` with thinking enabled.
+
+This section is appendix-facing unless the target venue explicitly values a
+small generation sanity check in the main result section.
+
+**Appendix Table F1. Downstream generation smoke test.**
 
 | Method | Answer score | Faithfulness | Answer relevance | Win count | Context token proxy ratio |
 |---|---:|---:|---:|---:|---:|

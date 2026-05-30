@@ -5,6 +5,8 @@
 The experiments use several datasets, but they have different roles. The paper
 does not treat all datasets as equal evidence for the main claim.
 
+**Table 1. Dataset roles and evaluation guardrails.**
+
 | Dataset | Role | Paper use | Caveat |
 |---|---|---|---|
 | LoTTE technology/search | Main vertical-domain retrieval benchmark | Main scale-up, token-quality frontier, geometry validation | No true corpus topic labels in processed qrels |

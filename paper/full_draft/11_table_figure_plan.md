@@ -6,6 +6,16 @@ This file is a paper-facing placement plan. It does not introduce new
 experiments or new claims. Its purpose is to decide which evidence belongs in
 the main paper and which evidence should be moved to an appendix or supplement.
 
+The table labels in the current draft are aligned with this plan:
+
+- Table 1: dataset roles and evaluation guardrails;
+- Table 2: LoTTE token-quality frontier;
+- Table 3: LoTTE 100k component ablation;
+- Table 4: feedback self-evolution summary;
+- Table 5: LoTTE geometry diagnostics;
+- Appendix Tables A1, D1, and F1: seed stability, secondary datasets, and the
+  downstream generation smoke.
+
 ## Main-Paper Tables
 
 ### Table 1: Dataset Roles and Evaluation Guardrails
