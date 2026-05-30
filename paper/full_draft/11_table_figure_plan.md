@@ -127,6 +127,11 @@ Recommended columns:
 
 ### Figure 1: IntentWeight System Diagram
 
+Draft asset:
+
+- `figures/figure1_system_diagram.svg`
+- `figures/figure1_system_diagram.mmd`
+
 Purpose: explain the method more clearly than prose.
 
 Recommended visual flow:
@@ -145,6 +150,11 @@ that the method claims to eliminate.
 
 ### Figure 2: Token-Quality Frontier Across Corpus Scale
 
+Draft asset:
+
+- `figures/figure2_token_quality_frontier.svg`
+- `figures/figure2_token_quality_frontier_data.csv`
+
 Purpose: visualize the main result from Table 2.
 
 Recommended plot:
@@ -158,6 +168,11 @@ not be described as statistically significant unless supported by the reported
 intervals.
 
 ### Figure 3: Geometry Diagnostic Trend
+
+Draft asset:
+
+- `figures/figure3_geometry_diagnostics.svg`
+- `figures/figure3_geometry_diagnostics_data.csv`
 
 Purpose: connect the manifold-inspired hypothesis to measured local geometry.
 

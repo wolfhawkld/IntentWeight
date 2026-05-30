@@ -22,6 +22,8 @@ The 100k result is near dense, with a small $\mathrm{Hit@10}$ drop. At 200k,
 400k, and 638k, the conservative policy has mean $\mathrm{Hit@10}$ above dense
 while using fewer final context tokens. The result should be framed as
 conservative final context compaction, not as aggressive dense replacement.
+Figure 2 visualizes the same result as a token-quality frontier across corpus
+scale.
 
 ## 5.2 Seed Stability
 
@@ -169,6 +171,8 @@ that geometry alone should not replace dense retrieval.
 
 These diagnostics support the piecewise relevance-manifold framing as a useful
 motivation and diagnostic, not as a theorem.
+Figure 3 visualizes the geometry trend: nearest-cluster hit remains high, while
+context retention and PCA concentration decline as the corpus grows.
 
 ## 5.7 Encoder Robustness
 

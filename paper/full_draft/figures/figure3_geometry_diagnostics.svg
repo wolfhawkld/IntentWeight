@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="520" viewBox="0 0 1060 520" role="img">
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+<path d="M0,0 L0,6 L9,3 z" fill="#425466" />
+</marker>
+<style><![CDATA[
+text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
+.title { font-size: 22px; font-weight: 700; }
+.subtitle { font-size: 13px; fill: #52606d; }
+.axis { stroke: #9aa5b1; stroke-width: 1; }
+.grid { stroke: #e4e7eb; stroke-width: 1; }
+.label { font-size: 12px; fill: #52606d; }
+.tick { font-size: 11px; fill: #616e7c; }
+.legend { font-size: 12px; fill: #323f4b; }
+.box-title { font-size: 13px; font-weight: 700; }
+.box-text { font-size: 11px; fill: #52606d; }
+]]></style>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff" />
+<text x="40.0" y="42.0" class="title" text-anchor="start">Figure 3. Geometry diagnostics across LoTTE scale</text>
+<text x="40.0" y="64.0" class="subtitle" text-anchor="start">Local cluster geometry remains useful, while context retention and PCA concentration decline with scale.</text>
+<line x1="90.0" y1="118.0" x2="90.0" y2="408.0" stroke="#9aa5b1" stroke-width="1.2" />
+<line x1="90.0" y1="408.0" x2="880.0" y2="408.0" stroke="#9aa5b1" stroke-width="1.2" />
+<text x="90.0" y="102.0" class="subtitle" text-anchor="start">Diagnostic value</text>
+<line x1="90.0" y1="408.0" x2="880.0" y2="408.0" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="82.0" y="412.0" class="tick" text-anchor="end">0.55</text>
+<line x1="90.0" y1="335.5" x2="880.0" y2="335.5" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="82.0" y="339.5" class="tick" text-anchor="end">0.65</text>
+<line x1="90.0" y1="263.0" x2="880.0" y2="263.0" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="82.0" y="267.0" class="tick" text-anchor="end">0.75</text>
+<line x1="90.0" y1="190.5" x2="880.0" y2="190.5" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="82.0" y="194.5" class="tick" text-anchor="end">0.85</text>
+<line x1="90.0" y1="118.0" x2="880.0" y2="118.0" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="82.0" y="122.0" class="tick" text-anchor="end">0.95</text>
+<text x="90.0" y="430.0" class="tick" text-anchor="middle">100k</text>
+<text x="353.3" y="430.0" class="tick" text-anchor="middle">200k</text>
+<text x="616.7" y="430.0" class="tick" text-anchor="middle">400k</text>
+<text x="880.0" y="430.0" class="tick" text-anchor="middle">638k</text>
+<polyline points="90.0,163.7 353.3,176.2 616.7,153.1 880.0,153.1" fill="none" stroke="#2f855a" stroke-width="2.8" />
+<circle cx="90.0" cy="163.7" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="353.3" cy="176.2" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="616.7" cy="153.1" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="880.0" cy="153.1" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<polyline points="90.0,151.8 353.3,158.1 616.7,166.8 880.0,185.3" fill="none" stroke="#1f5f8b" stroke-width="2.8" />
+<circle cx="90.0" cy="151.8" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="353.3" cy="158.1" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="616.7" cy="166.8" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="880.0" cy="185.3" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<polyline points="90.0,340.1 353.3,350.6 616.7,363.8 880.0,381.4" fill="none" stroke="#9a6b14" stroke-width="2.8" />
+<circle cx="90.0" cy="340.1" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="353.3" cy="350.6" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="616.7" cy="363.8" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="880.0" cy="381.4" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<rect x="760" y="78" width="12" height="12" fill="#2f855a" />
+<text x="778.0" y="88.0" class="legend" text-anchor="start">NearestClusterHit@3</text>
+<rect x="760" y="100" width="12" height="12" fill="#1f5f8b" />
+<text x="778.0" y="110.0" class="legend" text-anchor="start">ContextRetention@10</text>
+<rect x="760" y="122" width="12" height="12" fill="#9a6b14" />
+<text x="778.0" y="132.0" class="legend" text-anchor="start">PCAvar@64</text>
+<text x="90.0" y="438.0" class="tick" text-anchor="middle">PCAdim90=182</text>
+<text x="353.3" y="438.0" class="tick" text-anchor="middle">PCAdim90=186</text>
+<text x="616.7" y="438.0" class="tick" text-anchor="middle">PCAdim90=190</text>
+<text x="880.0" y="438.0" class="tick" text-anchor="middle">PCAdim90=196</text>
+<text x="90.0" y="468.0" class="subtitle" text-anchor="start">Caption boundary: diagnostics support local-structure routing; they are not theorem-level manifold proof.</text>
+</svg>

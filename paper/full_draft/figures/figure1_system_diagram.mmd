@@ -1,0 +1,12 @@
+flowchart LR
+    Q[Query and user/session context] --> F[Feature construction]
+    F --> P[LinUCB route policy]
+    P --> D[Dense fallback]
+    P --> B[BM25 lexical path]
+    P --> C[Cluster-local dense path]
+    D --> G[Confidence-based final context budget]
+    B --> G
+    C --> G
+    G --> A[Generator or downstream agent response]
+    A --> T[Trust-weighted feedback]
+    T --> P

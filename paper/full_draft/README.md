@@ -20,6 +20,7 @@ revision.
 - `09_conclusion.md`: conclusion.
 - `10_reference_seed.md`: provisional citation keys and source links.
 - `11_table_figure_plan.md`: main-paper versus appendix placement plan.
+- `figures/`: regenerable draft SVG figures and figure source data.
 
 ## Internal Evidence Sources
 
@@ -56,7 +57,7 @@ pass should:
 - add formal citations and BibTeX entries;
 - normalize provisional citation keys into the target venue bibliography style;
 - tighten prose to the target venue style;
-- instantiate the selected main-paper figures from `11_table_figure_plan.md`;
+- refine draft SVG figures to the selected venue's visual style;
 - convert markdown tables into LaTeX once the venue template is chosen;
 - convert selected appendix tables into LaTeX once the venue template is chosen.
 

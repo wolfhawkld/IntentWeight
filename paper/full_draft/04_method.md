@@ -50,6 +50,12 @@ Full multi-route retrieval improves coverage but does not automatically reduce
 final context tokens. The final context policy described below is the mechanism
 that converts route confidence into retrieved-context token savings.
 
+Figure 1 summarizes this route-control architecture. It should be read as a
+controller diagram rather than a claim that any single retrieval route is
+removed: dense retrieval remains a fallback, while LinUCB and confidence
+signals decide when cluster-local evidence is reliable enough for context
+compaction.
+
 ## 3.4 Cluster Arms
 
 Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a
