@@ -108,7 +108,87 @@ $$
 \sum_{d \in C_t} \mathrm{tok}(d).
 $$
 
-## 4.4 Prequential Simulated Feedback
+## 4.4 Geometry Diagnostics
+
+The geometry diagnostics are used to test whether the corpus has usable local
+structure for route control. They are diagnostic support for the
+piecewise relevance-manifold assumption, not mathematical proof of a manifold.
+
+Let $E \in \mathbb{R}^{n \times p}$ be a sampled matrix of corpus chunk
+embeddings after mean-centering. Let
+$\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_p \ge 0$ be the eigenvalues of
+the empirical covariance matrix. The explained variance retained by the first
+$m$ principal components is:
+
+$$
+\mathrm{PCAvar@m} =
+\frac{\sum_{i=1}^{m} \lambda_i}
+     {\sum_{i=1}^{p} \lambda_i}.
+$$
+
+The dimension needed to explain 90% of the variance is:
+
+$$
+\mathrm{PCAdim90} =
+\min \left\{m:
+\frac{\sum_{i=1}^{m} \lambda_i}
+     {\sum_{i=1}^{p} \lambda_i}
+\ge 0.9
+\right\}.
+$$
+
+For cluster diagnostics, let $y_t$ be the PCA/context representation of query
+$q_t$, let $\mu_c$ be the centroid of cluster $c$, and let $\ell_i$ be the
+cluster label of chunk $d_i$. The top-$K$ nearest clusters for query $q_t$ are:
+
+$$
+\mathcal{N}_K(q_t) =
+\operatorname{TopK}_{c}
+\left(\mu_c^\top y_t\right).
+$$
+
+Let $\mathcal{C}_t = \{\ell_i : d_i \in G_t\}$ be the set of clusters that
+contain ground-truth evidence for query $q_t$. The nearest-cluster hit metric
+is:
+
+$$
+\mathrm{NearestClusterHit@K} =
+\frac{1}{|\mathcal{Q}_{GT}|}
+\sum_{q_t \in \mathcal{Q}_{GT}}
+\mathbb{1}
+\left[
+\mathcal{N}_K(q_t) \cap \mathcal{C}_t \neq \varnothing
+\right],
+$$
+
+where $\mathcal{Q}_{GT}$ is the set of queries with at least one ground-truth
+chunk in the evaluated corpus.
+
+Finally, let $R_{t,\mathrm{ctx}}^K$ be the top-$K$ chunks retrieved by inner
+product in the PCA/context space, and let $R_{t,\mathrm{dense}}^K$ be the
+top-$K$ chunks retrieved by dense embedding similarity. We define:
+
+$$
+\mathrm{ContextHit@K} =
+\frac{1}{|\mathcal{Q}_{GT}|}
+\sum_{q_t \in \mathcal{Q}_{GT}}
+\mathbb{1}
+\left[
+R_{t,\mathrm{ctx}}^K \cap G_t \neq \varnothing
+\right],
+$$
+
+and report context retention relative to dense retrieval:
+
+$$
+\mathrm{ContextRetention@K} =
+\frac{\mathrm{ContextHit@K}}
+     {\mathrm{DenseHit@K}}.
+$$
+
+If $\mathrm{DenseHit@K}=0$, we set $\mathrm{ContextRetention@K}=0$.
+
+## 4.5 Prequential Simulated Feedback
 
 LinUCB experiments use a no-leakage prequential simulated-feedback protocol.
 For each query, the current policy state is frozen before retrieval. The system
@@ -132,7 +212,7 @@ Some experiments use multiple prequential epochs over the same query stream to
 simulate repeated interaction. These runs are useful for route-policy
 self-evolution analysis. They are not IID held-out generalization results.
 
-## 4.5 Implementation Notes
+## 4.6 Implementation Notes
 
 The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2` with exact
 cosine search on CPU. Embeddings and retrieval artifacts are cached to avoid

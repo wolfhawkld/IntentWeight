@@ -43,6 +43,7 @@ accidentally promoted into paper-facing claims.
 | `task33_5_llm_generation_smoke_summary.md` | Supporting sanity check | Small downstream generation smoke test; not a full human evaluation. |
 | `task33_7_pre_writing_consistency_audit.md` | Supporting guardrail | Pre-writing claim consistency audit. |
 | `task34_review_defense_revision_plan.md` | Supporting guardrail | Review-defense revision checklist incorporated into the draft. |
+| `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 
 ## Boundary Or Negative Evidence
 
