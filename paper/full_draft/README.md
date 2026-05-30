@@ -19,6 +19,7 @@ revision.
 - `08_limitations.md`: limitations and future work.
 - `09_conclusion.md`: conclusion.
 - `10_reference_seed.md`: provisional citation keys and source links.
+- `11_table_figure_plan.md`: main-paper versus appendix placement plan.
 
 ## Internal Evidence Sources
 
@@ -55,10 +56,9 @@ pass should:
 - add formal citations and BibTeX entries;
 - normalize provisional citation keys into the target venue bibliography style;
 - tighten prose to the target venue style;
-- decide which tables go in the main paper versus appendix;
+- instantiate the selected main-paper figures from `11_table_figure_plan.md`;
 - convert markdown tables into LaTeX once the venue template is chosen;
-- add figures for the system diagram, token-quality frontier, and geometry
-  diagnostics.
+- convert selected appendix tables into LaTeX once the venue template is chosen.
 
 ## Math Style
 
