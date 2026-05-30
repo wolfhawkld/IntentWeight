@@ -1,6 +1,6 @@
 # IntentWeight Full Draft
 
-Updated: 2026-05-28
+Updated: 2026-05-31
 
 This directory contains the first complete paper draft assembled after the
 paper evidence package, pre-writing validation work, and review-defense
@@ -11,13 +11,14 @@ revision.
 - `00_title.md`: working title and short title options.
 - `01_abstract.md`: paper abstract.
 - `02_introduction.md`: motivation, hypothesis, contributions.
-- `03_related_work.md`: related-work skeleton with citation TODOs.
+- `03_related_work.md`: related-work framework with provisional citation keys.
 - `04_method.md`: IntentWeight method.
 - `05_experimental_setup.md`: datasets, metrics, baselines, protocol.
 - `06_results.md`: main results and ablations.
 - `07_discussion.md`: interpretation and deployment meaning.
 - `08_limitations.md`: limitations and future work.
 - `09_conclusion.md`: conclusion.
+- `10_reference_seed.md`: provisional citation keys and source links.
 
 ## Internal Evidence Sources
 
@@ -52,6 +53,7 @@ The current draft is a complete v1, not a final camera-ready paper. The next
 pass should:
 
 - add formal citations and BibTeX entries;
+- normalize provisional citation keys into the target venue bibliography style;
 - tighten prose to the target venue style;
 - decide which tables go in the main paper versus appendix;
 - convert markdown tables into LaTeX once the venue template is chosen;
