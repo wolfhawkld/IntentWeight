@@ -20,6 +20,7 @@ revision.
 - `09_conclusion.md`: conclusion.
 - `10_reference_seed.md`: provisional citation keys and source links.
 - `11_table_figure_plan.md`: main-paper versus appendix placement plan.
+- `references.bib`: provisional BibTeX bibliography for the current draft.
 - `figures/`: regenerable draft SVG figures and figure source data.
 
 ## Internal Evidence Sources
@@ -54,8 +55,7 @@ The paper should keep the bounded claim:
 The current draft is a complete v1, not a final camera-ready paper. The next
 pass should:
 
-- add formal citations and BibTeX entries;
-- normalize provisional citation keys into the target venue bibliography style;
+- verify `references.bib` against the target venue bibliography style;
 - tighten prose to the target venue style;
 - refine draft SVG figures to the selected venue's visual style;
 - convert markdown tables into LaTeX once the venue template is chosen;

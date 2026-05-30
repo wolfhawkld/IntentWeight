@@ -49,6 +49,7 @@ accidentally promoted into paper-facing claims.
 | `task36_4_table_figure_placement_plan.md` | Supporting writing revision | Defines which tables and figures belong in the main paper versus appendix; no new experiment. |
 | `task36_5_main_text_table_alignment.md` | Supporting writing revision | Aligns draft table captions and appendix-facing notes with the table/figure placement plan; no new experiment. |
 | `task36_6_main_figure_assets.md` | Supporting writing revision | Adds regenerable draft assets for the system diagram, token-quality frontier, and geometry diagnostic trend; no new experiment. |
+| `task36_7_bibtex_normalization.md` | Supporting writing revision | Converts the reference seed list into a provisional `references.bib` and checks citation-key coverage; no new experiment. |
 
 ## Boundary Or Negative Evidence
 

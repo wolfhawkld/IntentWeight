@@ -2,9 +2,9 @@
 
 Updated: 2026-05-31
 
-This file records provisional citation keys for the full draft. It is not a
-final bibliography. Convert these entries into BibTeX once the target venue and
-citation style are chosen.
+This file records the citation keys used by the full draft. A provisional
+BibTeX file has been generated at `references.bib`; recheck venue-specific
+formatting before camera-ready submission.
 
 ## Retrieval-Augmented Generation and Dense Retrieval
 
