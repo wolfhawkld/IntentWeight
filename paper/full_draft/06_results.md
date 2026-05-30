@@ -91,7 +91,37 @@ This supports the feedback self-evolution claim in a bounded form: controlled
 trust-weighted simulated feedback improves the route-policy value field. It
 does not prove that real human feedback has already been solved.
 
-## 5.5 Geometry Diagnostics
+## 5.5 Secondary Dataset Evidence
+
+The main paper claim is evaluated on LoTTE because it provides the cleanest
+large-scale vertical retrieval setting for token-quality analysis. Other
+datasets are used as supporting evidence and boundary cases rather than as
+equal main benchmarks.
+
+| Dataset | Role | Dense/reference $\mathrm{Hit@10}$ | Supporting / diagnostic result | Paper interpretation |
+|---|---|---|---|---|
+| PubMedQA | Evidence retrieval proof-of-concept | 0.9930 | Trust-weighted $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, selected-cluster hit $0.8860$ | Feedback improves policy internals near a dense ceiling; GT is abstract-level context. |
+| Banking77 | Intent routing proxy | 0.9805 | Trust-weighted $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, selected-cluster hit $0.9983$ | Strong intent-structure evidence; not an evidence-retrieval main benchmark. |
+| eManual | Duplicate/weak-label limitation | 0.3231 strict; 0.5615 text-equivalent | Deduplicated dense $\mathrm{Hit@10}=0.8615$; nearest-centroid text-equivalent $\mathrm{Hit@10}=0.5462$ | Strict chunk IDs understate success because many evidence texts are duplicated. |
+| CUAD | Sparse legal smoke/stress case | 0.0759 | Trust-weighted smoke $\mathrm{Hit@10}=0.0886$ | Too sparse and sampled to serve as positive main evidence. |
+
+PubMedQA and Banking77 support the feedback self-evolution mechanism. In both
+cases, final retrieval quality is already close to ceiling, so the important
+signal is not only final $\mathrm{Hit@10}$ but also last true reward and
+selected-cluster hit. PubMedQA is an evidence-retrieval proof-of-concept with
+section-level ground truth, while Banking77 is better understood as an
+intent-routing proxy.
+
+eManual and CUAD are useful because they prevent overclaiming. eManual has
+18,812 corpus chunks but only 1,729 unique text strings; many ground-truth
+references share duplicate text. Under strict chunk-id evaluation, dense
+retrieval reaches only $\mathrm{Hit@10}=0.3231$, but text-equivalent dense
+evaluation reaches $0.5615$, and the deduplicated corpus baseline reaches
+$0.8615$. This indicates that strict IDs can mark semantically equivalent
+retrievals as wrong. CUAD remains a sparse smoke case using a GT-anchored
+sample, so it should be reported only as a stress/limitation result.
+
+## 5.6 Geometry Diagnostics
 
 The geometry scale diagnostic validates whether LoTTE retains usable local
 geometry as scale grows.
@@ -112,7 +142,7 @@ that geometry alone should not replace dense retrieval.
 These diagnostics support the piecewise relevance-manifold framing as a useful
 motivation and diagnostic, not as a theorem.
 
-## 5.6 Encoder Robustness
+## 5.7 Encoder Robustness
 
 The encoder robustness check tests whether the result depends on the exact
 `all-MiniLM-L6-v2` encoder. With
@@ -126,7 +156,7 @@ This reduces the single-encoder risk but does not eliminate it. The result
 shows same-resource-class robustness within a MiniLM family; it does not prove
 the claim for all stronger encoders, rerankers, or late-interaction models.
 
-## 5.7 Downstream Generation Smoke
+## 5.8 Downstream Generation Smoke
 
 The downstream generation smoke test compares dense top-10 context with the
 compressed conservative-policy context on 60 sampled LoTTE 100k queries using
@@ -143,15 +173,3 @@ context compaction. Dense has a small average-score and relevance edge, so this
 should not be overclaimed as the conservative policy beating dense in generated
 answer quality. It is a sanity check, not a replacement for the retrieval and
 final-context-token experiments.
-
-## 5.8 Limitation Cases
-
-eManual contains heavy duplicate evidence text and strict chunk-id labels. The
-duplicate-evidence analysis shows that strict chunk-id recall can mark
-text-equivalent retrieved evidence as wrong. The dataset is useful as a
-limitation case: geometry may be usable, but the current learned route and
-strict labels understate retrieval success.
-
-CUAD remains a sparse smoke/stress case. Current experiments use GT-anchored
-sampling rather than full-corpus comparable evaluation. CUAD should not be used
-as main positive evidence.
