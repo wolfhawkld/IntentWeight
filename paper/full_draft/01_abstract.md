@@ -5,13 +5,13 @@ quality while limiting latency, noise, and final context cost. This trade-off is
 especially difficult for vertical-domain data, where relevance is shaped by
 domain terminology, local semantic neighborhoods, workflow structure, and
 evolving user intent. We propose IntentWeight, a feedback-guided evidence
-selection controller for manifold-structured domain data. IntentWeight combines
-dense semantic retrieval, BM25 lexical recall, and cluster-local routing under a
-piecewise relevance-manifold assumption, and uses trust-weighted LinUCB to learn
-route preferences from simulated feedback. A confidence-based final context
-policy then compacts the selected evidence sent to the generator while
-preserving dense fallback under low confidence. We instantiate this framework in
-a retrieval-augmented question-answering setting on LoTTE technology/search,
+selection controller motivated by a piecewise relevance-manifold assumption.
+IntentWeight combines dense semantic retrieval, BM25 lexical recall, and
+cluster-local routing, and uses trust-weighted LinUCB to learn route preferences
+from simulated feedback. A confidence-based final context policy then compacts
+the selected evidence sent to the generator while preserving dense fallback
+under low confidence. We instantiate this framework in a retrieval-augmented
+question-answering setting on LoTTE technology/search,
 evaluated from 100k to 638k corpus chunks; our empirical claims are limited to
 this retrieval-augmented QA setting rather than all possible knowledge-carrier
 formats. The conservative policy reduces final retrieved context tokens by

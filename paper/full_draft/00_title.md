@@ -2,7 +2,7 @@
 
 ## Recommended Title
 
-IntentWeight: Feedback-Guided Evidence Selection over Manifold-Structured Domain Data
+IntentWeight: Feedback-Guided Evidence Selection under a Piecewise Relevance-Manifold Assumption
 
 ## Short Title
 
@@ -10,7 +10,7 @@ IntentWeight for Feedback-Guided Evidence Selection
 
 ## Alternative Titles
 
-1. Manifold-Aware Feedback Optimization for Token-Efficient Evidence Selection
+1. Manifold-Inspired Feedback Optimization for Token-Efficient Evidence Selection
 2. Adaptive Evidence Routing under a Piecewise Relevance-Manifold Assumption
 3. Contextual Bandit Control for Quality-Cost Trade-offs in Knowledge-Augmented Agents
 

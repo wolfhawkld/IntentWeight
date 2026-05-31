@@ -51,6 +51,7 @@ accidentally promoted into paper-facing claims.
 | `task36_6_main_figure_assets.md` | Supporting writing revision | Adds regenerable draft assets for the system diagram, token-quality frontier, and geometry diagnostic trend; no new experiment. |
 | `task36_7_bibtex_normalization.md` | Supporting writing revision | Converts the reference seed list into a provisional `references.bib` and checks citation-key coverage; no new experiment. |
 | `task36_8_appendix_draft.md` | Supporting writing revision | Adds a paper-facing appendix draft for stability, baseline, cost-guardrail, boundary-case, encoder, and generation-smoke evidence; no new experiment. |
+| `task36_9_full_draft_consistency_audit.md` | Supporting writing revision | Adds an automated manuscript/BibTeX audit and tightens the broad evidence-selection framing to avoid manifold and RAG overclaiming; no new experiment. |
 
 ## Boundary Or Negative Evidence
 

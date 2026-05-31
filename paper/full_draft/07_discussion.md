@@ -1,9 +1,10 @@
 # 6. Discussion
 
-## 6.1 What IntentWeight Proves
+## 6.1 Supported Claim
 
 IntentWeight supports a bounded but useful claim. It is a feedback-driven
-adaptive retrieval controller that can control final context budget while
+adaptive evidence-selection controller instantiated as a retrieval controller
+in the evaluated QA setting. It can control final context budget while
 preserving dense-level retrieval quality. On LoTTE technology/search, the
 conservative confidence-based context policy reduces final retrieved context
 tokens by about 4.7-5.3% from 100k to 638k corpus chunks. Mean

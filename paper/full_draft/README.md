@@ -40,9 +40,10 @@ draft. The most important internal evidence groups are:
 The paper should keep the bounded claim:
 
 > IntentWeight is a feedback-guided evidence selection and context-budget
-> controller for manifold-structured vertical-domain data, instantiated in a
-> retrieval-augmented question-answering setting. It reduces final retrieved
-> context tokens by about 4.7-5.3% on LoTTE technology/search 100k-638k while
+> controller motivated by a piecewise relevance-manifold assumption for
+> vertical-domain data, instantiated in a retrieval-augmented question-answering
+> setting. It reduces final retrieved context tokens by about 4.7-5.3% on LoTTE
+> technology/search 100k-638k while
 > preserving dense-level $\mathrm{Hit@10}$. Mean $\mathrm{Hit@10}$ is above
 > dense on 200k, 400k, and 638k, but the paper should not claim universal or
 > statistically significant dominance, nor should it imply that the current
@@ -61,6 +62,14 @@ pass should:
 - refine draft SVG figures to the selected venue's visual style;
 - convert markdown tables into LaTeX once the venue template is chosen;
 - convert selected appendix tables into LaTeX once the venue template is chosen.
+
+## Draft Validation
+
+Run the full-draft consistency check from the repository root:
+
+```bash
+.venv/bin/python paper/experiments/scripts/task36_9_validate_full_draft.py
+```
 
 ## Math Style
 

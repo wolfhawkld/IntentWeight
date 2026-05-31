@@ -31,9 +31,10 @@ alone is not enough: a cluster route that prunes too early can miss the correct
 evidence, and dense retrieval must remain available as a recall floor.
 
 We propose IntentWeight, a feedback-guided adaptive evidence selection
-controller for manifold-structured vertical-domain data. IntentWeight does not
-replace dense retrieval with a single alternative retriever. Instead, in our
-retrieval-augmented QA implementation, it builds a multi-route retrieval surface
+controller motivated by a piecewise relevance-manifold assumption for
+vertical-domain data. IntentWeight does not replace dense retrieval with a
+single alternative retriever. Instead, in our retrieval-augmented QA
+implementation, it builds a multi-route retrieval surface
 including dense retrieval, BM25 lexical recall, and cluster-local retrieval.
 Fixed KMeans/MiniBatchKMeans clusters provide stable arms for a LinUCB policy.
 The policy observes query and route features, selects cluster-local routes, and

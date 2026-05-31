@@ -2,11 +2,12 @@
 
 ## 3.1 Problem Formulation
 
-Let a RAG corpus be a set of chunks $D = \{d_i\}_{i=1}^{N}$ and a query
-stream $Q = \{q_t\}_{t=1}^{T}$. For each query $q_t$, a retrieval system
-returns an ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be
-passed to a downstream generator. The objective is to preserve retrieval
-quality while controlling both retrieval cost and final context cost.
+In the retrieval-backed implementation evaluated here, let an evidence corpus
+be a set of chunks $D = \{d_i\}_{i=1}^{N}$ and a query stream
+$Q = \{q_t\}_{t=1}^{T}$. For each query $q_t$, a retrieval system returns an
+ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be passed to a
+downstream generator. The objective is to preserve retrieval quality while
+controlling both retrieval cost and final context cost.
 
 IntentWeight treats retrieval as a route-control problem. For each query, the
 system chooses how much to rely on global dense retrieval, lexical BM25 recall,
@@ -19,9 +20,9 @@ downstream generation smoke test.
 
 The method is motivated by a bounded assumption:
 
-> In vertical-domain RAG, query-document relevance often follows a piecewise
-> local structure induced by domain terminology, semantic neighborhoods,
-> document organization, and user intent.
+> In vertical-domain evidence retrieval, query-document relevance often
+> follows a piecewise local structure induced by domain terminology, semantic
+> neighborhoods, document organization, and user intent.
 
 This does not mean that corpus geometry is sufficient by itself. Instead,
 IntentWeight uses geometry as one routing signal among several. Dense retrieval
