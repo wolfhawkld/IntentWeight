@@ -27,24 +27,10 @@ scale.
 
 ## 5.2 Seed Stability
 
-This section is appendix-facing in a conference-length version. The main text
-should summarize the direction and keep the detailed interval table in the
-appendix unless space permits.
-
 The multi-seed stability analysis reports three-seed diagnostics for the
 conservative policy. With only three seeds, these intervals should be presented
 as engineering stability diagnostics, not as strong statistical significance
 proof.
-
-**Appendix Table A1. Multi-seed stability diagnostics for the conservative
-context policy.**
-
-| Scale | Conservative policy $\mathrm{Hit@10}$ mean | $\mathrm{Hit@10}$ 95% CI | Token saving mean | Token saving 95% CI |
-|---|---:|---:|---:|---:|
-| 100k | 0.8652 | [0.8565, 0.8739] | 4.83% | [2.89%, 6.77%] |
-| 200k | 0.8249 | [0.8052, 0.8446] | 4.69% | [3.89%, 5.48%] |
-| 400k | 0.7819 | [0.7709, 0.7929] | 5.32% | [0.11%, 10.53%] |
-| 638k | 0.7466 | [0.7246, 0.7687] | 4.86% | [4.24%, 5.48%] |
 
 The 400k token-saving interval is wider than the other scales. We interpret
 this as seed-level variance in route confidence and context-budget control, not
@@ -57,6 +43,9 @@ policy setting. The five-seed mean is $\mathrm{Hit@10}=0.8708$ versus dense
 $0.8674$, with final context token ratio $0.9507\times$. The Hit delta
 confidence interval overlaps zero, so this strengthens stability but does not
 justify a statistical-superiority claim at 100k.
+
+Appendix A reports the complete three-seed confidence-interval tables and the
+five-seed LoTTE 100k extension.
 
 ## 5.3 Component Ablation
 
@@ -120,19 +109,6 @@ large-scale vertical retrieval setting for token-quality analysis. Other
 datasets are used as supporting evidence and boundary cases rather than as
 equal main benchmarks.
 
-This section is appendix-facing in a conference-length version. A short main
-text paragraph can summarize the secondary evidence and boundary cases, while
-the full table can move to the appendix.
-
-**Appendix Table D1. Secondary dataset evidence and boundary cases.**
-
-| Dataset | Role | Dense/reference $\mathrm{Hit@10}$ | Supporting / diagnostic result | Paper interpretation |
-|---|---|---|---|---|
-| PubMedQA | Evidence retrieval proof-of-concept | 0.9930 | Trust-weighted $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, selected-cluster hit $0.8860$ | Feedback improves policy internals near a dense ceiling; GT is abstract-level context. |
-| Banking77 | Intent routing proxy | 0.9805 | Trust-weighted $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, selected-cluster hit $0.9983$ | Strong intent-structure evidence; not an evidence-retrieval main benchmark. |
-| eManual | Duplicate/weak-label limitation | 0.3231 strict; 0.5615 text-equivalent | Deduplicated dense $\mathrm{Hit@10}=0.8615$; nearest-centroid text-equivalent $\mathrm{Hit@10}=0.5462$ | Strict chunk IDs understate success because many evidence texts are duplicated. |
-| CUAD | Sparse legal smoke/stress case | 0.0759 | Trust-weighted smoke $\mathrm{Hit@10}=0.0886$ | Too sparse and sampled to serve as positive main evidence. |
-
 PubMedQA and Banking77 support the feedback self-evolution mechanism. In both
 cases, final retrieval quality is already close to ceiling, so the important
 signal is not only final $\mathrm{Hit@10}$ but also last true reward and
@@ -148,6 +124,9 @@ evaluation reaches $0.5615$, and the deduplicated corpus baseline reaches
 $0.8615$. This indicates that strict IDs can mark semantically equivalent
 retrievals as wrong. CUAD remains a sparse smoke case using a GT-anchored
 sample, so it should be reported only as a stress/limitation result.
+
+Appendix D reports the full secondary-dataset table and the eManual
+duplicate-text diagnostic.
 
 ## 5.6 Geometry Diagnostics
 
@@ -176,8 +155,6 @@ context retention and PCA concentration decline as the corpus grows.
 
 ## 5.7 Encoder Robustness
 
-This section is appendix-facing in a conference-length version.
-
 The encoder robustness check tests whether the result depends on the exact
 `all-MiniLM-L6-v2` encoder. With
 `sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, a QA-tuned MiniLM-family
@@ -189,6 +166,7 @@ context tokens by $3.35\%$.
 This reduces the single-encoder risk but does not eliminate it. The result
 shows same-resource-class robustness within a MiniLM family; it does not prove
 the claim for all stronger encoders, rerankers, or late-interaction models.
+Appendix E reports the complete robustness table.
 
 ## 5.8 Downstream Generation Smoke
 
@@ -196,19 +174,8 @@ The downstream generation smoke test compares dense top-10 context with the
 compressed conservative-policy context on 60 sampled LoTTE 100k queries using
 `deepseek-v4-flash` with thinking enabled.
 
-This section is appendix-facing unless the target venue explicitly values a
-small generation sanity check in the main result section.
-
-**Appendix Table F1. Downstream generation smoke test.**
-
-| Method | Answer score | Faithfulness | Answer relevance | Win count | Context token proxy ratio |
-|---|---:|---:|---:|---:|---:|
-| Dense top-10 | 4.4000 | 4.6500 | 4.6500 | 14 | 1.0000 |
-| Conservative policy | 4.2833 | 4.6333 | 4.4500 | 14 | 0.9321 |
-| Tie | - | - | - | 32 | - |
-
 The smoke does not show obvious answer-quality degradation from conservative
 context compaction. Dense has a small average-score and relevance edge, so this
 should not be overclaimed as the conservative policy beating dense in generated
 answer quality. It is a sanity check, not a replacement for the retrieval and
-final-context-token experiments.
+final-context-token experiments. Appendix F reports the full smoke table.

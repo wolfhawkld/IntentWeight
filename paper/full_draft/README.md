@@ -20,6 +20,7 @@ revision.
 - `09_conclusion.md`: conclusion.
 - `10_reference_seed.md`: provisional citation keys and source links.
 - `11_table_figure_plan.md`: main-paper versus appendix placement plan.
+- `12_appendix.md`: paper-facing appendix draft with supporting diagnostics.
 - `references.bib`: provisional BibTeX bibliography for the current draft.
 - `figures/`: regenerable draft SVG figures and figure source data.
 

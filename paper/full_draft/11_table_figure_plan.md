@@ -5,6 +5,7 @@ Updated: 2026-05-31
 This file is a paper-facing placement plan. It does not introduce new
 experiments or new claims. Its purpose is to decide which evidence belongs in
 the main paper and which evidence should be moved to an appendix or supplement.
+The appendix-facing tables are instantiated in `12_appendix.md`.
 
 The table labels in the current draft are aligned with this plan:
 
