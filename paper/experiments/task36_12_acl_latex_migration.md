@@ -66,9 +66,10 @@ pdf_compile=skipped_no_tex_toolchain
 latex_validation=passed
 ```
 
-The current WSL environment does not contain `pdflatex`, `latexmk`, `bibtex`,
-`xelatex`, or `lualatex`. Static validation passes, but PDF compilation and
-visual page-budget inspection remain required in TeX Live or Overleaf.
+At the end of Task36.12, the WSL environment did not contain `pdflatex`,
+`latexmk`, `bibtex`, `xelatex`, or `lualatex`. Static validation passed.
+Task36.13 subsequently installs TinyTeX, compiles the PDF, and performs the
+visual page-budget inspection.
 
 ## Source-Of-Truth Rule
 

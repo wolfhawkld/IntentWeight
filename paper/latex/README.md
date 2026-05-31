@@ -28,16 +28,48 @@ Or from this directory:
 make validate
 ```
 
+## Lightweight TeX Environment
+
+The current WSL environment uses TinyTeX, a lightweight TeX Live distribution:
+
+```bash
+curl -sL "https://yihui.org/tinytex/install-unx.sh" | sh
+tlmgr install lineno caption microtype upquote
+```
+
+TinyTeX installs into the user home directory and adds command links under
+`~/bin`. The four extra packages are the only packages that were missing from
+the default TinyTeX profile for this ACL review-mode draft.
+
 ## Build PDF
 
-Use a TeX Live environment with `latexmk`, `pdflatex`, and `bibtex`:
+Build the review PDF:
 
 ```bash
 make pdf
 ```
 
-The current WSL environment does not include a TeX toolchain, so repository
-validation is static until the draft is compiled in TeX Live or Overleaf.
+The generated `main.pdf` and LaTeX intermediate files are intentionally
+gitignored.
+
+## Audit PDF
+
+Install the optional rendering audit dependencies in the project virtual
+environment:
+
+```bash
+../../.venv/bin/python -m pip install -r audit-requirements.txt
+```
+
+Then compile and render the PDF audit:
+
+```bash
+make audit
+```
+
+The audit checks page rendering, nonblank pages, references and appendix
+locations, and critical LaTeX log warnings. Contact sheets are written under
+`/tmp/intentweight_pdf_audit/`.
 
 ## Official ACL Style Files
 

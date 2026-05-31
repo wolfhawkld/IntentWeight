@@ -637,13 +637,16 @@ contain ground-truth evidence for query $q_t$. The nearest-cluster hit metric
 is:
 
 $$
-\mathrm{NearestClusterHit@K} =
+\begin{aligned}
+\mathrm{NearestClusterHit@K} &=
 \frac{1}{|\mathcal{Q}_{GT}|}
-\sum_{q_t \in \mathcal{Q}_{GT}}
+\sum_{q_t \in \mathcal{Q}_{GT}} \\
+&\quad
 \mathbb{1}
 \left[
 \mathcal{N}_K(q_t) \cap \mathcal{C}_t \neq \varnothing
-\right],
+\right].
+\end{aligned}
 $$
 
 where $\mathcal{Q}_{GT}$ is the set of queries with at least one ground-truth
@@ -654,13 +657,16 @@ product in the PCA/context space, and let $R_{t,\mathrm{dense}}^K$ be the
 top-$K$ chunks retrieved by dense embedding similarity. We define:
 
 $$
-\mathrm{ContextHit@K} =
+\begin{aligned}
+\mathrm{ContextHit@K} &=
 \frac{1}{|\mathcal{Q}_{GT}|}
-\sum_{q_t \in \mathcal{Q}_{GT}}
+\sum_{q_t \in \mathcal{Q}_{GT}} \\
+&\quad
 \mathbb{1}
 \left[
 R_{t,\mathrm{ctx}}^K \cap G_t \neq \varnothing
 \right],
+\end{aligned}
 $$
 
 and report context retention relative to dense retrieval:

@@ -78,7 +78,7 @@ def inline(text: str) -> str:
         ),
         text,
     )
-    text = CODE_RE.sub(lambda match: protect(r"\texttt{" + escape_latex(match.group(1)) + "}"), text)
+    text = CODE_RE.sub(lambda match: protect(r"\nolinkurl{" + match.group(1) + "}"), text)
     text = BOLD_RE.sub(lambda match: protect(r"\textbf{" + escape_latex(match.group(1)) + "}"), text)
     for source, replacement in FIGURE_REFS.items():
         text = text.replace(source, protect(replacement))
@@ -264,7 +264,7 @@ def convert_markdown(path: Path, *, appendix: bool = False, abstract: bool = Fal
                     continue
             command = "section" if len(hashes) == 1 or (appendix and len(hashes) == 2) else "subsection"
             if appendix and len(hashes) == 3:
-                command = "subsubsection"
+                command = "subsection"
             clean_title = heading_title(value)
             output.append(rf"\{command}{{{inline(clean_title)}}}")
             output.append(rf"\label{{sec:{label_prefix}:{slug(clean_title)}}}")

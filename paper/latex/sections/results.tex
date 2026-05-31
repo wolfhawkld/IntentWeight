@@ -141,13 +141,13 @@ These diagnostics support the piecewise relevance-manifold framing as a useful m
 \subsection{Encoder Robustness}
 \label{sec:06-results:encoder-robustness}
 
-The encoder robustness check tests whether the result depends on the exact \texttt{all-MiniLM-L6-v2} encoder. With \texttt{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder, the dense baseline becomes stronger on LoTTE 100k: $\mathrm{Hit@10}$ increases to $0.8809$. IntentWeight still reaches mean $\mathrm{Hit@10}=0.8853$ under the conservative policy and reduces final context tokens by $3.35\%$.
+The encoder robustness check tests whether the result depends on the exact \nolinkurl{all-MiniLM-L6-v2} encoder. With \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder, the dense baseline becomes stronger on LoTTE 100k: $\mathrm{Hit@10}$ increases to $0.8809$. IntentWeight still reaches mean $\mathrm{Hit@10}=0.8853$ under the conservative policy and reduces final context tokens by $3.35\%$.
 
 This reduces the single-encoder risk but does not eliminate it. The result shows same-resource-class robustness within a MiniLM family; it does not prove the claim for all stronger encoders, rerankers, or late-interaction models. Appendix E reports the complete robustness table.
 
 \subsection{Downstream Generation Smoke}
 \label{sec:06-results:downstream-generation-smoke}
 
-The downstream generation smoke test compares dense top-10 context with the compressed conservative-policy context on 60 sampled LoTTE 100k queries using \texttt{deepseek-v4-flash} with thinking enabled.
+The downstream generation smoke test compares dense top-10 context with the compressed conservative-policy context on 60 sampled LoTTE 100k queries using \nolinkurl{deepseek-v4-flash} with thinking enabled.
 
 The smoke does not show obvious answer-quality degradation from conservative context compaction. Dense has a small average-score and relevance edge, so this should not be overclaimed as the conservative policy beating dense in generated answer quality. It is a sanity check, not a replacement for the retrieval and final-context-token experiments. Appendix F reports the full smoke table.

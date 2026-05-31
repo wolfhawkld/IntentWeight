@@ -93,9 +93,13 @@ root:
 .venv/bin/python paper/experiments/scripts/task36_12_validate_latex.py
 ```
 
-The LaTeX entry point is `paper/latex/main.tex`. The current WSL environment
-does not include a TeX toolchain, so PDF compilation must run in TeX Live or
-Overleaf.
+The LaTeX entry point is `paper/latex/main.tex`. TinyTeX is installed in the
+current WSL environment, so the ACL review PDF can be compiled and audited
+locally:
+
+```bash
+make -C paper/latex audit
+```
 
 ## Math Style
 

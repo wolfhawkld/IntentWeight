@@ -35,7 +35,7 @@ The baseline family includes:
 
 \begin{itemize}
 \item BM25-only lexical retrieval.
-\item Dense-only retrieval with \texttt{sentence-transformers/all-MiniLM-L6-v2}.
+\item Dense-only retrieval with \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}.
 \item BM25 + dense hybrid retrieval using reciprocal-rank fusion.
 \item Full multi-route IntentWeight.
 \item Gated cost-aware IntentWeight.
@@ -150,13 +150,16 @@ For cluster diagnostics, let $y_t$ be the PCA/context representation of query $q
 Let $\mathcal{C}_t = \{\ell_i : d_i \in G_t\}$ be the set of clusters that contain ground-truth evidence for query $q_t$. The nearest-cluster hit metric is:
 
 \[
-\mathrm{NearestClusterHit@K} =
+\begin{aligned}
+\mathrm{NearestClusterHit@K} &=
 \frac{1}{|\mathcal{Q}_{GT}|}
-\sum_{q_t \in \mathcal{Q}_{GT}}
+\sum_{q_t \in \mathcal{Q}_{GT}} \\
+&\quad
 \mathbb{1}
 \left[
 \mathcal{N}_K(q_t) \cap \mathcal{C}_t \neq \varnothing
-\right],
+\right].
+\end{aligned}
 \]
 
 where $\mathcal{Q}_{GT}$ is the set of queries with at least one ground-truth chunk in the evaluated corpus.
@@ -164,13 +167,16 @@ where $\mathcal{Q}_{GT}$ is the set of queries with at least one ground-truth ch
 Finally, let $R_{t,\mathrm{ctx}}^K$ be the top-$K$ chunks retrieved by inner product in the PCA/context space, and let $R_{t,\mathrm{dense}}^K$ be the top-$K$ chunks retrieved by dense embedding similarity. We define:
 
 \[
-\mathrm{ContextHit@K} =
+\begin{aligned}
+\mathrm{ContextHit@K} &=
 \frac{1}{|\mathcal{Q}_{GT}|}
-\sum_{q_t \in \mathcal{Q}_{GT}}
+\sum_{q_t \in \mathcal{Q}_{GT}} \\
+&\quad
 \mathbb{1}
 \left[
 R_{t,\mathrm{ctx}}^K \cap G_t \neq \varnothing
 \right],
+\end{aligned}
 \]
 
 and report context retention relative to dense retrieval:
@@ -197,6 +203,6 @@ Some experiments use multiple prequential epochs over the same query stream to s
 \subsection{Implementation Notes}
 \label{sec:05-experimental-setup:implementation-notes}
 
-The main dense baseline uses \texttt{sentence-transformers/all-MiniLM-L6-v2} with exact cosine search on CPU. Embeddings and retrieval artifacts are cached to avoid repeating deterministic computation. Metrics are recomputed from saved rankings, not copied from prior summaries.
+The main dense baseline uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2} with exact cosine search on CPU. Embeddings and retrieval artifacts are cached to avoid repeating deterministic computation. Metrics are recomputed from saved rankings, not copied from prior summaries.
 
 KMeans/MiniBatchKMeans uses a fixed number of arms across scales. This supports LinUCB comparability and reproducibility, but it is not claimed to be the best possible clustering design.

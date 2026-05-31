@@ -36,7 +36,7 @@ KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and the
 \subsection{Limited Encoder and Domain Coverage}
 \label{sec:08-limitations:limited-encoder-and-domain-coverage}
 
-The main dense baseline uses \texttt{sentence-transformers/all-MiniLM-L6-v2}. The paper adds a CPU-friendly encoder robustness check with \texttt{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, but the paper should not generalize the result to stronger domain-specific encoders, rerankers, or late-interaction models without additional experiments.
+The main dense baseline uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. The paper adds a CPU-friendly encoder robustness check with \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, but the paper should not generalize the result to stronger domain-specific encoders, rerankers, or late-interaction models without additional experiments.
 
 LoTTE technology/search is the main positive large-scale domain. Additional LoTTE domains or other vertical corpora would strengthen external validity.
 

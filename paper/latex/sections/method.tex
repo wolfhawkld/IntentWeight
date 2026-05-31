@@ -83,7 +83,7 @@ The current experiments do not claim that real human feedback was collected. The
 \subsection{Route-Level Credit Assignment}
 \label{sec:04-method:route-level-credit-assignment}
 
-Early experiments used final fused retrieval success as the reward signal. This can over-credit the selected cluster arm when dense or BM25 rescue the final ranking. IntentWeight therefore uses a stricter \texttt{cluster\_only} reward attribution mode in the main policy-learning experiments. The LinUCB arm is updated using the quality of its own cluster-local route.
+Early experiments used final fused retrieval success as the reward signal. This can over-credit the selected cluster arm when dense or BM25 rescue the final ranking. IntentWeight therefore uses a stricter \nolinkurl{cluster_only} reward attribution mode in the main policy-learning experiments. The LinUCB arm is updated using the quality of its own cluster-local route.
 
 This distinction is important. The final fused ranking measures the system outcome, while cluster-only reward measures whether LinUCB is learning a better route. Dense and BM25 rescue paths protect final quality; cluster-only credit assignment tests whether the adaptive component itself is improving.
 
@@ -101,7 +101,7 @@ Several repeated-feedback experiments use multiple prequential epochs over the s
 
 Preliminary token-cost analysis showed that reducing source candidates does not automatically reduce final context tokens. IntentWeight therefore adds an explicit final context policy.
 
-The conservative \texttt{confidence\_topk} policy works as follows:
+The conservative \nolinkurl{confidence_topk} policy works as follows:
 
 \begin{enumerate}
 \item If route confidence is low or semantic drift is high, keep dense fallback and the normal top-10 context.

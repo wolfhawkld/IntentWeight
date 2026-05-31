@@ -152,7 +152,7 @@ CUAD & Sparse legal smoke/stress case & 0.0759 & Trust-weighted smoke $\mathrm{H
 \end{tabularx}
 \end{table*}
 
-\subsubsection{eManual Duplicate-Text Diagnostic}
+\subsection{eManual Duplicate-Text Diagnostic}
 \label{sec:12-appendix:emanual-duplicate-text-diagnostic}
 
 eManual contains 18,812 corpus chunks but only 1,729 unique text strings. Strict chunk-id evaluation can therefore mark semantically equivalent retrievals as incorrect.
@@ -184,7 +184,7 @@ The text-equivalent and deduplicated metrics are diagnostics, not replacements f
 \section{Encoder Robustness}
 \label{sec:12-appendix:encoder-robustness}
 
-The main scale-up uses \texttt{sentence-transformers/all-MiniLM-L6-v2}. A LoTTE 100k robustness check replaces it with \texttt{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder with the same 384-dimensional embedding size and a similar CPU-friendly resource class.
+The main scale-up uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. A LoTTE 100k robustness check replaces it with \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder with the same 384-dimensional embedding size and a similar CPU-friendly resource class.
 
 \begin{table*}[t]
 \centering
