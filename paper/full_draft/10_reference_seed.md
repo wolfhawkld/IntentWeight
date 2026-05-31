@@ -39,6 +39,26 @@ formatting before camera-ready submission.
   Algorithms. Cambridge University Press.
   Source: https://www.cambridge.org/core/books/bandit-algorithms/8E39FD004E6CE036680F90DD0C6F09FC
 
+## Adaptive Retrieval and Bandit Routing
+
+- `jiang2023flare`: Zhengbao Jiang et al. 2023. Active Retrieval Augmented
+  Generation. EMNLP 2023.
+  Source: https://aclanthology.org/2023.emnlp-main.495/
+- `jeong2024adaptiverag`: Soyeong Jeong et al. 2024. Adaptive-RAG: Learning to
+  Adapt Retrieval-Augmented Large Language Models through Question Complexity.
+  NAACL 2024.
+  Source: https://aclanthology.org/2024.naacl-long.389/
+- `asai2024selfrag`: Akari Asai et al. 2024. Self-RAG: Learning to Retrieve,
+  Generate, and Critique through Self-Reflection. ICLR 2024.
+  Source: https://openreview.net/forum?id=hSyW5go0v8
+- `yan2024crag`: Shi-Qi Yan et al. 2024. Corrective Retrieval Augmented
+  Generation. arXiv:2401.15884.
+  Source: https://arxiv.org/abs/2401.15884
+- `tang2025mbarag`: Xiaqiang Tang et al. 2025. MBA-RAG: a Bandit Approach for
+  Adaptive Retrieval-Augmented Generation through Question Complexity. COLING
+  2025.
+  Source: https://aclanthology.org/2025.coling-main.218/
+
 ## Geometry and Structured Retrieval
 
 - `tenenbaum2000isomap`: Joshua B. Tenenbaum, Vin de Silva, and John C.
@@ -73,3 +93,23 @@ formatting before camera-ready submission.
 - `ouyang2022instructgpt`: Long Ouyang et al. 2022. Training Language Models to
   Follow Instructions with Human Feedback. arXiv:2203.02155.
   Source: https://arxiv.org/abs/2203.02155
+
+## Context Compression and Evidence Refinement
+
+- `li2023selectivecontext`: Yucheng Li et al. 2023. Compressing Context to
+  Enhance Inference Efficiency of Large Language Models. arXiv:2310.06201.
+  Source: https://arxiv.org/abs/2310.06201
+- `jiang2023llmlingua`: Huiqiang Jiang et al. 2023. LLMLingua: Compressing
+  Prompts for Accelerated Inference of Large Language Models. EMNLP 2023.
+  Source: https://aclanthology.org/2023.emnlp-main.825/
+- `pan2024llmlingua2`: Zhuoshi Pan et al. 2024. LLMLingua-2: Data Distillation
+  for Efficient and Faithful Task-Agnostic Prompt Compression. Findings of ACL
+  2024.
+  Source: https://aclanthology.org/2024.findings-acl.57/
+- `hwang2024dslr`: Taeho Hwang et al. 2024. DSLR: Document Refinement with
+  Sentence-Level Re-ranking and Reconstruction to Enhance Retrieval-Augmented
+  Generation. KnowledgeNLP 2024.
+  Source: https://aclanthology.org/2024.knowledgenlp-1.6/
+- `shi2024replug`: Weijia Shi et al. 2024. REPLUG: Retrieval-Augmented
+  Black-Box Language Models. NAACL 2024.
+  Source: https://aclanthology.org/2024.naacl-long.463/

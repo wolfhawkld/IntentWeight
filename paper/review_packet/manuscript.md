@@ -182,6 +182,17 @@ heterogeneous query streams. Some queries require exact lexical anchors, others
 require semantic expansion, and others can be answered from a smaller local
 evidence region.
 
+Several systems adapt retrieval behavior without using contextual bandits.
+FLARE performs active retrieval during generation when predicted continuation
+tokens have low confidence [@jiang2023flare]. Adaptive-RAG routes questions
+among no-retrieval, single-step, and iterative retrieval strategies using a
+learned question-complexity classifier [@jeong2024adaptiverag]. Self-RAG trains
+a language model to retrieve and critique evidence on demand through reflection
+tokens [@asai2024selfrag]. CRAG evaluates retrieved evidence and triggers
+corrective actions when retrieval confidence is low [@yan2024crag]. These
+methods establish that retrieval behavior should respond to query difficulty,
+generation uncertainty, or evidence quality rather than remain fixed.
+
 Contextual bandits provide a natural abstraction for adaptive route control. A
 policy observes a context, selects an action, receives feedback, and updates its
 future decisions. LinUCB is a simple and interpretable contextual bandit
@@ -191,11 +202,15 @@ studied for personalized news recommendation [@li2010linucb], and contextual
 bandits more broadly are a standard framework for sequential decision making
 under partial feedback [@lattimore2020bandits].
 
-IntentWeight uses LinUCB not as a replacement retriever, but as an adaptive
-routing policy over cluster-local evidence routes and confidence-controlled
-context choices. This distinguishes the method from static hybrid retrieval:
-the controller is updated by feedback and can change route preference over
-time.
+MBA-RAG is the closest bandit-based comparison: it treats retrieval methods as
+arms, dynamically selects a strategy according to question complexity, and
+penalizes retrieval steps in its reward [@tang2025mbarag]. IntentWeight does not
+claim to be the first use of bandits in retrieval-augmented generation. Its
+focus is different: it studies fixed cluster-local routes over a domain corpus,
+route-level credit assignment, trust-weighted feedback, dense rescue paths, and
+the measured size of the final context. The LinUCB controller is not a
+replacement retriever. It is an adaptive local-evidence routing policy that can
+change route preference as feedback accumulates.
 
 ## 2.4 Geometry and Manifold-Inspired Retrieval
 
@@ -223,7 +238,27 @@ rescue paths, and the geometry assumption is evaluated diagnostically through
 $\mathrm{NearestClusterHit@K}$, $\mathrm{PCAvar@m}$, $\mathrm{PCAdim90}$, and
 $\mathrm{ContextRetention@K}$.
 
-## 2.5 User Feedback, RLHF-Inspired Optimization, and Trust Weighting
+## 2.5 Context Compression and Evidence Refinement
+
+Reducing the context passed to a language model is related to, but distinct
+from, choosing a retrieval route. Selective Context prunes redundant input
+content, LLMLingua uses a coarse-to-fine prompt compression pipeline, and
+LLMLingua-2 learns a task-agnostic token classifier for faithful compression
+[@li2023selectivecontext; @jiang2023llmlingua; @pan2024llmlingua2]. DSLR
+refines retrieved passages through sentence-level reranking and reconstruction
+[@hwang2024dslr]. REPLUG shows another complementary direction: a frozen
+black-box language model can be paired with a tuneable retrieval model
+[@shi2024replug].
+
+IntentWeight operates earlier in the pipeline. It selects and compacts evidence
+units before generation rather than compressing tokens inside already selected
+passages or tuning a retriever against language-model likelihood. Its
+confidence-based context policy is therefore compatible with prompt
+compression, reranking, and black-box generation methods. The paper measures
+final context tokens because source-candidate counts alone do not establish
+downstream context savings.
+
+## 2.6 User Feedback, RLHF-Inspired Optimization, and Trust Weighting
 
 User feedback can improve retrieval systems, but real feedback is delayed,
 biased, sparse, and user-dependent. Earlier work on clickthrough and implicit

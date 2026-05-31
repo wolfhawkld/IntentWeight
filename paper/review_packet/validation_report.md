@@ -6,8 +6,8 @@ Updated: 2026-05-31
 
 ```text
 manuscript_files=11
-citation_keys=16
-bib_entries=16
+citation_keys=26
+bib_entries=26
 uncited_bib_entries=0
 validation=passed
 ```
@@ -17,9 +17,9 @@ validation=passed
 ```text
 packet_validation=passed
 chapters=10
-manuscript_words=8771
-citation_keys=16
-bib_entries=16
+manuscript_words=9051
+citation_keys=26
+bib_entries=26
 figure_assets=3
 ```
 
