@@ -71,6 +71,16 @@ Run the full-draft consistency check from the repository root:
 .venv/bin/python paper/experiments/scripts/task36_9_validate_full_draft.py
 ```
 
+## Review Packet
+
+Build the venue-neutral independent-review packet from the repository root:
+
+```bash
+.venv/bin/python paper/experiments/scripts/task36_10_build_review_packet.py
+```
+
+The generated review entry point is `paper/review_packet/`.
+
 ## Math Style
 
 Formula notation in this draft should use Markdown-compatible LaTeX syntax:
