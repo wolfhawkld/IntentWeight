@@ -23,6 +23,7 @@ revision.
 - `12_appendix.md`: paper-facing appendix draft with supporting diagnostics.
 - `references.bib`: provisional BibTeX bibliography for the current draft.
 - `figures/`: regenerable draft SVG figures and figure source data.
+- `../latex/`: generated ACL-style LaTeX migration with PDF figure assets.
 
 ## Internal Evidence Sources
 
@@ -57,11 +58,11 @@ The paper should keep the bounded claim:
 The current draft is a complete v1, not a final camera-ready paper. The next
 pass should:
 
-- verify `references.bib` against the target venue bibliography style;
 - tighten prose to the target venue style;
 - refine draft SVG figures to the selected venue's visual style;
-- convert markdown tables into LaTeX once the venue template is chosen;
-- convert selected appendix tables into LaTeX once the venue template is chosen.
+- compile the ACL-style LaTeX migration in TeX Live or Overleaf;
+- visually inspect table density, float placement, and page budget;
+- select a specific submission cycle before camera-ready formatting.
 
 ## Draft Validation
 
@@ -80,6 +81,21 @@ Build the venue-neutral independent-review packet from the repository root:
 ```
 
 The generated review entry point is `paper/review_packet/`.
+
+## ACL-Style LaTeX Migration
+
+Generate and statically validate the formal LaTeX migration from the repository
+root:
+
+```bash
+.venv/bin/python paper/experiments/scripts/task36_12_migrate_latex.py
+.venv/bin/python paper/experiments/scripts/task36_12_generate_latex_figures.py
+.venv/bin/python paper/experiments/scripts/task36_12_validate_latex.py
+```
+
+The LaTeX entry point is `paper/latex/main.tex`. The current WSL environment
+does not include a TeX toolchain, so PDF compilation must run in TeX Live or
+Overleaf.
 
 ## Math Style
 

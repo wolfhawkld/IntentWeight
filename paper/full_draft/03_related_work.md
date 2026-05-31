@@ -1,8 +1,5 @@
 # 2. Related Work
 
-This section uses provisional citation keys. The exact BibTeX style should be
-normalized once the target venue template is selected.
-
 ## 2.1 Retrieval-Augmented and Knowledge-Augmented Generation
 
 Retrieval-augmented generation connects a parametric language model to an

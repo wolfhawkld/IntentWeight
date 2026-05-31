@@ -1,0 +1,2 @@
+# Preserve the official ACL bibliography style byte-for-byte.
+paper/latex/acl_natbib.bst whitespace=-trailing-space

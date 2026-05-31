@@ -38,3 +38,12 @@ secrets/
 credentials/
 secrets.json
 config.local.*
+
+# LaTeX generated build files
+paper/latex/*.aux
+paper/latex/*.bbl
+paper/latex/*.blg
+paper/latex/*.fdb_latexmk
+paper/latex/*.fls
+paper/latex/*.out
+paper/latex/*.pdf

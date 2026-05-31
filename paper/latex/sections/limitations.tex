@@ -1,0 +1,60 @@
+% Generated from paper/full_draft. Edit the Markdown source or migration script.
+
+\section{Limitations and Future Work}
+\label{sec:08-limitations:limitations-and-future-work}
+
+\subsection{Simulated Feedback}
+\label{sec:08-limitations:simulated-feedback}
+
+The current experiments use simulated feedback derived from ground truth and controlled noise/trust settings. This validates whether the policy can improve under a feedback signal, but it does not prove the same behavior under real human feedback. Real deployments must handle delayed feedback, biased implicit signals, adversarial or low-quality users, and non-stationary intent.
+
+\subsection{Limited Generation Evaluation}
+\label{sec:08-limitations:limited-generation-evaluation}
+
+The main experiments evaluate retrieval and final retrieved context tokens. A 60-query LLM generation smoke test shows no obvious answer-quality degradation from conservative context compaction, but this is not a full end-to-end human evaluation. The supported main claim remains evidence retrieval and retrieved context budget, not generated answer superiority or user satisfaction.
+
+\subsection{Dense Remains Strong}
+\label{sec:08-limitations:dense-remains-strong}
+
+Dense-only retrieval remains a strong baseline. IntentWeight should not be claimed as a universal replacement for dense retrieval. The evidence supports a controller that can reduce final context tokens while preserving dense-level $\mathrm{Hit@10}$ in the main LoTTE setting, and that can expose a quality-cost frontier across routes.
+
+\subsection{Evidence Completeness Trade-Off}
+\label{sec:08-limitations:evidence-completeness-trade-off}
+
+The main retrieval headline is query-level $\mathrm{Hit@10}$. Final context compaction can preserve whether at least one relevant chunk is retrieved while reducing the fraction of all ground-truth chunks retrieved. For tasks that require complete evidence collection, such as legal review, medical evidence synthesis, or exhaustive compliance analysis, a more conservative context policy or no compaction may be preferable.
+
+\subsection{Geometry Is Diagnostic, Not a Proof}
+\label{sec:08-limitations:geometry-is-diagnostic-not-a-proof}
+
+The piecewise relevance-manifold framing is supported by diagnostics such as $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These diagnostics do not prove a mathematical manifold theorem. They show that local geometry is informative for routing on LoTTE, while dense retrieval remains necessary.
+
+\subsection{KMeans Is an Experimental Arm Design}
+\label{sec:08-limitations:kmeans-is-an-experimental-arm-design}
+
+KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and the experiments need reproducible, scalable arms. This is not a claim that KMeans is the best clustering method for all RAG systems. HDBSCAN or graph-based clusters may perform better in some deployments, but dynamic arm counts complicate the current LinUCB setup.
+
+\subsection{Limited Encoder and Domain Coverage}
+\label{sec:08-limitations:limited-encoder-and-domain-coverage}
+
+The main dense baseline uses \texttt{sentence-transformers/all-MiniLM-L6-v2}. The paper adds a CPU-friendly encoder robustness check with \texttt{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, but the paper should not generalize the result to stronger domain-specific encoders, rerankers, or late-interaction models without additional experiments.
+
+LoTTE technology/search is the main positive large-scale domain. Additional LoTTE domains or other vertical corpora would strengthen external validity.
+
+\subsection{Seed Count and 400k Variance}
+\label{sec:08-limitations:seed-count-and-400k-variance}
+
+The stability analysis reports three-seed confidence intervals across LoTTE 100k-638k, and an additional robustness check extends LoTTE 100k to five seeds. These are useful engineering stability diagnostics, but they should not be over-framed as strong statistical significance proof. The LoTTE 400k token-saving interval is notably wider than the other scales and should be interpreted as seed-level variance in route confidence and context-budget control.
+
+\subsection{Future Work}
+\label{sec:08-limitations:future-work}
+
+Future work should evaluate:
+
+\begin{itemize}
+\item real user feedback with trust scoring and delayed-feedback handling;
+\item larger end-to-end LLM answer-quality and citation-faithfulness studies;
+\item stronger dense encoders, rerankers, and late-interaction retrieval models;
+\item graph or density-based dynamic clustering under bandit-compatible arm management;
+\item larger seed counts and additional vertical-domain corpora;
+\item production policies that lower dense usage only after route confidence is demonstrably stable.
+\end{itemize}

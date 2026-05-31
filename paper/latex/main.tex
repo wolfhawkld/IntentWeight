@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+
+\usepackage[review]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tabularx}
+
+\graphicspath{{figures/}}
+
+\title{IntentWeight: Feedback-Guided Evidence Selection under a Piecewise Relevance-Manifold Assumption}
+
+\author{Anonymous ACL submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/method}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figure1_system_diagram.pdf}
+\caption{IntentWeight evidence-selection controller. Dense remains a recall
+floor; LinUCB controls cluster-local routes and final context budget.}
+\label{fig:system}
+\end{figure*}
+
+\input{sections/experimental_setup}
+\input{sections/results}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figure2_token_quality_frontier.pdf}
+\caption{Token-quality frontier across LoTTE scale. The conservative policy
+reduces final retrieved context tokens while maintaining dense-level query
+hit.}
+\label{fig:token-quality}
+\end{figure*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figure3_geometry_diagnostics.pdf}
+\caption{Geometry diagnostics across LoTTE scale. Local cluster routing remains
+useful while context retention and PCA concentration decline with scale.}
+\label{fig:geometry}
+\end{figure}
+
+\input{sections/discussion}
+\input{sections/conclusion}
+\input{sections/limitations}
+
+\bibliographystyle{acl_natbib}
+\bibliography{references}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

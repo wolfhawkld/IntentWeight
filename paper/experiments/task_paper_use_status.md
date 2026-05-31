@@ -54,6 +54,7 @@ accidentally promoted into paper-facing claims.
 | `task36_9_full_draft_consistency_audit.md` | Supporting writing revision | Adds an automated manuscript/BibTeX audit and tightens the broad evidence-selection framing to avoid manifold and RAG overclaiming; no new experiment. |
 | `task36_10_review_packet.md` | Supporting writing revision | Adds a regenerable venue-neutral independent-review packet with manuscript, references, figure index, checklist, validation report, and file manifest; no new experiment. |
 | `task36_11_literature_gap_expansion.md` | Supporting writing revision | Adds direct adaptive-retrieval, bandit-routing, and context-compression prior art; explicitly distinguishes IntentWeight from MBA-RAG and avoids first-use overclaiming; no new experiment. |
+| `task36_12_acl_latex_migration.md` | Supporting writing revision | Adds a modular ACL-style LaTeX migration, official ACL style files, PDF figure assets, and static validation; PDF compilation remains pending because the current WSL environment lacks a TeX toolchain. |
 
 ## Boundary Or Negative Evidence
 
