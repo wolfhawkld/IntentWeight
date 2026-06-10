@@ -17,13 +17,16 @@ Completed:
   - `lotte_science_search_100k`
   - `lotte_science_search_20k_q200`
 - Built a reusable `lotte_science_search` scale store for
-  `lotte_science_search_20k_q200`.
+  `lotte_science_search_20k_q200`, then incrementally extended it to
+  `lotte_science_search_100k`.
 - Completed dense baseline for `lotte_science_search_20k_q200`.
 - Completed gated cost-aware LinUCB formal run for
   `lotte_science_search_20k_q200` with the same multi-seed / multi-epoch
   protocol used by the main LoTTE technology results.
 - Completed the calibrated context-budget protocol on
   `lotte_science_search_20k_q200`.
+- Completed dense baseline, gated cost-aware LinUCB formal run, and calibrated
+  context-budget validation for `lotte_science_search_100k`.
 
 The 20k/q200 dense baseline result is:
 
@@ -62,12 +65,53 @@ with roughly 13-14% final LLM evidence-context input token saving. The strict
 seed-level non-inferiority CI remains conservative because the frozen test
 split has only 140 queries; this should be reported transparently.
 
+The 100k dense baseline result is:
+
+| Dataset | Corpus chunks | Queries | GT refs | Hit@10 | EvidenceRecall@10 | MRR@10 | nDCG@10 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `lotte_science_search_100k` | 101,187 | 596 | 1,705 | 0.8926 | 0.7328 | 0.7357 | 0.6685 |
+
+The 100k gated cost-aware LinUCB result is:
+
+| Dataset | Seeds | Epochs | Hit@10 | EvidenceRecall@10 | MRR@10 | nDCG@10 | Avg source candidate cost | Dense query rate | LinUCB primary rate |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `lotte_science_search_100k` | 3 | 8 | 0.9077 | 0.7277 | 0.7429 | 0.6609 | 212.74 | 0.6992 | 0.3008 |
+
+This confirms that the ranking-side effect generalizes beyond the 20k/q200
+slice: fixed top-10 gated LinUCB improves query-level sufficient-evidence
+Hit@10 over dense by about `+1.51pp` on the 100k science corpus.
+
+The 100k calibrated context-budget protocol again selects
+`token_budget_r0.85_m4`, using 179 calibration queries and 417 frozen test
+queries:
+
+| Method | Seed | Frozen test Hit@10 | Hit delta vs dense | Final context token saving | Strict NI by CI |
+|---|---:|---:|---:|---:|---:|
+| dense adaptive truncation | - | 0.8849 | -1.44 pp | 22.60% | False |
+| dense fixed top-8 | - | 0.8897 | -0.96 pp | 20.37% | False |
+| dense fixed top-9 | - | 0.8969 | -0.24 pp | 10.20% | True |
+| Task39 budgeted LinUCB | 13 | 0.8873 | -1.20 pp | 19.21% | False |
+| Task39 budgeted LinUCB | 17 | 0.8993 | +0.00 pp | 17.53% | False |
+| Task39 budgeted LinUCB | 19 | 0.8897 | -0.96 pp | 20.53% | False |
+
+The 100k context-budget result is therefore more conservative than the 20k/q200
+slice. It still shows that IntentWeight can produce a stronger top-10 ranking
+than dense on a second LoTTE domain, and that aggressive final-context budgets
+can save about 17-21% LLM evidence-context input tokens. However, under the
+frozen test split this aggressive policy does not uniformly preserve dense
+top-10 Hit@10. This should be written as a domain/scale calibration boundary:
+ranking gains are stable, while final-context compression strength must be
+selected carefully rather than assumed to transfer perfectly.
+
 Artifacts:
 
 - `paper/experiments/data/scale_store/lotte_science_search/`
 - `paper/experiments/results/task39_lotte_science_20k_q200_dense/`
 - `paper/experiments/results/task39_lotte_science_20k_q200_linucb/`
 - `paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.*`
+- `paper/experiments/results/task39_lotte_science_100k_dense/`
+- `paper/experiments/results/task39_lotte_science_100k_linucb/`
+- `paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.*`
 
 ## Incremental Embedding Note
 
@@ -93,21 +137,24 @@ The first science store was built with:
   --batch-size 64 --encode-chunk-size 500
 ```
 
-Resulting store:
+Initial 20k/q200 store:
 
 | Store | Rows | Dim | Encode elapsed |
 |---|---:|---:|---:|
 | `lotte_science_search` | 20,490 | 384 | 750.405 sec |
 
+The 100k extension was then appended with the same command shape and
+`--datasets lotte_science_search_100k`. It reused the first 20,490 canonical
+rows and encoded 80,697 missing rows:
+
+| Store | Rows | Dim | New rows | Reused rows | Encode elapsed |
+|---|---:|---:|---:|---:|---:|
+| `lotte_science_search` | 101,187 | 384 | 80,697 | 20,490 | 1,858.132 sec |
+
 ## Next Step
 
-The current 20k/q200 cross-domain validation slice is complete. A stronger
-optional extension is to append the remaining `lotte_science_search_100k`
-corpus rows into the same scale store, then repeat:
-
-1. dense baseline through the scale-store path;
-2. gated cost-aware LinUCB formal run;
-3. calibrated context-budget validation.
-
-That extension is useful if the paper needs a larger second-domain validation,
-but it is not required to interpret the current Task39 checkpoint.
+Task39 now has a completed second-domain validation at both 20k/q200 and 100k
+science/search scales. A possible follow-up is a conservative budget-selection
+variant for science 100k, but the current evidence is already enough to use
+science/search as cross-domain support plus a useful limitation case for
+domain-specific compression calibration.

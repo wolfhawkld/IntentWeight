@@ -1374,12 +1374,12 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     638k 仅低约 `0.08pp`。dense adaptive truncation 虽然更省 token，但所有
     scale 都损伤 Hit@10。Task38 因此强化了“不是简单 dense top-k 裁剪”的结论，
     但仍应透明报告严格 seed-level non-inferiority 并非所有 scale/seed 都通过。
-11. LoTTE cross-domain validation：Task39 的 science/search 20k/q200
-    checkpoint 已完成，详见
+11. LoTTE cross-domain validation：Task39 的 science/search 20k/q200 和
+    100k checkpoint 均已完成，详见
     `paper/experiments/task39_lotte_cross_domain_validation.md`。当前已完成
-    `LoTTE science/search` 的数据缓存、`20k/q200` processed slice、science
-    scale-store 初始化、dense baseline、gated cost-aware LinUCB formal run，
-    以及 Task38-style calibrated context-budget protocol。
+    `LoTTE science/search` 的数据缓存、`20k/q200` 与 `100k` processed
+    slices、science scale-store 增量扩展、dense baseline、gated cost-aware
+    LinUCB formal run，以及 Task38-style calibrated context-budget protocol。
     `lotte_science_search_20k_q200` dense baseline 为 `Hit@10=0.8950`、
     `EvidenceRecall@10=0.7384`；gated cost-aware LinUCB 为
     `Hit@10=0.9267`、`EvidenceRecall@10=0.7406`。在 60 calibration / 140
@@ -1387,13 +1387,18 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     的 frozen-test Hit@10 均高于 dense top-10，并节省约 `13.18%`、
     `14.31%`、`13.91%` final LLM evidence-context input tokens；dense
     adaptive truncation 虽然节省约 `22.69%` tokens，但 Hit@10 低于 dense。
-    这为 Task38 的 minimum-sufficient-context 结论提供了第二 LoTTE domain
-    的 cross-domain 支撑。可选下一步是把 science/search 扩展到 100k scale。
+    `lotte_science_search_100k` dense baseline 为 `Hit@10=0.8926`、
+    `EvidenceRecall@10=0.7328`；gated cost-aware LinUCB 为
+    `Hit@10=0.9077`、`EvidenceRecall@10=0.7277`。100k 的 calibrated
+    `token_budget_r0.85_m4` 可节省约 `17.53%` 到 `20.53%` final context
+    tokens，但 frozen-test Hit@10 相对 dense top-10 为小幅下降到持平；该结果
+    支持 ranking-side cross-domain generalization，同时提示 context compression
+    强度需要按 domain/scale 校准，不能无条件迁移。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
-calibration/test 防御，以及第 11 项 Task39 science/search 跨域复现
-checkpoint 均已完成。
+calibration/test 防御，以及第 11 项 Task39 science/search 跨域复现 20k/q200
+和 100k checkpoints 均已完成。
 
 ---
 
