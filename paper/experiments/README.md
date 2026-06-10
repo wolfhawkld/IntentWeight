@@ -1405,6 +1405,10 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     learned risky-arm fallback 在 science 上平均提升约 `+0.16pp` 到 `+0.48pp`
     Hit@10，在 technology 上约为 `-0.16pp` 到 `+0.16pp`。结论是 feedback
     可作为 tail-query recovery / fallback trigger，但不能写成无条件全局提升。
+    从统计解释上，same-query post-feedback recovery 是最强证据：
+    conservative retry 合并两个 100k domains 后恢复 `23/76` affected queries，
+    约 `30.3%`，近似 Wilson 区间约为 `21%` 到 `41%`；而 calibration-to-test
+    泛化只能作为方向性和边界证据，不应写成显著 held-out improvement。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38

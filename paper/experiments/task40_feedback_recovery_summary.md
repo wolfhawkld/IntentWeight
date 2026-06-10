@@ -55,6 +55,14 @@ are not necessarily permanent. Simulated feedback at the arm level can recover a
 meaningful fraction of affected queries. The trade-off is explicit: stronger
 fallback recovers more queries but reduces or removes token savings.
 
+From a statistical interpretation standpoint, same-query retry is the strongest
+Task40 evidence. The conservative retry setting recovers `14/34` affected
+queries on science 100k and `9/42` on technology 100k, or `23/76` when pooled
+across the two 100k domains. This is not a one-off recovery of one or two
+examples; it is a meaningful post-feedback repair rate. Approximate Wilson
+intervals put the pooled recovery rate around 21-41%. However, this evidence is
+about post-feedback retry behavior, not first-pass IID test performance.
+
 ## Calibration-to-test Results
 
 | Domain | Frozen test policy | Mean Hit@10 delta vs budgeted-before-feedback | Avg token saving vs dense |
@@ -69,6 +77,12 @@ shows that learned fallback can slightly improve or preserve test Hit@10, but
 the effect is small and domain-dependent. Naive arm boosting can cause negative
 transfer, so the paper should prefer conservative fallback language rather than
 claiming universal arm-boost generalization.
+
+This split should not be presented as statistically significant held-out
+improvement. Its role is narrower: it shows that learned risky-arm fallback can
+be applied without catastrophic degradation and may preserve or slightly improve
+Hit@10, while also exposing the limitation that feedback generalization depends
+on domain structure and feedback quality.
 
 ## Interpretation
 
