@@ -19,6 +19,11 @@ Completed:
 - Built a reusable `lotte_science_search` scale store for
   `lotte_science_search_20k_q200`.
 - Completed dense baseline for `lotte_science_search_20k_q200`.
+- Completed gated cost-aware LinUCB formal run for
+  `lotte_science_search_20k_q200` with the same multi-seed / multi-epoch
+  protocol used by the main LoTTE technology results.
+- Completed the calibrated context-budget protocol on
+  `lotte_science_search_20k_q200`.
 
 The 20k/q200 dense baseline result is:
 
@@ -26,10 +31,43 @@ The 20k/q200 dense baseline result is:
 |---|---:|---:|---:|---:|---:|---:|---:|
 | `lotte_science_search_20k_q200` | 20,490 | 200 | 626 | 0.8950 | 0.7384 | 0.7504 | 0.6569 |
 
+The 20k/q200 gated cost-aware LinUCB result is:
+
+| Dataset | Seeds | Epochs | Hit@10 | EvidenceRecall@10 | MRR@10 | nDCG@10 | Avg source candidate cost | Dense query rate | LinUCB primary rate |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `lotte_science_search_20k_q200` | 3 | 8 | 0.9267 | 0.7406 | 0.7433 | 0.6444 | 207.67 | 0.6327 | 0.3673 |
+
+This improves query-level sufficient-evidence Hit@10 over the dense baseline
+from `0.8950` to `0.9267`, while preserving the same no-leakage prequential
+simulated-feedback protocol. As in the main LoTTE technology experiments, this
+should be interpreted as adaptive test-time feedback simulation rather than an
+offline IID train/test claim.
+
+The calibrated context-budget result selects `token_budget_r0.85_m4` using only
+60 calibration queries, then freezes that policy on 140 test queries:
+
+| Method | Seed | Frozen test Hit@10 | Hit delta vs dense | Final context token saving | Strict NI by CI |
+|---|---:|---:|---:|---:|---:|
+| dense adaptive truncation | - | 0.8857 | -0.71 pp | 22.69% | False |
+| dense fixed top-8 | - | 0.8786 | -1.43 pp | 20.01% | False |
+| dense fixed top-9 | - | 0.8786 | -1.43 pp | 9.52% | False |
+| Task39 budgeted LinUCB | 13 | 0.9214 | +2.86 pp | 13.18% | True |
+| Task39 budgeted LinUCB | 17 | 0.9071 | +1.43 pp | 14.31% | False |
+| Task39 budgeted LinUCB | 19 | 0.9000 | +0.71 pp | 13.91% | False |
+
+The science/search checkpoint therefore supports the main Task38 finding on a
+second LoTTE domain: dense-only truncation saves more context tokens but loses
+Hit@10, while the budgeted IntentWeight ranking keeps above-dense mean Hit@10
+with roughly 13-14% final LLM evidence-context input token saving. The strict
+seed-level non-inferiority CI remains conservative because the frozen test
+split has only 140 queries; this should be reported transparently.
+
 Artifacts:
 
 - `paper/experiments/data/scale_store/lotte_science_search/`
 - `paper/experiments/results/task39_lotte_science_20k_q200_dense/`
+- `paper/experiments/results/task39_lotte_science_20k_q200_linucb/`
+- `paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.*`
 
 ## Incremental Embedding Note
 
@@ -63,13 +101,13 @@ Resulting store:
 
 ## Next Step
 
-Resume Task39 by running cost-aware LinUCB on
-`lotte_science_search_20k_q200`, preferably with `--use-scale-store` and:
+The current 20k/q200 cross-domain validation slice is complete. A stronger
+optional extension is to append the remaining `lotte_science_search_100k`
+corpus rows into the same scale store, then repeat:
 
-```text
---scale-store-dir paper/experiments/data/scale_store/lotte_science_search
---scale-store-canonical-name lotte_science_search
-```
+1. dense baseline through the scale-store path;
+2. gated cost-aware LinUCB formal run;
+3. calibrated context-budget validation.
 
-After LinUCB ranking is available, run the same Task38 calibrated context-budget
-protocol on science/search and compare against dense adaptive truncation.
+That extension is useful if the paper needs a larger second-domain validation,
+but it is not required to interpret the current Task39 checkpoint.
