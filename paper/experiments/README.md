@@ -1394,11 +1394,23 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     tokens，但 frozen-test Hit@10 相对 dense top-10 为小幅下降到持平；该结果
     支持 ranking-side cross-domain generalization，同时提示 context compression
     强度需要按 domain/scale 校准，不能无条件迁移。
+12. feedback-driven hard-case recovery：Task40 已完成，详见
+    `paper/experiments/task40_feedback_recovery_summary.md`。该项针对 aggressive
+    context-budget 造成的尾部 affected queries，验证 simulated feedback 是否能
+    恢复证据召回。Same-query retry 在 `science 100k` 上使用 arm boost +
+    conservative budget 恢复 `14/34` affected queries，平均仍保留约 `5.76%`
+    token saving；在 `technology 100k` 上恢复 `9/42` affected queries，平均
+    保留约 `11.75%` token saving。更强的 full-context fallback 可恢复更多
+    query，但 token saving 明显下降。Calibration-to-test 泛化结果较保守：
+    learned risky-arm fallback 在 science 上平均提升约 `+0.16pp` 到 `+0.48pp`
+    Hit@10，在 technology 上约为 `-0.16pp` 到 `+0.16pp`。结论是 feedback
+    可作为 tail-query recovery / fallback trigger，但不能写成无条件全局提升。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
-calibration/test 防御，以及第 11 项 Task39 science/search 跨域复现 20k/q200
-和 100k checkpoints 均已完成。
+calibration/test 防御、第 11 项 Task39 science/search 跨域复现 20k/q200
+和 100k checkpoints，以及第 12 项 Task40 feedback-driven hard-case recovery
+均已完成。
 
 ---
 
