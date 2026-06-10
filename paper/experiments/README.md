@@ -1342,9 +1342,51 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
    review 中最关键的写作防御点：400k CI 方差、Task29-C conservative
    rationale、mean-above-dense 措辞、effective compaction rate、multi-epoch
    disclosure，以及 evidence_recall trade-off。
+9. context-budget optimization：Task37 已开始，详见
+   `paper/experiments/task37_context_budget_optimization.md`。该项先验证了
+   aggressive fixed-k compaction 会显著增加 token saving 但损伤 Hit@10；
+   更有效的方向是基于完整 gated top-10 ranking 做 token-budget tail
+   pruning。Task37-B 已扩展到 LoTTE 100k/200k/400k/638k。固定
+   `gated_fixed + token_budget_r0.95_m5` 在四个 scale 上均保持 above-dense
+   `Hit@10`，final context token ratio 分别为 `0.9227x`、`0.9296x`、
+   `0.9056x`、`0.9176x`，平均约 `0.9189x`，即约 `8.1%` LLM
+   evidence-context input token saving。相比 Task29-C 约 `4.7-5.3%` 的
+   saving，Task37 是更强的主结果候选。Task37-C 已完成 query-level paired
+   significance test：所有 scale/seed 的 final context token saving 均为
+   Wilcoxon `p<0.05`，Task37 在四个规模上的三 seed 平均 Hit delta 均不低于
+   dense；但严格 `1pp` non-inferiority 不是所有 seed 都通过。因此论文主张应
+   写成“显著降低 LLM evidence-context input tokens，同时在均值上保持
+   dense-level 或 above-dense Hit@10”，而不是“所有 seed/scale 均统计显著
+   non-inferior”。Task37-D 已补 dense adaptive top-k / same-budget baseline：
+   dense top-9 和 dense `token_budget_r0.95_m5` 虽然能节省更多 token，但在
+   100k/200k/400k/638k 上均损伤 Hit@10；Task37 保持更高 Hit@10，同时仍节省
+   约 `7-9%` final evidence-context tokens。因此 Task37 的收益不能简化解释为
+   “dense 少取几个 chunk”，而应归因于更强的 gated ranking + conservative
+   tail pruning。
+10. calibrated context-budget validation：Task38 已完成，详见
+    `paper/experiments/task38_calibrated_context_budget_validation.md`。该项回应
+    Task37 可能存在的 test-set model-selection bias：将 LoTTE 596 个 held-out
+    queries 确定性划分为 179 calibration / 417 frozen test queries，只在
+    calibration 上选择 token-budget policy，然后冻结到 test 上评估。结果显示：
+    Task38 在 100k/200k/400k/638k 的 frozen test 上分别取得约 `6.18%`、
+    `16.00%`、`6.57%`、`17.53%` final LLM evidence-context input token
+    saving；平均 Hit@10 在 100k 基本等于 dense，在 200k/400k 高于 dense，在
+    638k 仅低约 `0.08pp`。dense adaptive truncation 虽然更省 token，但所有
+    scale 都损伤 Hit@10。Task38 因此强化了“不是简单 dense top-k 裁剪”的结论，
+    但仍应透明报告严格 seed-level non-inferiority 并非所有 scale/seed 都通过。
+11. LoTTE cross-domain validation：Task39 已启动，详见
+    `paper/experiments/task39_lotte_cross_domain_validation.md`。当前已完成
+    `LoTTE science/search` 的数据缓存、`20k/q200` processed slice、science
+    scale-store 初始化，以及 dense baseline。`lotte_science_search_20k_q200`
+    dense baseline 为 `Hit@10=0.8950`、`EvidenceRecall@10=0.7384`。Task39
+    暂停在 checkpoint：下一步应复用
+    `paper/experiments/data/scale_store/lotte_science_search/` 跑 cost-aware
+    LinUCB，然后套用 Task38 calibrated context-budget protocol。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
-一致性审计和第 8 项 review 防御修订也已完成。
+一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化和第 10 项 Task38
+calibration/test 防御也已完成；第 11 项 Task39 跨域复现已进入 science/search
+checkpoint。
 
 ---
 

@@ -170,24 +170,36 @@ def append_scale_store_streaming(
 
     ids_path = store_dir / "canonical_corpus_ids.json"
     embeddings_path = store_dir / "canonical_corpus_embeddings.npy"
-    if not ids_path.exists() or not embeddings_path.exists():
-        raise FileNotFoundError(f"Existing canonical store is required under {store_dir}")
-    with ids_path.open("r", encoding="utf-8") as f:
-        ids_data = json.load(f)
-    canonical_ids = [str(item) for item in ids_data.get("canonical_ids", [])]
-    canonical_text_sha256 = [str(item) for item in ids_data.get("text_sha256", [])]
-    canonical_source_datasets = [
-        [str(value) for value in item]
-        for item in ids_data.get("source_datasets", [])
-    ]
-    existing_embeddings = np.load(embeddings_path, mmap_mode="r")
-    if existing_embeddings.shape[0] != len(canonical_ids):
-        raise ValueError(
-            f"Existing canonical store row mismatch: {existing_embeddings.shape[0]} embedding rows "
-            f"for {len(canonical_ids)} ids"
+    if ids_path.exists() and embeddings_path.exists():
+        with ids_path.open("r", encoding="utf-8") as f:
+            ids_data = json.load(f)
+        canonical_ids = [str(item) for item in ids_data.get("canonical_ids", [])]
+        canonical_text_sha256 = [str(item) for item in ids_data.get("text_sha256", [])]
+        canonical_source_datasets = [
+            [str(value) for value in item]
+            for item in ids_data.get("source_datasets", [])
+        ]
+        existing_embeddings = np.load(embeddings_path, mmap_mode="r")
+        if existing_embeddings.shape[0] != len(canonical_ids):
+            raise ValueError(
+                f"Existing canonical store row mismatch: {existing_embeddings.shape[0]} embedding rows "
+                f"for {len(canonical_ids)} ids"
+            )
+        if len(canonical_text_sha256) != len(canonical_ids) or len(canonical_source_datasets) != len(canonical_ids):
+            raise ValueError("Existing canonical id metadata length mismatch")
+        dim = int(existing_embeddings.shape[1])
+    elif not ids_path.exists() and not embeddings_path.exists():
+        canonical_ids = []
+        canonical_text_sha256 = []
+        canonical_source_datasets = []
+        existing_embeddings = None
+        dim = int(encoder.get_sentence_embedding_dimension())
+        if dim <= 0:
+            raise ValueError("Could not determine encoder embedding dimension for empty streaming store")
+    else:
+        raise FileNotFoundError(
+            f"Incomplete canonical store under {store_dir}; expected both ids and embeddings or neither"
         )
-    if len(canonical_text_sha256) != len(canonical_ids) or len(canonical_source_datasets) != len(canonical_ids):
-        raise ValueError("Existing canonical id metadata length mismatch")
 
     canonical_index = {cid: row_idx for row_idx, cid in enumerate(canonical_ids)}
     corpus = load_json_list(corpus_path(data_dir, dataset))
@@ -219,7 +231,6 @@ def append_scale_store_streaming(
         missing_local_indices.append(local_idx)
 
     missing_count = len(missing_local_indices)
-    dim = int(existing_embeddings.shape[1])
     new_embeddings_path = store_dir / f"{dataset}__new_embeddings.tmp.npy"
     combined_tmp_path = store_dir / "canonical_corpus_embeddings.tmp.npy"
 
@@ -256,10 +267,11 @@ def append_scale_store_streaming(
         dtype=np.float32,
         shape=(final_count, dim),
     )
-    print(f"[{dataset}] copying existing canonical rows 1-{initial_count}", flush=True)
-    for start_idx in range(0, initial_count, copy_chunk_size):
-        end_idx = min(start_idx + copy_chunk_size, initial_count)
-        combined[start_idx:end_idx] = existing_embeddings[start_idx:end_idx]
+    if initial_count:
+        print(f"[{dataset}] copying existing canonical rows 1-{initial_count}", flush=True)
+        for start_idx in range(0, initial_count, copy_chunk_size):
+            end_idx = min(start_idx + copy_chunk_size, initial_count)
+            combined[start_idx:end_idx] = existing_embeddings[start_idx:end_idx]
     print(f"[{dataset}] copying new canonical rows {initial_count + 1}-{final_count}", flush=True)
     for start_idx in range(0, missing_count, copy_chunk_size):
         end_idx = min(start_idx + copy_chunk_size, missing_count)
