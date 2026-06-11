@@ -1,6 +1,6 @@
 # Table and Figure Placement Plan
 
-Updated: 2026-05-31
+Updated: 2026-06-11
 
 This file is a paper-facing placement plan. It does not introduce new
 experiments or new claims. Its purpose is to decide which evidence belongs in
@@ -11,9 +11,12 @@ The table labels in the current draft are aligned with this plan:
 
 - Table 1: dataset roles and evaluation guardrails;
 - Table 2: LoTTE token-quality frontier;
-- Table 3: LoTTE 100k component ablation;
-- Table 4: feedback self-evolution summary;
-- Table 5: LoTTE geometry diagnostics;
+- Table 3: calibration/test context-budget validation;
+- Table 4: LoTTE science/search cross-domain validation;
+- Table 5: LoTTE 100k component ablation;
+- Table 6: feedback self-evolution summary;
+- Table 7: feedback-driven hard-case recovery;
+- Table 8: LoTTE geometry diagnostics;
 - Appendix Tables A1, D1, and F1: seed stability, secondary datasets, and the
   downstream generation smoke.
 
@@ -58,7 +61,45 @@ Recommended columns:
 - conservative policy $\mathrm{Tokens@10}$;
 - token saving.
 
-### Table 3: LoTTE 100k Component Ablation
+### Table 3: Calibration/Test Context-Budget Validation
+
+Evidence basis: the frozen calibration/test context-budget protocol.
+
+Purpose: show that the context-token result is not only post-hoc test-set
+policy selection and not merely dense-only top-k truncation.
+
+Keep in the main paper because it directly addresses reviewer concerns about
+selection bias and same-budget dense truncation controls.
+
+Recommended columns:
+
+- scale;
+- selected policy;
+- hit delta versus dense;
+- token saving versus dense;
+- dense adaptive hit delta;
+- dense adaptive token saving.
+
+### Table 4: LoTTE Science/Search Cross-Domain Validation
+
+Evidence basis: LoTTE science/search 20k/q200 and 100k.
+
+Purpose: show cross-domain ranking-side support and expose the boundary that
+compression strength must be calibrated per domain and scale.
+
+Keep a compact version in the main paper if space allows; otherwise keep
+fixed-top-10 ranking results in the main paper and move budget details to the
+appendix.
+
+Recommended columns:
+
+- domain/scale;
+- dense $\mathrm{Hit@10}$;
+- IntentWeight fixed top-10 $\mathrm{Hit@10}$;
+- hit delta;
+- budgeted token saving.
+
+### Table 5: LoTTE 100k Component Ablation
 
 Evidence basis: the clean LoTTE 100k component ablation.
 
@@ -84,7 +125,7 @@ If space is tight, move $\mathrm{EvidenceRecall@10}$ and last reward to an
 appendix and keep dense rate, LinUCB rate, $\mathrm{Hit@10}$, and token ratio
 in the main table.
 
-### Table 4: Feedback Self-Evolution Summary
+### Table 6: Feedback Self-Evolution Summary
 
 Evidence basis: controlled feedback-sensitivity and trust-weighting analysis.
 
@@ -104,7 +145,26 @@ Recommended columns:
 - token ratio;
 - $\mathrm{Hit@10}$.
 
-### Table 5: Geometry Diagnostics Across LoTTE Scales
+### Table 7: Feedback-Driven Hard-Case Recovery
+
+Evidence basis: same-query conservative retry on affected LoTTE 100k
+technology/search and science/search queries.
+
+Purpose: show that feedback provides a controlled recovery mechanism for
+budget-induced tail failures.
+
+Keep in the main paper only if the feedback-recovery claim remains central;
+otherwise move to appendix and mention the pooled rate in text.
+
+Recommended columns:
+
+- domain;
+- affected queries;
+- recovered queries;
+- recovery rate;
+- average token saving versus dense.
+
+### Table 8: Geometry Diagnostics Across LoTTE Scales
 
 Evidence basis: LoTTE geometry diagnostics across corpus scale.
 

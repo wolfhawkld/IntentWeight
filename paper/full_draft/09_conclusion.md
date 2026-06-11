@@ -15,10 +15,17 @@ preserving dense-level $\mathrm{Hit@10}$. Mean $\mathrm{Hit@10}$ is above
 dense-only retrieval at 200k, 400k, and 638k. Additional diagnostics show that
 local geometry provides useful routing signal, trust-weighted feedback improves
 route-policy metrics, and a small downstream generation smoke test does not
-show obvious answer-quality degradation from context compaction.
+show obvious answer-quality degradation from context compaction. Calibration/test
+validation shows that frozen budget policies can save larger final
+evidence-context token fractions while outperforming dense-only adaptive
+truncation, and LoTTE science/search provides cross-domain ranking support with
+a clear compression-calibration boundary. Hard-case recovery experiments further
+show that simulated feedback can repair part of the tail failures caused by
+aggressive context compression.
 
 The result is intentionally bounded. IntentWeight is not a universal dense
 replacement, and it does not prove that geometry alone solves retrieval. Dense
 retrieval remains an important recall floor. The contribution is a controller
-that learns when multiple retrieval routes and route confidence can be used to
-preserve retrieval quality while reducing the final context budget.
+that learns when multiple retrieval routes, route confidence, and feedback can
+be used to preserve retrieval quality, reduce the final context budget, and
+recover some failures after feedback.

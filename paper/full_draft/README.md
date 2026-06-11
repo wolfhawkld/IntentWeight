@@ -1,6 +1,6 @@
 # IntentWeight Full Draft
 
-Updated: 2026-05-31
+Updated: 2026-06-11
 
 This directory contains the first complete paper draft assembled after the
 paper evidence package, pre-writing validation work, and review-defense
@@ -35,6 +35,9 @@ draft. The most important internal evidence groups are:
 - token-quality frontier and context-token analyses;
 - clean component ablation table;
 - LoTTE geometry scale validation.
+- calibration/test context-budget validation;
+- LoTTE science/search cross-domain validation;
+- feedback-driven hard-case recovery.
 
 ## Claim Boundary
 
@@ -52,6 +55,12 @@ The paper should keep the bounded claim:
 > retrieval setting.
 > Broader agent-memory, graph, tree, or tool-context applications should be
 > framed as motivation and future work unless separately evaluated.
+
+The strengthened post-review claim adds that calibration/test budget selection
+can save 6-18% final evidence-context tokens under frozen policies, LoTTE
+science/search supports cross-domain ranking gains while exposing
+domain-specific compression calibration, and simulated feedback can recover a
+meaningful fraction of budget-induced tail failures in post-feedback retry.
 
 ## Next Editing Pass
 

@@ -8,6 +8,13 @@ under a feedback signal, but it does not prove the same behavior under real
 human feedback. Real deployments must handle delayed feedback, biased implicit
 signals, adversarial or low-quality users, and non-stationary intent.
 
+The hard-case recovery experiment also uses GT-derived simulated feedback.
+Same-query retry should be interpreted as an engineering recovery test after a
+failed compressed answer, not as first-pass IID held-out improvement. The result
+shows that feedback can repair a meaningful fraction of affected queries when
+the evidence remains reachable through the candidate pool and arm structure; it
+does not imply universal recovery.
+
 ## 7.2 Limited Generation Evaluation
 
 The main experiments evaluate retrieval and final retrieved context tokens.
@@ -34,7 +41,17 @@ require complete evidence collection, such as legal review, medical evidence
 synthesis, or exhaustive compliance analysis, a more conservative context
 policy or no compaction may be preferable.
 
-## 7.5 Geometry Is Diagnostic, Not a Proof
+## 7.5 Context Budget Requires Domain Calibration
+
+The LoTTE science/search replication shows that fixed top-10 ranking gains can
+transfer to a second domain, but context-budget strength does not transfer
+automatically. At science/search 100k, an aggressive budget still saves
+17-21% final context tokens but can introduce small $\mathrm{Hit@10}$ drops on
+the frozen test split. Compression should therefore be calibrated per domain
+and scale, with dense fallback retained for low-confidence or high-risk local
+regions.
+
+## 7.6 Geometry Is Diagnostic, Not a Proof
 
 The piecewise relevance-manifold framing is supported by diagnostics such as
 $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These
@@ -42,7 +59,7 @@ diagnostics do not prove a mathematical manifold theorem. They show that local
 geometry is informative for routing on LoTTE, while dense retrieval remains
 necessary.
 
-## 7.6 KMeans Is an Experimental Arm Design
+## 7.7 KMeans Is an Experimental Arm Design
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and
 the experiments need reproducible, scalable arms. This is not a claim that
@@ -50,7 +67,7 @@ KMeans is the best clustering method for all RAG systems. HDBSCAN or
 graph-based clusters may perform better in some deployments, but dynamic arm
 counts complicate the current LinUCB setup.
 
-## 7.7 Limited Encoder and Domain Coverage
+## 7.8 Limited Encoder and Domain Coverage
 
 The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. The
 paper adds a CPU-friendly encoder robustness check with
@@ -58,10 +75,11 @@ paper adds a CPU-friendly encoder robustness check with
 generalize the result to stronger domain-specific encoders, rerankers, or
 late-interaction models without additional experiments.
 
-LoTTE technology/search is the main positive large-scale domain. Additional
-LoTTE domains or other vertical corpora would strengthen external validity.
+LoTTE technology/search is the main positive large-scale domain. LoTTE
+science/search strengthens external validity but does not replace evaluation on
+additional vertical corpora.
 
-## 7.8 Seed Count and 400k Variance
+## 7.9 Seed Count and 400k Variance
 
 The stability analysis reports three-seed confidence intervals across LoTTE
 100k-638k, and an additional robustness check extends LoTTE 100k to five seeds.
@@ -71,7 +89,7 @@ token-saving interval is notably wider than the other scales and should be
 interpreted as seed-level variance in route confidence and context-budget
 control.
 
-## 7.9 Future Work
+## 7.10 Future Work
 
 Future work should evaluate:
 
@@ -83,3 +101,5 @@ Future work should evaluate:
 - larger seed counts and additional vertical-domain corpora;
 - production policies that lower dense usage only after route confidence is
   demonstrably stable.
+- recovery policies evaluated with real delayed feedback rather than
+  GT-derived same-query retry.

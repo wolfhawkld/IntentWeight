@@ -114,6 +114,21 @@ For the conservative policy, the effective compaction rate is therefore the high
 
 The main result uses this conservative confidence-based policy. It reduces final context tokens by about 4.7-5.3\% across LoTTE 100k, 200k, 400k, and 638k while preserving dense-level $\mathrm{Hit@10}$, with mean above-dense $\mathrm{Hit@10}$ on 200k, 400k, and 638k.
 
+\subsection{Feedback-Triggered Recovery}
+\label{sec:04-method:feedback-triggered-recovery}
+
+IntentWeight can also use feedback as a recovery signal after a compressed context fails. In this mode, feedback does not insert the missing ground-truth chunk into the current answer. Instead, it updates arm-level route value and marks the associated local region as risky for future routing or optional post-feedback retry.
+
+The safe recovery behavior is conservative:
+
+\begin{enumerate}
+\item If feedback indicates that a compressed context missed evidence, identify the evidence-bearing arm or risky query-arm relation.
+\item Prefer a less aggressive final-context budget or full-context fallback for that local region.
+\item Avoid unconditional global arm boosting, because a feedback-positive arm for one query can transfer poorly to unrelated queries.
+\end{enumerate}
+
+This recovery mechanism is deployment-facing. It represents how a system can repair tail failures after user or evaluator feedback, not how the first-pass ranking is produced before feedback is observed.
+
 \subsection{Algorithm Sketch}
 \label{sec:04-method:algorithm-sketch}
 
@@ -127,6 +142,7 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 \item Apply confidence-based final context policy.
 \item Evaluate retrieval quality for $q_t$.
 \item Only after evaluation, convert the ground-truth label into simulated feedback and update LinUCB for later queries.
+\item If the interaction is a post-feedback retry or a later query in a risky local region, use the updated arm state to choose a safer context budget or fallback path.
 \end{enumerate}
 
 Output: final retrieved context $C_t$ and updated policy state.

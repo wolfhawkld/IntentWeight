@@ -1,10 +1,10 @@
 # Experiments Draft
 
-Updated: 2026-05-25
+Updated: 2026-06-11
 
 ## Experimental Goals
 
-The experiments test four claims:
+The experiments test five claims:
 
 1. Multi-route retrieval can improve coverage relative to a single dense route
    on large vertical-domain retrieval.
@@ -12,12 +12,15 @@ The experiments test four claims:
 3. Geometry provides useful routing signal, but cannot replace dense retrieval.
 4. Confidence-based final context compaction can reduce retrieved context tokens
    while preserving dense-level Hit@10.
+5. Feedback-triggered fallback can recover a meaningful fraction of tail
+   failures caused by aggressive context compaction.
 
 ## Dataset Roles
 
 | Dataset | Role | Paper Use | Caveat |
 |---|---|---|---|
 | LoTTE technology/search | Main vertical-domain retrieval benchmark | Main scale-up, token-quality frontier, geometry validation | No true corpus topic labels in processed qrels |
+| LoTTE science/search | Cross-domain vertical-domain validation | Tests whether ranking and context-budget findings transfer beyond technology/search | Compression strength is more domain-sensitive at 100k |
 | PubMedQA | Feedback/manifold proof-of-concept | Shows trust feedback and local propagation can improve policy | GT is abstract-level context, not strict answer sentence |
 | Banking77 | Intent/domain routing proxy | Shows strong feedback self-evolution and intent structure | Should not be mixed with evidence-retrieval main table |
 | eManual | Failure/limitation case | Shows duplicate text and strict chunk-id issues | Low strict recall does not prove geometry is absent |
@@ -154,6 +157,58 @@ overlaps zero (`[-0.82, +1.50]` percentage points), so this should be used only
 as stability evidence: token saving remains directionally stable while quality
 stays dense-level.
 
+## Calibration/Test Context-Budget Validation
+
+Task38 addresses a reviewer-facing risk: a context-budget policy selected after
+inspecting the same test results can overstate the quality-cost trade-off. The
+validation therefore splits held-out LoTTE technology/search queries into
+calibration and frozen test subsets. The budget policy is selected only on
+calibration queries and then evaluated unchanged on the frozen test split.
+
+| Scale | Selected policy | Hit delta vs dense | Token saving vs dense | Dense adaptive hit delta | Dense adaptive token saving |
+|---|---|---:|---:|---:|---:|
+| 100k | `token_budget_r0.95_m4` | +0.00 pp | 6.18% | -1.44 pp | 13.83% |
+| 200k | `token_budget_r0.85_m4` | +1.20 pp | 16.00% | -2.40 pp | 21.95% |
+| 400k | `token_budget_r0.98_m4` | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
+| 638k | `token_budget_r0.85_m4` | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
+
+Interpretation:
+
+- The calibrated policy saves final LLM evidence-context input tokens under a
+  frozen policy-selection protocol.
+- Dense-only adaptive truncation usually saves more tokens, but loses Hit@10 on
+  every scale.
+- IntentWeight therefore does more than simple dense top-k truncation: it uses
+  route quality to decide where a shorter final context is safer.
+- Strict seed-level non-inferiority remains scale-dependent and should not be
+  overclaimed.
+
+## Cross-Domain LoTTE Science/Search Validation
+
+Task39 repeats the main validation pattern on LoTTE science/search. This is not
+the primary scale-up benchmark, but it tests whether the result is limited to
+technology/search.
+
+| Domain/scale | Dense Hit@10 | IntentWeight fixed top-10 Hit@10 | Hit delta | Notes |
+|---|---:|---:|---:|---|
+| science/search 20k/q200 | 0.8950 | 0.9267 | +3.17 pp | Three seeds, eight prequential epochs |
+| science/search 100k | 0.8926 | 0.9077 | +1.51 pp | Three seeds, eight prequential epochs |
+
+The fixed top-10 ranking-side effect transfers to a second LoTTE domain.
+Context compression is more nuanced:
+
+| Domain/scale | Frozen budget policy | Budgeted Hit delta vs dense | Final context token saving |
+|---|---|---:|---:|
+| science/search 20k/q200 | `token_budget_r0.85_m4` | +0.71 to +2.86 pp | 13.18-14.31% |
+| science/search 100k | `token_budget_r0.85_m4` | -1.20 to +0.00 pp | 17.53-20.53% |
+
+The science/search result should be written as cross-domain support plus a
+calibration boundary. IntentWeight improves fixed top-10 ranking quality on the
+second domain, but an aggressive final-context budget that works well on a
+smaller science slice can produce small Hit@10 drops at 100k. Compression
+strength should therefore be calibrated per domain and scale rather than copied
+unchanged.
+
 ## Geometry Diagnostics
 
 Task30 validates whether LoTTE retains usable local geometry as scale grows.
@@ -198,6 +253,36 @@ Recommended paper wording:
 Avoid:
 
 > Feedback alone explains all retrieval gains.
+
+## Feedback-Driven Hard-Case Recovery
+
+Task40 tests a narrower but important question: when final-context compression
+causes a tail query to lose evidence that dense top-10 would have retrieved,
+can simulated feedback help recover that failure? This is a post-feedback
+recovery experiment, not a first-pass IID ranking claim.
+
+Same-query retry identifies affected queries where dense top-10 hits at least
+one GT chunk but the budgeted IntentWeight context misses. Feedback then
+updates arm-level routing state and triggers a safer retry policy.
+
+| Domain | Conservative retry affected queries | Recovered | Recovery rate | Avg token saving vs dense |
+|---|---:|---:|---:|---:|
+| science/search 100k | 34 | 14 | 41.18% | 5.76% |
+| technology/search 100k | 42 | 9 | 21.43% | 11.75% |
+| pooled | 76 | 23 | 30.26% | - |
+
+The pooled conservative retry recovery rate is approximately 30%, with an
+approximate Wilson interval around 21-41%. This supports a practical recovery
+claim: budget-induced failures are not always permanent, and feedback can
+repair a meaningful fraction of them. It does not imply that every failed query
+is recoverable, nor that feedback will always improve unrelated future queries.
+
+A stricter calibration-to-test variant learns risky-arm fallback on calibration
+failures and applies the frozen rule to held-out test queries. The effect is
+small and domain-dependent: science/search improves by roughly +0.16 to
++0.48 pp, while technology/search ranges from -0.16 to +0.16 pp depending on
+the fallback. This result supports controlled fallback behavior, not
+unconditional global arm boosting.
 
 ## Context Compaction Trade-Off
 
@@ -253,9 +338,12 @@ Recommended ordering in the results section:
 2. Static baseline comparison.
 3. Main LoTTE Task29-C token-quality frontier.
 4. Seed stability diagnostics.
-5. Feedback self-evolution and credit assignment.
-6. Geometry diagnostics.
-7. Failure cases and limitations.
+5. Calibration/test context-budget validation.
+6. Cross-domain LoTTE science/search validation.
+7. Feedback self-evolution and credit assignment.
+8. Feedback-driven hard-case recovery.
+9. Geometry diagnostics.
+10. Failure cases and limitations.
 
 ## Artifact References
 
@@ -272,3 +360,9 @@ Recommended ordering in the results section:
   `paper/experiments/task33_6_additional_seeds_summary.md`
 - Pre-writing consistency audit:
   `paper/experiments/task33_7_pre_writing_consistency_audit.md`
+- Calibration/test context budget:
+  `paper/experiments/task38_calibrated_context_budget_validation.md`
+- Cross-domain LoTTE validation:
+  `paper/experiments/task39_lotte_cross_domain_validation.md`
+- Feedback-driven hard-case recovery:
+  `paper/experiments/task40_feedback_recovery_summary.md`

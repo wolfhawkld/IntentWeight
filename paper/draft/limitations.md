@@ -1,6 +1,6 @@
 # Limitations Draft
 
-Updated: 2026-05-25
+Updated: 2026-06-11
 
 IntentWeight should be presented with explicit boundaries. These limitations do
 not invalidate the current paper claim, but they define what the current
@@ -13,6 +13,14 @@ controlled noise/trust settings. This validates whether the policy can improve
 under a feedback signal, but it does not prove the same behavior under real
 human feedback. Real deployments must handle delayed feedback, biased implicit
 signals, adversarial or low-quality users, and non-stationary intent.
+
+Task40 adds post-feedback hard-case recovery experiments, but those experiments
+still use GT-derived simulated feedback. Same-query retry should be interpreted
+as an engineering recovery test after a failed compressed answer, not as
+first-pass IID held-out improvement. The result shows that feedback can repair
+a meaningful fraction of affected queries when the evidence remains reachable
+through the candidate pool and arm structure; it does not imply universal
+recovery.
 
 ## Limited Generation Evaluation
 
@@ -39,6 +47,15 @@ fraction of all ground-truth chunks retrieved (`evidence_recall@10`). For tasks
 that require complete evidence collection, such as legal review, medical
 evidence synthesis, or exhaustive compliance analysis, a more conservative
 context policy or no compaction may be preferable.
+
+## Context Budget Requires Domain Calibration
+
+The LoTTE science/search replication shows that fixed top-10 ranking gains can
+transfer to a second domain, but context-budget strength does not transfer
+automatically. At science/search 100k, an aggressive budget still saves
+17-21% final context tokens but can introduce small Hit@10 drops on the frozen
+test split. Compression should therefore be calibrated per domain and scale,
+with dense fallback retained for low-confidence or high-risk local regions.
 
 ## Geometry Is Diagnostic, Not a Proof
 
@@ -101,6 +118,12 @@ and final context tokens are separate metrics. The main token-efficiency claim
 must use final retrieved context tokens from Task29, not earlier candidate-count
 reductions.
 
+Task38 and Task39 extend this point to LLM evidence-context input tokens under
+calibration/test policies. These results support meaningful context-token
+reduction, but they do not measure full production cost including indexing,
+embedding refreshes, reranking, generation output tokens, or infrastructure
+overhead.
+
 ## Future Work
 
 Future work should evaluate:
@@ -113,3 +136,5 @@ Future work should evaluate:
 - larger seed counts and additional vertical-domain corpora;
 - production policies that lower dense usage only after route confidence is
   demonstrably stable.
+- recovery policies evaluated with real delayed feedback rather than
+  GT-derived same-query retry.

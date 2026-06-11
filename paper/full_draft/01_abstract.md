@@ -17,9 +17,17 @@ this retrieval-augmented QA setting rather than all possible knowledge-carrier
 formats. The conservative policy reduces final retrieved context tokens by
 approximately 4.7-5.3% while preserving near-dense $\mathrm{Hit@10}$ at 100k
 and achieving mean above-dense $\mathrm{Hit@10}$ at 200k, 400k, and 638k.
-Geometry diagnostics and ablations show that local cluster structure provides
-useful routing signal, while dense retrieval remains an important recall floor.
-A 60-query downstream generation smoke test shows no obvious answer-quality
-degradation from the compressed context. These results position IntentWeight
-not as a universal replacement for dense retrieval, but as an adaptive
-quality-cost controller for evidence selection over structured domain data.
+A calibration/test validation further shows that frozen budget policies can
+save 6-18% final evidence-context tokens while outperforming dense-only
+adaptive truncation in $\mathrm{Hit@10}$, though strict seed-level
+non-inferiority is scale-dependent. A second LoTTE science/search domain
+supports ranking-side generalization, while showing that compression strength
+must be domain calibrated. Feedback-driven hard-case recovery experiments show
+that simulated arm-level feedback can repair a meaningful fraction of
+budget-induced tail failures in post-feedback retry. Geometry diagnostics and
+ablations show that local cluster structure provides useful routing signal,
+while dense retrieval remains an important recall floor. A 60-query downstream
+generation smoke test shows no obvious answer-quality degradation from the
+compressed context. These results position IntentWeight not as a universal
+replacement for dense retrieval, but as an adaptive quality-cost and recovery
+controller for evidence selection over structured domain data.

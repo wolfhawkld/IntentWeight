@@ -170,7 +170,83 @@ The smoke does not show obvious answer-quality degradation from conservative
 context compaction. It is not a full human evaluation: the sample is small,
 one generator/judge model is used, and LLM-as-judge can be biased.
 
-## G. Reproducibility and Reporting Guardrails
+## G. Calibration/Test Context-Budget Validation
+
+The calibration/test protocol selects the final-context budget on calibration
+queries and freezes it before evaluation on held-out test queries.
+
+**Appendix Table G1. Frozen context-budget validation on LoTTE technology/search.**
+
+| Scale | Selected policy | Calibration eligible | Hit delta vs dense | Token saving | Dense adaptive hit delta | Dense adaptive token saving |
+|---|---|---:|---:|---:|---:|---:|
+| 100k | `token_budget_r0.95_m4` | True | +0.00 pp | 6.18% | -1.44 pp | 13.83% |
+| 200k | `token_budget_r0.85_m4` | True | +1.20 pp | 16.00% | -2.40 pp | 21.95% |
+| 400k | `token_budget_r0.98_m4` | False | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
+| 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
+
+The calibrated policies should be compared against dense-only adaptive
+truncation because both reduce final context size. IntentWeight preserves
+substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
+
+## H. LoTTE Science/Search Cross-Domain Validation
+
+LoTTE science/search is used as a second-domain validation, not as a replacement
+for the main LoTTE technology/search scale-up.
+
+**Appendix Table H1. Science/search fixed top-10 ranking validation.**
+
+| Domain/scale | Corpus chunks | Queries | Dense $\mathrm{Hit@10}$ | IntentWeight $\mathrm{Hit@10}$ | Hit delta |
+|---|---:|---:|---:|---:|---:|
+| science/search 20k/q200 | 20,490 | 200 | 0.8950 | 0.9267 | +3.17 pp |
+| science/search 100k | 101,187 | 596 | 0.8926 | 0.9077 | +1.51 pp |
+
+**Appendix Table H2. Science/search frozen context-budget validation.**
+
+| Domain/scale | Budget policy | Seed | Frozen test hit delta vs dense | Token saving | Strict NI by CI |
+|---|---|---:|---:|---:|---:|
+| 20k/q200 | `token_budget_r0.85_m4` | 13 | +2.86 pp | 13.18% | True |
+| 20k/q200 | `token_budget_r0.85_m4` | 17 | +1.43 pp | 14.31% | False |
+| 20k/q200 | `token_budget_r0.85_m4` | 19 | +0.71 pp | 13.91% | False |
+| 100k | `token_budget_r0.85_m4` | 13 | -1.20 pp | 19.21% | False |
+| 100k | `token_budget_r0.85_m4` | 17 | +0.00 pp | 17.53% | False |
+| 100k | `token_budget_r0.85_m4` | 19 | -0.96 pp | 20.53% | False |
+
+The fixed top-10 ranking gains transfer, while aggressive final-context budgets
+require domain and scale calibration.
+
+## I. Feedback-Driven Hard-Case Recovery
+
+Hard-case recovery focuses on affected queries where dense top-10 retrieves at
+least one GT chunk but the budgeted IntentWeight context misses.
+
+**Appendix Table I1. Same-query feedback recovery on affected queries.**
+
+| Domain | Retry method | Affected queries | Recovered | Recovery rate | Avg token saving vs dense |
+|---|---|---:|---:|---:|---:|
+| science 100k | arm boost | 34 | 5 | 14.71% | 17.40% |
+| science 100k | arm boost + conservative budget | 34 | 14 | 41.18% | 5.76% |
+| science 100k | full-context fallback | 34 | 17 | 50.00% | -8.07% |
+| technology 100k | arm boost | 42 | 8 | 19.05% | 13.68% |
+| technology 100k | arm boost + conservative budget | 42 | 9 | 21.43% | 11.75% |
+| technology 100k | full-context fallback | 42 | 12 | 28.57% | 0.96% |
+
+Same-query retry is post-feedback repair evidence. It is not a first-pass
+generalization result.
+
+**Appendix Table I2. Calibration-to-test recovery generalization.**
+
+| Domain | Frozen test policy | Mean hit delta vs budgeted-before-feedback | Avg token saving vs dense |
+|---|---|---:|---:|
+| science 100k | conservative budget on learned risky arms | +0.16 pp | 16.13% |
+| science 100k | full-context fallback on learned risky arms | +0.48 pp | 13.09% |
+| technology 100k | conservative budget on learned risky arms | -0.16 pp | 5.88% |
+| technology 100k | full-context fallback on learned risky arms | +0.16 pp | 4.25% |
+
+The held-out effect is small and domain-dependent. Feedback should therefore be
+used as a controlled fallback trigger rather than as unconditional global
+reranking.
+
+## J. Reproducibility and Reporting Guardrails
 
 The following rules apply when migrating the draft into a submission template:
 

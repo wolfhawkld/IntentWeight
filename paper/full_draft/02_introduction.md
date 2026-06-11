@@ -68,6 +68,21 @@ $\mathrm{Hit@10}$ above dense-only retrieval at 200k, 400k, and 638k. We treat
 these as bounded mean improvements rather than universal or statistically
 significant dominance claims.
 
+We further evaluate three reviewer-facing concerns. First, a calibration/test
+context-budget validation selects the final-context policy on calibration
+queries and freezes it before test evaluation; under this protocol,
+IntentWeight saves 6-18% final evidence-context tokens across LoTTE
+technology/search scales while outperforming dense-only adaptive truncation in
+$\mathrm{Hit@10}$, although strict seed-level non-inferiority remains
+scale-dependent. Second, a LoTTE science/search replication shows that the
+fixed top-10 IntentWeight ranking improves query-level $\mathrm{Hit@10}$ at
+both 20k and 100k corpus scales, while also showing that aggressive context
+compression must be domain-calibrated. Third, a hard-case recovery experiment
+shows that simulated arm-level feedback can repair a meaningful fraction of
+budget-induced tail failures in post-feedback retry. This recovery result
+supports the adaptive feedback mechanism, but it is not a claim of first-pass
+IID improvement on all future queries.
+
 The contributions of this paper are:
 
 1. We formulate evidence selection over structured vertical-domain data as an
@@ -77,17 +92,22 @@ The contributions of this paper are:
    dense retrieval, BM25 lexical recall, cluster-local retrieval,
    trust-weighted LinUCB route learning, and confidence-based final context
    compaction in a retrieval-augmented QA implementation.
-3. We provide large-scale LoTTE evidence that conservative context compaction
-   can reduce final retrieved context tokens while preserving dense-level
-   $\mathrm{Hit@10}$.
-4. We add geometry diagnostics and ablations showing that local cluster
+3. We provide large-scale LoTTE evidence that conservative and calibrated
+   context compaction can reduce final retrieved context tokens while
+   preserving dense-level $\mathrm{Hit@10}$ under bounded operating points.
+4. We replicate the ranking-side result on a second LoTTE domain and document
+   that context-compression strength requires domain calibration.
+5. We show that simulated feedback can act as a controlled recovery mechanism
+   for tail queries harmed by aggressive context compression.
+6. We add geometry diagnostics and ablations showing that local cluster
    structure is useful for routing, but not sufficient to replace dense
    retrieval.
-5. We document limitation cases where dataset structure, weak labels, duplicate
+7. We document limitation cases where dataset structure, weak labels, duplicate
    evidence, sparse ground truth, or complete-evidence requirements reduce the
    benefit of adaptive routing.
 
 The resulting claim is intentionally bounded. IntentWeight is not presented as
 a universal replacement for dense retrieval. It is a feedback-driven controller
 that uses dense retrieval as a recall floor and learns when route confidence is
-strong enough to reduce the final context budget.
+strong enough to reduce the final context budget or trigger a safer
+post-feedback recovery path.

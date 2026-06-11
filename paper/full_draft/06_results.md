@@ -47,13 +47,56 @@ justify a statistical-superiority claim at 100k.
 Appendix A reports the complete three-seed confidence-interval tables and the
 five-seed LoTTE 100k extension.
 
-## 5.3 Component Ablation
+## 5.3 Calibration/Test Context-Budget Validation
+
+To reduce test-set model-selection bias, we also evaluate a calibration/test
+context-budget protocol. The budget policy is selected only on calibration
+queries and then frozen before evaluation on the test split. Token saving is
+measured as final LLM evidence-context input tokens relative to dense top-10.
+
+**Table 3. Calibration/test context-budget validation on LoTTE technology/search.**
+
+| Scale | Selected policy | Hit delta vs dense | Token saving vs dense | Dense adaptive hit delta | Dense adaptive token saving |
+|---|---|---:|---:|---:|---:|
+| 100k | `token_budget_r0.95_m4` | +0.00 pp | 6.18% | -1.44 pp | 13.83% |
+| 200k | `token_budget_r0.85_m4` | +1.20 pp | 16.00% | -2.40 pp | 21.95% |
+| 400k | `token_budget_r0.98_m4` | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
+| 638k | `token_budget_r0.85_m4` | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
+
+The calibrated IntentWeight policies save 6-18% final evidence-context tokens
+under frozen policy selection. Dense-only adaptive truncation usually saves
+more tokens, but it loses $\mathrm{Hit@10}$ on every scale. This indicates that
+IntentWeight is not merely truncating dense top-k lists; route confidence helps
+decide where a shorter context is safer. Strict seed-level non-inferiority
+remains scale-dependent and should not be overclaimed.
+
+## 5.4 Cross-Domain LoTTE Science/Search Validation
+
+We replicate the validation pattern on LoTTE science/search to test whether the
+effect is limited to technology/search.
+
+**Table 4. LoTTE science/search cross-domain validation.**
+
+| Domain/scale | Dense $\mathrm{Hit@10}$ | IntentWeight fixed top-10 $\mathrm{Hit@10}$ | Hit delta | Budgeted token saving |
+|---|---:|---:|---:|---:|
+| science/search 20k/q200 | 0.8950 | 0.9267 | +3.17 pp | 13.18-14.31% |
+| science/search 100k | 0.8926 | 0.9077 | +1.51 pp | 17.53-20.53% |
+
+The fixed top-10 ranking-side effect transfers to a second LoTTE domain. The
+context-budget result is more nuanced. At 20k/q200, the frozen budgeted
+policies keep above-dense $\mathrm{Hit@10}$ while saving roughly 13-14%
+context tokens. At 100k, the same aggressive budget saves roughly 17-21%
+tokens but can introduce small $\mathrm{Hit@10}$ drops. This should be written
+as cross-domain support for adaptive ranking and as a boundary on compression:
+budget strength must be calibrated per domain and scale.
+
+## 5.5 Component Ablation
 
 The component ablation table summarizes which parts of the system provide the
 quality floor, routing signal, feedback adaptation, and final token saving on
 LoTTE 100k.
 
-**Table 3. LoTTE 100k component ablation.**
+**Table 5. LoTTE 100k component ablation.**
 
 | Component | Role | $\mathrm{Hit@10}$ | $\mathrm{EvidenceRecall@10}$ | $\mathrm{Tokens@10}$ | Token ratio | Dense rate | LinUCB rate | Cluster hit | Last reward |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -76,14 +119,14 @@ Trust-weighted feedback improves policy internals relative to equal noisy
 feedback, especially selected-cluster hit and last true reward. The oracle row
 shows the upper bound under clean feedback.
 
-## 5.4 Feedback Self-Evolution
+## 5.6 Feedback Self-Evolution
 
 The feedback experiments show that final $\mathrm{Hit@10}$ can be saturated by
 dense and BM25 rescue routes, making feedback gains less visible in the fused
 final ranking. The strongest evidence for LinUCB self-evolution is therefore in
 route-policy metrics rather than only final $\mathrm{Hit@10}$.
 
-**Table 4. Feedback self-evolution summary on LoTTE 100k.**
+**Table 6. Feedback self-evolution summary on LoTTE 100k.**
 
 | Feedback mode | $\mathrm{Hit@10}$ | Token ratio | Dense rate | LinUCB rate | Selected-cluster hit | Last true reward |
 |---|---:|---:|---:|---:|---:|---:|
@@ -102,7 +145,31 @@ This supports the feedback self-evolution claim in a bounded form: controlled
 trust-weighted simulated feedback improves the route-policy value field. It
 does not prove that real human feedback has already been solved.
 
-## 5.5 Secondary Dataset Evidence
+## 5.7 Feedback-Driven Hard-Case Recovery
+
+We also test whether feedback can repair tail queries harmed by aggressive
+final-context budgets. A query is affected when dense top-10 retrieves at least
+one GT evidence chunk but the budgeted IntentWeight context misses. In
+same-query retry, simulated feedback updates arm-level routing state and
+triggers a safer retry policy. This is a post-feedback recovery experiment, not
+a first-pass IID ranking claim.
+
+**Table 7. Conservative post-feedback recovery on affected LoTTE 100k queries.**
+
+| Domain | Affected queries | Recovered | Recovery rate | Avg token saving vs dense |
+|---|---:|---:|---:|---:|
+| science/search 100k | 34 | 14 | 41.18% | 5.76% |
+| technology/search 100k | 42 | 9 | 21.43% | 11.75% |
+| pooled | 76 | 23 | 30.26% | - |
+
+The pooled conservative retry recovery rate is approximately 30%, with an
+approximate Wilson interval around 21-41%. This supports a practical recovery
+claim: budget-induced failures are not always permanent, and feedback can
+repair a meaningful fraction of them. A stricter calibration-to-test variant
+shows only small, domain-dependent effects, so the paper should frame feedback
+as a controlled fallback trigger rather than as unconditional global reranking.
+
+## 5.8 Secondary Dataset Evidence
 
 The main paper claim is evaluated on LoTTE because it provides the cleanest
 large-scale vertical retrieval setting for token-quality analysis. Other
@@ -128,12 +195,12 @@ sample, so it should be reported only as a stress/limitation result.
 Appendix D reports the full secondary-dataset table and the eManual
 duplicate-text diagnostic.
 
-## 5.6 Geometry Diagnostics
+## 5.9 Geometry Diagnostics
 
 The geometry scale diagnostic validates whether LoTTE retains usable local
 geometry as scale grows.
 
-**Table 5. LoTTE geometry diagnostics across corpus scale.**
+**Table 8. LoTTE geometry diagnostics across corpus scale.**
 
 | Scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Conservative policy hit delta |
 |---|---:|---:|---:|---:|---:|
@@ -153,7 +220,7 @@ motivation and diagnostic, not as a theorem.
 Figure 3 visualizes the geometry trend: nearest-cluster hit remains high, while
 context retention and PCA concentration decline as the corpus grows.
 
-## 5.7 Encoder Robustness
+## 5.10 Encoder Robustness
 
 The encoder robustness check tests whether the result depends on the exact
 `all-MiniLM-L6-v2` encoder. With
@@ -168,7 +235,7 @@ shows same-resource-class robustness within a MiniLM family; it does not prove
 the claim for all stronger encoders, rerankers, or late-interaction models.
 Appendix E reports the complete robustness table.
 
-## 5.8 Downstream Generation Smoke
+## 5.11 Downstream Generation Smoke
 
 The downstream generation smoke test compares dense top-10 context with the
 compressed conservative-policy context on 60 sampled LoTTE 100k queries using

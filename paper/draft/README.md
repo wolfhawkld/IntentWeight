@@ -1,12 +1,13 @@
 # IntentWeight Paper Draft
 
-Updated: 2026-05-25
+Updated: 2026-06-11
 
 This directory starts the paper-writing phase after Task31 consolidated the
 experimental evidence. The draft uses
 `paper/experiments/task31_paper_evidence_package.md`, the Task33.7 pre-writing
-audit, and the Task34 review-defense revision plan as the source of truth for
-claims, tables, limitations, and reviewer-risk boundaries.
+audit, the Task34 review-defense revision plan, and the Task38-40 validation
+updates as the source of truth for claims, tables, limitations, and
+reviewer-risk boundaries.
 
 ## Draft Files
 
@@ -31,6 +32,17 @@ retrieval. The supported claim is narrower and stronger:
 > conservative policy reduces final retrieved context tokens by about 4.7-5.3%
 > while preserving dense-level Hit@10.
 
+The strengthened post-review position adds three bounded claims:
+
+- Calibration/test validation shows that frozen context-budget policies can
+  save 6-18% final evidence-context tokens while avoiding the Hit@10 losses
+  seen in dense-only adaptive truncation.
+- LoTTE science/search provides cross-domain ranking support, but also shows
+  that final-context compression strength must be domain calibrated.
+- Feedback-driven hard-case recovery can repair a meaningful fraction of
+  budget-induced tail failures in post-feedback retry; this is recovery
+  evidence, not first-pass IID dominance.
+
 ## Evidence Sources
 
 - Evidence package: `paper/experiments/task31_paper_evidence_package.md`
@@ -50,3 +62,9 @@ retrieval. The supported claim is narrower and stronger:
   `paper/experiments/task33_6_additional_seeds_summary.md`
 - Review defense revision:
   `paper/experiments/task34_review_defense_revision_plan.md`
+- Calibration/test context-budget validation:
+  `paper/experiments/task38_calibrated_context_budget_validation.md`
+- Cross-domain validation:
+  `paper/experiments/task39_lotte_cross_domain_validation.md`
+- Feedback-driven hard-case recovery:
+  `paper/experiments/task40_feedback_recovery_summary.md`

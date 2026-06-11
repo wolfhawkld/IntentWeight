@@ -9,6 +9,11 @@ preserving dense-level retrieval quality. On LoTTE technology/search, the
 conservative confidence-based context policy reduces final retrieved context
 tokens by about 4.7-5.3% from 100k to 638k corpus chunks. Mean
 $\mathrm{Hit@10}$ is above dense-only retrieval on 200k, 400k, and 638k.
+Calibration/test validation strengthens the cost claim by showing that frozen
+budget policies can save 6-18% final evidence-context tokens while avoiding the
+$\mathrm{Hit@10}$ losses of dense-only adaptive truncation. LoTTE science/search
+further supports ranking-side generalization, but also shows that compression
+strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. The value of
@@ -44,6 +49,13 @@ usable feedback signal. However, the current feedback is simulated and
 ground-truth-derived. Production systems still need real feedback collection,
 trust scoring, delayed-feedback handling, and safeguards against unreliable or
 adversarial signals.
+
+The hard-case recovery experiment adds a more operational interpretation of
+feedback. When aggressive compression loses evidence, arm-level feedback can
+repair a meaningful fraction of affected queries through a safer retry or
+fallback policy. This should be treated as a controlled recovery mechanism. It
+does not mean that feedback should blindly boost the same arm for all future
+queries.
 
 ## 6.4 Geometry Is Useful but Not Sufficient
 
@@ -84,6 +96,7 @@ The correct deployment interpretation is therefore:
 
 - keep dense retrieval as a recall floor;
 - use feedback and confidence to reduce final context when the policy is stable;
+- use negative feedback to trigger safer local fallback for risky regions;
 - monitor evidence quality and fallback rates;
 - avoid aggressive compaction for complete-evidence tasks;
 - treat token saving as a controllable frontier rather than a fixed guarantee.

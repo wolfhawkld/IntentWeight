@@ -1,6 +1,6 @@
 # Paper Outline
 
-Updated: 2026-05-25
+Updated: 2026-06-11
 
 ## Working Titles
 
@@ -28,6 +28,12 @@ The current evidence supports a bounded claim:
   above dense on LoTTE 200k, 400k, and 638k.
 - It reduces final retrieved context tokens by about 4.7-5.3% across these
   LoTTE scales under the conservative Task29-C policy.
+- Calibration/test validation shows 6-18% final evidence-context token savings
+  under frozen budget selection, with scale-dependent strict non-inferiority.
+- LoTTE science/search supports cross-domain ranking gains but shows that
+  context-budget strength must be domain calibrated.
+- Feedback-driven hard-case recovery can repair a meaningful fraction of
+  budget-induced tail failures in post-feedback retry.
 - It exposes a quality-cost frontier rather than universally dominating dense
   retrieval on every dataset and metric.
 
@@ -42,6 +48,8 @@ The current evidence supports a bounded claim:
    while preserving dense-level Hit@10?
 4. Do geometry diagnostics support the piecewise relevance-manifold framing,
    and where does that framing break down?
+5. Can feedback-triggered fallback recover tail queries harmed by aggressive
+   final-context compression?
 
 ## Contributions
 
@@ -57,7 +65,13 @@ The current evidence supports a bounded claim:
 4. **Final context-token control.** We separate retrieval candidate cost from
    final context tokens and show that confidence-based context compaction can
    reduce retrieved context tokens while preserving retrieval quality.
-5. **Large-scale evidence and limitations.** We evaluate LoTTE
+5. **Calibration and cross-domain validation.** We validate budget selection
+   under calibration/test splits and replicate ranking-side gains on LoTTE
+   science/search.
+6. **Feedback-driven recovery.** We show that simulated feedback can trigger
+   safer fallback behavior and recover part of the tail failures caused by
+   aggressive context compression.
+7. **Large-scale evidence and limitations.** We evaluate LoTTE
    technology/search from 100k to 638k chunks and include ablations and failure
    cases showing where dense remains necessary.
 
@@ -73,6 +87,9 @@ The current evidence supports a bounded claim:
   retrieval path.
 - State bounded result: 4.7-5.3% final context-token reduction on LoTTE
   100k-638k, with mean Hit@10 above dense on 200k/400k/638k.
+- State strengthened evidence: calibration/test context budgets, science/search
+  cross-domain ranking support, and feedback recovery for budget-induced tail
+  failures.
 
 ### 2. Related Work
 
@@ -107,8 +124,11 @@ Suggested buckets:
 
 - Static baselines and multi-route scale-up.
 - Task29 final context-token frontier.
+- Calibration/test validation from Task38.
+- Cross-domain LoTTE science/search validation from Task39.
 - Seed stability from Task29.3 and Task33.6.
 - Feedback self-evolution evidence from Task15/25/33.2.
+- Feedback-driven hard-case recovery from Task40.
 - Encoder robustness and LLM generation smoke from Task33.1a and Task33.5.
 - Geometry diagnostics from Task30.
 - Failure and limitation cases: eManual and CUAD.
@@ -119,6 +139,8 @@ Suggested buckets:
 - Why geometry helps routing but does not replace dense.
 - Why feedback value is clearer in policy metrics than in already-saturated
   final Hit@10 on some datasets.
+- Why feedback recovery should be treated as a controlled fallback trigger,
+  not a universal reranking rule.
 - Deployment interpretation: dense can be reduced under confidence, but should
   remain as a fallback.
 
@@ -131,6 +153,8 @@ Suggested buckets:
 - Three seed stability diagnostics across all scales, plus five seeds on
   LoTTE 100k; not strong significance proof.
 - Geometry diagnostics support an assumption, not a theorem.
+- Post-feedback recovery is not the same as first-pass IID improvement.
+- Context-budget parameters require domain and scale calibration.
 
 ## Figure Plan
 
@@ -141,9 +165,13 @@ Suggested buckets:
    Task29-C in Hit@10 vs average context tokens.
 3. **Feedback self-evolution.** Last true reward and selected-cluster hit over
    epochs for trust-weighted vs no-feedback or equal-noisy modes.
-4. **Geometry diagnostics.** Nearest-cluster hit@3 and context retention across
+4. **Calibration and cross-domain context budgets.** Frozen budget policies on
+   LoTTE technology/search and science/search.
+5. **Feedback recovery.** Affected tail queries and recovered queries under
+   conservative retry.
+6. **Geometry diagnostics.** Nearest-cluster hit@3 and context retention across
    LoTTE scales.
-5. **Cost-layer separation.** Candidate cost, dense invocation rate, and final
+7. **Cost-layer separation.** Candidate cost, dense invocation rate, and final
    context tokens as separate layers.
 
 ## Table Plan
@@ -152,10 +180,13 @@ Suggested buckets:
 2. Static BM25/dense/hybrid baselines.
 3. Main LoTTE Task29-C token-quality table.
 4. Task29.3 seed CI table.
-5. Task30 geometry table.
-6. Feedback and credit-assignment ablation table.
-7. Robustness/sanity table for Task33.1a, Task33.5, and Task33.6.
-8. Limitation case table for eManual and CUAD.
+5. Task38 calibration/test context-budget table.
+6. Task39 cross-domain LoTTE table.
+7. Task40 hard-case recovery table.
+8. Task30 geometry table.
+9. Feedback and credit-assignment ablation table.
+10. Robustness/sanity table for Task33.1a, Task33.5, and Task33.6.
+11. Limitation case table for eManual and CUAD.
 
 ## Claim Boundaries
 

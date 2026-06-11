@@ -10,14 +10,17 @@ does not treat all datasets as equal evidence for the main claim.
 | Dataset | Role | Paper use | Caveat |
 |---|---|---|---|
 | LoTTE technology/search | Main vertical-domain retrieval benchmark | Main scale-up, token-quality frontier, geometry validation | No true corpus topic labels in processed qrels |
+| LoTTE science/search | Cross-domain vertical-domain validation | Tests whether ranking and context-budget findings transfer beyond technology/search | Compression strength is more domain-sensitive at 100k |
 | PubMedQA | Feedback/manifold proof-of-concept | Shows trust feedback and local propagation can improve policy | GT is abstract-level context, not strict answer sentence |
 | Banking77 | Intent/domain routing proxy | Shows strong feedback self-evolution and intent structure | Should not be mixed with evidence retrieval main table |
 | eManual | Failure/limitation case | Shows duplicate text and strict chunk-id issues | Low strict recall does not prove geometry is absent |
 | CUAD | Sparse smoke/stress case | Shows sparse legal-domain limitation | GT-anchored sample only, not full-corpus main evidence |
 
 LoTTE technology/search is the main large-scale evidence benchmark. We evaluate
-nested corpus scales from 100k to 638k chunks with 596 test queries. CUAD and
-eManual are reported as limitation cases rather than main positive evidence.
+nested corpus scales from 100k to 638k chunks with 596 test queries. LoTTE
+science/search is used as a second-domain validation at 20k/q200 and 100k
+scales. CUAD and eManual are reported as limitation cases rather than main
+positive evidence.
 
 ## 4.2 Baselines and Variants
 

@@ -8,6 +8,8 @@
 
 The current experiments use simulated feedback derived from ground truth and controlled noise/trust settings. This validates whether the policy can improve under a feedback signal, but it does not prove the same behavior under real human feedback. Real deployments must handle delayed feedback, biased implicit signals, adversarial or low-quality users, and non-stationary intent.
 
+The hard-case recovery experiment also uses GT-derived simulated feedback. Same-query retry should be interpreted as an engineering recovery test after a failed compressed answer, not as first-pass IID held-out improvement. The result shows that feedback can repair a meaningful fraction of affected queries when the evidence remains reachable through the candidate pool and arm structure; it does not imply universal recovery.
+
 \subsection{Limited Generation Evaluation}
 \label{sec:08-limitations:limited-generation-evaluation}
 
@@ -22,6 +24,11 @@ Dense-only retrieval remains a strong baseline. IntentWeight should not be claim
 \label{sec:08-limitations:evidence-completeness-trade-off}
 
 The main retrieval headline is query-level $\mathrm{Hit@10}$. Final context compaction can preserve whether at least one relevant chunk is retrieved while reducing the fraction of all ground-truth chunks retrieved. For tasks that require complete evidence collection, such as legal review, medical evidence synthesis, or exhaustive compliance analysis, a more conservative context policy or no compaction may be preferable.
+
+\subsection{Context Budget Requires Domain Calibration}
+\label{sec:08-limitations:context-budget-requires-domain-calibration}
+
+The LoTTE science/search replication shows that fixed top-10 ranking gains can transfer to a second domain, but context-budget strength does not transfer automatically. At science/search 100k, an aggressive budget still saves 17-21\% final context tokens but can introduce small $\mathrm{Hit@10}$ drops on the frozen test split. Compression should therefore be calibrated per domain and scale, with dense fallback retained for low-confidence or high-risk local regions.
 
 \subsection{Geometry Is Diagnostic, Not a Proof}
 \label{sec:08-limitations:geometry-is-diagnostic-not-a-proof}
@@ -38,7 +45,7 @@ KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and the
 
 The main dense baseline uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. The paper adds a CPU-friendly encoder robustness check with \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, but the paper should not generalize the result to stronger domain-specific encoders, rerankers, or late-interaction models without additional experiments.
 
-LoTTE technology/search is the main positive large-scale domain. Additional LoTTE domains or other vertical corpora would strengthen external validity.
+LoTTE technology/search is the main positive large-scale domain. LoTTE science/search strengthens external validity but does not replace evaluation on additional vertical corpora.
 
 \subsection{Seed Count and 400k Variance}
 \label{sec:08-limitations:seed-count-and-400k-variance}
@@ -57,4 +64,5 @@ Future work should evaluate:
 \item graph or density-based dynamic clustering under bandit-compatible arm management;
 \item larger seed counts and additional vertical-domain corpora;
 \item production policies that lower dense usage only after route confidence is demonstrably stable.
+\item recovery policies evaluated with real delayed feedback rather than GT-derived same-query retry.
 \end{itemize}

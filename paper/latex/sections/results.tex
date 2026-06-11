@@ -40,6 +40,56 @@ An additional five-seed robustness check extends the LoTTE 100k conservative pol
 
 Appendix A reports the complete three-seed confidence-interval tables and the five-seed LoTTE 100k extension.
 
+\subsection{Calibration/Test Context-Budget Validation}
+\label{sec:06-results:calibration-test-context-budget-validation}
+
+To reduce test-set model-selection bias, we also evaluate a calibration/test context-budget protocol. The budget policy is selected only on calibration queries and then frozen before evaluation on the test split. Token saving is measured as final LLM evidence-context input tokens relative to dense top-10.
+
+\begin{table*}[t]
+\centering
+\small
+\caption{Calibration/test context-budget validation on LoTTE technology/search}
+\label{tab:3}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllrlr}
+\toprule
+Scale & Selected policy & Hit delta vs dense & Token saving vs dense & Dense adaptive hit delta & Dense adaptive token saving \\
+\midrule
+100k & \nolinkurl{token_budget_r0.95_m4} & +0.00 pp & 6.18\% & -1.44 pp & 13.83\% \\
+200k & \nolinkurl{token_budget_r0.85_m4} & +1.20 pp & 16.00\% & -2.40 pp & 21.95\% \\
+400k & \nolinkurl{token_budget_r0.98_m4} & +2.32 pp & 6.57\% & -0.24 pp & 11.44\% \\
+638k & \nolinkurl{token_budget_r0.85_m4} & -0.08 pp & 17.53\% & -3.84 pp & 21.90\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
+
+The calibrated IntentWeight policies save 6-18\% final evidence-context tokens under frozen policy selection. Dense-only adaptive truncation usually saves more tokens, but it loses $\mathrm{Hit@10}$ on every scale. This indicates that IntentWeight is not merely truncating dense top-k lists; route confidence helps decide where a shorter context is safer. Strict seed-level non-inferiority remains scale-dependent and should not be overclaimed.
+
+\subsection{Cross-Domain LoTTE Science/Search Validation}
+\label{sec:06-results:cross-domain-lotte-science-search-validation}
+
+We replicate the validation pattern on LoTTE science/search to test whether the effect is limited to technology/search.
+
+\begin{table}[t]
+\centering
+\small
+\caption{LoTTE science/search cross-domain validation}
+\label{tab:4}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrlr}
+\toprule
+Domain/scale & Dense $\mathrm{Hit@10}$ & IntentWeight fixed top-10 $\mathrm{Hit@10}$ & Hit delta & Budgeted token saving \\
+\midrule
+science/search 20k/q200 & 0.8950 & 0.9267 & +3.17 pp & 13.18-14.31\% \\
+science/search 100k & 0.8926 & 0.9077 & +1.51 pp & 17.53-20.53\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+The fixed top-10 ranking-side effect transfers to a second LoTTE domain. The context-budget result is more nuanced. At 20k/q200, the frozen budgeted policies keep above-dense $\mathrm{Hit@10}$ while saving roughly 13-14\% context tokens. At 100k, the same aggressive budget saves roughly 17-21\% tokens but can introduce small $\mathrm{Hit@10}$ drops. This should be written as cross-domain support for adaptive ranking and as a boundary on compression: budget strength must be calibrated per domain and scale.
+
 \subsection{Component Ablation}
 \label{sec:06-results:component-ablation}
 
@@ -49,7 +99,7 @@ The component ablation table summarizes which parts of the system provide the qu
 \centering
 \small
 \caption{LoTTE 100k component ablation}
-\label{tab:3}
+\label{tab:5}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrrrrr}
 \toprule
@@ -80,7 +130,7 @@ The feedback experiments show that final $\mathrm{Hit@10}$ can be saturated by d
 \centering
 \small
 \caption{Feedback self-evolution summary on LoTTE 100k}
-\label{tab:4}
+\label{tab:6}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -98,6 +148,31 @@ Oracle feedback & 0.8758 & 0.9013 & 0.4345 & 0.5655 & 0.8386 & 0.8932 \\
 Under default noisy feedback, trust weighting improves selected-cluster hit from $0.5979$ to $0.7223$ and last true reward from $0.7517$ to $0.8328$ relative to equal noisy feedback. Under mild trust-weighted noise, selected-cluster hit reaches $0.7908$, last true reward reaches $0.8820$, dense rate falls to $0.5826$, and final context token ratio falls to $0.9255\times$.
 
 This supports the feedback self-evolution claim in a bounded form: controlled trust-weighted simulated feedback improves the route-policy value field. It does not prove that real human feedback has already been solved.
+
+\subsection{Feedback-Driven Hard-Case Recovery}
+\label{sec:06-results:feedback-driven-hard-case-recovery}
+
+We also test whether feedback can repair tail queries harmed by aggressive final-context budgets. A query is affected when dense top-10 retrieves at least one GT evidence chunk but the budgeted IntentWeight context misses. In same-query retry, simulated feedback updates arm-level routing state and triggers a safer retry policy. This is a post-feedback recovery experiment, not a first-pass IID ranking claim.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Conservative post-feedback recovery on affected LoTTE 100k queries}
+\label{tab:7}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrr}
+\toprule
+Domain & Affected queries & Recovered & Recovery rate & Avg token saving vs dense \\
+\midrule
+science/search 100k & 34 & 14 & 41.18\% & 5.76\% \\
+technology/search 100k & 42 & 9 & 21.43\% & 11.75\% \\
+pooled & 76 & 23 & 30.26\% & - \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+The pooled conservative retry recovery rate is approximately 30\%, with an approximate Wilson interval around 21-41\%. This supports a practical recovery claim: budget-induced failures are not always permanent, and feedback can repair a meaningful fraction of them. A stricter calibration-to-test variant shows only small, domain-dependent effects, so the paper should frame feedback as a controlled fallback trigger rather than as unconditional global reranking.
 
 \subsection{Secondary Dataset Evidence}
 \label{sec:06-results:secondary-dataset-evidence}
@@ -119,7 +194,7 @@ The geometry scale diagnostic validates whether LoTTE retains usable local geome
 \centering
 \small
 \caption{LoTTE geometry diagnostics across corpus scale}
-\label{tab:5}
+\label{tab:8}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrl}
 \toprule

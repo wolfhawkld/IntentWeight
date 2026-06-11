@@ -185,7 +185,28 @@ final context tokens by about 4.7-5.3% across LoTTE 100k, 200k, 400k, and 638k
 while preserving dense-level $\mathrm{Hit@10}$, with mean above-dense
 $\mathrm{Hit@10}$ on 200k, 400k, and 638k.
 
-## 3.10 Algorithm Sketch
+## 3.10 Feedback-Triggered Recovery
+
+IntentWeight can also use feedback as a recovery signal after a compressed
+context fails. In this mode, feedback does not insert the missing ground-truth
+chunk into the current answer. Instead, it updates arm-level route value and
+marks the associated local region as risky for future routing or optional
+post-feedback retry.
+
+The safe recovery behavior is conservative:
+
+1. If feedback indicates that a compressed context missed evidence, identify
+   the evidence-bearing arm or risky query-arm relation.
+2. Prefer a less aggressive final-context budget or full-context fallback for
+   that local region.
+3. Avoid unconditional global arm boosting, because a feedback-positive arm for
+   one query can transfer poorly to unrelated queries.
+
+This recovery mechanism is deployment-facing. It represents how a system can
+repair tail failures after user or evaluator feedback, not how the first-pass
+ranking is produced before feedback is observed.
+
+## 3.11 Algorithm Sketch
 
 Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 
@@ -198,5 +219,8 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 6. Evaluate retrieval quality for $q_t$.
 7. Only after evaluation, convert the ground-truth label into simulated
    feedback and update LinUCB for later queries.
+8. If the interaction is a post-feedback retry or a later query in a risky
+   local region, use the updated arm state to choose a safer context budget or
+   fallback path.
 
 Output: final retrieved context $C_t$ and updated policy state.
