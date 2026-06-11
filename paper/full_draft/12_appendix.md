@@ -1,10 +1,13 @@
 # Appendix
 
-## A. Seed Stability Diagnostics
+## A. Conservative Baseline and Seed Stability Diagnostics
 
-The conservative confidence-based context policy is evaluated with three seeds
-at every LoTTE scale. These intervals are engineering stability diagnostics,
-not strong inferential proof: each scale has only three observations.
+The conservative confidence-only context policy is the stable baseline for
+context compaction. The main text reports calibrated token-budget policies as
+the primary cost result; this appendix keeps the earlier confidence-only scale
+table and seed diagnostics. These intervals are engineering stability
+diagnostics, not strong inferential proof: each scale has only three
+observations.
 
 **Appendix Table A1. Multi-seed retrieval-quality stability.**
 
@@ -154,11 +157,11 @@ retrieval-metric improvement.
 
 ## F. Downstream Answer-Quality Check
 
-A small downstream generation smoke compares dense top-10 context with the
+A small downstream answer-quality check compares dense top-10 context with the
 compressed conservative-policy context on 60 sampled LoTTE 100k queries. The
-same LLM configuration generates and judges answers in this smoke.
+same LLM configuration generates and judges answers in this check.
 
-**Appendix Table F1. Downstream generation smoke test.**
+**Appendix Table F1. Downstream answer-quality check.**
 
 | Method | Answer score | Faithfulness | Answer relevance | Win count | Prompt context-token proxy ratio |
 |---|---:|---:|---:|---:|---:|
@@ -166,7 +169,7 @@ same LLM configuration generates and judges answers in this smoke.
 | Conservative policy | 4.2833 | 4.6333 | 4.4500 | 14 | 0.9321x |
 | Tie | - | - | - | 32 | - |
 
-The smoke does not show obvious answer-quality degradation from conservative
+The check does not show obvious answer-quality degradation from conservative
 context compaction. It is not a full human evaluation: the sample is small,
 one generator/judge model is used, and LLM-as-judge can be biased.
 

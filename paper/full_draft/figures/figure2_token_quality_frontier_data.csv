@@ -1,5 +1,5 @@
-scale,dense_hit,policy_hit,dense_tokens,policy_tokens,token_ratio,saving_pct
-100k,0.8674,0.8652,1472.39,1401.24,0.9517,4.83
-200k,0.7970,0.8249,1444.12,1376.46,0.9531,4.69
-400k,0.7718,0.7819,1482.30,1403.43,0.9468,5.32
-638k,0.7282,0.7466,1525.62,1451.49,0.9514,4.86
+scale,policy_hit_delta_pp,policy_saving_pct,dense_adaptive_hit_delta_pp,dense_adaptive_saving_pct
+100k,0.00,6.18,-1.44,13.83
+200k,1.20,16.00,-2.40,21.95
+400k,2.32,6.57,-0.24,11.44
+638k,-0.08,17.53,-3.84,21.90

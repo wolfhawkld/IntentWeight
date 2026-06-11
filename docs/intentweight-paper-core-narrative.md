@@ -54,11 +54,11 @@ IntentWeight 不替代 dense retrieval，而是在 dense recall floor 上做 ada
 
 论文主证据应按以下顺序组织：
 
-1. **Main LoTTE technology/search scale-up**  
-   在 100k-638k corpus chunks 上，保守 context policy 减少约 4.7-5.3% final retrieved context tokens，并保持 dense-level Hit@10。
-
-2. **Calibration/test validation**  
+1. **Main calibrated token-quality frontier**:
    冻结 budget policy 后仍可节省 6-18% evidence-context tokens，并优于 dense-only adaptive truncation 的 Hit@10，说明不是简单 dense top-k 截断，也不是纯测试集调参。
+
+2. **Conservative confidence-only baseline**:
+   在 100k-638k corpus chunks 上，保守 context policy 减少约 4.7-5.3% final retrieved context tokens，并保持 dense-level Hit@10。该结果作为稳定 baseline 和 seed-diagnostic 支撑，主结果应以前一项 calibrated policy 为核心。
 
 3. **Cross-domain validation**  
    LoTTE science/search 支持 fixed top-10 ranking-side gain，但也说明 context compression strength 必须按 domain 和 scale 校准。
@@ -81,7 +81,7 @@ IntentWeight 不替代 dense retrieval，而是在 dense recall floor 上做 ada
 - **Related Work**：连接 RAG/dense/BM25/hybrid retrieval、contextual bandits、geometry-inspired retrieval、context compression 和 feedback/RLHF-inspired optimization。
 - **Method**：描述 IntentWeight 的 controller 设计，而不是把各个组件写成工程流水线。
 - **Experimental Setup**：明确数据集角色、metrics、prequential simulated feedback、cost layer separation。
-- **Results**：先给 main token-quality frontier，再给 calibration/test、cross-domain、feedback adaptation、recovery、geometry 和 robustness。
+- **Results**：先给 calibrated token-quality frontier，再给 cross-domain、component ablation、feedback adaptation/recovery、geometry 和 boundary/robustness checks。
 - **Discussion**：解释为什么 multi-route 本身不等于省 token，真正的成本收益来自 confidence-based final context compaction 和 feedback-triggered fallback。
 - **Limitations**：主动限制 simulated feedback、single-resource-class encoder、Hit@10 只代表 usable evidence、geometry 只是 diagnostic support。
 - **Conclusion**：回到 controller 贡献：quality、context token cost 和 recovery 的动态 trade-off。
@@ -113,4 +113,3 @@ Avoid:
 最稳的论文定位是：
 
 > 本文不是提出一个全面超过 dense retrieval 的检索器，而是提出一个 feedback-guided adaptive evidence selection controller。它把结构化垂类知识系统中的证据选择、context token 成本和失败恢复建模为一个可学习的控制问题，并在 LoTTE 大规模垂类检索实验中展示了可控的 quality-cost trade-off。
-

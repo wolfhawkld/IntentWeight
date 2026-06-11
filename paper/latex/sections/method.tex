@@ -8,7 +8,7 @@
 
 In the retrieval-backed implementation evaluated here, let an evidence corpus be a set of chunks $D = \{d_i\}_{i=1}^{N}$ and a query stream $Q = \{q_t\}_{t=1}^{T}$. For each query $q_t$, a retrieval system returns an ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be passed to a downstream generator. The objective is to preserve retrieval quality while controlling both retrieval cost and final context cost.
 
-IntentWeight treats retrieval as a route-control problem. For each query, the system chooses how much to rely on global dense retrieval, lexical BM25 recall, and cluster-local retrieval. The final response generator is outside the main experiment scope. The paper evaluates retrieval quality and the token count of the retrieved context that would be sent to the generator, with one small downstream generation smoke test.
+IntentWeight treats retrieval as a route-control problem. For each query, the system chooses how much to rely on global dense retrieval, lexical BM25 recall, and cluster-local retrieval. The final response generator is outside the main experiment scope. The paper evaluates retrieval quality and the token count of the retrieved context that would be sent to the generator, with one small downstream answer-quality check.
 
 \subsection{Piecewise Relevance-Manifold Assumption}
 \label{sec:04-method:piecewise-relevance-manifold-assumption}
@@ -39,7 +39,7 @@ Figure~\ref{fig:system} summarizes this route-control architecture. It should be
 \subsection{Routing Arm Construction}
 \label{sec:04-method:routing-arm-construction}
 
-Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a deliberate experimental choice. LinUCB requires a fixed number of arms, fixed arms improve reproducibility across seeds and scales, and KMeans is fast enough for large-scale LoTTE experiments. The same arm count is used across LoTTE scales to keep the LinUCB state space comparable, even though larger corpora therefore contain more chunks per arm.
+Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a deliberate experimental choice. LinUCB requires a fixed number of arms, fixed arms improve reproducibility across seeds and scales, and KMeans is fast enough for large-scale LoTTE experiments. The same arm count is used across LoTTE scales to keep the LinUCB state space comparable, even though larger corpora therefore contain more chunks per arm. We use 32 routing arms as a practical balance between local routing granularity and per-arm feedback sample size; sensitivity to the arm count is left to future work.
 
 The paper does not claim that KMeans is the best clustering algorithm for retrieval. HDBSCAN, graph clusters, or learned routing structures may be better in some deployments, but dynamic arm counts complicate the current LinUCB setup. Here, each cluster arm represents a local region of the retrieval surface. The cluster route searches inside selected arms, while dense and BM25 routes can rescue cases where the cluster route misses relevant evidence.
 
@@ -112,7 +112,9 @@ The conservative \nolinkurl{confidence_topk} policy works as follows:
 
 For the conservative policy, the effective compaction rate is therefore the high-confidence compression rate, not the broader rate of queries that enter a non-fallback route. Hybrid-lite can reduce dense influence in fusion while retaining dense candidates as a safety net; it should not be described as reducing dense computation unless the global dense route is actually skipped.
 
-The main result uses this conservative confidence-based policy. It reduces final context tokens by about 4.7-5.3\% across LoTTE 100k, 200k, 400k, and 638k while preserving dense-level $\mathrm{Hit@10}$, with mean above-dense $\mathrm{Hit@10}$ on 200k, 400k, and 638k.
+The main token-quality result uses frozen calibration/test budget policies that select a final context budget on calibration queries and evaluate it unchanged on held-out test queries. The conservative confidence-based policy remains a stable baseline: it reduces final context tokens by about 4.7-5.3\% across LoTTE 100k, 200k, 400k, and 638k while preserving dense-level query hit.
+
+On LoTTE, semantic drift rarely exceeds the configured fallback threshold, so the reported compression behavior is primarily confidence-driven. In more heterogeneous query distributions, drift-based fallback may become more active.
 
 \subsection{Feedback-Triggered Recovery}
 \label{sec:04-method:feedback-triggered-recovery}

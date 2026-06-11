@@ -91,23 +91,26 @@ def system_diagram() -> None:
 def token_quality() -> None:
     rows = read_csv("figure2_token_quality_frontier_data.csv")
     scales = [row["scale"] for row in rows]
-    dense_hit = [float(row["dense_hit"]) for row in rows]
-    policy_hit = [float(row["policy_hit"]) for row in rows]
-    ratios = [float(row["token_ratio"]) for row in rows]
+    policy_hit_delta = [float(row["policy_hit_delta_pp"]) for row in rows]
+    dense_hit_delta = [float(row["dense_adaptive_hit_delta_pp"]) for row in rows]
+    policy_saving = [float(row["policy_saving_pct"]) for row in rows]
+    dense_saving = [float(row["dense_adaptive_saving_pct"]) for row in rows]
 
     fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.6))
-    axes[0].plot(scales, dense_hit, marker="o", label="Dense")
-    axes[0].plot(scales, policy_hit, marker="o", label="IntentWeight")
-    axes[0].set_ylabel("Hit@10")
+    axes[0].plot(scales, policy_hit_delta, marker="o", label="IntentWeight budget")
+    axes[0].plot(scales, dense_hit_delta, marker="o", label="Dense adaptive truncation")
+    axes[0].axhline(0.0, color="#52606d", linestyle="--", linewidth=1)
+    axes[0].set_ylabel("Hit@10 delta vs dense (pp)")
     axes[0].set_xlabel("LoTTE corpus scale")
     axes[0].grid(alpha=0.3)
     axes[0].legend()
 
-    axes[1].plot(scales, ratios, marker="o", color="#9a6b14")
-    axes[1].axhline(1.0, color="#52606d", linestyle="--", linewidth=1)
-    axes[1].set_ylabel("Final context token ratio vs dense")
+    axes[1].plot(scales, policy_saving, marker="o", label="IntentWeight budget")
+    axes[1].plot(scales, dense_saving, marker="o", label="Dense adaptive truncation")
+    axes[1].set_ylabel("Final context token saving (%)")
     axes[1].set_xlabel("LoTTE corpus scale")
     axes[1].grid(alpha=0.3)
+    axes[1].legend()
     fig.tight_layout()
     save(fig, "figure2_token_quality_frontier.pdf")
 

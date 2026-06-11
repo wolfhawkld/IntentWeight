@@ -46,21 +46,20 @@ The paper should keep the bounded claim:
 > IntentWeight is a feedback-guided evidence selection and context-budget
 > controller motivated by a piecewise relevance-manifold assumption for
 > vertical-domain data, instantiated in a retrieval-augmented question-answering
-> setting. It reduces final retrieved context tokens by about 4.7-5.3% on LoTTE
-> technology/search 100k-638k while
-> preserving dense-level $\mathrm{Hit@10}$. Mean $\mathrm{Hit@10}$ is above
-> dense on 200k, 400k, and 638k, but the paper should not claim universal or
-> statistically significant dominance, nor should it imply that the current
-> experiments cover every possible knowledge-carrier format beyond the tested
-> retrieval setting.
+> setting. Under calibration/test budget selection, it reduces final LLM
+> evidence-context input tokens by 6-18% on LoTTE technology/search 100k-638k
+> while outperforming dense-only adaptive truncation in $\mathrm{Hit@10}$.
+> A conservative confidence-only policy remains as a stable 4.7-5.3% saving
+> baseline. The paper should not claim universal or statistically significant
+> dominance, nor should it imply that the current experiments cover every
+> possible knowledge-carrier format beyond the tested retrieval setting.
 > Broader agent-memory, graph, tree, or tool-context applications should be
 > framed as motivation and future work unless separately evaluated.
 
-The strengthened post-review claim adds that calibration/test budget selection
-can save 6-18% final evidence-context tokens under frozen policies, LoTTE
-science/search supports cross-domain ranking gains while exposing
-domain-specific compression calibration, and simulated feedback can recover a
-meaningful fraction of budget-induced tail failures in post-feedback retry.
+Cross-domain LoTTE science/search results support ranking-side generalization
+while exposing domain-specific compression calibration, and simulated feedback
+can recover a meaningful fraction of budget-induced tail failures in
+post-feedback retry.
 
 ## Next Editing Pass
 

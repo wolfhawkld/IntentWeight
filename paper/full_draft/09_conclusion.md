@@ -9,19 +9,16 @@ applies confidence-based final context compaction to reduce retrieved context
 tokens.
 
 The main evidence comes from LoTTE technology/search at 100k to 638k corpus
-chunks. Under the conservative confidence-based context policy, IntentWeight
-reduces final retrieved context tokens by approximately 4.7-5.3% while
-preserving dense-level $\mathrm{Hit@10}$. Mean $\mathrm{Hit@10}$ is above
-dense-only retrieval at 200k, 400k, and 638k. Additional diagnostics show that
-local geometry provides useful routing signal, trust-weighted feedback improves
-route-policy metrics, and a small downstream generation smoke test does not
-show obvious answer-quality degradation from context compaction. Calibration/test
-validation shows that frozen budget policies can save larger final
-evidence-context token fractions while outperforming dense-only adaptive
-truncation, and LoTTE science/search provides cross-domain ranking support with
-a clear compression-calibration boundary. Hard-case recovery experiments further
-show that simulated feedback can repair part of the tail failures caused by
-aggressive context compression.
+chunks. Under calibration/test budget selection, IntentWeight reduces final LLM
+evidence-context input tokens by 6-18% while outperforming dense-only adaptive
+truncation in $\mathrm{Hit@10}$. A conservative confidence-only policy remains
+a stable 4.7-5.3% saving baseline. Additional diagnostics show that local
+geometry provides useful routing signal, trust-weighted feedback improves
+route-policy metrics, and a small downstream answer-quality check does not show
+obvious degradation from context compaction. LoTTE science/search provides
+cross-domain ranking support with a clear compression-calibration boundary.
+Hard-case recovery experiments further show that simulated feedback can repair
+part of the tail failures caused by aggressive context compression.
 
 The result is intentionally bounded. IntentWeight is not a universal dense
 replacement, and it does not prove that geometry alone solves retrieval. Dense

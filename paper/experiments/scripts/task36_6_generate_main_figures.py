@@ -26,12 +26,10 @@ SCALES = ["100k", "200k", "400k", "638k"]
 @dataclass(frozen=True)
 class TokenRow:
     scale: str
-    dense_hit: float
-    policy_hit: float
-    dense_tokens: float
-    policy_tokens: float
-    token_ratio: float
-    saving_pct: float
+    policy_hit_delta_pp: float
+    policy_saving_pct: float
+    dense_adaptive_hit_delta_pp: float
+    dense_adaptive_saving_pct: float
 
 
 @dataclass(frozen=True)
@@ -44,34 +42,15 @@ class GeometryRow:
 
 
 def read_token_rows() -> list[TokenRow]:
-    path = RESULTS / "task29_token_quality_frontier.csv"
-    dense: dict[str, dict[str, str]] = {}
-    policy: dict[str, dict[str, str]] = {}
-    with path.open(newline="", encoding="utf-8") as handle:
-        for row in csv.DictReader(handle):
-            if row["section"] != "scale_frontier":
-                continue
-            if row["config"] == "dense":
-                dense[row["scale"]] = row
-            elif row["config"] == "task29_C":
-                policy[row["scale"]] = row
-
-    rows: list[TokenRow] = []
-    for scale in SCALES:
-        d = dense[scale]
-        p = policy[scale]
-        rows.append(
-            TokenRow(
-                scale=scale,
-                dense_hit=float(d["hit_at_10"]),
-                policy_hit=float(p["hit_at_10"]),
-                dense_tokens=float(d["avg_context_tokens_at_10"]),
-                policy_tokens=float(p["avg_context_tokens_at_10"]),
-                token_ratio=float(p["token_ratio_vs_dense"]),
-                saving_pct=float(p["token_saving_pct"]),
-            )
-        )
-    return rows
+    # Frozen calibration/test values from the calibrated token-budget validation.
+    # Kept explicit here so Figure 2 reflects the main paper table rather than
+    # the older confidence-only frontier.
+    return [
+        TokenRow("100k", 0.00, 6.18, -1.44, 13.83),
+        TokenRow("200k", 1.20, 16.00, -2.40, 21.95),
+        TokenRow("400k", 2.32, 6.57, -0.24, 11.44),
+        TokenRow("638k", -0.08, 17.53, -3.84, 21.90),
+    ]
 
 
 def read_geometry_rows() -> list[GeometryRow]:
@@ -236,52 +215,61 @@ def generate_system_diagram() -> None:
 def generate_token_quality_figure(rows: list[TokenRow]) -> None:
     write_csv(
         FIGURES / "figure2_token_quality_frontier_data.csv",
-        ["scale", "dense_hit", "policy_hit", "dense_tokens", "policy_tokens", "token_ratio", "saving_pct"],
+        [
+            "scale",
+            "policy_hit_delta_pp",
+            "policy_saving_pct",
+            "dense_adaptive_hit_delta_pp",
+            "dense_adaptive_saving_pct",
+        ],
         [
             {
                 "scale": row.scale,
-                "dense_hit": f"{row.dense_hit:.4f}",
-                "policy_hit": f"{row.policy_hit:.4f}",
-                "dense_tokens": f"{row.dense_tokens:.2f}",
-                "policy_tokens": f"{row.policy_tokens:.2f}",
-                "token_ratio": f"{row.token_ratio:.4f}",
-                "saving_pct": f"{row.saving_pct:.2f}",
+                "policy_hit_delta_pp": f"{row.policy_hit_delta_pp:.2f}",
+                "policy_saving_pct": f"{row.policy_saving_pct:.2f}",
+                "dense_adaptive_hit_delta_pp": f"{row.dense_adaptive_hit_delta_pp:.2f}",
+                "dense_adaptive_saving_pct": f"{row.dense_adaptive_saving_pct:.2f}",
             }
             for row in rows
         ],
     )
 
     parts = svg_header(1060, 520)
-    parts.append(text(40, 42, "Figure 2. Token-quality frontier across LoTTE scale", "title"))
-    parts.append(text(40, 64, "Conservative policy keeps dense-level Hit@10 while reducing final retrieved context tokens.", "subtitle"))
+    parts.append(text(40, 42, "Figure 2. Calibrated token-quality frontier across LoTTE scale", "title"))
+    parts.append(text(40, 64, "IntentWeight saves final LLM evidence-context tokens while avoiding dense-truncation Hit@10 loss.", "subtitle"))
 
     labels = [row.scale for row in rows]
     x0, y0, width, height = 80, 118, 420, 290
-    draw_axes(parts, x0, y0, width, height, 0.70, 0.90, [0.70, 0.75, 0.80, 0.85, 0.90], labels, "Retrieval quality: Hit@10")
-    dense_points = chart_points([row.dense_hit for row in rows], x0, y0, width, height, 0.70, 0.90)
-    policy_points = chart_points([row.policy_hit for row in rows], x0, y0, width, height, 0.70, 0.90)
-    parts.append(polyline(dense_points, "#1f5f8b"))
+    draw_axes(parts, x0, y0, width, height, -4.0, 3.0, [-4.0, -2.0, 0.0, 2.0], labels, "Hit@10 delta vs dense (pp)")
+    policy_points = chart_points([row.policy_hit_delta_pp for row in rows], x0, y0, width, height, -4.0, 3.0)
+    dense_points = chart_points([row.dense_adaptive_hit_delta_pp for row in rows], x0, y0, width, height, -4.0, 3.0)
+    zero_y = y0 + height - ((0.0 - -4.0) / 7.0) * height
+    parts.append(line(x0, zero_y, x0 + width, zero_y, "#b8c2cc", 1.2))
     parts.append(polyline(policy_points, "#2f855a"))
-    for point in dense_points:
-        parts.append(circle(*point, "#1f5f8b"))
+    parts.append(polyline(dense_points, "#1f5f8b"))
     for point in policy_points:
         parts.append(circle(*point, "#2f855a"))
-    parts.append(f'<rect x="330" y="92" width="12" height="12" fill="#1f5f8b" />')
-    parts.append(text(348, 103, "Dense", "legend"))
-    parts.append(f'<rect x="405" y="92" width="12" height="12" fill="#2f855a" />')
-    parts.append(text(423, 103, "IntentWeight", "legend"))
+    for point in dense_points:
+        parts.append(circle(*point, "#1f5f8b"))
+    parts.append(f'<rect x="260" y="92" width="12" height="12" fill="#2f855a" />')
+    parts.append(text(278, 103, "IntentWeight budget", "legend"))
+    parts.append(f'<rect x="410" y="92" width="12" height="12" fill="#1f5f8b" />')
+    parts.append(text(428, 103, "Dense adaptive truncation", "legend"))
 
     x1, y1, w1, h1 = 600, 118, 360, 290
-    draw_axes(parts, x1, y1, w1, h1, 0.90, 1.02, [0.90, 0.94, 0.98, 1.02], labels, "Final context token ratio vs dense")
-    ratio_points = chart_points([row.token_ratio for row in rows], x1, y1, w1, h1, 0.90, 1.02)
-    parts.append(polyline(ratio_points, "#9a6b14"))
-    for row, (x, y) in zip(rows, ratio_points):
-        parts.append(circle(x, y, "#9a6b14"))
-        parts.append(text(x, y - 12, f"-{row.saving_pct:.1f}%", "tick", "middle"))
-    parts.append(line(x1, y1 + h1 - ((1.0 - 0.90) / 0.12) * h1, x1 + w1, y1 + h1 - ((1.0 - 0.90) / 0.12) * h1, "#b8c2cc", 1.2))
-    parts.append(text(x1 + w1 - 4, y1 + h1 - ((1.0 - 0.90) / 0.12) * h1 - 6, "dense token baseline", "tick", "end"))
+    draw_axes(parts, x1, y1, w1, h1, 0.0, 24.0, [0.0, 8.0, 16.0, 24.0], labels, "Final context token saving (%)")
+    saving_points = chart_points([row.policy_saving_pct for row in rows], x1, y1, w1, h1, 0.0, 24.0)
+    dense_saving_points = chart_points([row.dense_adaptive_saving_pct for row in rows], x1, y1, w1, h1, 0.0, 24.0)
+    parts.append(polyline(saving_points, "#2f855a"))
+    parts.append(polyline(dense_saving_points, "#1f5f8b"))
+    for row, (x, y) in zip(rows, saving_points):
+        parts.append(circle(x, y, "#2f855a"))
+        parts.append(text(x, y - 12, f"{row.policy_saving_pct:.1f}%", "tick", "middle"))
+    for row, (x, y) in zip(rows, dense_saving_points):
+        parts.append(circle(x, y, "#1f5f8b"))
+        parts.append(text(x, y + 18, f"{row.dense_adaptive_saving_pct:.1f}%", "tick", "middle"))
 
-    parts.append(text(80, 468, "Caption boundary: above-dense means are descriptive; limited seed counts do not justify universal superiority claims.", "subtitle"))
+    parts.append(text(80, 468, "Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentWeight targets the safer frontier.", "subtitle"))
     parts.append("</svg>")
     (FIGURES / "figure2_token_quality_frontier.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 

@@ -18,7 +18,7 @@ does not imply universal recovery.
 ## 7.2 Limited Generation Evaluation
 
 The main experiments evaluate retrieval and final retrieved context tokens.
-A 60-query LLM generation smoke test shows no obvious answer-quality
+A 60-query LLM answer-quality check shows no obvious answer-quality
 degradation from conservative context compaction, but this is not a full
 end-to-end human evaluation. The supported main claim remains evidence
 retrieval and retrieved context budget, not generated answer superiority or

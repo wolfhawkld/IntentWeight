@@ -55,33 +55,34 @@ rate at which global dense retrieval is invoked, and the final number of
 retrieved context tokens sent to the generator. Our main efficiency claim uses
 the third layer. Earlier candidate-count reductions are useful retrieval-stage
 diagnostics, but they are not evidence of lower LLM context cost unless the
-final context itself is reduced.
+final context itself is reduced. Because these retrieved chunks enter the LLM
+generator as input tokens, each percentage point of evidence-context reduction
+translates directly into a proportional per-query inference-cost reduction, a
+recurring saving that scales with deployment query volume.
 
 We evaluate IntentWeight on multiple datasets and use LoTTE technology/search
 as the main large-scale vertical-domain evidence benchmark. On LoTTE, we scale
 from 100k to 638k corpus chunks and compare against dense-only retrieval using
-`sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Under the
-conservative confidence-based final context policy, IntentWeight reduces final
-retrieved context tokens by approximately 4.7-5.3% across all scales. It
-preserves near-dense $\mathrm{Hit@10}$ at 100k and has mean
-$\mathrm{Hit@10}$ above dense-only retrieval at 200k, 400k, and 638k. We treat
-these as bounded mean improvements rather than universal or statistically
-significant dominance claims.
+`sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Our main
+cost-quality evidence uses a calibration/test context-budget protocol: the
+final-context policy is selected on calibration queries and frozen before test
+evaluation. Under this protocol, IntentWeight saves 6-18% final
+evidence-context tokens across LoTTE technology/search scales while
+outperforming dense-only adaptive truncation in $\mathrm{Hit@10}$, although
+strict seed-level non-inferiority remains scale-dependent. A conservative
+confidence-only policy provides a stable baseline, reducing final retrieved
+context tokens by approximately 4.7-5.3% across all scales while preserving
+dense-level query hit. We treat these as bounded operating points rather than
+universal or statistically significant dominance claims.
 
-We further evaluate three reviewer-facing concerns. First, a calibration/test
-context-budget validation selects the final-context policy on calibration
-queries and freezes it before test evaluation; under this protocol,
-IntentWeight saves 6-18% final evidence-context tokens across LoTTE
-technology/search scales while outperforming dense-only adaptive truncation in
-$\mathrm{Hit@10}$, although strict seed-level non-inferiority remains
-scale-dependent. Second, a LoTTE science/search replication shows that the
-fixed top-10 IntentWeight ranking improves query-level $\mathrm{Hit@10}$ at
-both 20k and 100k corpus scales, while also showing that aggressive context
-compression must be domain-calibrated. Third, a hard-case recovery experiment
-shows that simulated arm-level feedback can repair a meaningful fraction of
-budget-induced tail failures in post-feedback retry. This recovery result
-supports the adaptive feedback mechanism, but it is not a claim of first-pass
-IID improvement on all future queries.
+We further evaluate two reviewer-facing concerns. First, a LoTTE science/search
+replication shows that the fixed top-10 IntentWeight ranking improves
+query-level $\mathrm{Hit@10}$ at both 20k and 100k corpus scales, while also
+showing that aggressive context compression must be domain-calibrated. Second,
+a hard-case recovery experiment shows that simulated arm-level feedback can
+repair a meaningful fraction of budget-induced tail failures in post-feedback
+retry. This recovery result supports the adaptive feedback mechanism, but it is
+not a claim of first-pass IID improvement on all future queries.
 
 The contributions of this paper are:
 

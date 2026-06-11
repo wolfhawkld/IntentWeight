@@ -14,7 +14,7 @@ system chooses how much to rely on global dense retrieval, lexical BM25 recall,
 and cluster-local retrieval. The final response generator is outside the main
 experiment scope. The paper evaluates retrieval quality and the token count of
 the retrieved context that would be sent to the generator, with one small
-downstream generation smoke test.
+downstream answer-quality check.
 
 ## 3.2 Piecewise Relevance-Manifold Assumption
 
@@ -65,6 +65,9 @@ arms improve reproducibility across seeds and scales, and KMeans is fast enough
 for large-scale LoTTE experiments. The same arm count is used across LoTTE
 scales to keep the LinUCB state space comparable, even though larger corpora
 therefore contain more chunks per arm.
+We use 32 routing arms as a practical balance between local routing granularity
+and per-arm feedback sample size; sensitivity to the arm count is left to future
+work.
 
 The paper does not claim that KMeans is the best clustering algorithm for
 retrieval. HDBSCAN, graph clusters, or learned routing structures may be better
@@ -180,10 +183,15 @@ non-fallback route. Hybrid-lite can reduce dense influence in fusion while
 retaining dense candidates as a safety net; it should not be described as
 reducing dense computation unless the global dense route is actually skipped.
 
-The main result uses this conservative confidence-based policy. It reduces
-final context tokens by about 4.7-5.3% across LoTTE 100k, 200k, 400k, and 638k
-while preserving dense-level $\mathrm{Hit@10}$, with mean above-dense
-$\mathrm{Hit@10}$ on 200k, 400k, and 638k.
+The main token-quality result uses frozen calibration/test budget policies that
+select a final context budget on calibration queries and evaluate it unchanged
+on held-out test queries. The conservative confidence-based policy remains a
+stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
+100k, 200k, 400k, and 638k while preserving dense-level query hit.
+
+On LoTTE, semantic drift rarely exceeds the configured fallback threshold, so
+the reported compression behavior is primarily confidence-driven. In more
+heterogeneous query distributions, drift-based fallback may become more active.
 
 ## 3.10 Feedback-Triggered Recovery
 

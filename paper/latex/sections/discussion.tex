@@ -6,7 +6,7 @@
 \subsection{Supported Claim}
 \label{sec:07-discussion:supported-claim}
 
-IntentWeight supports a bounded but useful claim. It is a feedback-driven adaptive evidence-selection controller instantiated as a retrieval controller in the evaluated QA setting. It can control final context budget while preserving dense-level retrieval quality. On LoTTE technology/search, the conservative confidence-based context policy reduces final retrieved context tokens by about 4.7-5.3\% from 100k to 638k corpus chunks. Mean $\mathrm{Hit@10}$ is above dense-only retrieval on 200k, 400k, and 638k. Calibration/test validation strengthens the cost claim by showing that frozen budget policies can save 6-18\% final evidence-context tokens while avoiding the $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. LoTTE science/search further supports ranking-side generalization, but also shows that compression strength must be calibrated per domain and scale.
+IntentWeight supports a bounded but useful claim. It is a feedback-driven adaptive evidence-selection controller instantiated as a retrieval controller in the evaluated QA setting. It can control final context budget while preserving dense-level retrieval quality. On LoTTE technology/search, calibration/test validation shows that frozen budget policies can save 6-18\% final evidence-context tokens while avoiding the $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. A conservative confidence-only policy provides a stable baseline, reducing final retrieved context tokens by about 4.7-5.3\% from 100k to 638k corpus chunks while preserving dense-level query hit. LoTTE science/search further supports ranking-side generalization, but also shows that compression strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains the primary quality baseline and an important recall floor. The value of IntentWeight is that it learns when dense fallback is needed, when local geometry is reliable, and when the final context can be safely compacted.
 
@@ -15,7 +15,7 @@ This result is not a claim that dense retrieval is weak. Dense retrieval remains
 
 A static combination of dense, BM25, and cluster-local retrieval can improve coverage, but it does not automatically reduce final context tokens. In fact, static dense+BM25 hybrid retrieval can use more context tokens than dense-only retrieval because it surfaces longer or noisier chunks. The token-saving mechanism is therefore not "more routes." It is confidence-based final context control.
 
-The main confidence-based policy is intentionally conservative. It compresses only high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is why the saving is modest but stable. More aggressive configurations save more tokens, but they produce visible $\mathrm{Hit@10}$ loss. The conservative policy should therefore be interpreted as a safe operating point on a token-quality frontier.
+The confidence-only policy is intentionally conservative. It compresses only high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is why the saving is modest but stable. The calibrated token-budget policies use a frozen calibration/test protocol to expose a stronger operating frontier, while dense-only adaptive truncation shows that saving more tokens by simply reducing dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy should therefore be interpreted as a safe baseline, not the highest-compression configuration.
 
 \subsection{Feedback Improves the Policy Field}
 \label{sec:07-discussion:feedback-improves-the-policy-field}
@@ -43,7 +43,7 @@ This is an expected trade-off. IntentWeight optimizes usable evidence under a sm
 \subsection{Production Interpretation}
 \label{sec:07-discussion:production-interpretation}
 
-The measured 4.7-5.3\% token reduction is conservative. It is measured with limited simulated interaction history and a cautious $k=8$ high-confidence compression policy. In production, repeated query patterns, user-specific feedback, and richer confidence tiers may increase the fraction of queries that can be safely compacted. This is a hypothesis for production evaluation rather than a claim proven by the current experiments.
+The measured 6-18\% calibrated evidence-context token reduction applies to the most expensive recurring component of a retrieval-augmented answer: LLM input tokens. At enterprise query volumes, even the conservative end of this range can compound into meaningful cumulative inference-cost reduction. The older 4.7-5.3\% confidence-only policy is best interpreted as a stable conservative baseline, while calibrated budgets show the stronger operating frontier. In production, repeated query patterns, user-specific feedback, and richer confidence tiers may increase the fraction of queries that can be safely compacted. This is a hypothesis for production evaluation rather than a claim proven by the current experiments.
 
 The correct deployment interpretation is therefore:
 

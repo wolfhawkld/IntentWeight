@@ -10,15 +10,14 @@ The appendix-facing tables are instantiated in `12_appendix.md`.
 The table labels in the current draft are aligned with this plan:
 
 - Table 1: dataset roles and evaluation guardrails;
-- Table 2: LoTTE token-quality frontier;
-- Table 3: calibration/test context-budget validation;
-- Table 4: cross-domain validation;
-- Table 5: LoTTE 100k component ablation;
-- Table 6: feedback-driven policy adaptation summary;
-- Table 7: feedback-driven hard-case recovery;
-- Table 8: LoTTE geometry diagnostics;
+- Table 2: calibrated token-quality frontier;
+- Table 3: cross-domain validation;
+- Table 4: LoTTE 100k component ablation;
+- Table 5: feedback-driven policy adaptation summary;
+- Table 6: feedback-driven hard-case recovery;
+- Table 7: LoTTE geometry diagnostics;
 - Appendix Tables A1, D1, and F1: seed stability, secondary datasets, and the
-  downstream generation smoke.
+  downstream answer-quality check.
 
 ## Main-Paper Tables
 
@@ -39,48 +38,29 @@ Recommended columns:
 - paper use;
 - caveat.
 
-### Table 2: LoTTE Token-Quality Frontier
+### Table 2: Calibrated Token-Quality Frontier
 
-Evidence basis: the LoTTE 100k-638k final context-token frontier.
+Evidence basis: the frozen calibration/test context-budget protocol and dense
+adaptive truncation baseline.
 
-Purpose: main quantitative result. It shows that the conservative policy
-reduces final retrieved context tokens by about 4.7-5.3% across LoTTE
-100k-638k while preserving dense-level $\mathrm{Hit@10}$.
+Purpose: main quantitative result. It shows that calibrated token-budget
+policies reduce final LLM evidence-context input tokens by 6-18% while
+avoiding the $\mathrm{Hit@10}$ loss of dense-only adaptive truncation.
 
 Keep in the main paper because this is the central evidence for the
-quality-token trade-off.
+quality-cost trade-off and directly addresses the strongest alternative
+explanation.
 
 Recommended columns:
 
 - scale;
-- corpus size;
-- dense $\mathrm{Hit@10}$;
-- conservative policy $\mathrm{Hit@10}$;
-- hit delta;
-- dense $\mathrm{Tokens@10}$;
-- conservative policy $\mathrm{Tokens@10}$;
-- token saving.
-
-### Table 3: Calibration/Test Context-Budget Validation
-
-Evidence basis: the frozen calibration/test context-budget protocol.
-
-Purpose: show that the context-token result is not only post-hoc test-set
-policy selection and not merely dense-only top-k truncation.
-
-Keep in the main paper because it directly addresses reviewer concerns about
-selection bias and same-budget dense truncation controls.
-
-Recommended columns:
-
-- scale;
-- selected policy;
-- hit delta versus dense;
-- token saving versus dense;
+- frozen budget policy;
+- IntentWeight hit delta versus dense;
+- IntentWeight token saving versus dense;
 - dense adaptive hit delta;
 - dense adaptive token saving.
 
-### Table 4: Cross-Domain Validation
+### Table 3: Cross-Domain Validation
 
 Evidence basis: LoTTE science/search 20k/q200 and 100k.
 
@@ -99,7 +79,7 @@ Recommended columns:
 - hit delta;
 - budgeted token saving.
 
-### Table 5: LoTTE 100k Component Ablation
+### Table 4: LoTTE 100k Component Ablation
 
 Evidence basis: the clean LoTTE 100k component ablation.
 
@@ -125,7 +105,7 @@ If space is tight, move $\mathrm{EvidenceRecall@10}$ and last reward to an
 appendix and keep dense rate, LinUCB rate, $\mathrm{Hit@10}$, and token ratio
 in the main table.
 
-### Table 6: Feedback-Driven Policy Adaptation Summary
+### Table 5: Feedback-Driven Policy Adaptation Summary
 
 Evidence basis: controlled feedback-sensitivity and trust-weighting analysis.
 
@@ -145,7 +125,7 @@ Recommended columns:
 - token ratio;
 - $\mathrm{Hit@10}$.
 
-### Table 7: Feedback-Driven Hard-Case Recovery
+### Table 6: Feedback-Driven Hard-Case Recovery
 
 Evidence basis: same-query conservative retry on affected LoTTE 100k
 technology/search and science/search queries.
@@ -164,7 +144,7 @@ Recommended columns:
 - recovery rate;
 - average token saving versus dense.
 
-### Table 8: Geometry Diagnostics Across LoTTE Scales
+### Table 7: Geometry Diagnostics Across LoTTE Scales
 
 Evidence basis: LoTTE geometry diagnostics across corpus scale.
 
@@ -209,7 +189,7 @@ Recommended visual flow:
 Caption boundary: dense is a recall floor and rescue path, not a component
 that the method claims to eliminate.
 
-### Figure 2: Token-Quality Frontier Across Corpus Scale
+### Figure 2: Calibrated Token-Quality Frontier Across Corpus Scale
 
 Draft asset:
 
@@ -221,12 +201,14 @@ Purpose: visualize the main result from Table 2.
 Recommended plot:
 
 - x-axis: LoTTE corpus scale;
-- left y-axis: $\mathrm{Hit@10}$ for dense and conservative policy;
-- right y-axis or separate panel: token ratio / token saving.
+- left y-axis: $\mathrm{Hit@10}$ delta versus dense for IntentWeight budget and
+  dense adaptive truncation;
+- right y-axis or separate panel: final context-token saving for IntentWeight
+  budget and dense adaptive truncation.
 
-Caption boundary: mean above-dense $\mathrm{Hit@10}$ at 200k/400k/638k should
-not be described as statistically significant unless supported by the reported
-intervals.
+Caption boundary: dense adaptive truncation can save more tokens but loses
+$\mathrm{Hit@10}$; IntentWeight targets a safer quality-cost frontier rather
+than maximum compression.
 
 ### Figure 3: Geometry Diagnostic Trend
 
@@ -248,13 +230,13 @@ interpretation, not proof that the true corpus is a smooth manifold.
 
 ## Appendix Tables
 
-### Appendix A: Full Seed Stability and Confidence Intervals
+### Appendix A: Conservative Baseline and Seed Stability Diagnostics
 
-Evidence basis: LoTTE multi-seed confidence intervals and the five-seed 100k
-extension.
+Evidence basis: the conservative confidence-only baseline, LoTTE multi-seed
+confidence intervals, and the five-seed 100k extension.
 
-Include the three-seed LoTTE 100k-638k diagnostics and the five-seed LoTTE 100k
-extension.
+Include the 4.7%-5.3% stable context-token saving baseline, the three-seed
+LoTTE 100k-638k diagnostics, and the five-seed LoTTE 100k extension.
 
 ### Appendix B: Full Static Baseline Metrics
 
@@ -289,7 +271,7 @@ Include model-resource rationale and the MiniLM-family robustness result.
 
 ### Appendix F: Downstream Answer-Quality Check
 
-Evidence basis: the small downstream generation smoke test.
+Evidence basis: the small downstream answer-quality check.
 
 Keep this in the appendix unless the target venue specifically values a small
 generation sanity check in the main results.
@@ -307,13 +289,14 @@ final context tokens as the main efficiency metric.
 ### Appendix Figure A: Feedback Sensitivity Curves
 
 Plot selected-cluster hit, last true reward, dense rate, and token ratio across
-feedback modes. This supports Table 4 without overloading the main paper.
+feedback modes. This supports Table 5 without overloading the main paper.
 
 ### Appendix Figure B: Context-Token Distribution
 
-Plot per-query context token distributions for dense and conservative policy
-at one or more LoTTE scales. This can show whether savings come from broad
-small reductions or a smaller number of high-confidence compaction cases.
+Plot per-query context token distributions for dense, dense adaptive
+truncation, calibrated IntentWeight budget, and conservative IntentWeight
+baseline at one or more LoTTE scales. This can show whether savings come from
+broad small reductions or a smaller number of high-confidence compaction cases.
 
 ### Appendix Figure C: eManual Duplicate-Text Diagnostic
 
