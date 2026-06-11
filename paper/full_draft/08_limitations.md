@@ -59,7 +59,7 @@ diagnostics do not prove a mathematical manifold theorem. They show that local
 geometry is informative for routing on LoTTE, while dense retrieval remains
 necessary.
 
-## 7.7 KMeans Is an Experimental Arm Design
+## 7.7 Fixed Routing Arms Are an Experimental Design
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and
 the experiments need reproducible, scalable arms. This is not a claim that

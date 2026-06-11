@@ -92,8 +92,8 @@ Scale & Corpus chunks & BM25 $\mathrm{Hit@10}$ & Dense $\mathrm{Hit@10}$ & Stati
 
 The declining dense score as corpus scale grows motivates adaptive context control, but it does not make dense retrieval obsolete. Dense remains an important recall floor and fallback route in IntentWeight.
 
-\section{Cost-Metric Guardrail}
-\label{sec:12-appendix:cost-metric-guardrail}
+\section{Cost Metric Separation}
+\label{sec:12-appendix:cost-metric-separation}
 
 The experiments separate three efficiency layers:
 
@@ -205,8 +205,8 @@ Conservative policy & 0.8853 & 0.7118 & 0.6291 & 0.6789 & 1463.71 & 0.9665x \\
 
 Under the QA-tuned encoder, the dense baseline becomes stronger and the conservative policy still preserves dense-level query hit while reducing final context tokens by 3.35\%. Ranking metrics and evidence recall are lower than dense, so this is a bounded robustness result rather than a universal retrieval-metric improvement.
 
-\section{Downstream Generation Smoke}
-\label{sec:12-appendix:downstream-generation-smoke}
+\section{Downstream Answer-Quality Check}
+\label{sec:12-appendix:downstream-answer-quality-check}
 
 A small downstream generation smoke compares dense top-10 context with the compressed conservative-policy context on 60 sampled LoTTE 100k queries. The same LLM configuration generates and judges answers in this smoke.
 
@@ -256,8 +256,8 @@ Scale & Selected policy & Calibration eligible & Hit delta vs dense & Token savi
 
 The calibrated policies should be compared against dense-only adaptive truncation because both reduce final context size. IntentWeight preserves substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
 
-\section{LoTTE Science/Search Cross-Domain Validation}
-\label{sec:12-appendix:lotte-science-search-cross-domain-validation}
+\section{Cross-Domain Validation}
+\label{sec:12-appendix:cross-domain-validation}
 
 LoTTE science/search is used as a second-domain validation, not as a replacement for the main LoTTE technology/search scale-up.
 

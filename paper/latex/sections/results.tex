@@ -66,15 +66,15 @@ Scale & Selected policy & Hit delta vs dense & Token saving vs dense & Dense ada
 
 The calibrated IntentWeight policies save 6-18\% final evidence-context tokens under frozen policy selection. Dense-only adaptive truncation usually saves more tokens, but it loses $\mathrm{Hit@10}$ on every scale. This indicates that IntentWeight is not merely truncating dense top-k lists; route confidence helps decide where a shorter context is safer. Strict seed-level non-inferiority remains scale-dependent and should not be overclaimed.
 
-\subsection{Cross-Domain LoTTE Science/Search Validation}
-\label{sec:06-results:cross-domain-lotte-science-search-validation}
+\subsection{Cross-Domain Validation}
+\label{sec:06-results:cross-domain-validation}
 
 We replicate the validation pattern on LoTTE science/search to test whether the effect is limited to technology/search.
 
 \begin{table}[t]
 \centering
 \small
-\caption{LoTTE science/search cross-domain validation}
+\caption{Cross-domain validation on LoTTE science/search}
 \label{tab:4}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrlr}
@@ -121,15 +121,15 @@ Oracle feedback & Upper bound & 0.8758 & 0.6768 & 1327.03 & 0.9013 & 0.4345 & 0.
 
 Dense-only remains the quality floor. BM25-only is weaker as a standalone retriever, and static dense+BM25 hybrid is near dense but uses more final context tokens. No-feedback gated routing has high $\mathrm{Hit@10}$ because it falls back to full dense/multi-route retrieval; it does not learn efficient route control. Trust-weighted feedback improves policy internals relative to equal noisy feedback, especially selected-cluster hit and last true reward. The oracle row shows the upper bound under clean feedback.
 
-\subsection{Feedback Self-Evolution}
-\label{sec:06-results:feedback-self-evolution}
+\subsection{Feedback-Driven Policy Adaptation}
+\label{sec:06-results:feedback-driven-policy-adaptation}
 
 The feedback experiments show that final $\mathrm{Hit@10}$ can be saturated by dense and BM25 rescue routes, making feedback gains less visible in the fused final ranking. The strongest evidence for LinUCB self-evolution is therefore in route-policy metrics rather than only final $\mathrm{Hit@10}$.
 
 \begin{table*}[t]
 \centering
 \small
-\caption{Feedback self-evolution summary on LoTTE 100k}
+\caption{Feedback-driven policy adaptation summary on LoTTE 100k}
 \label{tab:6}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrr}
@@ -220,8 +220,8 @@ The encoder robustness check tests whether the result depends on the exact \noli
 
 This reduces the single-encoder risk but does not eliminate it. The result shows same-resource-class robustness within a MiniLM family; it does not prove the claim for all stronger encoders, rerankers, or late-interaction models. Appendix E reports the complete robustness table.
 
-\subsection{Downstream Generation Smoke}
-\label{sec:06-results:downstream-generation-smoke}
+\subsection{Downstream Answer-Quality Check}
+\label{sec:06-results:downstream-answer-quality-check}
 
 The downstream generation smoke test compares dense top-10 context with the compressed conservative-policy context on 60 sampled LoTTE 100k queries using \nolinkurl{deepseek-v4-flash} with thinking enabled.
 

@@ -12,9 +12,9 @@ The table labels in the current draft are aligned with this plan:
 - Table 1: dataset roles and evaluation guardrails;
 - Table 2: LoTTE token-quality frontier;
 - Table 3: calibration/test context-budget validation;
-- Table 4: LoTTE science/search cross-domain validation;
+- Table 4: cross-domain validation;
 - Table 5: LoTTE 100k component ablation;
-- Table 6: feedback self-evolution summary;
+- Table 6: feedback-driven policy adaptation summary;
 - Table 7: feedback-driven hard-case recovery;
 - Table 8: LoTTE geometry diagnostics;
 - Appendix Tables A1, D1, and F1: seed stability, secondary datasets, and the
@@ -80,7 +80,7 @@ Recommended columns:
 - dense adaptive hit delta;
 - dense adaptive token saving.
 
-### Table 4: LoTTE Science/Search Cross-Domain Validation
+### Table 4: Cross-Domain Validation
 
 Evidence basis: LoTTE science/search 20k/q200 and 100k.
 
@@ -125,7 +125,7 @@ If space is tight, move $\mathrm{EvidenceRecall@10}$ and last reward to an
 appendix and keep dense rate, LinUCB rate, $\mathrm{Hit@10}$, and token ratio
 in the main table.
 
-### Table 6: Feedback Self-Evolution Summary
+### Table 6: Feedback-Driven Policy Adaptation Summary
 
 Evidence basis: controlled feedback-sensitivity and trust-weighting analysis.
 
@@ -287,7 +287,7 @@ robustness check.
 
 Include model-resource rationale and the MiniLM-family robustness result.
 
-### Appendix F: Downstream Generation Smoke
+### Appendix F: Downstream Answer-Quality Check
 
 Evidence basis: the small downstream generation smoke test.
 

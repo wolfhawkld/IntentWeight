@@ -57,7 +57,7 @@ removed: dense retrieval remains a fallback, while LinUCB and confidence
 signals decide when cluster-local evidence is reliable enough for context
 compaction.
 
-## 3.4 Cluster Arms
+## 3.4 Routing Arm Construction
 
 Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a
 deliberate experimental choice. LinUCB requires a fixed number of arms, fixed

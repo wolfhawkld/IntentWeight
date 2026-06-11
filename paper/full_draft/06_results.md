@@ -70,12 +70,12 @@ IntentWeight is not merely truncating dense top-k lists; route confidence helps
 decide where a shorter context is safer. Strict seed-level non-inferiority
 remains scale-dependent and should not be overclaimed.
 
-## 5.4 Cross-Domain LoTTE Science/Search Validation
+## 5.4 Cross-Domain Validation
 
 We replicate the validation pattern on LoTTE science/search to test whether the
 effect is limited to technology/search.
 
-**Table 4. LoTTE science/search cross-domain validation.**
+**Table 4. Cross-domain validation on LoTTE science/search.**
 
 | Domain/scale | Dense $\mathrm{Hit@10}$ | IntentWeight fixed top-10 $\mathrm{Hit@10}$ | Hit delta | Budgeted token saving |
 |---|---:|---:|---:|---:|
@@ -119,14 +119,14 @@ Trust-weighted feedback improves policy internals relative to equal noisy
 feedback, especially selected-cluster hit and last true reward. The oracle row
 shows the upper bound under clean feedback.
 
-## 5.6 Feedback Self-Evolution
+## 5.6 Feedback-Driven Policy Adaptation
 
 The feedback experiments show that final $\mathrm{Hit@10}$ can be saturated by
 dense and BM25 rescue routes, making feedback gains less visible in the fused
 final ranking. The strongest evidence for LinUCB self-evolution is therefore in
 route-policy metrics rather than only final $\mathrm{Hit@10}$.
 
-**Table 6. Feedback self-evolution summary on LoTTE 100k.**
+**Table 6. Feedback-driven policy adaptation summary on LoTTE 100k.**
 
 | Feedback mode | $\mathrm{Hit@10}$ | Token ratio | Dense rate | LinUCB rate | Selected-cluster hit | Last true reward |
 |---|---:|---:|---:|---:|---:|---:|
@@ -235,7 +235,7 @@ shows same-resource-class robustness within a MiniLM family; it does not prove
 the claim for all stronger encoders, rerankers, or late-interaction models.
 Appendix E reports the complete robustness table.
 
-## 5.11 Downstream Generation Smoke
+## 5.11 Downstream Answer-Quality Check
 
 The downstream generation smoke test compares dense top-10 context with the
 compressed conservative-policy context on 60 sampled LoTTE 100k queries using

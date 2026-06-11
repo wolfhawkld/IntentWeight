@@ -43,7 +43,7 @@ The routes are fused by a weighted ranking strategy in the retrieval layer. The
 system can run in a full multi-route mode, a gated cost-aware mode, or a final
 context compaction mode.
 
-## Cluster Arms
+## Routing Arm Construction
 
 Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a
 deliberate experimental choice:

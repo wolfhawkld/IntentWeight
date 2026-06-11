@@ -10,8 +10,8 @@ IntentWeight supports a bounded but useful claim. It is a feedback-driven adapti
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains the primary quality baseline and an important recall floor. The value of IntentWeight is that it learns when dense fallback is needed, when local geometry is reliable, and when the final context can be safely compacted.
 
-\subsection{Why Multi-Route Retrieval Alone Is Not Enough}
-\label{sec:07-discussion:why-multi-route-retrieval-alone-is-not-enough}
+\subsection{Role of Confidence-Based Context Compaction}
+\label{sec:07-discussion:role-of-confidence-based-context-compaction}
 
 A static combination of dense, BM25, and cluster-local retrieval can improve coverage, but it does not automatically reduce final context tokens. In fact, static dense+BM25 hybrid retrieval can use more context tokens than dense-only retrieval because it surfaces longer or noisier chunks. The token-saving mechanism is therefore not "more routes." It is confidence-based final context control.
 

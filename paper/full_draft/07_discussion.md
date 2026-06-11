@@ -20,7 +20,7 @@ the primary quality baseline and an important recall floor. The value of
 IntentWeight is that it learns when dense fallback is needed, when local
 geometry is reliable, and when the final context can be safely compacted.
 
-## 6.2 Why Multi-Route Retrieval Alone Is Not Enough
+## 6.2 Role of Confidence-Based Context Compaction
 
 A static combination of dense, BM25, and cluster-local retrieval can improve
 coverage, but it does not automatically reduce final context tokens. In fact,

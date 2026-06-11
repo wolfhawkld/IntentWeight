@@ -64,7 +64,7 @@ nearest-cluster hit@3, PCA spectrum, and context retention. These diagnostics do
 not prove a mathematical manifold theorem. They show that local geometry is
 informative for routing on LoTTE, while dense retrieval remains necessary.
 
-## KMeans Is an Experimental Arm Design
+## Fixed Routing Arms Are an Experimental Design
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and the
 experiments need reproducible, scalable arms. This is not a claim that KMeans is

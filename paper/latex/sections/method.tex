@@ -36,8 +36,8 @@ The routes are fused in the retrieval layer. The system can run in a full multi-
 
 Figure~\ref{fig:system} summarizes this route-control architecture. It should be read as a controller diagram rather than a claim that any single retrieval route is removed: dense retrieval remains a fallback, while LinUCB and confidence signals decide when cluster-local evidence is reliable enough for context compaction.
 
-\subsection{Cluster Arms}
-\label{sec:04-method:cluster-arms}
+\subsection{Routing Arm Construction}
+\label{sec:04-method:routing-arm-construction}
 
 Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a deliberate experimental choice. LinUCB requires a fixed number of arms, fixed arms improve reproducibility across seeds and scales, and KMeans is fast enough for large-scale LoTTE experiments. The same arm count is used across LoTTE scales to keep the LinUCB state space comparable, even though larger corpora therefore contain more chunks per arm.
 

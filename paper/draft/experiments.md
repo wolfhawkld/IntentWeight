@@ -229,7 +229,7 @@ Interpretation:
 - Context retention declines with scale, showing that geometry alone should not
   replace dense retrieval.
 
-## Feedback Self-Evolution
+## Feedback-Driven Policy Adaptation
 
 Task15 and Task25 provide the feedback-learning evidence.
 
@@ -293,7 +293,7 @@ has multiple GT chunks. This is an expected trade-off: the conservative policy
 targets usable evidence under a smaller context budget, not complete evidence
 collection for every query.
 
-## Downstream Generation Smoke
+## Downstream Answer-Quality Check
 
 Task33.5 adds a small LLM generation sanity check. It compares dense top-10
 context with Task29-C compressed context on 60 sampled LoTTE 100k queries using

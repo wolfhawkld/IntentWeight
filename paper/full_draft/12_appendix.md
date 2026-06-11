@@ -62,7 +62,7 @@ The declining dense score as corpus scale grows motivates adaptive context
 control, but it does not make dense retrieval obsolete. Dense remains an
 important recall floor and fallback route in IntentWeight.
 
-## C. Cost-Metric Guardrail
+## C. Cost Metric Separation
 
 The experiments separate three efficiency layers:
 
@@ -152,7 +152,7 @@ context tokens by 3.35%. Ranking metrics and evidence recall are lower than
 dense, so this is a bounded robustness result rather than a universal
 retrieval-metric improvement.
 
-## F. Downstream Generation Smoke
+## F. Downstream Answer-Quality Check
 
 A small downstream generation smoke compares dense top-10 context with the
 compressed conservative-policy context on 60 sampled LoTTE 100k queries. The
@@ -188,7 +188,7 @@ The calibrated policies should be compared against dense-only adaptive
 truncation because both reduce final context size. IntentWeight preserves
 substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
 
-## H. LoTTE Science/Search Cross-Domain Validation
+## H. Cross-Domain Validation
 
 LoTTE science/search is used as a second-domain validation, not as a replacement
 for the main LoTTE technology/search scale-up.

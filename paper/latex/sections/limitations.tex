@@ -35,8 +35,8 @@ The LoTTE science/search replication shows that fixed top-10 ranking gains can t
 
 The piecewise relevance-manifold framing is supported by diagnostics such as $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These diagnostics do not prove a mathematical manifold theorem. They show that local geometry is informative for routing on LoTTE, while dense retrieval remains necessary.
 
-\subsection{KMeans Is an Experimental Arm Design}
-\label{sec:08-limitations:kmeans-is-an-experimental-arm-design}
+\subsection{Fixed Routing Arms Are an Experimental Design}
+\label{sec:08-limitations:fixed-routing-arms-are-an-experimental-design}
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and the experiments need reproducible, scalable arms. This is not a claim that KMeans is the best clustering method for all RAG systems. HDBSCAN or graph-based clusters may perform better in some deployments, but dynamic arm counts complicate the current LinUCB setup.
 
