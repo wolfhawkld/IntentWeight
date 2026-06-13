@@ -122,7 +122,7 @@ def emit_table(rows: list[str], caption: tuple[str, str] | None) -> list[str]:
     ]
     column_spec = "".join("r" if numeric else "l" for numeric in numeric_columns)
     result = [
-        rf"\begin{{{environment}}}[t]",
+        rf"\begin{{{environment}}}[tbp]",
         r"\centering",
         r"\small",
         rf"\caption{{{inline(title_text.rstrip('.'))}}}",

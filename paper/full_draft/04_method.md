@@ -51,11 +51,11 @@ Full multi-route retrieval improves coverage but does not automatically reduce
 final context tokens. The final context policy described below is the mechanism
 that converts route confidence into retrieved-context token savings.
 
-Figure 1 summarizes this route-control architecture. It should be read as a
-controller diagram rather than a claim that any single retrieval route is
-removed: dense retrieval remains a fallback, while LinUCB and confidence
-signals decide when cluster-local evidence is reliable enough for context
-compaction.
+Figure 1 summarizes this route-control architecture after the route surface is
+defined. It should be read as a controller diagram rather than a claim that
+LinUCB replaces dense or BM25 retrieval: dense and BM25 are global recall
+routes, LinUCB selects cluster-local arms, and route confidence is passed to
+the final context-budget controller.
 
 ## 3.4 Routing Arm Construction
 

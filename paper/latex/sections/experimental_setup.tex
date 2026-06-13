@@ -6,28 +6,16 @@
 \subsection{Datasets}
 \label{sec:05-experimental-setup:datasets}
 
-The experiments use several datasets, but they have different roles. The paper does not treat all datasets as equal evidence for the main claim.
+The experiments use several datasets, but they have different evidentiary roles. We do not treat all datasets as equal support for the main claim:
 
-\begin{table*}[t]
-\centering
-\small
-\caption{Dataset roles and evaluation guardrails}
-\label{tab:1}
-\begin{tabularx}{\textwidth}{XXXX}
-\toprule
-Dataset & Role & Paper use & Caveat \\
-\midrule
-LoTTE technology/search & Main vertical-domain retrieval benchmark & Main scale-up, token-quality frontier, geometry validation & No true corpus topic labels in processed qrels \\
-LoTTE science/search & Cross-domain vertical-domain validation & Tests whether ranking and context-budget findings transfer beyond technology/search & Compression strength is more domain-sensitive at 100k \\
-PubMedQA & Feedback/manifold proof-of-concept & Shows trust feedback and local propagation can improve policy & GT is abstract-level context, not strict answer sentence \\
-Banking77 & Intent/domain routing proxy & Shows strong feedback self-evolution and intent structure & Should not be mixed with evidence retrieval main table \\
-eManual & Failure/limitation case & Shows duplicate text and strict chunk-id issues & Low strict recall does not prove geometry is absent \\
-CUAD & Sparse smoke/stress case & Shows sparse legal-domain limitation & GT-anchored sample only, not full-corpus main evidence \\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\begin{itemize}
+\item \textbf{LoTTE technology/search} is the main large-scale vertical-domain evidence benchmark. We evaluate nested corpus scales from 100k to 638k chunks with 596 test queries.
+\item \textbf{LoTTE science/search} is the cross-domain validation benchmark. It tests whether ranking and context-budget behavior transfer beyond technology/search at 20k/q200 and 100k scales.
+\item \textbf{PubMedQA and Banking77} are supporting feedback-adaptation checks. PubMedQA is an evidence-retrieval proof-of-concept with abstract-level ground truth, while Banking77 is an intent-routing proxy rather than a strict evidence-retrieval benchmark.
+\item \textbf{eManual and CUAD} are boundary cases. eManual exposes duplicate-text and strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
+\end{itemize}
 
-LoTTE technology/search is the main large-scale evidence benchmark. We evaluate nested corpus scales from 100k to 638k chunks with 596 test queries. LoTTE science/search is used as a second-domain validation at 20k/q200 and 100k scales. CUAD and eManual are reported as limitation cases rather than main positive evidence.
+This role separation keeps the main claim tied to LoTTE while preserving the diagnostic value of the secondary datasets.
 
 \subsection{Baselines and Variants}
 \label{sec:05-experimental-setup:baselines-and-variants}

@@ -1,6 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[review]{acl}
+\usepackage[preprint]{acl}
 \usepackage{times}
 \usepackage{latexsym}
 \usepackage[T1]{fontenc}
@@ -12,6 +12,19 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{tabularx}
+\usepackage{stfloats}
+
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@dblfptop}{0pt}
+\makeatother
+\setcounter{topnumber}{5}
+\setcounter{dbltopnumber}{5}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.85}
+\renewcommand{\dblfloatpagefraction}{0.85}
 
 \graphicspath{{figures/}}
 
@@ -33,8 +46,9 @@
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figure1_system_diagram.pdf}
-\caption{IntentWeight evidence-selection controller. Dense remains a recall
-floor; LinUCB controls cluster-local routes and final context budget.}
+\caption{IntentWeight evidence-selection controller. Dense and BM25 remain
+global recall routes; LinUCB selects cluster-local arms and contributes route
+confidence for final context-budget control.}
 \label{fig:system}
 \end{figure*}
 

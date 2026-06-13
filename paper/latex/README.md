@@ -34,16 +34,22 @@ The current WSL environment uses TinyTeX, a lightweight TeX Live distribution:
 
 ```bash
 curl -sL "https://yihui.org/tinytex/install-unx.sh" | sh
-tlmgr install lineno caption microtype upquote
+tlmgr install lineno caption microtype upquote sttools
 ```
 
 TinyTeX installs into the user home directory and adds command links under
-`~/bin`. The four extra packages are the only packages that were missing from
-the default TinyTeX profile for this ACL review-mode draft.
+`~/bin`. The extra packages are the packages that were missing from the default
+TinyTeX profile for this ACL-style draft. `sttools` provides `stfloats`, which
+is used for safer two-column wide-table placement.
+
+The current local reading build uses `\usepackage[preprint]{acl}` to remove
+line numbers while retaining page numbers. Before formal anonymous review
+submission, restore `\usepackage[review]{acl}` if the target venue requires
+ACL review formatting.
 
 ## Build PDF
 
-Build the review PDF:
+Build the PDF:
 
 ```bash
 make pdf

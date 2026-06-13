@@ -41,13 +41,14 @@ def system_diagram() -> None:
     boxes = {
         "Query": (0.3, 3.1, 1.2, 0.7, "#e8f4fd"),
         "Features": (2.0, 3.1, 1.3, 0.7, "#eefcf6"),
-        "LinUCB": (3.9, 3.1, 1.3, 0.7, "#fff7e6"),
-        "Dense fallback": (6.0, 4.0, 1.5, 0.55, "#f5f7fa"),
-        "BM25 path": (6.0, 3.1, 1.5, 0.55, "#f5f7fa"),
-        "Cluster-local": (6.0, 2.2, 1.5, 0.55, "#f5f7fa"),
-        "Context budget": (8.4, 3.1, 1.7, 0.7, "#eefcf6"),
+        "Dense global": (4.4, 4.0, 1.5, 0.55, "#f5f7fa"),
+        "BM25 global": (4.4, 3.1, 1.5, 0.55, "#f5f7fa"),
+        "LinUCB selector": (4.4, 2.15, 1.55, 0.65, "#fff7e6"),
+        "Cluster-local": (6.4, 2.15, 1.45, 0.65, "#fff7e6"),
+        "Rank fusion": (6.4, 3.35, 1.45, 0.65, "#eefcf6"),
+        "Context budget": (8.4, 3.35, 1.7, 0.7, "#eefcf6"),
         "Generator": (8.4, 1.3, 1.7, 0.65, "#e8f4fd"),
-        "Trust feedback": (3.9, 0.7, 1.7, 0.65, "#fff1f2"),
+        "Trust feedback": (4.4, 0.7, 1.7, 0.65, "#fff1f2"),
     }
     for label, (x, y, width, height, color) in boxes.items():
         ax.add_patch(
@@ -67,21 +68,23 @@ def system_diagram() -> None:
         ax.add_patch(FancyArrowPatch(start, end, arrowstyle="-|>", mutation_scale=11, color="#425466"))
 
     arrow((1.5, 3.45), (2.0, 3.45))
-    arrow((3.3, 3.45), (3.9, 3.45))
-    arrow((5.2, 3.45), (6.0, 4.27))
-    arrow((5.2, 3.45), (6.0, 3.37))
-    arrow((5.2, 3.45), (6.0, 2.47))
-    arrow((7.5, 4.27), (8.4, 3.58))
-    arrow((7.5, 3.37), (8.4, 3.45))
-    arrow((7.5, 2.47), (8.4, 3.32))
-    arrow((9.25, 3.1), (9.25, 1.95))
-    arrow((8.4, 1.62), (5.6, 1.02))
-    arrow((4.75, 1.35), (4.55, 3.1))
+    arrow((3.3, 3.45), (4.4, 4.27))
+    arrow((3.3, 3.45), (4.4, 3.37))
+    arrow((3.3, 3.45), (4.4, 2.47))
+    arrow((5.95, 2.47), (6.4, 2.47))
+    arrow((5.9, 4.27), (6.4, 3.83))
+    arrow((5.9, 3.37), (6.4, 3.68))
+    arrow((7.85, 2.47), (7.1, 3.35))
+    arrow((7.85, 3.68), (8.4, 3.68))
+    arrow((5.95, 2.47), (8.4, 3.35))
+    arrow((9.25, 3.35), (9.25, 1.95))
+    arrow((8.4, 1.62), (6.1, 1.02))
+    arrow((5.25, 1.35), (5.15, 2.15))
     ax.text(0.3, 4.75, "IntentWeight evidence-selection controller", fontsize=13, weight="bold")
     ax.text(
         0.3,
         4.5,
-        "Dense remains a recall floor; LinUCB controls local routes and final context budget.",
+        "Dense/BM25 are global recall routes; LinUCB selects cluster-local arms and budget confidence.",
         fontsize=9,
         color="#52606d",
     )

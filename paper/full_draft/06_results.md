@@ -7,7 +7,7 @@ scale, the budget is selected on calibration queries and then frozen before
 test evaluation. The measured cost is final LLM evidence-context input tokens
 relative to dense top-10, not retrieval-side candidate count.
 
-**Table 2. Calibrated token-quality frontier on LoTTE technology/search.**
+**Table 1. Calibrated token-quality frontier on LoTTE technology/search.**
 
 | Scale | Frozen budget policy | IntentWeight hit delta vs dense | IntentWeight token saving | Dense adaptive hit delta | Dense adaptive token saving |
 |---|---|---:|---:|---:|---:|
@@ -35,7 +35,7 @@ diagnostics.
 We replicate the validation pattern on LoTTE science/search to test whether the
 effect is limited to technology/search.
 
-**Table 3. Cross-domain validation on LoTTE science/search.**
+**Table 2. Cross-domain validation on LoTTE science/search.**
 
 | Domain/scale | Dense $\mathrm{Hit@10}$ | IntentWeight fixed top-10 $\mathrm{Hit@10}$ | Hit delta | Budgeted token saving |
 |---|---:|---:|---:|---:|
@@ -56,7 +56,7 @@ The component ablation summarizes which parts of the system provide the quality
 floor, routing signal, feedback adaptation, and final token saving on LoTTE
 100k.
 
-**Table 4. LoTTE 100k component ablation. The no-feedback gated row disables
+**Table 3. LoTTE 100k component ablation. The no-feedback gated row disables
 learning; its high $\mathrm{Hit@10}$ reflects full dense fallback
 ($\mathrm{dense\ rate}=1.0$), not learned route efficiency.**
 
@@ -85,7 +85,7 @@ making feedback gains less visible in the fused final ranking. The clearer
 feedback signal appears in route-policy metrics such as selected-cluster hit,
 last true reward, dense rate, and LinUCB usage.
 
-**Table 5. Feedback-driven policy adaptation on LoTTE 100k.**
+**Table 4. Feedback-driven policy adaptation on LoTTE 100k.**
 
 | Feedback mode | $\mathrm{Hit@10}$ | Token ratio | Dense rate | LinUCB rate | Selected-cluster hit | Last true reward |
 |---|---:|---:|---:|---:|---:|---:|
@@ -106,7 +106,7 @@ context budgets. A query is affected when dense top-10 retrieves at least one
 GT evidence chunk but the budgeted IntentWeight context misses. Same-query
 retry is a post-feedback repair setting, not a first-pass IID ranking claim.
 
-**Table 6. Conservative post-feedback recovery on affected LoTTE 100k queries.**
+**Table 5. Conservative post-feedback recovery on affected LoTTE 100k queries.**
 
 | Domain | Affected queries | Recovered | Recovery rate | Avg token saving vs dense |
 |---|---:|---:|---:|---:|
@@ -126,7 +126,7 @@ controlled fallback trigger rather than as unconditional global reranking.
 The geometry scale diagnostic validates whether LoTTE retains usable local
 geometry as scale grows.
 
-**Table 7. LoTTE geometry diagnostics across corpus scale.**
+**Table 6. LoTTE geometry diagnostics across corpus scale.**
 
 | Scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Confidence-only hit delta |
 |---|---:|---:|---:|---:|---:|

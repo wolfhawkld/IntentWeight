@@ -5,7 +5,7 @@
 
 The conservative confidence-only context policy is the stable baseline for context compaction. The main text reports calibrated token-budget policies as the primary cost result; this appendix keeps the earlier confidence-only scale table and seed diagnostics. These intervals are engineering stability diagnostics, not strong inferential proof: each scale has only three observations.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Multi-seed retrieval-quality stability}
@@ -24,7 +24,7 @@ Scale & Dense $\mathrm{Hit@10}$ & Policy $\mathrm{Hit@10}$ mean & Std & 95\% CI 
 }
 \end{table*}
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Multi-seed final context-token stability}
@@ -47,7 +47,7 @@ The token-saving direction is consistent across scales. The wider 400k token int
 
 A five-seed extension is also available for LoTTE 100k. The additional seeds test sensitivity to KMeans initialization and route-policy stochasticity.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Five-seed LoTTE 100k extension}
@@ -71,7 +71,7 @@ The five-seed hit-delta interval is $[-0.0082, +0.0150]$. This supports dense-le
 
 Dense retrieval is the primary quality baseline. BM25 supplies lexical coverage, but it is weaker as a standalone retriever on LoTTE. Static dense-plus-BM25 reciprocal-rank fusion is competitive at some scales but does not consistently dominate dense.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \small
 \caption{Static LoTTE retrieval baselines across corpus scale}
@@ -105,7 +105,7 @@ The experiments separate three efficiency layers:
 
 The main paper claim uses the third layer. Historical routing experiments showed that reducing candidate counts does not automatically reduce final context tokens when the final context remains fixed at top-10.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Representative fixed-top-10 correction audit}
@@ -133,35 +133,25 @@ This audit motivated the explicit confidence-based final context policy. Its tok
 \section{Secondary Datasets and Boundary Cases}
 \label{sec:12-appendix:secondary-datasets-and-boundary-cases}
 
-The secondary datasets have different roles. PubMedQA supports the evidence-retrieval mechanism near a dense ceiling. Banking77 is an intent-routing proxy rather than an evidence-retrieval benchmark. eManual and CUAD are boundary cases that prevent universal claims.
+The secondary datasets have different roles and should not be pooled into the main LoTTE evidence claim.
 
-\begin{table*}[t]
-\centering
-\small
-\caption{Secondary dataset evidence and boundary cases}
-\label{tab:d1}
-\begin{tabularx}{\textwidth}{XXXXX}
-\toprule
-Dataset & Role & Dense/reference $\mathrm{Hit@10}$ & Supporting or diagnostic result & Interpretation \\
-\midrule
-PubMedQA & Evidence retrieval proof-of-concept & 0.9930 & Trust-weighted $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, selected-cluster hit $0.8860$ & Feedback improves policy internals near a dense ceiling; GT is abstract-level context. \\
-Banking77 & Intent routing proxy & 0.9805 & Trust-weighted $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, selected-cluster hit $0.9983$ & Strong intent structure; do not mix with evidence-retrieval headline results. \\
-eManual & Duplicate-text limitation & 0.3231 strict; 0.5615 text-equivalent & Deduplicated dense $\mathrm{Hit@10}=0.8615$ & Strict chunk IDs understate success because many evidence texts are duplicated. \\
-CUAD & Sparse legal smoke/stress case & 0.0759 & Trust-weighted smoke $\mathrm{Hit@10}=0.0886$ & GT-anchored sample only; do not treat as positive full-corpus evidence. \\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\begin{itemize}
+\item \textbf{PubMedQA} is an evidence-retrieval proof-of-concept near a dense ceiling. Dense reaches $\mathrm{Hit@10}=0.9930$; trust-weighted feedback reaches $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, and selected-cluster hit $0.8860$. The ground truth is abstract-level context, not a strict answer sentence.
+\item \textbf{Banking77} is an intent-routing proxy rather than an evidence-retrieval benchmark. Dense/reference $\mathrm{Hit@10}$ is $0.9805$; trust-weighted feedback reaches $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, and selected-cluster hit $0.9983$. It supports the feedback mechanism, not the main evidence-retrieval headline.
+\item \textbf{eManual} is a duplicate-text limitation case. Strict dense $\mathrm{Hit@10}$ is $0.3231$, text-equivalent dense $\mathrm{Hit@10}$ is $0.5615$, and deduplicated dense $\mathrm{Hit@10}$ rises to $0.8615$. Strict chunk IDs can therefore understate useful retrieval.
+\item \textbf{CUAD} is a sparse legal smoke/stress case. Dense/reference $\mathrm{Hit@10}$ is $0.0759$ and the trust-weighted smoke reaches $\mathrm{Hit@10}=0.0886$. It is a GT-anchored sample, not positive full-corpus evidence.
+\end{itemize}
 
 \subsection{eManual Duplicate-Text Diagnostic}
 \label{sec:12-appendix:emanual-duplicate-text-diagnostic}
 
 eManual contains 18,812 corpus chunks but only 1,729 unique text strings. Strict chunk-id evaluation can therefore mark semantically equivalent retrievals as incorrect.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \small
 \caption{eManual strict, text-equivalent, and deduplicated evaluation}
-\label{tab:d2}
+\label{tab:d1}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{llrrr}
 \toprule
@@ -186,7 +176,7 @@ The text-equivalent and deduplicated metrics are diagnostics, not replacements f
 
 The main scale-up uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. A LoTTE 100k robustness check replaces it with \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder with the same 384-dimensional embedding size and a similar CPU-friendly resource class.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{QA-tuned MiniLM-family encoder robustness}
@@ -210,7 +200,7 @@ Under the QA-tuned encoder, the dense baseline becomes stronger and the conserva
 
 A small downstream answer-quality check compares dense top-10 context with the compressed conservative-policy context on 60 sampled LoTTE 100k queries. The same LLM configuration generates and judges answers in this check.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Downstream answer-quality check}
@@ -235,7 +225,7 @@ The check does not show obvious answer-quality degradation from conservative con
 
 The calibration/test protocol selects the final-context budget on calibration queries and freezes it before evaluation on held-out test queries.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Frozen context-budget validation on LoTTE technology/search}
@@ -261,7 +251,7 @@ The calibrated policies should be compared against dense-only adaptive truncatio
 
 LoTTE science/search is used as a second-domain validation, not as a replacement for the main LoTTE technology/search scale-up.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Science/search fixed top-10 ranking validation}
@@ -278,7 +268,7 @@ science/search 100k & 101,187 & 596 & 0.8926 & 0.9077 & +1.51 pp \\
 }
 \end{table*}
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Science/search frozen context-budget validation}
@@ -306,7 +296,7 @@ The fixed top-10 ranking gains transfer, while aggressive final-context budgets 
 
 Hard-case recovery focuses on affected queries where dense top-10 retrieves at least one GT chunk but the budgeted IntentWeight context misses.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Same-query feedback recovery on affected queries}
@@ -329,24 +319,22 @@ technology 100k & full-context fallback & 42 & 12 & 28.57\% & 0.96\% \\
 
 Same-query retry is post-feedback repair evidence. It is not a first-pass generalization result.
 
-\begin{table}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Calibration-to-test recovery generalization}
 \label{tab:i2}
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{lllr}
+\begin{tabularx}{\textwidth}{XXXr}
 \toprule
-Domain & Frozen test policy & Mean hit delta vs budgeted-before-feedback & Avg token saving vs dense \\
+Domain & Frozen test recovery policy & Mean hit delta versus budgeted-before-feedback & Avg token saving vs dense \\
 \midrule
-science 100k & conservative budget on learned risky arms & +0.16 pp & 16.13\% \\
-science 100k & full-context fallback on learned risky arms & +0.48 pp & 13.09\% \\
-technology 100k & conservative budget on learned risky arms & -0.16 pp & 5.88\% \\
-technology 100k & full-context fallback on learned risky arms & +0.16 pp & 4.25\% \\
+science 100k & conservative budget on learned risky arms after calibration & +0.16 pp & 16.13\% \\
+science 100k & full-context fallback on learned risky arms after calibration & +0.48 pp & 13.09\% \\
+technology 100k & conservative budget on learned risky arms after calibration & -0.16 pp & 5.88\% \\
+technology 100k & full-context fallback on learned risky arms after calibration & +0.16 pp & 4.25\% \\
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\end{tabularx}
+\end{table*}
 
 The held-out effect is small and domain-dependent. Feedback should therefore be used as a controlled fallback trigger rather than as unconditional global reranking.
 

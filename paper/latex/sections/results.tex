@@ -8,11 +8,11 @@
 
 The main cost result uses a calibrated token-budget policy. For each corpus scale, the budget is selected on calibration queries and then frozen before test evaluation. The measured cost is final LLM evidence-context input tokens relative to dense top-10, not retrieval-side candidate count.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Calibrated token-quality frontier on LoTTE technology/search}
-\label{tab:2}
+\label{tab:1}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lllrlr}
 \toprule
@@ -36,11 +36,11 @@ The earlier conservative confidence-only policy remains useful as a stable basel
 
 We replicate the validation pattern on LoTTE science/search to test whether the effect is limited to technology/search.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \small
 \caption{Cross-domain validation on LoTTE science/search}
-\label{tab:3}
+\label{tab:2}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrlr}
 \toprule
@@ -60,11 +60,11 @@ The fixed top-10 ranking-side effect transfers to a second LoTTE domain. The con
 
 The component ablation summarizes which parts of the system provide the quality floor, routing signal, feedback adaptation, and final token saving on LoTTE 100k.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{LoTTE 100k component ablation. The no-feedback gated row disables learning; its high $\mathrm{Hit@10}$ reflects full dense fallback ($\mathrm{dense\ rate}=1.0$), not learned route efficiency}
-\label{tab:4}
+\label{tab:3}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrrrrr}
 \toprule
@@ -91,11 +91,11 @@ Dense-only remains the quality floor. BM25-only is weaker as a standalone retrie
 
 Final $\mathrm{Hit@10}$ can be saturated by dense and BM25 rescue routes, making feedback gains less visible in the fused final ranking. The clearer feedback signal appears in route-policy metrics such as selected-cluster hit, last true reward, dense rate, and LinUCB usage.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Feedback-driven policy adaptation on LoTTE 100k}
-\label{tab:5}
+\label{tab:4}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -114,11 +114,11 @@ Under default noisy feedback, trust weighting improves selected-cluster hit from
 
 Feedback also provides a recovery path for tail queries harmed by aggressive context budgets. A query is affected when dense top-10 retrieves at least one GT evidence chunk but the budgeted IntentWeight context misses. Same-query retry is a post-feedback repair setting, not a first-pass IID ranking claim.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \small
 \caption{Conservative post-feedback recovery on affected LoTTE 100k queries}
-\label{tab:6}
+\label{tab:5}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrr}
 \toprule
@@ -139,11 +139,11 @@ The pooled conservative retry recovery rate is approximately 30\%, with an appro
 
 The geometry scale diagnostic validates whether LoTTE retains usable local geometry as scale grows.
 
-\begin{table*}[t]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{LoTTE geometry diagnostics across corpus scale}
-\label{tab:7}
+\label{tab:6}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrl}
 \toprule

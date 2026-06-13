@@ -153,18 +153,19 @@ def draw_axes(parts: list[str], x0: float, y0: float, width: float, height: floa
 def generate_system_diagram() -> None:
     parts = svg_header(1120, 520)
     parts.append(text(40, 42, "Figure 1. IntentWeight evidence-selection controller", "title"))
-    parts.append(text(40, 64, "Dense remains a recall floor; LinUCB controls route confidence and final context budget.", "subtitle"))
+    parts.append(text(40, 64, "Dense/BM25 are global recall routes; LinUCB selects cluster-local arms and budget confidence.", "subtitle"))
 
     boxes = [
         (40, 120, 150, 88, "#e8f4fd", "#1f5f8b", "Query", ["user/session", "context"]),
         (230, 120, 165, 88, "#eefcf6", "#2f855a", "Feature builder", ["query embedding", "route signals"]),
-        (435, 120, 165, 88, "#fff7e6", "#9a6b14", "LinUCB policy", ["fixed cluster arms", "confidence scores"]),
-        (650, 86, 180, 56, "#f5f7fa", "#425466", "Dense fallback", ["global semantic recall"]),
-        (650, 156, 180, 56, "#f5f7fa", "#425466", "BM25 path", ["lexical anchors"]),
-        (650, 226, 180, 56, "#f5f7fa", "#425466", "Cluster-local path", ["local dense search"]),
-        (870, 144, 190, 88, "#eefcf6", "#2f855a", "Final context policy", ["top-10 safety tier", "top-8 compaction"]),
-        (870, 300, 190, 76, "#e8f4fd", "#1f5f8b", "Generator / agent", ["answer from selected", "evidence context"]),
-        (425, 330, 190, 76, "#fff1f2", "#b42318", "Trust-weighted feedback", ["simulated feedback", "future updates only"]),
+        (455, 78, 175, 58, "#f5f7fa", "#425466", "Dense global", ["semantic recall floor"]),
+        (455, 154, 175, 58, "#f5f7fa", "#425466", "BM25 global", ["lexical anchors"]),
+        (455, 230, 175, 72, "#fff7e6", "#9a6b14", "LinUCB selector", ["fixed cluster arms", "confidence scores"]),
+        (690, 230, 175, 72, "#fff7e6", "#9a6b14", "Cluster-local dense", ["search selected arms", "local evidence"]),
+        (690, 130, 175, 76, "#eefcf6", "#2f855a", "Rank fusion", ["merge route", "candidates"]),
+        (905, 130, 175, 76, "#eefcf6", "#2f855a", "Context budget", ["LLM input context", "compact if safe"]),
+        (905, 300, 175, 76, "#e8f4fd", "#1f5f8b", "Generator / agent", ["answer from selected", "evidence context"]),
+        (455, 350, 190, 76, "#fff1f2", "#b42318", "Trust-weighted feedback", ["simulated feedback", "future updates only"]),
     ]
 
     for x, y, w, h, fill, stroke, title, lines in boxes:
@@ -175,16 +176,18 @@ def generate_system_diagram() -> None:
 
     arrows = [
         (190, 164, 230, 164),
-        (395, 164, 435, 164),
-        (600, 164, 650, 114),
-        (600, 164, 650, 184),
-        (600, 164, 650, 254),
-        (830, 114, 870, 168),
-        (830, 184, 870, 188),
-        (830, 254, 870, 208),
-        (965, 232, 965, 300),
-        (870, 340, 615, 368),
-        (425, 368, 518, 208),
+        (395, 164, 455, 107),
+        (395, 164, 455, 183),
+        (395, 164, 455, 266),
+        (630, 266, 690, 266),
+        (630, 107, 690, 154),
+        (630, 183, 690, 168),
+        (865, 266, 735, 206),
+        (865, 168, 905, 168),
+        (630, 266, 905, 206),
+        (992, 206, 992, 300),
+        (905, 338, 645, 388),
+        (550, 350, 550, 302),
     ]
     for x1, y1, x2, y2 in arrows:
         parts.append(
@@ -198,13 +201,15 @@ def generate_system_diagram() -> None:
 
     mermaid = """flowchart LR
     Q[Query and user/session context] --> F[Feature construction]
-    F --> P[LinUCB route policy]
-    P --> D[Dense fallback]
-    P --> B[BM25 lexical path]
-    P --> C[Cluster-local dense path]
-    D --> G[Confidence-based final context budget]
-    B --> G
-    C --> G
+    F --> D[Dense global recall floor]
+    F --> B[BM25 lexical recall]
+    F --> P[LinUCB cluster-arm selector]
+    P --> C[Cluster-local dense search]
+    D --> R[Rank fusion]
+    B --> R
+    C --> R
+    P --> G[Confidence-based final context budget]
+    R --> G
     G --> A[Generator or downstream agent response]
     A --> T[Trust-weighted feedback]
     T --> P

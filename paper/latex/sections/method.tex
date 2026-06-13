@@ -34,7 +34,7 @@ IntentWeight uses three retrieval routes.
 
 The routes are fused in the retrieval layer. The system can run in a full multi-route mode, a gated cost-aware mode, or a final context compaction mode. Full multi-route retrieval improves coverage but does not automatically reduce final context tokens. The final context policy described below is the mechanism that converts route confidence into retrieved-context token savings.
 
-Figure~\ref{fig:system} summarizes this route-control architecture. It should be read as a controller diagram rather than a claim that any single retrieval route is removed: dense retrieval remains a fallback, while LinUCB and confidence signals decide when cluster-local evidence is reliable enough for context compaction.
+Figure~\ref{fig:system} summarizes this route-control architecture after the route surface is defined. It should be read as a controller diagram rather than a claim that LinUCB replaces dense or BM25 retrieval: dense and BM25 are global recall routes, LinUCB selects cluster-local arms, and route confidence is passed to the final context-budget controller.
 
 \subsection{Routing Arm Construction}
 \label{sec:04-method:routing-arm-construction}

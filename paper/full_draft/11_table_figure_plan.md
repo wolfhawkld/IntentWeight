@@ -9,36 +9,39 @@ The appendix-facing tables are instantiated in `12_appendix.md`.
 
 The table labels in the current draft are aligned with this plan:
 
-- Table 1: dataset roles and evaluation guardrails;
-- Table 2: calibrated token-quality frontier;
-- Table 3: cross-domain validation;
-- Table 4: LoTTE 100k component ablation;
-- Table 5: feedback-driven policy adaptation summary;
-- Table 6: feedback-driven hard-case recovery;
-- Table 7: LoTTE geometry diagnostics;
-- Appendix Tables A1, D1, and F1: seed stability, secondary datasets, and the
+- Dataset roles are summarized as text bullets in Experimental Setup rather
+  than as a main table;
+- Table 1: calibrated token-quality frontier;
+- Table 2: cross-domain validation;
+- Table 3: LoTTE 100k component ablation;
+- Table 4: feedback-driven policy adaptation summary;
+- Table 5: feedback-driven hard-case recovery;
+- Table 6: LoTTE geometry diagnostics;
+- Appendix Tables A1, D1, and F1: seed stability, eManual diagnostics, and the
   downstream answer-quality check.
 
 ## Main-Paper Tables
 
-### Table 1: Dataset Roles and Evaluation Guardrails
+### Dataset Role Summary
 
 Evidence basis: dataset-role guardrails from the experimental setup.
 
 Purpose: explain why LoTTE is the main benchmark and why PubMedQA, Banking77,
 eManual, and CUAD are supporting or boundary cases.
 
-Keep in the main paper because the dataset-role distinction is essential to
-the claim boundary.
+Keep in the main paper as compact prose bullets rather than a table. The
+dataset-role distinction is essential to the claim boundary, but it should not
+consume the first table slot or visually compete with the main quantitative
+result.
 
-Recommended columns:
+Recommended content:
 
-- dataset;
-- role;
-- paper use;
-- caveat.
+- LoTTE technology/search as the main large-scale benchmark;
+- LoTTE science/search as cross-domain validation;
+- PubMedQA and Banking77 as feedback-adaptation checks;
+- eManual and CUAD as boundary cases.
 
-### Table 2: Calibrated Token-Quality Frontier
+### Table 1: Calibrated Token-Quality Frontier
 
 Evidence basis: the frozen calibration/test context-budget protocol and dense
 adaptive truncation baseline.
@@ -60,7 +63,7 @@ Recommended columns:
 - dense adaptive hit delta;
 - dense adaptive token saving.
 
-### Table 3: Cross-Domain Validation
+### Table 2: Cross-Domain Validation
 
 Evidence basis: LoTTE science/search 20k/q200 and 100k.
 
@@ -79,7 +82,7 @@ Recommended columns:
 - hit delta;
 - budgeted token saving.
 
-### Table 4: LoTTE 100k Component Ablation
+### Table 3: LoTTE 100k Component Ablation
 
 Evidence basis: the clean LoTTE 100k component ablation.
 
@@ -105,7 +108,7 @@ If space is tight, move $\mathrm{EvidenceRecall@10}$ and last reward to an
 appendix and keep dense rate, LinUCB rate, $\mathrm{Hit@10}$, and token ratio
 in the main table.
 
-### Table 5: Feedback-Driven Policy Adaptation Summary
+### Table 4: Feedback-Driven Policy Adaptation Summary
 
 Evidence basis: controlled feedback-sensitivity and trust-weighting analysis.
 
@@ -125,7 +128,7 @@ Recommended columns:
 - token ratio;
 - $\mathrm{Hit@10}$.
 
-### Table 6: Feedback-Driven Hard-Case Recovery
+### Table 5: Feedback-Driven Hard-Case Recovery
 
 Evidence basis: same-query conservative retry on affected LoTTE 100k
 technology/search and science/search queries.
@@ -144,7 +147,7 @@ Recommended columns:
 - recovery rate;
 - average token saving versus dense.
 
-### Table 7: Geometry Diagnostics Across LoTTE Scales
+### Table 6: Geometry Diagnostics Across LoTTE Scales
 
 Evidence basis: LoTTE geometry diagnostics across corpus scale.
 
@@ -179,15 +182,17 @@ Recommended visual flow:
 
 1. query and optional user/session context;
 2. feature construction;
-3. LinUCB route policy;
-4. route set: dense fallback, BM25 lexical path, cluster-local dense path, and
-   hybrid/fusion path;
-5. confidence-based final context budget;
-6. answer generation or downstream agent response;
-7. simulated or deployment feedback returning to the LinUCB state.
+3. global dense recall floor and global BM25 lexical recall;
+4. LinUCB cluster-arm selector;
+5. cluster-local dense search inside selected arms;
+6. rank fusion across global and cluster-local routes;
+7. confidence-based final context budget;
+8. answer generation or downstream agent response;
+9. simulated or deployment feedback returning to the LinUCB state.
 
-Caption boundary: dense is a recall floor and rescue path, not a component
-that the method claims to eliminate.
+Caption boundary: dense and BM25 are global recall routes, while LinUCB selects
+cluster-local arms and contributes route confidence. The method does not claim
+to eliminate dense retrieval.
 
 ### Figure 2: Calibrated Token-Quality Frontier Across Corpus Scale
 
@@ -196,7 +201,7 @@ Draft asset:
 - `figures/figure2_token_quality_frontier.svg`
 - `figures/figure2_token_quality_frontier_data.csv`
 
-Purpose: visualize the main result from Table 2.
+Purpose: visualize the main result from Table 1.
 
 Recommended plot:
 
@@ -261,6 +266,8 @@ CUAD sparse smoke/stress artifacts, and PubMedQA/Banking77 feedback artifacts.
 
 This appendix should make clear that PubMedQA and Banking77 support the
 feedback mechanism, while eManual and CUAD bound the method's applicability.
+Use prose bullets for cross-dataset role summaries and reserve tables for
+structured diagnostics such as eManual deduplication.
 
 ### Appendix E: Encoder Robustness
 
@@ -289,7 +296,7 @@ final context tokens as the main efficiency metric.
 ### Appendix Figure A: Feedback Sensitivity Curves
 
 Plot selected-cluster hit, last true reward, dense rate, and token ratio across
-feedback modes. This supports Table 5 without overloading the main paper.
+feedback modes. This supports Table 4 without overloading the main paper.
 
 ### Appendix Figure B: Context-Token Distribution
 
@@ -312,7 +319,7 @@ For a conference-length paper, target:
 - detailed metric tables in the appendix.
 
 If one main table must be removed, move the full geometry table to the appendix
-and keep the geometry trend as Figure 3. The main paper should not drop Table 2
+and keep the geometry trend as Figure 3. The main paper should not drop Table 1
 or the component ablation table.
 
 ## Claim Guardrail

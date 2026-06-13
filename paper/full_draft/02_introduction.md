@@ -42,12 +42,11 @@ is updated by trust-weighted simulated feedback. A confidence-based final
 context policy then decides whether to compact the retrieved context or keep a
 denser fallback.
 
-The framework is motivated by general evidence selection in knowledge-augmented
-agents, including possible memory, graph, tree, or retrieval-backed carriers.
-However, the empirical validation in this paper is limited to
-retrieval-augmented question answering over LoTTE technology/search. Claims
-about other knowledge-carrier formats should therefore be treated as motivation
-and future work rather than demonstrated results.
+Although the control problem appears in memory, graph, tree, and
+retrieval-backed agents, our empirical validation instantiates it in
+retrieval-augmented question answering. We therefore use the broader agent
+framing as motivation and keep the demonstrated claims tied to retrieval-backed
+evidence selection.
 
 This design separates three cost layers that are often conflated in RAG
 experiments: the number of source candidates considered during retrieval, the
@@ -89,20 +88,21 @@ The contributions of this paper are:
 1. We formulate evidence selection over structured vertical-domain data as an
    adaptive route-control problem rather than a fixed retriever selection
    problem.
-2. We introduce IntentWeight, a feedback-guided multi-route controller combining
+2. We state a bounded piecewise relevance-manifold hypothesis and test its
+   diagnostic implications with local geometry measurements across LoTTE
+   scales.
+3. We introduce IntentWeight, a feedback-guided multi-route controller combining
    dense retrieval, BM25 lexical recall, cluster-local retrieval,
    trust-weighted LinUCB route learning, and confidence-based final context
    compaction in a retrieval-augmented QA implementation.
-3. We provide large-scale LoTTE evidence that conservative and calibrated
-   context compaction can reduce final retrieved context tokens while
-   preserving dense-level $\mathrm{Hit@10}$ under bounded operating points.
-4. We replicate the ranking-side result on a second LoTTE domain and document
+4. We provide large-scale LoTTE evidence that calibrated context-budget
+   policies reduce the LLM input tokens consumed by retrieved evidence context
+   while preserving dense-level $\mathrm{Hit@10}$ under bounded operating
+   points.
+5. We replicate the ranking-side result on a second LoTTE domain and document
    that context-compression strength requires domain calibration.
-5. We show that simulated feedback can act as a controlled recovery mechanism
+6. We show that simulated feedback can act as a controlled recovery mechanism
    for tail queries harmed by aggressive context compression.
-6. We add geometry diagnostics and ablations showing that local cluster
-   structure is useful for routing, but not sufficient to replace dense
-   retrieval.
 7. We document limitation cases where dataset structure, weak labels, duplicate
    evidence, sparse ground truth, or complete-evidence requirements reduce the
    benefit of adaptive routing.

@@ -97,19 +97,27 @@ token savings.
 
 ## D. Secondary Datasets and Boundary Cases
 
-The secondary datasets have different roles. PubMedQA supports the
-evidence-retrieval mechanism near a dense ceiling. Banking77 is an
-intent-routing proxy rather than an evidence-retrieval benchmark. eManual and
-CUAD are boundary cases that prevent universal claims.
+The secondary datasets have different roles and should not be pooled into the
+main LoTTE evidence claim.
 
-**Appendix Table D1. Secondary dataset evidence and boundary cases.**
-
-| Dataset | Role | Dense/reference $\mathrm{Hit@10}$ | Supporting or diagnostic result | Interpretation |
-|---|---|---|---|---|
-| PubMedQA | Evidence retrieval proof-of-concept | 0.9930 | Trust-weighted $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, selected-cluster hit $0.8860$ | Feedback improves policy internals near a dense ceiling; GT is abstract-level context. |
-| Banking77 | Intent routing proxy | 0.9805 | Trust-weighted $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, selected-cluster hit $0.9983$ | Strong intent structure; do not mix with evidence-retrieval headline results. |
-| eManual | Duplicate-text limitation | 0.3231 strict; 0.5615 text-equivalent | Deduplicated dense $\mathrm{Hit@10}=0.8615$ | Strict chunk IDs understate success because many evidence texts are duplicated. |
-| CUAD | Sparse legal smoke/stress case | 0.0759 | Trust-weighted smoke $\mathrm{Hit@10}=0.0886$ | GT-anchored sample only; do not treat as positive full-corpus evidence. |
+- **PubMedQA** is an evidence-retrieval proof-of-concept near a dense ceiling.
+  Dense reaches $\mathrm{Hit@10}=0.9930$; trust-weighted feedback reaches
+  $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, and selected-cluster hit
+  $0.8860$. The ground truth is abstract-level context, not a strict answer
+  sentence.
+- **Banking77** is an intent-routing proxy rather than an evidence-retrieval
+  benchmark. Dense/reference $\mathrm{Hit@10}$ is $0.9805$; trust-weighted
+  feedback reaches $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, and
+  selected-cluster hit $0.9983$. It supports the feedback mechanism, not the
+  main evidence-retrieval headline.
+- **eManual** is a duplicate-text limitation case. Strict dense
+  $\mathrm{Hit@10}$ is $0.3231$, text-equivalent dense $\mathrm{Hit@10}$ is
+  $0.5615$, and deduplicated dense $\mathrm{Hit@10}$ rises to $0.8615$. Strict
+  chunk IDs can therefore understate useful retrieval.
+- **CUAD** is a sparse legal smoke/stress case. Dense/reference
+  $\mathrm{Hit@10}$ is $0.0759$ and the trust-weighted smoke reaches
+  $\mathrm{Hit@10}=0.0886$. It is a GT-anchored sample, not positive
+  full-corpus evidence.
 
 ### D.1 eManual Duplicate-Text Diagnostic
 
@@ -117,7 +125,7 @@ eManual contains 18,812 corpus chunks but only 1,729 unique text strings.
 Strict chunk-id evaluation can therefore mark semantically equivalent
 retrievals as incorrect.
 
-**Appendix Table D2. eManual strict, text-equivalent, and deduplicated
+**Appendix Table D1. eManual strict, text-equivalent, and deduplicated
 evaluation.**
 
 | Method | Evaluation mode | $\mathrm{Hit@10}$ | $\mathrm{MRR@10}$ | $\mathrm{nDCG@10}$ |
@@ -238,12 +246,12 @@ generalization result.
 
 **Appendix Table I2. Calibration-to-test recovery generalization.**
 
-| Domain | Frozen test policy | Mean hit delta vs budgeted-before-feedback | Avg token saving vs dense |
+| Domain | Frozen test recovery policy | Mean hit delta versus budgeted-before-feedback | Avg token saving vs dense |
 |---|---|---:|---:|
-| science 100k | conservative budget on learned risky arms | +0.16 pp | 16.13% |
-| science 100k | full-context fallback on learned risky arms | +0.48 pp | 13.09% |
-| technology 100k | conservative budget on learned risky arms | -0.16 pp | 5.88% |
-| technology 100k | full-context fallback on learned risky arms | +0.16 pp | 4.25% |
+| science 100k | conservative budget on learned risky arms after calibration | +0.16 pp | 16.13% |
+| science 100k | full-context fallback on learned risky arms after calibration | +0.48 pp | 13.09% |
+| technology 100k | conservative budget on learned risky arms after calibration | -0.16 pp | 5.88% |
+| technology 100k | full-context fallback on learned risky arms after calibration | +0.16 pp | 4.25% |
 
 The held-out effect is small and domain-dependent. Feedback should therefore be
 used as a controlled fallback trigger rather than as unconditional global
