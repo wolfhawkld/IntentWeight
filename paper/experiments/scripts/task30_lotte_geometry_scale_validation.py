@@ -23,12 +23,14 @@ import numpy as np
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR.parents[2]
 DEFAULT_DATA_DIR = SCRIPT_DIR.parent / "data" / "processed"
 DEFAULT_RESULTS_DIR = SCRIPT_DIR.parent / "results"
 DEFAULT_ARTIFACT_DIR = SCRIPT_DIR.parent / "data" / "retrieval_artifacts"
 DEFAULT_SCALE_STORE_DIR = SCRIPT_DIR.parent / "data" / "scale_store" / "lotte_technology_search"
 DEFAULT_OUTPUT_CSV = DEFAULT_RESULTS_DIR / "task30_lotte_geometry_scale_validation.csv"
 DEFAULT_OUTPUT_MD = DEFAULT_RESULTS_DIR / "task30_lotte_geometry_scale_validation.md"
+DEFAULT_DATASET_PREFIX = "lotte_technology_search"
 DEFAULT_SCALES = ("100k", "200k", "400k", "638k")
 DEFAULT_SEEDS = (13, 17, 19)
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
@@ -44,8 +46,8 @@ def _load_script_module(name: str, path: Path):
 manifold_diagnostics = _load_script_module("manifold_diagnostics", SCRIPT_DIR / "manifold_diagnostics.py")
 
 
-def dataset_name(scale: str) -> str:
-    return f"lotte_technology_search_{scale}"
+def dataset_name(scale: str, dataset_prefix: str) -> str:
+    return f"{dataset_prefix}_{scale}"
 
 
 def load_json_list(path: Path) -> List[Mapping]:
@@ -102,6 +104,55 @@ def load_task29_frontier(results_dir: Path) -> Dict[str, Mapping[str, str]]:
             if row.get("section") == "scale_frontier":
                 by_key[f"{row.get('scale')}::{row.get('config')}"] = row
     return by_key
+
+
+def _format_template(template: str, *, scale: str, dataset: str) -> str:
+    return template.format(scale=scale, scale_dash=scale.replace("_", "-"), dataset=dataset)
+
+
+def _resolve_one(root: Path, pattern: str) -> Path:
+    path = Path(pattern)
+    matches = sorted(path.parent.glob(path.name)) if path.is_absolute() else sorted(root.glob(pattern))
+    if not matches:
+        raise FileNotFoundError(f"No file matched pattern: {pattern}")
+    if len(matches) > 1:
+        raise ValueError(f"Expected one file for pattern {pattern}, found {len(matches)}")
+    return matches[0]
+
+
+def load_json_mapping(path: Path) -> Mapping:
+    with path.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+    if isinstance(data, list):
+        if not data or not isinstance(data[0], Mapping):
+            raise ValueError(f"Expected non-empty JSON mapping/list: {path}")
+        return data[0]
+    if isinstance(data, Mapping):
+        return data
+    raise ValueError(f"Expected JSON mapping/list: {path}")
+
+
+def metric_hit_at_10(metrics: Mapping) -> float:
+    for key in ("hit@10_mean", "hit@10", "recall@10"):
+        if key in metrics:
+            return float(metrics[key])
+    raise KeyError(f"Metrics file does not contain a Hit@10 field: {sorted(metrics)[:10]}")
+
+
+def load_budget_summary(path: Path, *, preferred_method: str) -> tuple[float, float] | None:
+    if not path.exists():
+        return None
+    ratios: List[float] = []
+    savings: List[float] = []
+    with path.open("r", encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f):
+            if row.get("method_label") != preferred_method:
+                continue
+            ratios.append(float(row["token_ratio"]))
+            savings.append(float(row["token_saving_percent"]))
+    if not ratios:
+        return None
+    return float(mean(ratios)), float(mean(savings))
 
 
 def find_context_artifact(artifact_dir: Path, dataset: str, seed: int) -> Path:
@@ -226,6 +277,7 @@ def pca_sample_metrics(
 def scale_row(
     scale: str,
     *,
+    dataset_prefix: str,
     data_dir: Path,
     results_dir: Path,
     artifact_dir: Path,
@@ -234,8 +286,13 @@ def scale_row(
     pca_sample_size: int,
     context_batch_size: int,
     pca_seed: int,
+    metrics_mode: str,
+    dense_metrics_template: str,
+    task_metrics_template: str,
+    budget_test_csv_template: str,
+    budget_method_label: str,
 ) -> Dict[str, object]:
-    dataset = dataset_name(scale)
+    dataset = dataset_name(scale, dataset_prefix)
     corpus = load_json_list(data_dir / f"{dataset}_corpus.json")
     queries = load_json_list(data_dir / f"{dataset}_queries.json")
     chunk_index = {chunk_id(chunk): idx for idx, chunk in enumerate(corpus)}
@@ -279,12 +336,35 @@ def scale_row(
         sample_size=pca_sample_size,
         seed=pca_seed,
     )
-    frontier = load_task29_frontier(results_dir)
-    dense = frontier[f"{scale}::dense"]
-    task29 = frontier[f"{scale}::task29_C"]
-    dense_hit = float(dense["hit_at_10"])
-    task29_hit = float(task29["hit_at_10"])
-    token_ratio = float(task29["token_ratio_vs_dense"])
+    if metrics_mode == "task29_frontier":
+        frontier = load_task29_frontier(results_dir)
+        dense = frontier[f"{scale}::dense"]
+        task29 = frontier[f"{scale}::task29_C"]
+        dense_hit = float(dense["hit_at_10"])
+        task_hit = float(task29["hit_at_10"])
+        hit_delta_pp = float(task29["hit_delta_vs_dense_pp"])
+        token_ratio = float(task29["token_ratio_vs_dense"])
+        token_saving_pct = float(task29["token_saving_pct"])
+        hit_per_1k_context_tokens = float(task29["hit_per_1k_context_tokens"])
+    elif metrics_mode == "metrics_json":
+        dense_path = _resolve_one(ROOT, _format_template(dense_metrics_template, scale=scale, dataset=dataset))
+        task_path = _resolve_one(ROOT, _format_template(task_metrics_template, scale=scale, dataset=dataset))
+        dense_metrics = load_json_mapping(dense_path)
+        task_metrics = load_json_mapping(task_path)
+        dense_hit = metric_hit_at_10(dense_metrics)
+        task_hit = metric_hit_at_10(task_metrics)
+        hit_delta_pp = (task_hit - dense_hit) * 100.0
+        budget_summary = None
+        if budget_test_csv_template:
+            budget_path = ROOT / _format_template(budget_test_csv_template, scale=scale, dataset=dataset)
+            budget_summary = load_budget_summary(budget_path, preferred_method=budget_method_label)
+        if budget_summary:
+            token_ratio, token_saving_pct = budget_summary
+        else:
+            token_ratio, token_saving_pct = 1.0, 0.0
+        hit_per_1k_context_tokens = 0.0
+    else:
+        raise ValueError(f"Unknown metrics mode: {metrics_mode}")
 
     out: Dict[str, object] = {
         "scale": scale,
@@ -293,11 +373,11 @@ def scale_row(
         "num_queries": len(queries),
         "num_gt_eval_queries": sum(1 for item in gt_indices_by_query if item),
         "dense_hit@10": dense_hit,
-        "task29_hit@10": task29_hit,
-        "task29_hit_delta_pp": float(task29["hit_delta_vs_dense_pp"]),
+        "task29_hit@10": task_hit,
+        "task29_hit_delta_pp": hit_delta_pp,
         "task29_token_ratio": token_ratio,
-        "task29_token_saving_pct": float(task29["token_saving_pct"]),
-        "task29_hit_per_1k_context_tokens": float(task29["hit_per_1k_context_tokens"]),
+        "task29_token_saving_pct": token_saving_pct,
+        "task29_hit_per_1k_context_tokens": hit_per_1k_context_tokens,
         "context_gt_recall@10": context_recall if context_recall is not None else 0.0,
         "context_recall_retention@10": (context_recall / dense_hit) if dense_hit and context_recall is not None else 0.0,
         **pca_metrics,
@@ -364,22 +444,22 @@ def pearson(xs: Sequence[float], ys: Sequence[float]) -> float:
     return float(np.corrcoef(x, y)[0, 1])
 
 
-def write_markdown(path: Path, rows: Sequence[Mapping[str, object]]) -> None:
+def write_markdown(path: Path, rows: Sequence[Mapping[str, object]], *, domain_label: str, metric_label: str) -> None:
     hit_deltas = [float(row["task29_hit_delta_pp"]) for row in rows]
     nearest3 = [float(row["nearest_cluster_hit@3_mean"]) for row in rows]
     retention = [float(row["context_recall_retention@10"]) for row in rows]
     token_savings = [float(row["task29_token_saving_pct"]) for row in rows]
     lines = [
-        "# Task30 LoTTE Multi-Scale Geometry Validation",
+        f"# LoTTE {domain_label} Geometry Validation",
         "",
-        "Task30 checks whether the LoTTE scale-up results are consistent with a",
+        "This diagnostic checks whether the LoTTE results are consistent with a",
         "retrieval-geometry interpretation. It reuses the canonical scale-store",
-        "embeddings, shared PCA/KMeans context artifacts, and Task29-C token-quality",
-        "frontier. No retrieval or LinUCB experiment is rerun.",
+        f"embeddings, shared PCA/KMeans context artifacts, and {metric_label}",
+        "metrics. No retrieval or LinUCB experiment is rerun.",
         "",
         "## Multi-Scale Table",
         "",
-        "| Scale | Corpus | PCA dim90 sample | PCA var@64 sample | Nearest cluster hit@3 | Context retention@10 | Dense Hit@10 | Task29-C Hit@10 | Hit Delta | Token Saving |",
+        f"| Scale | Corpus | PCA dim90 sample | PCA var@64 sample | Nearest cluster hit@3 | Context retention@10 | Dense Hit@10 | {metric_label} Hit@10 | Hit Delta | Token Saving |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
@@ -402,11 +482,11 @@ def write_markdown(path: Path, rows: Sequence[Mapping[str, object]]) -> None:
         "",
         "## Correlation Diagnostics",
         "",
-        f"- Pearson(`nearest_cluster_hit@3`, `Task29 Hit Delta`) = `{pearson(nearest3, hit_deltas):.4f}`.",
-        f"- Pearson(`context_recall_retention@10`, `Task29 Hit Delta`) = `{pearson(retention, hit_deltas):.4f}`.",
+        f"- Pearson(`nearest_cluster_hit@3`, `{metric_label} Hit Delta`) = `{pearson(nearest3, hit_deltas):.4f}`.",
+        f"- Pearson(`context_recall_retention@10`, `{metric_label} Hit Delta`) = `{pearson(retention, hit_deltas):.4f}`.",
         f"- Pearson(`nearest_cluster_hit@3`, `Token Saving`) = `{pearson(nearest3, token_savings):.4f}`.",
         "",
-        "These correlations use only four scale points, so they are descriptive",
+        f"These correlations use only {len(rows)} scale/domain points, so they are descriptive",
         "diagnostics, not statistical proof.",
         "",
         "## Interpretation",
@@ -417,15 +497,15 @@ def write_markdown(path: Path, rows: Sequence[Mapping[str, object]]) -> None:
         "  it does not fully replace dense retrieval. This supports the paper's",
         "  bounded claim: geometry is useful as a routing/control signal, not as a",
         "  stand-alone dense replacement.",
-        "- Dense Hit@10 declines as corpus scale grows, while Task29-C remains",
-        "  above dense at 200k/400k/638k with lower final context tokens.",
+        f"- Dense Hit@10 and {metric_label} Hit@10 should be read together with",
+        "  token saving to identify where compression remains safe.",
         "- This supports the piecewise relevance-manifold framing as an explanatory",
         "  assumption backed by diagnostics. It should not be written as a theorem",
         "  that geometry alone guarantees better retrieval.",
         "",
         "## Artifacts",
         "",
-        "- CSV: `paper/experiments/results/task30_lotte_geometry_scale_validation.csv`",
+        f"- CSV: `{path.with_suffix('.csv')}`",
         "- Script: `paper/experiments/scripts/task30_lotte_geometry_scale_validation.py`",
     ])
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -446,11 +526,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS_DIR)
     parser.add_argument("--artifact-dir", type=Path, default=DEFAULT_ARTIFACT_DIR)
     parser.add_argument("--scale-store-dir", type=Path, default=DEFAULT_SCALE_STORE_DIR)
+    parser.add_argument("--dataset-prefix", default=DEFAULT_DATASET_PREFIX)
     parser.add_argument("--scales", default=",".join(DEFAULT_SCALES))
     parser.add_argument("--seeds", default=",".join(str(seed) for seed in DEFAULT_SEEDS))
     parser.add_argument("--pca-sample-size", type=int, default=50000)
     parser.add_argument("--pca-seed", type=int, default=13)
     parser.add_argument("--context-batch-size", type=int, default=16)
+    parser.add_argument("--metrics-mode", choices=("task29_frontier", "metrics_json"), default="task29_frontier")
+    parser.add_argument("--dense-metrics-template", default="")
+    parser.add_argument("--task-metrics-template", default="")
+    parser.add_argument("--budget-test-csv-template", default="")
+    parser.add_argument("--budget-method-label", default="task38")
+    parser.add_argument("--domain-label", default="technology/search")
+    parser.add_argument("--metric-label", default="Task29-C")
     parser.add_argument("--output-csv", type=Path, default=DEFAULT_OUTPUT_CSV)
     parser.add_argument("--output-md", type=Path, default=DEFAULT_OUTPUT_MD)
     args = parser.parse_args(argv)
@@ -460,6 +548,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Validating LoTTE geometry scale: {scale}", flush=True)
         row = scale_row(
             scale,
+            dataset_prefix=args.dataset_prefix,
             data_dir=args.data_dir,
             results_dir=args.results_dir,
             artifact_dir=args.artifact_dir,
@@ -468,6 +557,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             pca_sample_size=args.pca_sample_size,
             context_batch_size=args.context_batch_size,
             pca_seed=args.pca_seed,
+            metrics_mode=args.metrics_mode,
+            dense_metrics_template=args.dense_metrics_template,
+            task_metrics_template=args.task_metrics_template,
+            budget_test_csv_template=args.budget_test_csv_template,
+            budget_method_label=args.budget_method_label,
         )
         rows.append(row)
         print(
@@ -478,7 +572,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             flush=True,
         )
     write_csv(args.output_csv, rows)
-    write_markdown(args.output_md, rows)
+    write_markdown(args.output_md, rows, domain_label=args.domain_label, metric_label=args.metric_label)
     print(f"CSV: {args.output_csv}")
     print(f"Markdown: {args.output_md}")
     return 0

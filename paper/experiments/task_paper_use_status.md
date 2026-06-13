@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-05-31
+Updated: 2026-06-14
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -21,9 +21,12 @@ accidentally promoted into paper-facing claims.
 
 | File | Status | Use in paper |
 |---|---|---|
+| `task38_calibrated_context_budget_validation.md` | Main evidence | Calibrated/frozen token-budget validation on LoTTE technology/search; use for the main token-quality frontier. |
+| `task39_lotte_cross_domain_validation.md` | Main/supporting evidence | LoTTE science/search cross-domain validation at 20k/q200 and 100k; use for ranking transfer and compression-calibration boundary. |
 | `task29_2_token_quality_frontier.md` | Main evidence | Main token-quality frontier for the conservative confidence-based context policy. |
 | `task29_confidence_context_policy_summary.md` | Main evidence | Defines the final context compaction policy and its LoTTE scale-up results. |
-| `task30_lotte_geometry_scale_validation.md` | Main evidence | Geometry diagnostics supporting the piecewise relevance-manifold framing. |
+| `task30_lotte_geometry_scale_validation.md` | Main evidence | LoTTE technology/search geometry diagnostics supporting the piecewise relevance-manifold framing. |
+| `task43_lotte_science_geometry_diagnostics.md` | Main/supporting evidence | LoTTE science/search geometry diagnostics; use together with Task39 to show the second-domain geometry signal and calibration boundary. |
 | `task31_paper_evidence_package.md` | Main evidence package | Aggregated evidence source; use together with the later consistency audit and full draft. |
 | `task33_3_clean_ablation_table.md` | Main/supporting evidence | Clean LoTTE 100k ablation table for dense floor, feedback, trust weighting, and final policy. |
 | `task33_6_additional_seeds_summary.md` | Supporting evidence | Five-seed stability check for LoTTE 100k; do not claim statistical superiority. |
@@ -43,6 +46,7 @@ accidentally promoted into paper-facing claims.
 | `task33_5_llm_generation_smoke_summary.md` | Supporting sanity check | Small downstream generation smoke test; not a full human evaluation. |
 | `task33_7_pre_writing_consistency_audit.md` | Supporting guardrail | Pre-writing claim consistency audit. |
 | `task34_review_defense_revision_plan.md` | Supporting guardrail | Review-defense revision checklist incorporated into the draft. |
+| `task40_feedback_recovery_summary.md` | Supporting evidence | Hard-case feedback recovery on LoTTE technology/search and science/search 100k; use as post-feedback repair evidence, not as first-pass IID improvement. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |

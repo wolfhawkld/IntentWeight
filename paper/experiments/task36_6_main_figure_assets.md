@@ -1,13 +1,16 @@
 # Task36.6 Main Figure Assets
 
-Updated: 2026-05-31
+Updated: 2026-06-14
 
 ## Purpose
 
 This task creates regenerable draft assets for the three main paper figures.
-It does not add new experiments or new claims. The figures are generated from
-existing experiment artifacts and are intended for writing, review, and later
-conversion into camera-ready venue artwork.
+The figures are generated from experiment artifacts and are intended for
+writing, review, and later conversion into camera-ready venue artwork.
+The 2026-06-14 refresh adds LoTTE science/search to Figure 2 and Figure 3 using
+Task39 token-budget artifacts and the Task43 science/search geometry diagnostic.
+The figure x-axis uses corpus chunk count; domain is retained only as a
+line-style distinction.
 
 ## Files Added
 
@@ -36,13 +39,19 @@ conversion into camera-ready venue artwork.
     trust-weighted feedback.
   - Caption boundary: dense is a recall floor, not a removed component.
 - Figure 2: token-quality frontier across LoTTE scale.
-  - Uses the LoTTE 100k-638k final context-token frontier.
-  - Shows dense versus conservative-policy $\mathrm{Hit@10}$ and final
-    context token ratio.
-  - Caption boundary: above-dense means are descriptive at current seed counts.
+  - Uses LoTTE technology/search 100k-638k and LoTTE science/search 20k/q200
+    and 100k final evidence-context token validation.
+  - X-axis is corpus chunk count, not a domain/category axis.
+  - Shows IntentWeight budgeted policies versus dense-only adaptive truncation
+    on $\mathrm{Hit@10}$ delta and final context-token saving.
+  - Caption boundary: science/search 100k is a calibration-boundary point; the
+    ranking-side gain transfers, but aggressive compression can introduce small
+    frozen-test hit loss.
 - Figure 3: geometry diagnostic trend.
-  - Uses LoTTE scale diagnostics for $\mathrm{NearestClusterHit@3}$,
-    $\mathrm{ContextRetention@10}$, and $\mathrm{PCAvar@64}$.
+  - Uses LoTTE technology/search and science/search diagnostics for
+    $\mathrm{NearestClusterHit@3}$, $\mathrm{ContextRetention@10}$, and
+    $\mathrm{PCAvar@64}$.
+  - X-axis is corpus chunk count, not a domain/category axis.
   - Caption boundary: diagnostics support local-structure routing but are not
     theorem-level manifold proof.
 

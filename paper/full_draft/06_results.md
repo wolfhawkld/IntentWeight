@@ -48,7 +48,8 @@ policies keep above-dense $\mathrm{Hit@10}$ while saving roughly 13-14% context
 tokens. At 100k, the same aggressive budget saves roughly 17-21% tokens but can
 introduce small $\mathrm{Hit@10}$ drops. This supports adaptive ranking across
 domains while showing that compression strength must be calibrated per domain
-and scale.
+and scale. Figure 2 includes both the technology/search scale-up and the
+science/search budgeted validation points.
 
 ## 5.3 Component Ablation
 
@@ -126,20 +127,26 @@ controlled fallback trigger rather than as unconditional global reranking.
 The geometry scale diagnostic validates whether LoTTE retains usable local
 geometry as scale grows.
 
-**Table 6. LoTTE geometry diagnostics across corpus scale.**
+**Table 6. LoTTE geometry diagnostics across domain and corpus scale.**
 
-| Scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Confidence-only hit delta |
+| Domain/scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Associated hit delta |
 |---|---:|---:|---:|---:|---:|
-| 100k | 182 | 0.6437 | 0.8870 | 0.9033 | -0.22 pp |
-| 200k | 186 | 0.6292 | 0.8697 | 0.8947 | +2.80 pp |
-| 400k | 190 | 0.6110 | 0.9016 | 0.8826 | +1.01 pp |
-| 638k | 196 | 0.5867 | 0.9016 | 0.8571 | +1.85 pp |
+| technology/search 100k | 182 | 0.6437 | 0.8870 | 0.9033 | -0.22 pp |
+| technology/search 200k | 186 | 0.6292 | 0.8697 | 0.8947 | +2.80 pp |
+| technology/search 400k | 190 | 0.6110 | 0.9016 | 0.8826 | +1.01 pp |
+| technology/search 638k | 196 | 0.5867 | 0.9016 | 0.8571 | +1.85 pp |
+| science/search 20k/q200 | 180 | 0.6377 | 0.9083 | 0.8939 | +3.17 pp |
+| science/search 100k | 177 | 0.6459 | 0.8574 | 0.8628 | +1.51 pp |
 
-$\mathrm{NearestClusterHit@3}$ remains high, around 0.87-0.90, suggesting
-local geometry is useful for routing. $\mathrm{PCAdim90}$ increases and
-$\mathrm{PCAvar@64}$ decreases with scale, suggesting the representation
-geometry becomes more complex. Context retention declines with scale, showing
-that geometry alone should not replace dense retrieval.
+$\mathrm{NearestClusterHit@3}$ remains high across both LoTTE domains,
+suggesting local geometry is useful for routing. On technology/search,
+$\mathrm{PCAdim90}$ increases and $\mathrm{PCAvar@64}$ decreases with scale,
+suggesting the representation geometry becomes more complex. Science/search
+also shows high local routing signal, but the 100k row has lower cluster-hit
+and context-retention diagnostics than the 20k/q200 slice, matching the
+observed need for domain-specific compression calibration. Context retention
+declines with scale, showing that geometry alone should not replace dense
+retrieval.
 
 These diagnostics support the piecewise relevance-manifold framing as a useful
 motivation and diagnostic, not as a theorem. Figure 3 visualizes the same trend.

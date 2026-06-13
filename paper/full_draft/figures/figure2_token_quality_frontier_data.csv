@@ -1,5 +1,7 @@
-scale,policy_hit_delta_pp,policy_saving_pct,dense_adaptive_hit_delta_pp,dense_adaptive_saving_pct
-100k,0.00,6.18,-1.44,13.83
-200k,1.20,16.00,-2.40,21.95
-400k,2.32,6.57,-0.24,11.44
-638k,-0.08,17.53,-3.84,21.90
+domain,scale,corpus_chunks,policy_hit_delta_pp,policy_saving_pct,dense_adaptive_hit_delta_pp,dense_adaptive_saving_pct
+technology/search,100k,101311,0.00,6.18,-1.44,13.83
+technology/search,200k,201010,1.20,16.00,-2.40,21.95
+technology/search,400k,400674,2.32,6.57,-0.24,11.44
+technology/search,638k,638509,-0.08,17.53,-3.84,21.90
+science/search,20k/q200,20490,1.67,13.80,-0.71,22.69
+science/search,100k,101187,-0.72,19.09,-1.44,22.60

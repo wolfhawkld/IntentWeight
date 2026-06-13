@@ -33,6 +33,44 @@ def save(fig: plt.Figure, name: str) -> None:
     plt.close(fig)
 
 
+def row_label(row: dict[str, str]) -> str:
+    domain = row.get("domain", "technology/search")
+    prefix = "tech" if domain == "technology/search" else "sci"
+    return f"{prefix}\n{row['scale']}"
+
+
+def domain_groups(rows: list[dict[str, str]]) -> dict[str, list[int]]:
+    groups: dict[str, list[int]] = {}
+    for idx, row in enumerate(rows):
+        groups.setdefault(row.get("domain", "technology/search"), []).append(idx)
+    return groups
+
+
+def domain_name(domain: str) -> str:
+    return "technology" if domain == "technology/search" else "science"
+
+
+def row_chunks(row: dict[str, str]) -> float:
+    if row.get("corpus_chunks"):
+        return float(row["corpus_chunks"])
+    scale = row["scale"]
+    fallback = {
+        "20k/q200": 20490.0,
+        "100k": 101311.0,
+        "200k": 201010.0,
+        "400k": 400674.0,
+        "638k": 638509.0,
+    }
+    return fallback[scale]
+
+
+def set_chunk_axis(ax: plt.Axes) -> None:
+    ticks = [20490, 101311, 201010, 400674, 638509]
+    labels = ["20k", "100k", "200k", "400k", "638k"]
+    ax.set_xticks(ticks, labels)
+    ax.set_xlabel("Corpus chunks")
+
+
 def system_diagram() -> None:
     fig, ax = plt.subplots(figsize=(11.0, 4.8))
     ax.set_xlim(0, 11)
@@ -93,46 +131,56 @@ def system_diagram() -> None:
 
 def token_quality() -> None:
     rows = read_csv("figure2_token_quality_frontier_data.csv")
-    scales = [row["scale"] for row in rows]
+    x_values = [row_chunks(row) for row in rows]
     policy_hit_delta = [float(row["policy_hit_delta_pp"]) for row in rows]
     dense_hit_delta = [float(row["dense_adaptive_hit_delta_pp"]) for row in rows]
     policy_saving = [float(row["policy_saving_pct"]) for row in rows]
     dense_saving = [float(row["dense_adaptive_saving_pct"]) for row in rows]
 
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.6))
-    axes[0].plot(scales, policy_hit_delta, marker="o", label="IntentWeight budget")
-    axes[0].plot(scales, dense_hit_delta, marker="o", label="Dense adaptive truncation")
+    fig, axes = plt.subplots(1, 2, figsize=(10.2, 3.8))
+    for domain, indices in domain_groups(rows).items():
+        linestyle = "-" if domain == "technology/search" else "--"
+        xs = [x_values[idx] for idx in indices]
+        axes[0].plot(xs, [policy_hit_delta[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentWeight {domain_name(domain)}")
+        axes[0].plot(xs, [dense_hit_delta[idx] for idx in indices], marker="x", linestyle=linestyle, label=f"Dense trunc. {domain_name(domain)}")
     axes[0].axhline(0.0, color="#52606d", linestyle="--", linewidth=1)
     axes[0].set_ylabel("Hit@10 delta vs dense (pp)")
-    axes[0].set_xlabel("LoTTE corpus scale")
+    set_chunk_axis(axes[0])
     axes[0].grid(alpha=0.3)
-    axes[0].legend()
+    axes[0].legend(fontsize=8)
 
-    axes[1].plot(scales, policy_saving, marker="o", label="IntentWeight budget")
-    axes[1].plot(scales, dense_saving, marker="o", label="Dense adaptive truncation")
+    for domain, indices in domain_groups(rows).items():
+        linestyle = "-" if domain == "technology/search" else "--"
+        xs = [x_values[idx] for idx in indices]
+        axes[1].plot(xs, [policy_saving[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentWeight {domain_name(domain)}")
+        axes[1].plot(xs, [dense_saving[idx] for idx in indices], marker="x", linestyle=linestyle, label=f"Dense trunc. {domain_name(domain)}")
     axes[1].set_ylabel("Final context token saving (%)")
-    axes[1].set_xlabel("LoTTE corpus scale")
+    set_chunk_axis(axes[1])
     axes[1].grid(alpha=0.3)
-    axes[1].legend()
+    axes[1].legend(fontsize=8)
     fig.tight_layout()
     save(fig, "figure2_token_quality_frontier.pdf")
 
 
 def geometry() -> None:
     rows = read_csv("figure3_geometry_diagnostics_data.csv")
-    scales = [row["scale"] for row in rows]
+    x_values = [row_chunks(row) for row in rows]
     cluster_hit = [float(row["nearest_cluster_hit_at_3"]) for row in rows]
     retention = [float(row["context_retention_at_10"]) for row in rows]
     variance = [float(row["pca_var64"]) for row in rows]
 
-    fig, ax = plt.subplots(figsize=(6.8, 3.6))
-    ax.plot(scales, cluster_hit, marker="o", label="NearestClusterHit@3")
-    ax.plot(scales, retention, marker="o", label="ContextRetention@10")
-    ax.plot(scales, variance, marker="o", label="PCAvar@64")
-    ax.set_xlabel("LoTTE corpus scale")
+    fig, ax = plt.subplots(figsize=(7.4, 3.8))
+    for domain, indices in domain_groups(rows).items():
+        linestyle = "-" if domain == "technology/search" else "--"
+        xs = [x_values[idx] for idx in indices]
+        suffix = domain_name(domain)
+        ax.plot(xs, [cluster_hit[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"NearestClusterHit@3 {suffix}")
+        ax.plot(xs, [retention[idx] for idx in indices], marker="s", linestyle=linestyle, label=f"ContextRetention@10 {suffix}")
+        ax.plot(xs, [variance[idx] for idx in indices], marker="^", linestyle=linestyle, label=f"PCAvar@64 {suffix}")
     ax.set_ylabel("Diagnostic value")
+    set_chunk_axis(ax)
     ax.grid(alpha=0.3)
-    ax.legend()
+    ax.legend(fontsize=7, ncol=2)
     fig.tight_layout()
     save(fig, "figure3_geometry_diagnostics.pdf")
 

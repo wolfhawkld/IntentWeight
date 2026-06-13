@@ -1,5 +1,7 @@
-scale,pca_dim90,pca_var64,nearest_cluster_hit_at_3,context_retention_at_10
-100k,182,0.6437,0.8870,0.9033
-200k,186,0.6292,0.8697,0.8947
-400k,190,0.6110,0.9016,0.8826
-638k,196,0.5867,0.9016,0.8571
+domain,scale,corpus_chunks,pca_dim90,pca_var64,nearest_cluster_hit_at_3,context_retention_at_10
+technology/search,100k,101311,182,0.6437,0.8870,0.9033
+technology/search,200k,201010,186,0.6292,0.8697,0.8947
+technology/search,400k,400674,190,0.6110,0.9016,0.8826
+technology/search,638k,638509,196,0.5867,0.9016,0.8571
+science/search,20k/q200,20490,180,0.6377,0.9083,0.8939
+science/search,100k,101187,177,0.6459,0.8574,0.8628
