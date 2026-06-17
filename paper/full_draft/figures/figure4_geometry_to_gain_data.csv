@@ -1,0 +1,7 @@
+domain,scale,corpus_chunks,nearest_cluster_hit_at_3,context_retention_at_10,policy_hit_delta_pp,policy_saving_pct
+technology/search,100k,101311,0.8870,0.9033,0.00,6.18
+technology/search,200k,201010,0.8697,0.8947,1.20,16.00
+technology/search,400k,400674,0.9016,0.8826,2.32,6.57
+technology/search,638k,638509,0.9016,0.8571,-0.08,17.53
+science/search,20k/q200,20490,0.9083,0.8939,1.67,13.80
+science/search,100k,101187,0.8574,0.8628,-0.72,19.09

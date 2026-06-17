@@ -10,8 +10,7 @@ The conservative confidence-only context policy is the stable baseline for conte
 \small
 \caption{Multi-seed retrieval-quality stability}
 \label{tab:a1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Scale & Dense $\mathrm{Hit@10}$ & Policy $\mathrm{Hit@10}$ mean & Std & 95\% CI & Mean hit delta \\
 \midrule
@@ -20,8 +19,7 @@ Scale & Dense $\mathrm{Hit@10}$ & Policy $\mathrm{Hit@10}$ mean & Std & 95\% CI 
 400k & 0.7718 & 0.7819 & 0.0044 & [0.7709, 0.7929] & +0.0101 \\
 638k & 0.7282 & 0.7466 & 0.0089 & [0.7246, 0.7687] & +0.0185 \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 \begin{table*}[tbp]
@@ -29,8 +27,7 @@ Scale & Dense $\mathrm{Hit@10}$ & Policy $\mathrm{Hit@10}$ mean & Std & 95\% CI 
 \small
 \caption{Multi-seed final context-token stability}
 \label{tab:a2}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Scale & Dense $\mathrm{Tokens@10}$ & Policy $\mathrm{Tokens@10}$ mean & Std & 95\% CI & Mean token saving & Saving 95\% CI \\
 \midrule
@@ -39,8 +36,7 @@ Scale & Dense $\mathrm{Tokens@10}$ & Policy $\mathrm{Tokens@10}$ mean & Std & 95
 400k & 1482.30 & 1403.43 & 31.10 & [1326.16, 1480.69] & 5.32\% & [0.11\%, 10.53\%] \\
 638k & 1525.62 & 1451.49 & 3.83 & [1441.97, 1461.00] & 4.86\% & [4.24\%, 5.48\%] \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 The token-saving direction is consistent across scales. The wider 400k token interval should be interpreted as route-confidence and context-budget variance, not hidden as a uniform result.
@@ -52,16 +48,14 @@ A five-seed extension is also available for LoTTE 100k. The additional seeds tes
 \small
 \caption{Five-seed LoTTE 100k extension}
 \label{tab:a3}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Setting & Seeds & $\mathrm{Hit@10}$ & Avg $\mathrm{Tokens@10}$ & Token ratio vs dense & Token saving \\
+Setting & Seeds & $\mathrm{Hit@10}$ & Avg tokens@10 & Token ratio & Token saving \\
 \midrule
 Dense-only & 1 & 0.8674 & 1472.39 & 1.0000x & 0.00\% \\
 Conservative policy & 5 & 0.8708 & 1399.83 & 0.9507x & 4.93\% \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 The five-seed hit-delta interval is $[-0.0082, +0.0150]$. This supports dense-level retrieval quality with stable context-token reduction, not a statistical-superiority claim.
@@ -71,13 +65,12 @@ The five-seed hit-delta interval is $[-0.0082, +0.0150]$. This supports dense-le
 
 Dense retrieval is the primary quality baseline. BM25 supplies lexical coverage, but it is weaker as a standalone retriever on LoTTE. Static dense-plus-BM25 reciprocal-rank fusion is competitive at some scales but does not consistently dominate dense.
 
-\begin{table}[tbp]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Static LoTTE retrieval baselines across corpus scale}
 \label{tab:b1}
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{lrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Scale & Corpus chunks & BM25 $\mathrm{Hit@10}$ & Dense $\mathrm{Hit@10}$ & Static hybrid $\mathrm{Hit@10}$ \\
 \midrule
@@ -86,9 +79,8 @@ Scale & Corpus chunks & BM25 $\mathrm{Hit@10}$ & Dense $\mathrm{Hit@10}$ & Stati
 400k & 400674 & 0.5721 & 0.7718 & 0.7617 \\
 638k & 638509 & 0.5084 & 0.7282 & 0.7181 \\
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\end{tabularx}
+\end{table*}
 
 The declining dense score as corpus scale grows motivates adaptive context control, but it does not make dense retrieval obsolete. Dense remains an important recall floor and fallback route in IntentWeight.
 
@@ -110,10 +102,9 @@ The main paper claim uses the third layer. Historical routing experiments showed
 \small
 \caption{Representative fixed-top-10 correction audit}
 \label{tab:c1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Dataset / scale & Routing setting & $\mathrm{Hit@10}$ & Avg $\mathrm{Tokens@10}$ & Ratio vs dense & Source candidate cost \\
+Dataset / scale & Routing setting & $\mathrm{Hit@10}$ & Avg tokens@10 & Ratio vs dense & Source candidate cost \\
 \midrule
 Banking77 & Gated cost-aware routing & 0.9813 & 120.82 & 0.9978x & 142.51 \\
 eManual & Gated cost-aware routing & 0.0116 & 17.92 & 0.9829x & 214.07 \\
@@ -124,8 +115,7 @@ LoTTE 200k & Initial gated routing & 0.8154 & 1549.39 & 1.0729x & 232.01 \\
 LoTTE 400k & Initial gated routing & 0.7836 & 1547.66 & 1.0441x & 233.22 \\
 LoTTE 638k & Initial gated routing & 0.7343 & 1599.95 & 1.0487x & 236.22 \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 This audit motivated the explicit confidence-based final context policy. Its token savings come from reducing selected final context size in high-confidence cases, not from treating candidate-count savings as prompt token savings.
@@ -147,13 +137,12 @@ The secondary datasets have different roles and should not be pooled into the ma
 
 eManual contains 18,812 corpus chunks but only 1,729 unique text strings. Strict chunk-id evaluation can therefore mark semantically equivalent retrievals as incorrect.
 
-\begin{table}[tbp]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{eManual strict, text-equivalent, and deduplicated evaluation}
 \label{tab:d1}
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{llrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Method & Evaluation mode & $\mathrm{Hit@10}$ & $\mathrm{MRR@10}$ & $\mathrm{nDCG@10}$ \\
 \midrule
@@ -165,9 +154,8 @@ Static hybrid & Strict chunk ID & 0.1692 & 0.0366 & 0.0287 \\
 Static hybrid & Text-equivalent & 0.5846 & 0.4895 & 0.2263 \\
 Dense & Deduplicated corpus & 0.8615 & 0.5736 & 0.3807 \\
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\end{tabularx}
+\end{table*}
 
 The text-equivalent and deduplicated metrics are diagnostics, not replacements for the strict evaluation. They show that eManual's low strict score cannot be interpreted as proof that useful local structure is absent.
 
@@ -181,16 +169,14 @@ The main scale-up uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. A LoT
 \small
 \caption{QA-tuned MiniLM-family encoder robustness}
 \label{tab:e1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Method & $\mathrm{Hit@10}$ & $\mathrm{MRR@10}$ & $\mathrm{nDCG@10}$ & $\mathrm{EvidenceRecall@10}$ & Avg $\mathrm{Tokens@10}$ & Token ratio vs dense \\
+Method & $\mathrm{Hit@10}$ & $\mathrm{MRR@10}$ & $\mathrm{nDCG@10}$ & Evid. recall@10 & Avg tokens@10 & Token ratio \\
 \midrule
 Dense-only & 0.8809 & 0.7220 & 0.6616 & 0.7163 & 1514.51 & 1.0000x \\
 Conservative policy & 0.8853 & 0.7118 & 0.6291 & 0.6789 & 1463.71 & 0.9665x \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 Under the QA-tuned encoder, the dense baseline becomes stronger and the conservative policy still preserves dense-level query hit while reducing final context tokens by 3.35\%. Ranking metrics and evidence recall are lower than dense, so this is a bounded robustness result rather than a universal retrieval-metric improvement.
@@ -205,17 +191,15 @@ A small downstream answer-quality check compares dense top-10 context with the c
 \small
 \caption{Downstream answer-quality check}
 \label{tab:f1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Method & Answer score & Faithfulness & Answer relevance & Win count & Prompt context-token proxy ratio \\
+Method & Answer score & Faithfulness & Answer relevance & Win count & Prompt token ratio \\
 \midrule
 Dense top-10 & 4.4000 & 4.6500 & 4.6500 & 14 & 1.0000x \\
 Conservative policy & 4.2833 & 4.6333 & 4.4500 & 14 & 0.9321x \\
 Tie & - & - & - & 32 & - \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 The check does not show obvious answer-quality degradation from conservative context compaction. It is not a full human evaluation: the sample is small, one generator/judge model is used, and LLM-as-judge can be biased.
@@ -230,18 +214,16 @@ The calibration/test protocol selects the final-context budget on calibration qu
 \small
 \caption{Frozen context-budget validation on LoTTE technology/search}
 \label{tab:g1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llllrlr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Scale & Selected policy & Calibration eligible & Hit delta vs dense & Token saving & Dense adaptive hit delta & Dense adaptive token saving \\
+Scale & Selected policy & Calibration eligible & Hit delta vs dense & Token saving & Dense trunc. hit delta & Dense trunc. token saving \\
 \midrule
 100k & \nolinkurl{token_budget_r0.95_m4} & True & +0.00 pp & 6.18\% & -1.44 pp & 13.83\% \\
 200k & \nolinkurl{token_budget_r0.85_m4} & True & +1.20 pp & 16.00\% & -2.40 pp & 21.95\% \\
 400k & \nolinkurl{token_budget_r0.98_m4} & False & +2.32 pp & 6.57\% & -0.24 pp & 11.44\% \\
 638k & \nolinkurl{token_budget_r0.85_m4} & True & -0.08 pp & 17.53\% & -3.84 pp & 21.90\% \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 The calibrated policies should be compared against dense-only adaptive truncation because both reduce final context size. IntentWeight preserves substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
@@ -256,16 +238,14 @@ LoTTE science/search is used as a second-domain validation, not as a replacement
 \small
 \caption{Science/search fixed top-10 ranking validation}
 \label{tab:h1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrl}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
 Domain/scale & Corpus chunks & Queries & Dense $\mathrm{Hit@10}$ & IntentWeight $\mathrm{Hit@10}$ & Hit delta \\
 \midrule
 science/search 20k/q200 & 20,490 & 200 & 0.8950 & 0.9267 & +3.17 pp \\
 science/search 100k & 101,187 & 596 & 0.8926 & 0.9077 & +1.51 pp \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 \begin{table*}[tbp]
@@ -273,8 +253,7 @@ science/search 100k & 101,187 & 596 & 0.8926 & 0.9077 & +1.51 pp \\
 \small
 \caption{Science/search frozen context-budget validation}
 \label{tab:h2}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llrlrl}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
 Domain/scale & Budget policy & Seed & Frozen test hit delta vs dense & Token saving & Strict NI by CI \\
 \midrule
@@ -285,8 +264,7 @@ Domain/scale & Budget policy & Seed & Frozen test hit delta vs dense & Token sav
 100k & \nolinkurl{token_budget_r0.85_m4} & 17 & +0.00 pp & 17.53\% & False \\
 100k & \nolinkurl{token_budget_r0.85_m4} & 19 & -0.96 pp & 20.53\% & False \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 The fixed top-10 ranking gains transfer, while aggressive final-context budgets require domain and scale calibration.
@@ -301,10 +279,9 @@ Hard-case recovery focuses on affected queries where dense top-10 retrieves at l
 \small
 \caption{Same-query feedback recovery on affected queries}
 \label{tab:i1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Domain & Retry method & Affected queries & Recovered & Recovery rate & Avg token saving vs dense \\
+Domain & Retry method & Affected queries & Recovered & Recovery rate & Avg token saving \\
 \midrule
 science 100k & arm boost & 34 & 5 & 14.71\% & 17.40\% \\
 science 100k & arm boost + conservative budget & 34 & 14 & 41.18\% & 5.76\% \\
@@ -313,8 +290,7 @@ technology 100k & arm boost & 42 & 8 & 19.05\% & 13.68\% \\
 technology 100k & arm boost + conservative budget & 42 & 9 & 21.43\% & 11.75\% \\
 technology 100k & full-context fallback & 42 & 12 & 28.57\% & 0.96\% \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 Same-query retry is post-feedback repair evidence. It is not a first-pass generalization result.
@@ -324,9 +300,9 @@ Same-query retry is post-feedback repair evidence. It is not a first-pass genera
 \small
 \caption{Calibration-to-test recovery generalization}
 \label{tab:i2}
-\begin{tabularx}{\textwidth}{XXXr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Domain & Frozen test recovery policy & Mean hit delta versus budgeted-before-feedback & Avg token saving vs dense \\
+Domain & Recovery policy & Mean hit delta & Avg token saving \\
 \midrule
 science 100k & conservative budget on learned risky arms after calibration & +0.16 pp & 16.13\% \\
 science 100k & full-context fallback on learned risky arms after calibration & +0.48 pp & 13.09\% \\

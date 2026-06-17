@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="520" viewBox="0 0 1120 520" role="img">
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+<path d="M0,0 L0,6 L9,3 z" fill="#425466" />
+</marker>
+<style><![CDATA[
+text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
+.title { font-size: 22px; font-weight: 700; }
+.subtitle { font-size: 13px; fill: #52606d; }
+.axis { stroke: #9aa5b1; stroke-width: 1; }
+.grid { stroke: #e4e7eb; stroke-width: 1; }
+.label { font-size: 12px; fill: #52606d; }
+.tick { font-size: 11px; fill: #616e7c; }
+.legend { font-size: 12px; fill: #323f4b; }
+.box-title { font-size: 13px; font-weight: 700; }
+.box-text { font-size: 11px; fill: #52606d; }
+]]></style>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff" />
+<text x="40.0" y="42.0" class="title" text-anchor="start">Figure 5. Feedback-driven route adaptation</text>
+<text x="40.0" y="64.0" class="subtitle" text-anchor="start">Trust-weighted feedback improves route-policy metrics and can reduce dense reliance under controlled simulation.</text>
+<line x1="80.0" y1="118.0" x2="80.0" y2="403.0" stroke="#9aa5b1" stroke-width="1.2" />
+<line x1="80.0" y1="403.0" x2="510.0" y2="403.0" stroke="#9aa5b1" stroke-width="1.2" />
+<text x="80.0" y="102.0" class="subtitle" text-anchor="start">Policy learning signal</text>
+<line x1="80.0" y1="403.0" x2="510.0" y2="403.0" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="72.0" y="407.0" class="tick" text-anchor="end">0.00</text>
+<line x1="80.0" y1="331.8" x2="510.0" y2="331.8" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="72.0" y="335.8" class="tick" text-anchor="end">0.25</text>
+<line x1="80.0" y1="260.5" x2="510.0" y2="260.5" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="72.0" y="264.5" class="tick" text-anchor="end">0.50</text>
+<line x1="80.0" y1="189.2" x2="510.0" y2="189.2" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="72.0" y="193.2" class="tick" text-anchor="end">0.75</text>
+<line x1="80.0" y1="118.0" x2="510.0" y2="118.0" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="72.0" y="122.0" class="tick" text-anchor="end">1.00</text>
+<text x="80.0" y="425.0" class="tick" text-anchor="middle">No feedback</text>
+<text x="166.0" y="425.0" class="tick" text-anchor="middle">Equal noisy</text>
+<text x="252.0" y="425.0" class="tick" text-anchor="middle">Trust-weighted</text>
+<text x="338.0" y="425.0" class="tick" text-anchor="middle">Trust mild</text>
+<text x="424.0" y="425.0" class="tick" text-anchor="middle">Strong noise</text>
+<text x="510.0" y="425.0" class="tick" text-anchor="middle">Oracle</text>
+<polyline points="80.0,358.7 166.0,232.6 252.0,197.1 338.0,177.6 424.0,265.8 510.0,164.0" fill="none" stroke="#2f855a" stroke-width="2.8" />
+<polyline points="80.0,359.8 166.0,188.8 252.0,165.7 338.0,151.6 424.0,234.5 510.0,148.4" fill="none" stroke="#9a6b14" stroke-width="2.8" />
+<circle cx="80.0" cy="358.7" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="166.0" cy="232.6" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="252.0" cy="197.1" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="338.0" cy="177.6" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="424.0" cy="265.8" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="510.0" cy="164.0" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="80.0" cy="359.8" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="166.0" cy="188.8" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="252.0" cy="165.7" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="338.0" cy="151.6" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="424.0" cy="234.5" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="510.0" cy="148.4" r="4.2" fill="#9a6b14" stroke="#ffffff" stroke-width="1.5" />
+<line x1="625.0" y1="118.0" x2="625.0" y2="403.0" stroke="#9aa5b1" stroke-width="1.2" />
+<line x1="625.0" y1="403.0" x2="1055.0" y2="403.0" stroke="#9aa5b1" stroke-width="1.2" />
+<text x="625.0" y="102.0" class="subtitle" text-anchor="start">Route usage and context cost</text>
+<line x1="625.0" y1="403.0" x2="1055.0" y2="403.0" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="617.0" y="407.0" class="tick" text-anchor="end">0.00</text>
+<line x1="625.0" y1="338.2" x2="1055.0" y2="338.2" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="617.0" y="342.2" class="tick" text-anchor="end">0.25</text>
+<line x1="625.0" y1="273.5" x2="1055.0" y2="273.5" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="617.0" y="277.5" class="tick" text-anchor="end">0.50</text>
+<line x1="625.0" y1="208.7" x2="1055.0" y2="208.7" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="617.0" y="212.7" class="tick" text-anchor="end">0.75</text>
+<line x1="625.0" y1="143.9" x2="1055.0" y2="143.9" stroke="#e4e7eb" stroke-width="1.0" />
+<text x="617.0" y="147.9" class="tick" text-anchor="end">1.00</text>
+<text x="625.0" y="425.0" class="tick" text-anchor="middle">No feedback</text>
+<text x="711.0" y="425.0" class="tick" text-anchor="middle">Equal noisy</text>
+<text x="797.0" y="425.0" class="tick" text-anchor="middle">Trust-weighted</text>
+<text x="883.0" y="425.0" class="tick" text-anchor="middle">Trust mild</text>
+<text x="969.0" y="425.0" class="tick" text-anchor="middle">Strong noise</text>
+<text x="1055.0" y="425.0" class="tick" text-anchor="middle">Oracle</text>
+<polyline points="625.0,143.9 711.0,209.2 797.0,229.2 883.0,252.1 969.0,178.4 1055.0,290.4" fill="none" stroke="#1f5f8b" stroke-width="2.8" />
+<polyline points="625.0,403.0 711.0,337.7 797.0,317.7 883.0,294.9 969.0,368.5 1055.0,256.5" fill="none" stroke="#2f855a" stroke-width="2.8" />
+<polyline points="625.0,128.3 711.0,152.5 797.0,156.7 883.0,163.2 969.0,148.1 1055.0,169.5" fill="none" stroke="#b42318" stroke-width="2.8" />
+<circle cx="625.0" cy="143.9" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="711.0" cy="209.2" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="797.0" cy="229.2" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="883.0" cy="252.1" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="969.0" cy="178.4" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="1055.0" cy="290.4" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="625.0" cy="403.0" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="711.0" cy="337.7" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="797.0" cy="317.7" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="883.0" cy="294.9" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="969.0" cy="368.5" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="1055.0" cy="256.5" r="4.2" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="625.0" cy="128.3" r="4.2" fill="#b42318" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="711.0" cy="152.5" r="4.2" fill="#b42318" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="797.0" cy="156.7" r="4.2" fill="#b42318" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="883.0" cy="163.2" r="4.2" fill="#b42318" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="969.0" cy="148.1" r="4.2" fill="#b42318" stroke="#ffffff" stroke-width="1.5" />
+<circle cx="1055.0" cy="169.5" r="4.2" fill="#b42318" stroke="#ffffff" stroke-width="1.5" />
+<rect x="130" y="82" width="12" height="12" fill="#2f855a" />
+<text x="148.0" y="92.0" class="legend" text-anchor="start">Selected-cluster hit / LinUCB rate</text>
+<rect x="365" y="82" width="12" height="12" fill="#9a6b14" />
+<text x="383.0" y="92.0" class="legend" text-anchor="start">Last true reward</text>
+<rect x="690" y="82" width="12" height="12" fill="#1f5f8b" />
+<text x="708.0" y="92.0" class="legend" text-anchor="start">Dense rate</text>
+<rect x="820" y="82" width="12" height="12" fill="#b42318" />
+<text x="838.0" y="92.0" class="legend" text-anchor="start">Token ratio</text>
+<text x="80.0" y="468.0" class="subtitle" text-anchor="start">Caption boundary: strong-noise feedback is a failure boundary; oracle feedback is an upper bound.</text>
+</svg>

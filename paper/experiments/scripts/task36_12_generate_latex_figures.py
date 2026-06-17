@@ -185,11 +185,76 @@ def geometry() -> None:
     save(fig, "figure3_geometry_diagnostics.pdf")
 
 
+def geometry_to_gain() -> None:
+    rows = read_csv("figure4_geometry_to_gain_data.csv")
+    retention = [float(row["context_retention_at_10"]) for row in rows]
+    hit_delta = [float(row["policy_hit_delta_pp"]) for row in rows]
+    saving = [float(row["policy_saving_pct"]) for row in rows]
+    colors = ["#2f855a" if row["domain"] == "technology/search" else "#1f5f8b" for row in rows]
+
+    fig, axes = plt.subplots(1, 2, figsize=(10.2, 3.8))
+    axes[0].axhline(0.0, color="#52606d", linestyle="--", linewidth=1)
+    axes[0].scatter(retention, hit_delta, c=colors, s=42, edgecolors="white", linewidths=0.8)
+    for row, x, y in zip(rows, retention, hit_delta):
+        axes[0].annotate(row["scale"], (x, y), textcoords="offset points", xytext=(0, 6), ha="center", fontsize=7)
+    axes[0].set_xlabel("ContextRetention@10")
+    axes[0].set_ylabel("IntentWeight Hit@10 delta vs dense (pp)")
+    axes[0].grid(alpha=0.3)
+
+    axes[1].scatter(retention, saving, c=colors, s=42, edgecolors="white", linewidths=0.8)
+    for row, x, y in zip(rows, retention, saving):
+        axes[1].annotate(row["scale"], (x, y), textcoords="offset points", xytext=(0, 6), ha="center", fontsize=7)
+    axes[1].set_xlabel("ContextRetention@10")
+    axes[1].set_ylabel("Final context token saving (%)")
+    axes[1].grid(alpha=0.3)
+
+    handles = [
+        plt.Line2D([0], [0], marker="o", color="w", label="technology/search", markerfacecolor="#2f855a", markersize=7),
+        plt.Line2D([0], [0], marker="o", color="w", label="science/search", markerfacecolor="#1f5f8b", markersize=7),
+    ]
+    axes[1].legend(handles=handles, fontsize=8, loc="lower right")
+    fig.tight_layout()
+    save(fig, "figure4_geometry_to_gain.pdf")
+
+
+def feedback_adaptation() -> None:
+    rows = read_csv("figure5_feedback_adaptation_data.csv")
+    labels = [row["display_label"] for row in rows]
+    x_values = list(range(len(rows)))
+    selected_cluster = [float(row["selected_cluster_hit"]) for row in rows]
+    last_reward = [float(row["last_true_reward"]) for row in rows]
+    dense_rate = [float(row["dense_rate"]) for row in rows]
+    linucb_rate = [float(row["linucb_rate"]) for row in rows]
+    token_ratio = [float(row["token_ratio_vs_dense"]) for row in rows]
+
+    fig, axes = plt.subplots(1, 2, figsize=(10.2, 3.8))
+    axes[0].plot(x_values, selected_cluster, marker="o", label="Selected-cluster hit", color="#2f855a")
+    axes[0].plot(x_values, last_reward, marker="s", label="Last true reward", color="#9a6b14")
+    axes[0].set_ylim(0.0, 1.0)
+    axes[0].set_ylabel("Policy metric")
+    axes[0].set_xticks(x_values, labels, rotation=20, ha="right")
+    axes[0].grid(alpha=0.3)
+    axes[0].legend(fontsize=8)
+
+    axes[1].plot(x_values, dense_rate, marker="o", label="Dense rate", color="#1f5f8b")
+    axes[1].plot(x_values, linucb_rate, marker="s", label="LinUCB rate", color="#2f855a")
+    axes[1].plot(x_values, token_ratio, marker="^", label="Token ratio", color="#b42318")
+    axes[1].set_ylim(0.0, 1.1)
+    axes[1].set_ylabel("Rate / ratio")
+    axes[1].set_xticks(x_values, labels, rotation=20, ha="right")
+    axes[1].grid(alpha=0.3)
+    axes[1].legend(fontsize=8)
+    fig.tight_layout()
+    save(fig, "figure5_feedback_adaptation.pdf")
+
+
 def main() -> None:
     system_diagram()
     token_quality()
     geometry()
-    print("figure_assets=3")
+    geometry_to_gain()
+    feedback_adaptation()
+    print("figure_assets=5")
     print("latex_figures=passed")
 
 

@@ -46,6 +46,29 @@ class GeometryRow:
     context_retention10: float
 
 
+@dataclass(frozen=True)
+class GeometryGainRow:
+    domain: str
+    scale: str
+    corpus_chunks: int
+    cluster_hit3: float
+    context_retention10: float
+    policy_hit_delta_pp: float
+    policy_saving_pct: float
+
+
+@dataclass(frozen=True)
+class FeedbackRow:
+    setting: str
+    display_label: str
+    hit10: float
+    token_ratio: float
+    dense_rate: float
+    linucb_rate: float
+    selected_cluster_hit: float
+    last_true_reward: float
+
+
 def read_token_rows() -> list[TokenRow]:
     # Frozen calibration/test values from the calibrated token-budget validation.
     # Kept explicit here so Figure 2 reflects the main paper table rather than
@@ -57,6 +80,72 @@ def read_token_rows() -> list[TokenRow]:
         TokenRow("technology/search", "638k", 638509, -0.08, 17.53, -3.84, 21.90),
     ]
     rows.extend(read_science_token_rows())
+    return rows
+
+
+def read_geometry_gain_rows(token_rows: list[TokenRow], geometry_rows: list[GeometryRow]) -> list[GeometryGainRow]:
+    by_key = {(row.domain, row.scale): row for row in token_rows}
+    rows: list[GeometryGainRow] = []
+    for geometry in geometry_rows:
+        token = by_key[(geometry.domain, geometry.scale)]
+        rows.append(
+            GeometryGainRow(
+                domain=geometry.domain,
+                scale=geometry.scale,
+                corpus_chunks=geometry.corpus_chunks,
+                cluster_hit3=geometry.cluster_hit3,
+                context_retention10=geometry.context_retention10,
+                policy_hit_delta_pp=token.policy_hit_delta_pp,
+                policy_saving_pct=token.policy_saving_pct,
+            )
+        )
+    return rows
+
+
+def read_feedback_rows() -> list[FeedbackRow]:
+    path = RESULTS / "task33_3_clean_ablation_table.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        by_component = {row["component"]: row for row in csv.DictReader(handle)}
+    order = [
+        ("No feedback gated routing", "No feedback"),
+        ("Equal noisy feedback", "Equal noisy"),
+        ("Trust-weighted feedback", "Trust-weighted"),
+        ("Trust-weighted mild noise", "Trust mild"),
+        ("Oracle feedback", "Oracle"),
+    ]
+    rows: list[FeedbackRow] = []
+    for component, label in order:
+        row = by_component[component]
+        rows.append(
+            FeedbackRow(
+                setting=component,
+                display_label=label,
+                hit10=float(row["hit@10"]),
+                token_ratio=float(row["token_ratio_vs_dense"]),
+                dense_rate=float(row["dense_rate"]),
+                linucb_rate=float(row["linucb_primary_rate"]),
+                selected_cluster_hit=float(row["selected_cluster_hit"]),
+                last_true_reward=float(row["last_true_reward"]),
+            )
+        )
+    strong_summary_path = RESULTS / "task33_2_feedback_trust_strong" / "linucb_cost_summary.csv"
+    with strong_summary_path.open(newline="", encoding="utf-8") as handle:
+        strong_summary = next(csv.DictReader(handle))
+    with (RESULTS / "task33_2_feedback_sensitivity_context_tokens.csv").open(newline="", encoding="utf-8") as handle:
+        context_rows = [row for row in csv.DictReader(handle) if row["source_label"] == "trust_strong"]
+    rows.insert(
+        4,
+        FeedbackRow(
+            setting="Trust-weighted strong noise",
+            display_label="Strong noise",
+            hit10=float(strong_summary["hit@10_mean"]),
+            token_ratio=mean(float(row["context_token_ratio_vs_baseline@10"]) for row in context_rows),
+            dense_rate=float(strong_summary["dense_query_rate_mean"]),
+            linucb_rate=float(strong_summary["linucb_primary_rate_mean"]),
+            selected_cluster_hit=float(strong_summary["selected_cluster_hit_rate_mean"]),
+            last_true_reward=float(strong_summary["last_epoch_true_reward_mean"]),
+        ),
+    )
     return rows
 
 
@@ -223,6 +312,44 @@ def chart_points_by_chunks(
     return points
 
 
+def scatter_points(
+    rows: list[GeometryGainRow],
+    x_values: list[float],
+    y_values: list[float],
+    x0: float,
+    y0: float,
+    width: float,
+    height: float,
+    x_min: float,
+    x_max: float,
+    y_min: float,
+    y_max: float,
+) -> list[tuple[float, float]]:
+    points: list[tuple[float, float]] = []
+    for x_value, y_value in zip(x_values, y_values):
+        x = x0 + ((x_value - x_min) / (x_max - x_min)) * width
+        y = y0 + height - ((y_value - y_min) / (y_max - y_min)) * height
+        points.append((x, y))
+    return points
+
+
+def category_points(
+    values: list[float],
+    x0: float,
+    y0: float,
+    width: float,
+    height: float,
+    y_min: float,
+    y_max: float,
+) -> list[tuple[float, float]]:
+    points: list[tuple[float, float]] = []
+    for idx, value in enumerate(values):
+        x = x0 + idx * (width / (len(values) - 1))
+        y = y0 + height - ((value - y_min) / (y_max - y_min)) * height
+        points.append((x, y))
+    return points
+
+
 def short_label(row: TokenRow | GeometryRow) -> str:
     prefix = "tech" if row.domain == "technology/search" else "sci"
     return f"{prefix} {row.scale}"
@@ -285,6 +412,59 @@ def draw_chunk_axes(
         parts.append(text(x, y0 + height + 22, label, "tick", "middle"))
     parts.append(text(x0 + width / 2, y0 + height + 44, "Corpus chunks", "label", "middle"))
     return x_min, x_max
+
+
+def draw_scatter_axes(
+    parts: list[str],
+    x0: float,
+    y0: float,
+    width: float,
+    height: float,
+    x_min: float,
+    x_max: float,
+    y_min: float,
+    y_max: float,
+    x_ticks: list[float],
+    y_ticks: list[float],
+    title: str,
+    x_label: str,
+) -> None:
+    parts.append(line(x0, y0, x0, y0 + height, "#9aa5b1", 1.2))
+    parts.append(line(x0, y0 + height, x0 + width, y0 + height, "#9aa5b1", 1.2))
+    parts.append(text(x0, y0 - 16, title, "subtitle"))
+    for tick_value in y_ticks:
+        y = y0 + height - ((tick_value - y_min) / (y_max - y_min)) * height
+        parts.append(line(x0, y, x0 + width, y, "#e4e7eb", 1.0))
+        parts.append(text(x0 - 8, y + 4, f"{tick_value:.1f}", "tick", "end"))
+    for tick_value in x_ticks:
+        x = x0 + ((tick_value - x_min) / (x_max - x_min)) * width
+        parts.append(line(x, y0 + height, x, y0 + height + 5, "#9aa5b1", 1.0))
+        parts.append(text(x, y0 + height + 22, f"{tick_value:.2f}", "tick", "middle"))
+    parts.append(text(x0 + width / 2, y0 + height + 44, x_label, "label", "middle"))
+
+
+def draw_category_axes(
+    parts: list[str],
+    labels: list[str],
+    x0: float,
+    y0: float,
+    width: float,
+    height: float,
+    y_min: float,
+    y_max: float,
+    y_ticks: list[float],
+    title: str,
+) -> None:
+    parts.append(line(x0, y0, x0, y0 + height, "#9aa5b1", 1.2))
+    parts.append(line(x0, y0 + height, x0 + width, y0 + height, "#9aa5b1", 1.2))
+    parts.append(text(x0, y0 - 16, title, "subtitle"))
+    for tick_value in y_ticks:
+        y = y0 + height - ((tick_value - y_min) / (y_max - y_min)) * height
+        parts.append(line(x0, y, x0 + width, y, "#e4e7eb", 1.0))
+        parts.append(text(x0 - 8, y + 4, f"{tick_value:.2f}", "tick", "end"))
+    for idx, label in enumerate(labels):
+        x = x0 + idx * (width / (len(labels) - 1))
+        parts.append(text(x, y0 + height + 22, label, "tick", "middle"))
 
 
 def generate_system_diagram() -> None:
@@ -471,10 +651,168 @@ def generate_geometry_figure(rows: list[GeometryRow]) -> None:
     (FIGURES / "figure3_geometry_diagnostics.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
+def generate_geometry_gain_figure(rows: list[GeometryGainRow]) -> None:
+    write_csv(
+        FIGURES / "figure4_geometry_to_gain_data.csv",
+        [
+            "domain",
+            "scale",
+            "corpus_chunks",
+            "nearest_cluster_hit_at_3",
+            "context_retention_at_10",
+            "policy_hit_delta_pp",
+            "policy_saving_pct",
+        ],
+        [
+            {
+                "domain": row.domain,
+                "scale": row.scale,
+                "corpus_chunks": row.corpus_chunks,
+                "nearest_cluster_hit_at_3": f"{row.cluster_hit3:.4f}",
+                "context_retention_at_10": f"{row.context_retention10:.4f}",
+                "policy_hit_delta_pp": f"{row.policy_hit_delta_pp:.2f}",
+                "policy_saving_pct": f"{row.policy_saving_pct:.2f}",
+            }
+            for row in rows
+        ],
+    )
+
+    parts = svg_header(1120, 520)
+    parts.append(text(40, 42, "Figure 4. Geometry-to-gain diagnostic", "title"))
+    parts.append(text(40, 64, "Local geometry is useful for calibration, but it is not a sufficient predictor of universal gains.", "subtitle"))
+
+    x0, y0, width, height = 95, 118, 395, 285
+    draw_scatter_axes(
+        parts,
+        x0,
+        y0,
+        width,
+        height,
+        0.84,
+        0.92,
+        -1.0,
+        3.5,
+        [0.84, 0.86, 0.88, 0.90, 0.92],
+        [-1.0, 0.0, 1.0, 2.0, 3.0],
+        "Hit delta vs context retention",
+        "ContextRetention@10",
+    )
+    points = scatter_points(rows, [row.context_retention10 for row in rows], [row.policy_hit_delta_pp for row in rows], x0, y0, width, height, 0.84, 0.92, -1.0, 3.5)
+    zero_y = y0 + height - ((0.0 - -1.0) / 4.5) * height
+    parts.append(line(x0, zero_y, x0 + width, zero_y, "#b8c2cc", 1.2))
+    for row, (x, y) in zip(rows, points):
+        color = "#2f855a" if row.domain == "technology/search" else "#1f5f8b"
+        parts.append(circle(x, y, color))
+        parts.append(text(x, y - 10, row.scale, "tick", "middle"))
+
+    x1, y1, w1, h1 = 630, 118, 395, 285
+    draw_scatter_axes(
+        parts,
+        x1,
+        y1,
+        w1,
+        h1,
+        0.84,
+        0.92,
+        0.0,
+        22.0,
+        [0.84, 0.86, 0.88, 0.90, 0.92],
+        [0.0, 5.0, 10.0, 15.0, 20.0],
+        "Token saving vs context retention",
+        "ContextRetention@10",
+    )
+    saving_points = scatter_points(rows, [row.context_retention10 for row in rows], [row.policy_saving_pct for row in rows], x1, y1, w1, h1, 0.84, 0.92, 0.0, 22.0)
+    for row, (x, y) in zip(rows, saving_points):
+        color = "#2f855a" if row.domain == "technology/search" else "#1f5f8b"
+        parts.append(circle(x, y, color))
+        parts.append(text(x, y - 10, f"{row.policy_saving_pct:.1f}%", "tick", "middle"))
+
+    parts.append(f'<rect x="820" y="88" width="12" height="12" fill="#2f855a" />')
+    parts.append(text(838, 99, "technology/search", "legend"))
+    parts.append(f'<rect x="820" y="112" width="12" height="12" fill="#1f5f8b" />')
+    parts.append(text(838, 123, "science/search", "legend"))
+    parts.append(text(95, 468, "Caption boundary: diagnostics explain where adaptive routing is plausible; dense fallback remains necessary.", "subtitle"))
+    parts.append("</svg>")
+    (FIGURES / "figure4_geometry_to_gain.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
+
+
+def generate_feedback_adaptation_figure(rows: list[FeedbackRow]) -> None:
+    write_csv(
+        FIGURES / "figure5_feedback_adaptation_data.csv",
+        [
+            "setting",
+            "display_label",
+            "hit_at_10",
+            "token_ratio_vs_dense",
+            "dense_rate",
+            "linucb_rate",
+            "selected_cluster_hit",
+            "last_true_reward",
+        ],
+        [
+            {
+                "setting": row.setting,
+                "display_label": row.display_label,
+                "hit_at_10": f"{row.hit10:.4f}",
+                "token_ratio_vs_dense": f"{row.token_ratio:.4f}",
+                "dense_rate": f"{row.dense_rate:.4f}",
+                "linucb_rate": f"{row.linucb_rate:.4f}",
+                "selected_cluster_hit": f"{row.selected_cluster_hit:.4f}",
+                "last_true_reward": f"{row.last_true_reward:.4f}",
+            }
+            for row in rows
+        ],
+    )
+
+    parts = svg_header(1120, 520)
+    parts.append(text(40, 42, "Figure 5. Feedback-driven route adaptation", "title"))
+    parts.append(text(40, 64, "Trust-weighted feedback improves route-policy metrics and can reduce dense reliance under controlled simulation.", "subtitle"))
+    labels = [row.display_label for row in rows]
+
+    x0, y0, width, height = 80, 118, 430, 285
+    draw_category_axes(parts, labels, x0, y0, width, height, 0.0, 1.0, [0.0, 0.25, 0.50, 0.75, 1.0], "Policy learning signal")
+    cluster_points = category_points([row.selected_cluster_hit for row in rows], x0, y0, width, height, 0.0, 1.0)
+    reward_points = category_points([row.last_true_reward for row in rows], x0, y0, width, height, 0.0, 1.0)
+    parts.append(polyline(cluster_points, "#2f855a"))
+    parts.append(polyline(reward_points, "#9a6b14"))
+    for point in cluster_points:
+        parts.append(circle(*point, "#2f855a"))
+    for point in reward_points:
+        parts.append(circle(*point, "#9a6b14"))
+
+    x1, y1, w1, h1 = 625, 118, 430, 285
+    draw_category_axes(parts, labels, x1, y1, w1, h1, 0.0, 1.1, [0.0, 0.25, 0.50, 0.75, 1.0], "Route usage and context cost")
+    dense_points = category_points([row.dense_rate for row in rows], x1, y1, w1, h1, 0.0, 1.1)
+    linucb_points = category_points([row.linucb_rate for row in rows], x1, y1, w1, h1, 0.0, 1.1)
+    token_points = category_points([row.token_ratio for row in rows], x1, y1, w1, h1, 0.0, 1.1)
+    parts.append(polyline(dense_points, "#1f5f8b"))
+    parts.append(polyline(linucb_points, "#2f855a"))
+    parts.append(polyline(token_points, "#b42318"))
+    for point in dense_points:
+        parts.append(circle(*point, "#1f5f8b"))
+    for point in linucb_points:
+        parts.append(circle(*point, "#2f855a"))
+    for point in token_points:
+        parts.append(circle(*point, "#b42318"))
+
+    legend = [
+        (130, 92, "#2f855a", "Selected-cluster hit / LinUCB rate"),
+        (365, 92, "#9a6b14", "Last true reward"),
+        (690, 92, "#1f5f8b", "Dense rate"),
+        (820, 92, "#b42318", "Token ratio"),
+    ]
+    for x, y, color, label in legend:
+        parts.append(f'<rect x="{x}" y="{y - 10}" width="12" height="12" fill="{color}" />')
+        parts.append(text(x + 18, y, label, "legend"))
+    parts.append(text(80, 468, "Caption boundary: strong-noise feedback is a failure boundary; oracle feedback is an upper bound.", "subtitle"))
+    parts.append("</svg>")
+    (FIGURES / "figure5_feedback_adaptation.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
+
+
 def write_readme() -> None:
     readme = """# Draft Figure Assets
 
-Updated: 2026-06-14
+Updated: 2026-06-16
 
 These assets are draft paper figures generated from existing experiment
 artifacts. They are intended for writing and review, not as final camera-ready
@@ -491,6 +829,10 @@ venue artwork.
 - `figure3_geometry_diagnostics.svg`: LoTTE technology/search and
   science/search geometry diagnostic trend plotted by corpus chunk count.
 - `figure3_geometry_diagnostics_data.csv`: source data for Figure 3.
+- `figure4_geometry_to_gain.svg`: geometry-to-gain diagnostic scatter plot.
+- `figure4_geometry_to_gain_data.csv`: source data for Figure 4.
+- `figure5_feedback_adaptation.svg`: feedback adaptation policy-metric plot.
+- `figure5_feedback_adaptation_data.csv`: source data for Figure 5.
 
 ## Regeneration
 
@@ -509,9 +851,13 @@ def main() -> None:
     FIGURES.mkdir(parents=True, exist_ok=True)
     token_rows = read_token_rows()
     geometry_rows = read_geometry_rows()
+    geometry_gain_rows = read_geometry_gain_rows(token_rows, geometry_rows)
+    feedback_rows = read_feedback_rows()
     generate_system_diagram()
     generate_token_quality_figure(token_rows)
     generate_geometry_figure(geometry_rows)
+    generate_geometry_gain_figure(geometry_gain_rows)
+    generate_feedback_adaptation_figure(feedback_rows)
     write_readme()
 
 

@@ -376,6 +376,68 @@ def audit_figure_2(audit: Audit) -> None:
             audit.eq(f"Figure 2 {key} {domain} {scale}", "paper/full_draft/figures/figure2_token_quality_frontier_data.csv", value, fig[key])
 
 
+def audit_figure_4(audit: Audit) -> None:
+    fig2_rows = read_csv("paper/full_draft/figures/figure2_token_quality_frontier_data.csv")
+    fig3_rows = read_csv("paper/full_draft/figures/figure3_geometry_diagnostics_data.csv")
+    fig4_rows = read_csv("paper/full_draft/figures/figure4_geometry_to_gain_data.csv")
+    for fig3 in fig3_rows:
+        domain = fig3["domain"]
+        scale = fig3["scale"]
+        fig2 = find_one(fig2_rows, domain=domain, scale=scale)
+        fig4 = find_one(fig4_rows, domain=domain, scale=scale)
+        expected = {
+            "corpus_chunks": fig3["corpus_chunks"],
+            "nearest_cluster_hit_at_3": fig3["nearest_cluster_hit_at_3"],
+            "context_retention_at_10": fig3["context_retention_at_10"],
+            "policy_hit_delta_pp": fig2["policy_hit_delta_pp"],
+            "policy_saving_pct": fig2["policy_saving_pct"],
+        }
+        for key, value in expected.items():
+            audit.eq(f"Figure 4 {key} {domain} {scale}", "paper/full_draft/figures/figure4_geometry_to_gain_data.csv", value, fig4[key])
+
+
+def audit_figure_5(audit: Audit) -> None:
+    fig5_rows = read_csv("paper/full_draft/figures/figure5_feedback_adaptation_data.csv")
+    ablation_rows = read_csv("paper/experiments/results/task33_3_clean_ablation_table.csv")
+    expected_components = [
+        "No feedback gated routing",
+        "Equal noisy feedback",
+        "Trust-weighted feedback",
+        "Trust-weighted mild noise",
+        "Oracle feedback",
+    ]
+    for component in expected_components:
+        source = find_one(ablation_rows, component=component)
+        fig = find_one(fig5_rows, setting=component)
+        expected = {
+            "hit_at_10": f4(source["hit@10"]),
+            "token_ratio_vs_dense": f4(source["token_ratio_vs_dense"]),
+            "dense_rate": f4(source["dense_rate"]),
+            "linucb_rate": f4(source["linucb_primary_rate"]),
+            "selected_cluster_hit": f4(source["selected_cluster_hit"]),
+            "last_true_reward": f4(source["last_true_reward"]),
+        }
+        for key, value in expected.items():
+            audit.eq(f"Figure 5 {key} {component}", "paper/full_draft/figures/figure5_feedback_adaptation_data.csv", value, fig[key])
+
+    strong_summary = read_csv("paper/experiments/results/task33_2_feedback_trust_strong/linucb_cost_summary.csv")[0]
+    strong_context = rows_where(
+        read_csv("paper/experiments/results/task33_2_feedback_sensitivity_context_tokens.csv"),
+        source_label="trust_strong",
+    )
+    fig = find_one(fig5_rows, setting="Trust-weighted strong noise")
+    expected = {
+        "hit_at_10": f4(strong_summary["hit@10_mean"]),
+        "token_ratio_vs_dense": f4(mean_float(strong_context, "context_token_ratio_vs_baseline@10")),
+        "dense_rate": f4(strong_summary["dense_query_rate_mean"]),
+        "linucb_rate": f4(strong_summary["linucb_primary_rate_mean"]),
+        "selected_cluster_hit": f4(strong_summary["selected_cluster_hit_rate_mean"]),
+        "last_true_reward": f4(strong_summary["last_epoch_true_reward_mean"]),
+    }
+    for key, value in expected.items():
+        audit.eq(f"Figure 5 {key} Trust-weighted strong noise", "paper/full_draft/figures/figure5_feedback_adaptation_data.csv", value, fig[key])
+
+
 def audit_appendix_a(audit: Audit, manuscript: str) -> None:
     rows = read_csv("paper/experiments/results/task29_3_seed_variance_ci.csv")
     for scale in ["100k", "200k", "400k", "638k"]:
@@ -554,9 +616,15 @@ def audit_assets(audit: Audit) -> None:
         "paper/full_draft/figures/figure2_token_quality_frontier_data.csv",
         "paper/full_draft/figures/figure3_geometry_diagnostics.svg",
         "paper/full_draft/figures/figure3_geometry_diagnostics_data.csv",
+        "paper/full_draft/figures/figure4_geometry_to_gain.svg",
+        "paper/full_draft/figures/figure4_geometry_to_gain_data.csv",
+        "paper/full_draft/figures/figure5_feedback_adaptation.svg",
+        "paper/full_draft/figures/figure5_feedback_adaptation_data.csv",
         "paper/latex/figures/figure1_system_diagram.pdf",
         "paper/latex/figures/figure2_token_quality_frontier.pdf",
         "paper/latex/figures/figure3_geometry_diagnostics.pdf",
+        "paper/latex/figures/figure4_geometry_to_gain.pdf",
+        "paper/latex/figures/figure5_feedback_adaptation.pdf",
     ]
     for rel in assets:
         audit.check(f"Figure asset exists {Path(rel).name}", rel, rel, (ROOT / rel).exists())
@@ -615,6 +683,8 @@ def main() -> int:
     audit_recovery_tables(audit, manuscript)
     audit_geometry_table_and_figure(audit, manuscript)
     audit_figure_2(audit)
+    audit_figure_4(audit)
+    audit_figure_5(audit)
     audit_appendix_a(audit, manuscript)
     audit_appendix_b_c(audit, manuscript)
     audit_secondary_and_robustness(audit, manuscript)

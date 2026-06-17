@@ -13,18 +13,16 @@ The main cost result uses a calibrated token-budget policy. For each corpus scal
 \small
 \caption{Calibrated token-quality frontier on LoTTE technology/search}
 \label{tab:1}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lllrlr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Scale & Frozen budget policy & IntentWeight hit delta vs dense & IntentWeight token saving & Dense adaptive hit delta & Dense adaptive token saving \\
+Scale & Frozen budget policy & IntentWeight hit delta & IntentWeight token saving & Dense trunc. hit delta & Dense trunc. token saving \\
 \midrule
 100k & \nolinkurl{token_budget_r0.95_m4} & +0.00 pp & 6.18\% & -1.44 pp & 13.83\% \\
 200k & \nolinkurl{token_budget_r0.85_m4} & +1.20 pp & 16.00\% & -2.40 pp & 21.95\% \\
 400k & \nolinkurl{token_budget_r0.98_m4} & +2.32 pp & 6.57\% & -0.24 pp & 11.44\% \\
 638k & \nolinkurl{token_budget_r0.85_m4} & -0.08 pp & 17.53\% & -3.84 pp & 21.90\% \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 The calibrated IntentWeight policies save 6-18\% final evidence-context tokens under frozen policy selection. Dense-only adaptive truncation usually saves more tokens, but it loses $\mathrm{Hit@10}$ on every scale. This comparison shows that the effect is not merely dense top-k truncation: route confidence helps decide where a shorter context remains safe. Strict seed-level non-inferiority remains scale-dependent, so the paper should claim a bounded quality-cost frontier rather than universal statistical superiority.
@@ -36,22 +34,20 @@ The earlier conservative confidence-only policy remains useful as a stable basel
 
 We replicate the validation pattern on LoTTE science/search to test whether the effect is limited to technology/search.
 
-\begin{table}[tbp]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Cross-domain validation on LoTTE science/search}
 \label{tab:2}
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{lrrlr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Domain/scale & Dense $\mathrm{Hit@10}$ & IntentWeight fixed top-10 $\mathrm{Hit@10}$ & Hit delta & Budgeted token saving \\
+Domain/scale & Dense $\mathrm{Hit@10}$ & IntentWeight fixed Hit@10 & Hit delta & Budgeted token saving \\
 \midrule
 science/search 20k/q200 & 0.8950 & 0.9267 & +3.17 pp & 13.18-14.31\% \\
 science/search 100k & 0.8926 & 0.9077 & +1.51 pp & 17.53-20.53\% \\
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\end{tabularx}
+\end{table*}
 
 The fixed top-10 ranking-side effect transfers to a second LoTTE domain. The context-budget result is more nuanced. At 20k/q200, the frozen budgeted policies keep above-dense $\mathrm{Hit@10}$ while saving roughly 13-14\% context tokens. At 100k, the same aggressive budget saves roughly 17-21\% tokens but can introduce small $\mathrm{Hit@10}$ drops. This supports adaptive ranking across domains while showing that compression strength must be calibrated per domain and scale. Figure~\ref{fig:token-quality} includes both the technology/search scale-up and the science/search budgeted validation points.
 
@@ -65,23 +61,39 @@ The component ablation summarizes which parts of the system provide the quality 
 \small
 \caption{LoTTE 100k component ablation. The no-feedback gated row disables learning; its high $\mathrm{Hit@10}$ reflects full dense fallback ($\mathrm{dense\ rate}=1.0$), not learned route efficiency}
 \label{tab:3}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llrrrrrrrr}
+\textit{Quality and context-cost metrics}\\[-0.2em]
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Component & Role & $\mathrm{Hit@10}$ & $\mathrm{EvidenceRecall@10}$ & $\mathrm{Tokens@10}$ & Token ratio & Dense rate & LinUCB rate & Cluster hit & Last reward \\
+Component & Role & $\mathrm{Hit@10}$ & Evid. recall@10 & Tokens@10 & Token ratio \\
 \midrule
-Dense-only & Quality floor & 0.8674 & 0.7026 & 1472.39 & 1.0000 & - & - & - & - \\
-BM25-only & Lexical baseline & 0.7232 & 0.5240 & 1745.12 & 1.1852 & - & - & - & - \\
-Dense+BM25 hybrid & Static fusion & 0.8624 & 0.6848 & 1705.46 & 1.1583 & - & - & - & - \\
-No feedback gated & Full dense fallback, no learning & 0.8826 & 0.7246 & 1561.15 & 1.0603 & 1.0000 & 0.0000 & 0.1553 & 0.1516 \\
-Equal noisy feedback & No trust weighting & 0.8641 & 0.6604 & 1423.84 & 0.9670 & 0.7480 & 0.2520 & 0.5979 & 0.7517 \\
-Trust-weighted feedback & Default trust scoring & 0.8641 & 0.6661 & 1399.51 & 0.9505 & 0.6708 & 0.3292 & 0.7223 & 0.8328 \\
-Trust-weighted mild noise & Best controlled-noise point & 0.8775 & 0.6795 & 1362.68 & 0.9255 & 0.5826 & 0.4174 & 0.7908 & 0.8820 \\
-Conservative final policy & Confidence-only baseline & 0.8652 & 0.6737 & 1401.24 & 0.9517 & 0.6708 & 0.3292 & 0.7223 & 0.8328 \\
-Oracle feedback & Upper bound & 0.8758 & 0.6768 & 1327.03 & 0.9013 & 0.4345 & 0.5655 & 0.8386 & 0.8932 \\
+Dense-only & Quality floor & 0.8674 & 0.7026 & 1472.39 & 1.0000 \\
+BM25-only & Lexical baseline & 0.7232 & 0.5240 & 1745.12 & 1.1852 \\
+Dense + BM25 hybrid & Static fusion & 0.8624 & 0.6848 & 1705.46 & 1.1583 \\
+No feedback gated & Full dense fallback, no learning & 0.8826 & 0.7246 & 1561.15 & 1.0603 \\
+Equal noisy feedback & No trust weighting & 0.8641 & 0.6604 & 1423.84 & 0.9670 \\
+Trust-weighted feedback & Default trust scoring & 0.8641 & 0.6661 & 1399.51 & 0.9505 \\
+Trust-weighted mild noise & Best controlled-noise point & 0.8775 & 0.6795 & 1362.68 & 0.9255 \\
+Conservative final policy & Confidence-only baseline & 0.8652 & 0.6737 & 1401.24 & 0.9517 \\
+Oracle feedback & Upper bound & 0.8758 & 0.6768 & 1327.03 & 0.9013 \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
+\vspace{0.45em}
+\textit{Route-policy metrics}\\[-0.2em]
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\toprule
+Component & Dense rate & LinUCB rate & Cluster hit & Last reward \\
+\midrule
+Dense-only & - & - & - & - \\
+BM25-only & - & - & - & - \\
+Dense + BM25 hybrid & - & - & - & - \\
+No feedback gated & 1.0000 & 0.0000 & 0.1553 & 0.1516 \\
+Equal noisy feedback & 0.7480 & 0.2520 & 0.5979 & 0.7517 \\
+Trust-weighted feedback & 0.6708 & 0.3292 & 0.7223 & 0.8328 \\
+Trust-weighted mild noise & 0.5826 & 0.4174 & 0.7908 & 0.8820 \\
+Conservative final policy & 0.6708 & 0.3292 & 0.7223 & 0.8328 \\
+Oracle feedback & 0.4345 & 0.5655 & 0.8386 & 0.8932 \\
+\bottomrule
+\end{tabularx}
 \end{table*}
 
 Dense-only remains the quality floor. BM25-only is weaker as a standalone retriever, and static dense+BM25 hybrid is near dense but uses more final context tokens. Trust-weighted feedback improves policy internals relative to equal noisy feedback, especially selected-cluster hit and last true reward. The oracle row shows the upper bound under clean feedback.
@@ -96,8 +108,7 @@ Final $\mathrm{Hit@10}$ can be saturated by dense and BM25 rescue routes, making
 \small
 \caption{Feedback-driven policy adaptation on LoTTE 100k}
 \label{tab:4}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Feedback mode & $\mathrm{Hit@10}$ & Token ratio & Dense rate & LinUCB rate & Selected-cluster hit & Last true reward \\
 \midrule
@@ -106,31 +117,28 @@ Trust-weighted feedback & 0.8641 & 0.9505 & 0.6708 & 0.3292 & 0.7223 & 0.8328 \\
 Trust-weighted mild noise & 0.8775 & 0.9255 & 0.5826 & 0.4174 & 0.7908 & 0.8820 \\
 Oracle feedback & 0.8758 & 0.9013 & 0.4345 & 0.5655 & 0.8386 & 0.8932 \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
-Under default noisy feedback, trust weighting improves selected-cluster hit from $0.5979$ to $0.7223$ and last true reward from $0.7517$ to $0.8328$ relative to equal noisy feedback. Under mild trust-weighted noise, selected-cluster hit reaches $0.7908$, last true reward reaches $0.8820$, dense rate falls to $0.5826$, and final context token ratio falls to $0.9255\times$.
+Under default noisy feedback, trust weighting improves selected-cluster hit from $0.5979$ to $0.7223$ and last true reward from $0.7517$ to $0.8328$ relative to equal noisy feedback. Under mild trust-weighted noise, selected-cluster hit reaches $0.7908$, last true reward reaches $0.8820$, dense rate falls to $0.5826$, and final context token ratio falls to $0.9255\times$. Figure 5 visualizes the same policy-field effect: feedback quality changes the learned route signal before it becomes visible as a final fused-ranking gain.
 
 Feedback also provides a recovery path for tail queries harmed by aggressive context budgets. A query is affected when dense top-10 retrieves at least one GT evidence chunk but the budgeted IntentWeight context misses. Same-query retry is a post-feedback repair setting, not a first-pass IID ranking claim.
 
-\begin{table}[tbp]
+\begin{table*}[tbp]
 \centering
 \small
 \caption{Conservative post-feedback recovery on affected LoTTE 100k queries}
 \label{tab:5}
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{lrrrr}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
-Domain & Affected queries & Recovered & Recovery rate & Avg token saving vs dense \\
+Domain & Affected queries & Recovered & Recovery rate & Avg token saving \\
 \midrule
 science/search 100k & 34 & 14 & 41.18\% & 5.76\% \\
 technology/search 100k & 42 & 9 & 21.43\% & 11.75\% \\
 pooled & 76 & 23 & 30.26\% & - \\
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\end{tabularx}
+\end{table*}
 
 The pooled conservative retry recovery rate is approximately 30\%, with an approximate Wilson interval around 21-41\%. This supports a practical recovery claim: budget-induced failures are not always permanent, and feedback can repair a meaningful fraction of them. A stricter calibration-to-test variant has only small, domain-dependent effects, so feedback should be framed as a controlled fallback trigger rather than as unconditional global reranking.
 
@@ -144,10 +152,9 @@ The geometry scale diagnostic validates whether LoTTE retains usable local geome
 \small
 \caption{LoTTE geometry diagnostics across domain and corpus scale}
 \label{tab:6}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrl}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
-Domain/scale & $\mathrm{PCAdim90}$ sample & $\mathrm{PCAvar@64}$ sample & $\mathrm{NearestClusterHit@3}$ & $\mathrm{ContextRetention@10}$ & Associated hit delta \\
+Domain/scale & PCA dim90 & PCA var@64 & Cluster hit@3 & Context ret.@10 & Associated hit delta \\
 \midrule
 technology/search 100k & 182 & 0.6437 & 0.8870 & 0.9033 & -0.22 pp \\
 technology/search 200k & 186 & 0.6292 & 0.8697 & 0.8947 & +2.80 pp \\
@@ -156,13 +163,12 @@ technology/search 638k & 196 & 0.5867 & 0.9016 & 0.8571 & +1.85 pp \\
 science/search 20k/q200 & 180 & 0.6377 & 0.9083 & 0.8939 & +3.17 pp \\
 science/search 100k & 177 & 0.6459 & 0.8574 & 0.8628 & +1.51 pp \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \end{table*}
 
 $\mathrm{NearestClusterHit@3}$ remains high across both LoTTE domains, suggesting local geometry is useful for routing. On technology/search, $\mathrm{PCAdim90}$ increases and $\mathrm{PCAvar@64}$ decreases with scale, suggesting the representation geometry becomes more complex. Science/search also shows high local routing signal, but the 100k row has lower cluster-hit and context-retention diagnostics than the 20k/q200 slice, matching the observed need for domain-specific compression calibration. Context retention declines with scale, showing that geometry alone should not replace dense retrieval.
 
-These diagnostics support the piecewise relevance-manifold framing as a useful motivation and diagnostic, not as a theorem. Figure~\ref{fig:geometry} visualizes the same trend.
+These diagnostics support the piecewise relevance-manifold framing as a useful motivation and diagnostic, not as a theorem. Figure~\ref{fig:geometry} visualizes the same trend. Figure 4 further connects the geometry diagnostics to the observed quality-cost frontier. The relationship is informative but not deterministic, which is why IntentWeight treats geometry as a routing signal rather than as a standalone retrieval rule.
 
 \subsection{Boundary, Robustness, and Downstream Checks}
 \label{sec:06-results:boundary-robustness-and-downstream-checks}

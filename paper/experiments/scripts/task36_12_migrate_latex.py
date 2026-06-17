@@ -23,6 +23,27 @@ HEADING_RE = re.compile(r"^(#{1,3})\s+(.+)$")
 PLACEHOLDER_RE = re.compile(r"@@LATEX(\d+)@@")
 NUMERIC_CELL_RE = re.compile(r"^[\[\]\d\s.,+\-%x]+$")
 
+TABLE_DISPLAY_ALIASES = {
+    r"$\mathrm{EvidenceRecall@10}$": "Evid. recall@10",
+    r"$\mathrm{Tokens@10}$": "Tokens@10",
+    r"Avg $\mathrm{Tokens@10}$": "Avg tokens@10",
+    r"$\mathrm{NearestClusterHit@3}$": "Cluster hit@3",
+    r"$\mathrm{ContextRetention@10}$": "Context ret.@10",
+    r"$\mathrm{PCAdim90}$ sample": "PCA dim90",
+    r"$\mathrm{PCAvar@64}$ sample": "PCA var@64",
+    r"IntentWeight fixed top-10 $\mathrm{Hit@10}$": "IntentWeight fixed Hit@10",
+    "IntentWeight hit delta vs dense": "IntentWeight hit delta",
+    "IntentWeight token saving": "IntentWeight token saving",
+    "Dense adaptive hit delta": "Dense trunc. hit delta",
+    "Dense adaptive token saving": "Dense trunc. token saving",
+    "Avg token saving vs dense": "Avg token saving",
+    "Prompt context-token proxy ratio": "Prompt token ratio",
+    "Token ratio vs dense": "Token ratio",
+    "Mean hit delta versus budgeted-before-feedback": "Mean hit delta",
+    "Frozen test recovery policy": "Recovery policy",
+    "Dense+BM25 hybrid": "Dense + BM25 hybrid",
+}
+
 CHAPTERS = [
     ("02_introduction.md", "introduction.tex", False),
     ("03_related_work.md", "related_work.tex", False),
@@ -87,6 +108,13 @@ def inline(text: str) -> str:
     return PLACEHOLDER_RE.sub(lambda match: placeholders[int(match.group(1))], escaped)
 
 
+def table_display_cell(cell: str) -> str:
+    value = TABLE_DISPLAY_ALIASES.get(cell, cell)
+    if value == cell:
+        value = value.replace("Dense+BM25", "Dense + BM25")
+    return inline(value)
+
+
 def slug(value: str) -> str:
     value = re.sub(r"^(?:\d+(?:\.\d+)*|[A-Z](?:\.\d+)?)\.?\s+", "", value)
     value = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
@@ -111,11 +139,13 @@ def emit_table(rows: list[str], caption: tuple[str, str] | None) -> list[str]:
     if any(len(row) != columns for row in body):
         raise ValueError("Markdown table has inconsistent column counts")
 
-    text_heavy = any(len(cell) > 45 for row in body for cell in row)
-    wide = columns > 5 or text_heavy
+    text_heavy = any(len(cell) > 45 for row in [header, *body] for cell in row)
+    wide = columns >= 5 or text_heavy
     environment = "table*" if wide else "table"
     width = r"\textwidth" if wide else r"\linewidth"
     identifier, title_text = caption or ("generated", "Migrated result table.")
+    if identifier == "3" and columns == 10:
+        return emit_component_ablation_table(cells, identifier, title_text)
     numeric_columns = [
         all(NUMERIC_CELL_RE.fullmatch(row[index]) for row in body)
         for index in range(columns)
@@ -128,25 +158,76 @@ def emit_table(rows: list[str], caption: tuple[str, str] | None) -> list[str]:
         rf"\caption{{{inline(title_text.rstrip('.'))}}}",
         rf"\label{{{table_label(identifier)}}}",
     ]
-    if text_heavy:
-        column_spec = "".join("r" if numeric else "X" for numeric in numeric_columns)
+    if wide:
+        column_spec = "".join(
+            r">{\raggedleft\arraybackslash}X" if numeric else r">{\raggedright\arraybackslash}X"
+            for numeric in numeric_columns
+        )
         result.extend([rf"\begin{{tabularx}}{{{width}}}{{{column_spec}}}"])
     else:
-        result.extend([rf"\resizebox{{{width}}}{{!}}{{%", rf"\begin{{tabular}}{{{column_spec}}}"])
+        result.extend([rf"\begin{{tabular}}{{{column_spec}}}"])
     result.extend(
         [
         r"\toprule",
-        " & ".join(inline(cell) for cell in header) + r" \\",
+        " & ".join(table_display_cell(cell) for cell in header) + r" \\",
         r"\midrule",
         ]
     )
-    result.extend(" & ".join(inline(cell) for cell in row) + r" \\" for row in body)
+    result.extend(" & ".join(table_display_cell(cell) for cell in row) + r" \\" for row in body)
     result.append(r"\bottomrule")
-    if text_heavy:
+    if wide:
         result.append(r"\end{tabularx}")
     else:
-        result.extend([r"\end{tabular}%", r"}"])
+        result.append(r"\end{tabular}")
     result.extend([rf"\end{{{environment}}}", ""])
+    return result
+
+
+def emit_component_ablation_table(cells: list[list[str]], identifier: str, title_text: str) -> list[str]:
+    header = cells[0]
+    body = cells[2:]
+    panels = [
+        (
+            "Quality and context-cost metrics",
+            [0, 1, 2, 3, 4, 5],
+            r">{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X"
+            r">{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X"
+            r">{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X",
+        ),
+        (
+            "Route-policy metrics",
+            [0, 6, 7, 8, 9],
+            r">{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X"
+            r">{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X"
+            r">{\raggedleft\arraybackslash}X",
+        ),
+    ]
+    result = [
+        r"\begin{table*}[tbp]",
+        r"\centering",
+        r"\small",
+        rf"\caption{{{inline(title_text.rstrip('.'))}}}",
+        rf"\label{{{table_label(identifier)}}}",
+    ]
+    for panel_index, (panel_title, indices, column_spec) in enumerate(panels):
+        if panel_index:
+            result.append(r"\vspace{0.45em}")
+        result.append(rf"\textit{{{panel_title}}}\\[-0.2em]")
+        result.append(rf"\begin{{tabularx}}{{\textwidth}}{{{column_spec}}}")
+        result.extend(
+            [
+                r"\toprule",
+                " & ".join(table_display_cell(header[index]) for index in indices) + r" \\",
+                r"\midrule",
+            ]
+        )
+        result.extend(
+            " & ".join(table_display_cell(row[index]) for index in indices) + r" \\"
+            for row in body
+        )
+        result.append(r"\bottomrule")
+        result.append(r"\end{tabularx}")
+    result.extend([r"\end{table*}", ""])
     return result
 
 

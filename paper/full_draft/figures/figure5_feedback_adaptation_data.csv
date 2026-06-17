@@ -1,0 +1,7 @@
+setting,display_label,hit_at_10,token_ratio_vs_dense,dense_rate,linucb_rate,selected_cluster_hit,last_true_reward
+No feedback gated routing,No feedback,0.8826,1.0603,1.0000,0.0000,0.1553,0.1516
+Equal noisy feedback,Equal noisy,0.8641,0.9670,0.7480,0.2520,0.5979,0.7517
+Trust-weighted feedback,Trust-weighted,0.8641,0.9505,0.6708,0.3292,0.7223,0.8328
+Trust-weighted mild noise,Trust mild,0.8775,0.9255,0.5826,0.4174,0.7908,0.8820
+Trust-weighted strong noise,Strong noise,0.8479,0.9837,0.8670,0.1330,0.4813,0.5912
+Oracle feedback,Oracle,0.8758,0.9013,0.4345,0.5655,0.8386,0.8932

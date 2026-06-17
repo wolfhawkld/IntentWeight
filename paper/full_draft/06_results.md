@@ -101,6 +101,8 @@ relative to equal noisy feedback. Under mild trust-weighted noise,
 selected-cluster hit reaches $0.7908$, last true reward reaches $0.8820$,
 dense rate falls to $0.5826$, and final context token ratio falls to
 $0.9255\times$.
+Figure 5 visualizes the same policy-field effect: feedback quality changes the
+learned route signal before it becomes visible as a final fused-ranking gain.
 
 Feedback also provides a recovery path for tail queries harmed by aggressive
 context budgets. A query is affected when dense top-10 retrieves at least one
@@ -150,6 +152,10 @@ retrieval.
 
 These diagnostics support the piecewise relevance-manifold framing as a useful
 motivation and diagnostic, not as a theorem. Figure 3 visualizes the same trend.
+Figure 4 further connects the geometry diagnostics to the observed
+quality-cost frontier. The relationship is informative but not deterministic,
+which is why IntentWeight treats geometry as a routing signal rather than as a
+standalone retrieval rule.
 
 ## 5.6 Boundary, Robustness, and Downstream Checks
 

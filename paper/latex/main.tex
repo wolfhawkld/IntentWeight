@@ -74,6 +74,26 @@ points, while context retention and PCA concentration vary with corpus scale.}
 \label{fig:geometry}
 \end{figure*}
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figure4_geometry_to_gain.pdf}
+\caption{Geometry-to-gain diagnostic. Context retention is useful for
+calibrating when local routing can preserve quality and save context tokens,
+but it is not sufficient by itself; dense fallback remains part of the
+controller.}
+\label{fig:geometry-gain}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figure5_feedback_adaptation.pdf}
+\caption{Feedback-driven route adaptation on LoTTE technology/search 100k.
+Trust-weighted simulated feedback improves route-policy metrics and reduces
+dense reliance under controlled noise, while strong-noise feedback marks a
+failure boundary and oracle feedback marks an upper bound.}
+\label{fig:feedback-adaptation}
+\end{figure*}
+
 \input{sections/discussion}
 \input{sections/conclusion}
 \input{sections/limitations}

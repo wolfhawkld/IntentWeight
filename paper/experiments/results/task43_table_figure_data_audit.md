@@ -7,8 +7,8 @@ Task40 same-query recovery token savings are checked with the same
 seed-level average used in `task40_feedback_recovery_summary.md`, not an
 affected-query-weighted average.
 
-- Checks: 166
-- Passed: 166
+- Checks: 238
+- Passed: 238
 - Failed: 0
 
 ## Full Check Log
@@ -20,9 +20,15 @@ affected-query-weighted average.
 | PASS | Figure asset exists figure2_token_quality_frontier_data.csv | `paper/full_draft/figures/figure2_token_quality_frontier_data.csv` | `paper/full_draft/figures/figure2_token_quality_frontier_data.csv` |  |
 | PASS | Figure asset exists figure3_geometry_diagnostics.svg | `paper/full_draft/figures/figure3_geometry_diagnostics.svg` | `paper/full_draft/figures/figure3_geometry_diagnostics.svg` |  |
 | PASS | Figure asset exists figure3_geometry_diagnostics_data.csv | `paper/full_draft/figures/figure3_geometry_diagnostics_data.csv` | `paper/full_draft/figures/figure3_geometry_diagnostics_data.csv` |  |
+| PASS | Figure asset exists figure4_geometry_to_gain.svg | `paper/full_draft/figures/figure4_geometry_to_gain.svg` | `paper/full_draft/figures/figure4_geometry_to_gain.svg` |  |
+| PASS | Figure asset exists figure4_geometry_to_gain_data.csv | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` |  |
+| PASS | Figure asset exists figure5_feedback_adaptation.svg | `paper/full_draft/figures/figure5_feedback_adaptation.svg` | `paper/full_draft/figures/figure5_feedback_adaptation.svg` |  |
+| PASS | Figure asset exists figure5_feedback_adaptation_data.csv | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` |  |
 | PASS | Figure asset exists figure1_system_diagram.pdf | `paper/latex/figures/figure1_system_diagram.pdf` | `paper/latex/figures/figure1_system_diagram.pdf` |  |
 | PASS | Figure asset exists figure2_token_quality_frontier.pdf | `paper/latex/figures/figure2_token_quality_frontier.pdf` | `paper/latex/figures/figure2_token_quality_frontier.pdf` |  |
 | PASS | Figure asset exists figure3_geometry_diagnostics.pdf | `paper/latex/figures/figure3_geometry_diagnostics.pdf` | `paper/latex/figures/figure3_geometry_diagnostics.pdf` |  |
+| PASS | Figure asset exists figure4_geometry_to_gain.pdf | `paper/latex/figures/figure4_geometry_to_gain.pdf` | `paper/latex/figures/figure4_geometry_to_gain.pdf` |  |
+| PASS | Figure asset exists figure5_feedback_adaptation.pdf | `paper/latex/figures/figure5_feedback_adaptation.pdf` | `paper/latex/figures/figure5_feedback_adaptation.pdf` |  |
 | PASS | Table 1 row 100k | `paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv` | `\| 100k \| `token_budget_r0.95_m4` \| +0.00 pp \| 6.18% \| -1.44 pp \| 13.83% \|` |  |
 | PASS | Appendix G1 row 100k | `paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv` | `\| 100k \| `token_budget_r0.95_m4` \| True \| +0.00 pp \| 6.18% \| -1.44 pp \| 13.83% \|` |  |
 | PASS | Table 1 row 200k | `paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv` | `\| 200k \| `token_budget_r0.85_m4` \| +1.20 pp \| 16.00% \| -2.40 pp \| 21.95% \|` |  |
@@ -137,6 +143,72 @@ affected-query-weighted average.
 | PASS | Figure 2 policy_saving_pct science/search 100k | `paper/full_draft/figures/figure2_token_quality_frontier_data.csv` | `19.09` | actual=19.09 |
 | PASS | Figure 2 dense_adaptive_hit_delta_pp science/search 100k | `paper/full_draft/figures/figure2_token_quality_frontier_data.csv` | `-1.44` | actual=-1.44 |
 | PASS | Figure 2 dense_adaptive_saving_pct science/search 100k | `paper/full_draft/figures/figure2_token_quality_frontier_data.csv` | `22.60` | actual=22.60 |
+| PASS | Figure 4 corpus_chunks technology/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `101311` | actual=101311 |
+| PASS | Figure 4 nearest_cluster_hit_at_3 technology/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8870` | actual=0.8870 |
+| PASS | Figure 4 context_retention_at_10 technology/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.9033` | actual=0.9033 |
+| PASS | Figure 4 policy_hit_delta_pp technology/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.00` | actual=0.00 |
+| PASS | Figure 4 policy_saving_pct technology/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `6.18` | actual=6.18 |
+| PASS | Figure 4 corpus_chunks technology/search 200k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `201010` | actual=201010 |
+| PASS | Figure 4 nearest_cluster_hit_at_3 technology/search 200k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8697` | actual=0.8697 |
+| PASS | Figure 4 context_retention_at_10 technology/search 200k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8947` | actual=0.8947 |
+| PASS | Figure 4 policy_hit_delta_pp technology/search 200k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `1.20` | actual=1.20 |
+| PASS | Figure 4 policy_saving_pct technology/search 200k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `16.00` | actual=16.00 |
+| PASS | Figure 4 corpus_chunks technology/search 400k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `400674` | actual=400674 |
+| PASS | Figure 4 nearest_cluster_hit_at_3 technology/search 400k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.9016` | actual=0.9016 |
+| PASS | Figure 4 context_retention_at_10 technology/search 400k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8826` | actual=0.8826 |
+| PASS | Figure 4 policy_hit_delta_pp technology/search 400k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `2.32` | actual=2.32 |
+| PASS | Figure 4 policy_saving_pct technology/search 400k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `6.57` | actual=6.57 |
+| PASS | Figure 4 corpus_chunks technology/search 638k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `638509` | actual=638509 |
+| PASS | Figure 4 nearest_cluster_hit_at_3 technology/search 638k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.9016` | actual=0.9016 |
+| PASS | Figure 4 context_retention_at_10 technology/search 638k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8571` | actual=0.8571 |
+| PASS | Figure 4 policy_hit_delta_pp technology/search 638k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `-0.08` | actual=-0.08 |
+| PASS | Figure 4 policy_saving_pct technology/search 638k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `17.53` | actual=17.53 |
+| PASS | Figure 4 corpus_chunks science/search 20k/q200 | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `20490` | actual=20490 |
+| PASS | Figure 4 nearest_cluster_hit_at_3 science/search 20k/q200 | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.9083` | actual=0.9083 |
+| PASS | Figure 4 context_retention_at_10 science/search 20k/q200 | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8939` | actual=0.8939 |
+| PASS | Figure 4 policy_hit_delta_pp science/search 20k/q200 | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `1.67` | actual=1.67 |
+| PASS | Figure 4 policy_saving_pct science/search 20k/q200 | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `13.80` | actual=13.80 |
+| PASS | Figure 4 corpus_chunks science/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `101187` | actual=101187 |
+| PASS | Figure 4 nearest_cluster_hit_at_3 science/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8574` | actual=0.8574 |
+| PASS | Figure 4 context_retention_at_10 science/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `0.8628` | actual=0.8628 |
+| PASS | Figure 4 policy_hit_delta_pp science/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `-0.72` | actual=-0.72 |
+| PASS | Figure 4 policy_saving_pct science/search 100k | `paper/full_draft/figures/figure4_geometry_to_gain_data.csv` | `19.09` | actual=19.09 |
+| PASS | Figure 5 hit_at_10 No feedback gated routing | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8826` | actual=0.8826 |
+| PASS | Figure 5 token_ratio_vs_dense No feedback gated routing | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `1.0603` | actual=1.0603 |
+| PASS | Figure 5 dense_rate No feedback gated routing | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `1.0000` | actual=1.0000 |
+| PASS | Figure 5 linucb_rate No feedback gated routing | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.0000` | actual=0.0000 |
+| PASS | Figure 5 selected_cluster_hit No feedback gated routing | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.1553` | actual=0.1553 |
+| PASS | Figure 5 last_true_reward No feedback gated routing | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.1516` | actual=0.1516 |
+| PASS | Figure 5 hit_at_10 Equal noisy feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8641` | actual=0.8641 |
+| PASS | Figure 5 token_ratio_vs_dense Equal noisy feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.9670` | actual=0.9670 |
+| PASS | Figure 5 dense_rate Equal noisy feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.7480` | actual=0.7480 |
+| PASS | Figure 5 linucb_rate Equal noisy feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.2520` | actual=0.2520 |
+| PASS | Figure 5 selected_cluster_hit Equal noisy feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.5979` | actual=0.5979 |
+| PASS | Figure 5 last_true_reward Equal noisy feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.7517` | actual=0.7517 |
+| PASS | Figure 5 hit_at_10 Trust-weighted feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8641` | actual=0.8641 |
+| PASS | Figure 5 token_ratio_vs_dense Trust-weighted feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.9505` | actual=0.9505 |
+| PASS | Figure 5 dense_rate Trust-weighted feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.6708` | actual=0.6708 |
+| PASS | Figure 5 linucb_rate Trust-weighted feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.3292` | actual=0.3292 |
+| PASS | Figure 5 selected_cluster_hit Trust-weighted feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.7223` | actual=0.7223 |
+| PASS | Figure 5 last_true_reward Trust-weighted feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8328` | actual=0.8328 |
+| PASS | Figure 5 hit_at_10 Trust-weighted mild noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8775` | actual=0.8775 |
+| PASS | Figure 5 token_ratio_vs_dense Trust-weighted mild noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.9255` | actual=0.9255 |
+| PASS | Figure 5 dense_rate Trust-weighted mild noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.5826` | actual=0.5826 |
+| PASS | Figure 5 linucb_rate Trust-weighted mild noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.4174` | actual=0.4174 |
+| PASS | Figure 5 selected_cluster_hit Trust-weighted mild noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.7908` | actual=0.7908 |
+| PASS | Figure 5 last_true_reward Trust-weighted mild noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8820` | actual=0.8820 |
+| PASS | Figure 5 hit_at_10 Oracle feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8758` | actual=0.8758 |
+| PASS | Figure 5 token_ratio_vs_dense Oracle feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.9013` | actual=0.9013 |
+| PASS | Figure 5 dense_rate Oracle feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.4345` | actual=0.4345 |
+| PASS | Figure 5 linucb_rate Oracle feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.5655` | actual=0.5655 |
+| PASS | Figure 5 selected_cluster_hit Oracle feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8386` | actual=0.8386 |
+| PASS | Figure 5 last_true_reward Oracle feedback | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8932` | actual=0.8932 |
+| PASS | Figure 5 hit_at_10 Trust-weighted strong noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8479` | actual=0.8479 |
+| PASS | Figure 5 token_ratio_vs_dense Trust-weighted strong noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.9837` | actual=0.9837 |
+| PASS | Figure 5 dense_rate Trust-weighted strong noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.8670` | actual=0.8670 |
+| PASS | Figure 5 linucb_rate Trust-weighted strong noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.1330` | actual=0.1330 |
+| PASS | Figure 5 selected_cluster_hit Trust-weighted strong noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.4813` | actual=0.4813 |
+| PASS | Figure 5 last_true_reward Trust-weighted strong noise | `paper/full_draft/figures/figure5_feedback_adaptation_data.csv` | `0.5912` | actual=0.5912 |
 | PASS | Appendix A1 row 100k | `paper/experiments/results/task29_3_seed_variance_ci.csv` | `\| 100k \| 0.8674 \| 0.8652 \| 0.0035 \| [0.8565, 0.8739] \| -0.0022 \|` |  |
 | PASS | Appendix A2 row 100k | `paper/experiments/results/task29_3_seed_variance_ci.csv` | `\| 100k \| 1472.39 \| 1401.24 \| 11.49 \| [1372.70, 1429.79] \| 4.83% \| [2.89%, 6.77%] \|` |  |
 | PASS | Appendix A1 row 200k | `paper/experiments/results/task29_3_seed_variance_ci.csv` | `\| 200k \| 0.7970 \| 0.8249 \| 0.0079 \| [0.8052, 0.8446] \| +0.0280 \|` |  |
