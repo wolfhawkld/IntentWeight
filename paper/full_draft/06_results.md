@@ -9,20 +9,35 @@ relative to dense top-10, not retrieval-side candidate count.
 
 **Table 1. Calibrated token-quality frontier on LoTTE technology/search.**
 
-| Scale | Frozen budget policy | IntentWeight hit delta vs dense | IntentWeight token saving | Dense adaptive hit delta | Dense adaptive token saving |
-|---|---|---:|---:|---:|---:|
-| 100k | `token_budget_r0.95_m4` | +0.00 pp | 6.18% | -1.44 pp | 13.83% |
-| 200k | `token_budget_r0.85_m4` | +1.20 pp | 16.00% | -2.40 pp | 21.95% |
-| 400k | `token_budget_r0.98_m4` | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
-| 638k | `token_budget_r0.85_m4` | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
+| Scale | Frozen policy | Calib. eligible | IW hit delta | NI seeds | IW token saving | Dense-trunc hit delta | Dense-trunc token saving |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 100k | `token_budget_r0.95_m4` | True | +0.00 pp | 0/3 | 6.18% | -1.44 pp | 13.83% |
+| 200k | `token_budget_r0.85_m4` | True | +1.20 pp | 1/3 | 16.00% | -2.40 pp | 21.95% |
+| 400k | `token_budget_r0.98_m4` | False / pending follow-up | +2.32 pp | 3/3 | 6.57% | -0.24 pp | 11.44% |
+| 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 0/3 | 17.53% | -3.84 pp | 21.90% |
 
-The calibrated IntentWeight policies save 6-18% final evidence-context tokens
-under frozen policy selection. Dense-only adaptive truncation usually saves
-more tokens, but it loses $\mathrm{Hit@10}$ on every scale. This comparison
-shows that the effect is not merely dense top-k truncation: route confidence
-helps decide where a shorter context remains safe. Strict seed-level
-non-inferiority remains scale-dependent, so the paper should claim a bounded
-quality-cost frontier rather than universal statistical superiority.
+The calibration-eligible operating points at 100k, 200k, and 638k save 6-18%
+final evidence-context tokens under frozen policy selection. The 400k policy is
+reported as a diagnostic frontier point and marked for follow-up: no candidate
+satisfied the zero-observed-hit-drop calibration gate in the current run,
+although the frozen test result is positive and all three seeds pass the
+stricter 1pp non-inferiority check. This distinction prevents the table from
+overstating calibration robustness while preserving 400k as a useful but
+currently incomplete scale point.
+
+Dense-only adaptive truncation usually saves more tokens, but it loses
+$\mathrm{Hit@10}$ on every scale. This comparison shows that the effect is not
+merely dense top-k truncation: route confidence helps decide where a shorter
+context remains safe. Strict seed-level non-inferiority remains scale-dependent,
+so the paper should claim a bounded quality-cost frontier rather than universal
+statistical superiority.
+
+The paired tests are query-level comparisons against dense top-10. They use
+bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context
+token savings, and McNemar-style win/loss counts for hit differences. The
+paired evidence supports token-cost superiority more consistently than strict
+quality non-inferiority: all calibrated policies reduce final context tokens,
+whereas the quality CI criterion is conservative and scale-dependent.
 
 The earlier conservative confidence-only policy remains useful as a stable
 baseline. It reduces final retrieved context tokens by 4.7-5.3% across LoTTE

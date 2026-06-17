@@ -1,6 +1,6 @@
 # IntentWeight Paper Core Narrative
 
-Updated: 2026-06-11
+Updated: 2026-06-17
 
 本文档用于后续写作纠偏：当论文继续扩写、改标题、调图表或回应审稿意见时，优先对照这里的核心叙事，避免重新滑回“工程 task 汇报”或“泛化过度”的表达。
 
@@ -55,7 +55,7 @@ IntentWeight 不替代 dense retrieval，而是在 dense recall floor 上做 ada
 论文主证据应按以下顺序组织：
 
 1. **Main calibrated token-quality frontier**:
-   冻结 budget policy 后仍可节省 6-18% evidence-context tokens，并优于 dense-only adaptive truncation 的 Hit@10，说明不是简单 dense top-k 截断，也不是纯测试集调参。
+   在 calibration/test 协议下，100k、200k、638k 的 calibration-eligible operating points 可节省 6-18% evidence-context tokens，并避免 dense-only adaptive truncation 的明显 Hit@10 损失。400k 当前 frozen-test 结果为正，但 calibration eligibility 未通过，应标记为 diagnostic / pending follow-up，不能混入最强主张。
 
 2. **Conservative confidence-only baseline**:
    在 100k-638k corpus chunks 上，保守 context policy 减少约 4.7-5.3% final retrieved context tokens，并保持 dense-level Hit@10。该结果作为稳定 baseline 和 seed-diagnostic 支撑，主结果应以前一项 calibrated policy 为核心。

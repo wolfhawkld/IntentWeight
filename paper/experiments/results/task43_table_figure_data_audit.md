@@ -29,13 +29,13 @@ affected-query-weighted average.
 | PASS | Figure asset exists figure3_geometry_diagnostics.pdf | `paper/latex/figures/figure3_geometry_diagnostics.pdf` | `paper/latex/figures/figure3_geometry_diagnostics.pdf` |  |
 | PASS | Figure asset exists figure4_geometry_to_gain.pdf | `paper/latex/figures/figure4_geometry_to_gain.pdf` | `paper/latex/figures/figure4_geometry_to_gain.pdf` |  |
 | PASS | Figure asset exists figure5_feedback_adaptation.pdf | `paper/latex/figures/figure5_feedback_adaptation.pdf` | `paper/latex/figures/figure5_feedback_adaptation.pdf` |  |
-| PASS | Table 1 row 100k | `paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv` | `\| 100k \| `token_budget_r0.95_m4` \| +0.00 pp \| 6.18% \| -1.44 pp \| 13.83% \|` |  |
+| PASS | Table 1 row 100k | `paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv` | `\| 100k \| `token_budget_r0.95_m4` \| True \| +0.00 pp \| 0/3 \| 6.18% \| -1.44 pp \| 13.83% \|` |  |
 | PASS | Appendix G1 row 100k | `paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv` | `\| 100k \| `token_budget_r0.95_m4` \| True \| +0.00 pp \| 6.18% \| -1.44 pp \| 13.83% \|` |  |
-| PASS | Table 1 row 200k | `paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv` | `\| 200k \| `token_budget_r0.85_m4` \| +1.20 pp \| 16.00% \| -2.40 pp \| 21.95% \|` |  |
+| PASS | Table 1 row 200k | `paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv` | `\| 200k \| `token_budget_r0.85_m4` \| True \| +1.20 pp \| 1/3 \| 16.00% \| -2.40 pp \| 21.95% \|` |  |
 | PASS | Appendix G1 row 200k | `paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv` | `\| 200k \| `token_budget_r0.85_m4` \| True \| +1.20 pp \| 16.00% \| -2.40 pp \| 21.95% \|` |  |
-| PASS | Table 1 row 400k | `paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv` | `\| 400k \| `token_budget_r0.98_m4` \| +2.32 pp \| 6.57% \| -0.24 pp \| 11.44% \|` |  |
-| PASS | Appendix G1 row 400k | `paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv` | `\| 400k \| `token_budget_r0.98_m4` \| False \| +2.32 pp \| 6.57% \| -0.24 pp \| 11.44% \|` |  |
-| PASS | Table 1 row 638k | `paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv` | `\| 638k \| `token_budget_r0.85_m4` \| -0.08 pp \| 17.53% \| -3.84 pp \| 21.90% \|` |  |
+| PASS | Table 1 row 400k | `paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv` | `\| 400k \| `token_budget_r0.98_m4` \| False / pending follow-up \| +2.32 pp \| 3/3 \| 6.57% \| -0.24 pp \| 11.44% \|` |  |
+| PASS | Appendix G1 row 400k | `paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv` | `\| 400k \| `token_budget_r0.98_m4` \| False / pending follow-up \| +2.32 pp \| 6.57% \| -0.24 pp \| 11.44% \|` |  |
+| PASS | Table 1 row 638k | `paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv` | `\| 638k \| `token_budget_r0.85_m4` \| True \| -0.08 pp \| 0/3 \| 17.53% \| -3.84 pp \| 21.90% \|` |  |
 | PASS | Appendix G1 row 638k | `paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv` | `\| 638k \| `token_budget_r0.85_m4` \| True \| -0.08 pp \| 17.53% \| -3.84 pp \| 21.90% \|` |  |
 | PASS | Table 2 fixed top-10 row science 20k/q200 | `paper/experiments/results/task43_lotte_science_geometry_diagnostics.csv` | `\| science/search 20k/q200 \| 0.8950 \| 0.9267 \| +3.17 pp \|` |  |
 | PASS | Appendix H1 row science 20k/q200 | `paper/experiments/results/task43_lotte_science_geometry_diagnostics.csv` | `\| science/search 20k/q200 \| 20,490 \| 200 \| 0.8950 \| 0.9267 \| +3.17 pp \|` |  |

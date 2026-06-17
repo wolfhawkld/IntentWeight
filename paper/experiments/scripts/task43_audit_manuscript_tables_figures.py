@@ -152,13 +152,18 @@ def audit_table_1_and_g1(audit: Audit, manuscript: str) -> None:
         dense_delta = float(dense_row["hit_delta_mean"])
         dense_saving = float(dense_row["token_saving_percent"])
         policies[scale] = bool(meta["selected_policy"]["eligible"])
+        eligibility_label = str(policies[scale])
+        if scale == "400k" and not policies[scale]:
+            eligibility_label = "False / pending follow-up"
+        ni_seeds = sum(1 for row in policy_rows if row.get("noninferior_by_ci") == "True")
         row = (
-            f"| {scale} | `{policy}` | {pp_from_fraction(policy_delta)} | "
+            f"| {scale} | `{policy}` | {eligibility_label} | "
+            f"{pp_from_fraction(policy_delta)} | {ni_seeds}/{len(policy_rows)} | "
             f"{pct(policy_saving)} | {pp_from_fraction(dense_delta)} | {pct(dense_saving)} |"
         )
         audit.contains(f"Table 1 row {scale}", rel, row, manuscript)
         g1_row = (
-            f"| {scale} | `{policy}` | {str(policies[scale])} | "
+            f"| {scale} | `{policy}` | {eligibility_label} | "
             f"{pp_from_fraction(policy_delta)} | {pct(policy_saving)} | "
             f"{pp_from_fraction(dense_delta)} | {pct(dense_saving)} |"
         )

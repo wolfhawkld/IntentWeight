@@ -100,6 +100,39 @@ The policy selects the top candidate arms by score. The selected arms define
 the cluster-local retrieval path and provide confidence signals for later
 context compaction.
 
+### Feature Groups and Route Confidence
+
+The LinUCB context vector is not intended to introduce a new representation
+model. It collects signals that decide whether local routing is reliable for
+the current query. The following summary lists the feature groups used by the
+controller.
+
+The feature groups are:
+
+- query representation: normalized query embedding and PCA/context projection,
+  used to place the query on the same local surface as corpus arms;
+- dense confidence: dense score concentration, top-rank margin, and fallback
+  availability, used to estimate whether global dense retrieval is already
+  reliable;
+- lexical confidence: BM25 candidate availability and lexical-match strength,
+  used to protect terminology-heavy and exact-match queries;
+- route agreement: overlap among dense, BM25, and cluster-local candidates,
+  used to detect when independent routes support the same evidence region;
+- local geometry: nearest centroid similarity, selected arm identity, and
+  semantic drift, used to estimate whether the query lies close to selected
+  local arms;
+- feedback state: selected-arm value, pull-count maturity, and recent route
+  reward, used to estimate whether LinUCB has enough evidence to trust the
+  local route;
+- budget state: route confidence tier and fallback status, used to decide
+  whether final context compaction is allowed.
+
+Route confidence is computed from the selected-arm value estimate, the
+top-versus-rest arm margin, and an arm-maturity term based on feedback count.
+Semantic drift is defined as one minus the nearest selected-centroid similarity.
+Low confidence or high drift keeps the dense fallback active; high confidence
+and low drift allow the final-context policy to compact evidence.
+
 ## 3.6 Trust-Weighted Feedback
 
 IntentWeight models feedback as a noisy signal rather than a perfect oracle. In
@@ -232,3 +265,35 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
    fallback path.
 
 Output: final retrieved context $C_t$ and updated policy state.
+
+## 3.12 Reproducibility Parameters
+
+The following summary lists the main implementation parameters used in the
+reported cost-aware LinUCB experiments. Scale-specific cache paths and dataset
+sizes are reported in the experiment artifacts; these parameters define the
+controller behavior.
+
+The main controller parameters are:
+
+- KMeans/MiniBatchKMeans arms: 32 fixed LinUCB arms;
+- candidate arms per query: 3 cluster-local routes;
+- context projection dimension: 64;
+- LinUCB exploration: $\alpha=1.0$, decay 0.01, minimum 0.3;
+- prequential epochs: 3 unless otherwise stated;
+- feedback trust: default $\tau=0.75$ for noisy feedback updates;
+- full-route candidate depths: dense/BM25/cluster = 100/100/100;
+- lite-route depths: dense/BM25 = 20/20;
+- dense safety floor: 5 full-route chunks and 2 lite-route chunks;
+- route fusion: weighted reciprocal-rank fusion with $k=60$;
+- full-route weights: dense 2.0, BM25 0.8, cluster 0.8;
+- lite-route weights: dense 0.8, BM25 0.5, cluster 2.0;
+- confidence thresholds: high 0.65 and mid 0.35;
+- drift threshold: 1.0;
+- token-budget grid: $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
+  $m \in \{4,\ldots,8\}$.
+
+The notation `token_budget_r0.85_m4` means that each query keeps a safe prefix
+of at least four chunks and then admits additional chunks only while the final
+context remains within 85% of the original dense top-10 token budget. The
+policy is chosen on calibration queries and then frozen before held-out test
+evaluation.

@@ -15,30 +15,44 @@ conference submission.
 
 ## Core Strategic Adjustment
 
-The paper should not place its main novelty on "manifold theory" or "LinUCB as
-a new algorithm." Those components remain important, but their role should be:
+The paper should not overclaim "manifold theory" or present LinUCB as a new
+bandit algorithm. However, the main research chain should still be preserved:
 
-- piecewise local relevance structure: motivation and diagnostic framing;
-- LinUCB: adaptive route-confidence learner;
-- feedback: recovery and risk-control signal under controlled simulation.
+> vertical/domain corpora exhibit local geometric structure; this motivates an
+> adaptive multi-route retrieval policy; LinUCB and feedback learn when to trust
+> compact local evidence versus fallback retrieval; the observable outcome is a
+> quality-efficiency trade-off in final evidence context.
 
-The main novelty should move to:
+The role of each component should therefore be:
 
-> risk-calibrated final-context budget control under a dense-retrieval quality
-> floor.
+- piecewise local relevance structure: the design hypothesis and diagnostic
+  support, not a fully proven mathematical theorem;
+- LinUCB: the adaptive route-confidence learner that operationalizes the
+  trade-off, not a new algorithmic contribution;
+- feedback: the mechanism for online correction/recovery under controlled
+  simulation, not proof of production RLHF;
+- final-context budget control: the measurable operational endpoint where the
+  quality-efficiency trade-off is evaluated.
 
-This is better aligned with the strongest current evidence: the calibrated
-token-quality frontier and dense-only adaptive truncation baseline.
+The main novelty should be framed as:
+
+> a manifold-inspired, feedback-adaptive evidence selection policy that learns
+> a risk-calibrated trade-off between compact local retrieval and dense fallback.
+
+This keeps the original research intent while aligning the claim with the
+strongest current evidence: geometry diagnostics, feedback recovery/adaptation,
+calibrated token-quality frontiers, and dense-only adaptive truncation
+baselines.
 
 Candidate title direction:
 
-> IntentWeight: Risk-Calibrated Final-Context Budget Control for
-> Retrieval-Augmented Evidence Selection
+> IntentWeight: Feedback-Adaptive Evidence Selection under Local Structure for
+> Efficient Retrieval-Augmented Reasoning
 
 Alternative:
 
-> IntentWeight: Adaptive Evidence-Context Budgeting with Dense Fallback and
-> Feedback-Triggered Recovery
+> IntentWeight: Manifold-Inspired Adaptive Retrieval with Risk-Calibrated
+> Evidence Contexts
 
 ## Already Addressed by Task44
 
@@ -65,21 +79,24 @@ Reduce overclaim risk and align the manuscript with the strongest evidence.
 
 Actions:
 
-1. Change the paper framing from "piecewise relevance-manifold assumption" to
-   "risk-calibrated final-context budget control."
-2. Keep manifold/local-structure language as motivation and diagnostics, not as
-   the headline theoretical contribution.
-3. Present LinUCB as the adaptive route-confidence learner, not as the central
-   novelty.
+1. Keep the paper centered on the chain:
+   local geometric structure -> adaptive route selection -> feedback correction
+   -> quality-efficiency trade-off.
+2. Avoid presenting manifold/local-structure diagnostics as a formal proof.
+3. Present LinUCB as the mechanism that learns the route-confidence and fallback
+   trade-off.
 4. Present feedback as a recovery/risk-control mechanism, not as proof of real
    user-feedback deployment.
-5. Update abstract and conclusion to say the results are retrieval-level and
+5. Use final-context-token reduction as the measurable efficiency endpoint, not
+   as the whole research contribution.
+6. Update abstract and conclusion to say the results are retrieval-level and
    final-context-token results; answer-level validation remains preliminary.
 
 Expected outcome:
 
-The claim becomes more defensible and less vulnerable to "component stacking"
-criticism.
+The claim remains faithful to the original research hypothesis while becoming
+more defensible and less vulnerable to "component stacking" or over-theorized
+manifold criticism.
 
 ### P0-B: Clean Up Calibration/Test Claims
 
@@ -91,8 +108,9 @@ scale-dependent non-inferiority.
 Actions:
 
 1. Move strict main-result language to eligible operating points.
-2. Treat the 400k calibrated-budget point as a diagnostic frontier point unless
-   its eligibility is re-established.
+2. Treat the 400k calibrated-budget point as a diagnostic frontier point and
+   explicitly mark it as pending follow-up unless its eligibility is
+   re-established by a supplemental experiment.
 3. Add or expose the non-inferiority margin used for calibration.
 4. Explain `token_budget_r0.85_m4`, `r0.95_m4`, and related policy names.
 5. Add a short note that strict non-inferiority is scale-dependent.
@@ -310,7 +328,8 @@ These are helpful after the main framing and experiment gaps are addressed.
 ## Suggested Execution Order
 
 1. Task45.1: Reframe title, abstract, introduction, contribution wording, and
-   conclusion around risk-calibrated final-context budget control.
+   conclusion around manifold-inspired adaptive evidence selection with
+   risk-calibrated final-context budget control as the measurable endpoint.
 2. Task45.2: Clean calibration/test result presentation and handle the 400k
    `eligible=False` point.
 3. Task45.3: Add paired non-inferiority statistics from existing artifacts.
@@ -327,3 +346,120 @@ Start with Task45.1-45.4 on the current device. They directly address the most
 credible review comments and do not require new heavy experiments. Then run
 Task46 because Dense+Sentence-MMR same-budget is the highest-value new baseline
 for the current paper claim.
+
+## Human-Validation Alignment Update
+
+Updated: 2026-06-17
+
+After adding `docs/human_validation_criteria.md`, the plan should be interpreted
+through five publication-readiness categories:
+
+1. claim and manuscript narrative;
+2. experimental evidence and baseline fairness;
+3. statistical and analytical rigor;
+4. presentation, reproducibility, and artifact traceability;
+5. human-AI workflow and final submission readiness.
+
+The original Task45 plan is still directionally correct, but the following
+adjustments make it better aligned with a publishable-paper workflow.
+
+### Adjustment 1: Keep Task45 as a Manuscript-Claim Repair Stage
+
+Task45 should not become another experiment task. Its job is to make the paper
+claim, section logic, method details, and evidence presentation consistent with
+the strongest current evidence.
+
+Required outputs:
+
+- title/abstract/introduction/conclusion claim boundary revision;
+- method reproducibility details and pseudocode;
+- calibration/test caveat cleanup;
+- paired-statistics insertion where existing artifacts already support it;
+- claim-to-evidence crosswalk for the main tables and figures.
+
+### Adjustment 2: Promote Task46 from "MMR Experiment" to Baseline-Fairness Test
+
+Task46 should still start with Dense+Sentence-MMR, but the task objective should
+be broader:
+
+> test whether a simple same-budget dense-context compression baseline can
+> explain away IntentWeight's final-context-token advantage.
+
+Minimum Task46 scope:
+
+1. Dense top-10 as the source candidate set.
+2. Sentence or evidence-unit segmentation.
+3. Query-sentence similarity plus MMR diversity selection.
+4. Same final-token budget as IntentWeight.
+5. Query-level comparison against dense fixed top-10 and IntentWeight.
+6. Artifact-backed outputs for quality, token count, win/loss/tie, and harmed
+   cases.
+
+Task46 should not be considered complete if it only reports an average score
+without query-level or artifact-traceable evidence.
+
+### Adjustment 3: Keep Reranker as Task47, but Do Not Block Task46 on It
+
+The reranker baseline is important, but it is heavier and may require more
+dependencies or model/runtime choices. It should remain Task47.
+
+Task46 answers the cheaper and more immediate reviewer objection:
+
+> why not just compress dense retrieval under the same token budget?
+
+Task47 answers the stronger but costlier objection:
+
+> why not use a standard cross-encoder reranker to select the compact context?
+
+### Adjustment 4: Add an Evidence Completeness Check Before Overusing Hit@10
+
+Before finalizing the manuscript text, add a lightweight evidence-completeness
+summary from existing artifacts where possible:
+
+- `Hit@10`: at least one usable evidence chunk;
+- `EvidenceRecall@10`: how much labeled evidence is covered;
+- bucketed behavior for `|GT| = 1`, `2-3`, and `>=4` if available.
+
+This protects the paper from overstating `Hit@10` as complete evidence
+collection.
+
+### Adjustment 4b: Track 400k Calibration as a Follow-up Gap
+
+The 400k scale currently has positive frozen-test behavior but
+`Calibration eligible=False`. Until a supplemental experiment re-establishes
+eligibility, paper-facing text should:
+
+- mark 400k as diagnostic or pending follow-up;
+- avoid pooling it into the strongest calibration-eligible claim;
+- keep its positive frozen-test result as useful evidence;
+- list the missing eligibility as a planned follow-up experiment rather than
+  hiding it.
+
+### Adjustment 5: Treat Off-Device Work as Robustness, Not a Main-Path Blocker
+
+Additional LoTTE domains and stronger GPU embedding models are valuable, but
+they should not block the current CPU-side paper repair path.
+
+Current-device main path:
+
+1. Task45: claim/method/statistics/presentation repair.
+2. Task46: same-budget dense compression baseline.
+3. Task47: reranker same-budget baseline if practical.
+4. Task48: expanded LLM answer-level evaluation when budget is available.
+
+Off-device robustness path:
+
+- stronger embedding model;
+- additional LoTTE domains;
+- larger answer-level or reranker evaluation if compute allows.
+
+### Adjusted Immediate Next Step
+
+Given Task44 is complete, the next task should be:
+
+> Task45.1-45.4: revise the manuscript and supporting plan using the human
+> validation criteria, preserving the local-structure -> LinUCB/feedback ->
+> quality-efficiency trade-off logic chain, without starting new heavy
+> experiments yet.
+
+After that, run Task46 as the first new experiment task.

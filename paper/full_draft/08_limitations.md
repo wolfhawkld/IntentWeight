@@ -87,7 +87,11 @@ These are useful engineering stability diagnostics, but they should not be
 over-framed as strong statistical significance proof. The LoTTE 400k
 token-saving interval is notably wider than the other scales and should be
 interpreted as seed-level variance in route confidence and context-budget
-control.
+control. In the calibrated-budget experiment, the 400k frozen-test result is
+positive but the selected policy is not calibration-eligible under the
+zero-observed-hit-drop gate; this scale is therefore marked as a follow-up
+calibration gap rather than pooled into the strongest eligible operating-point
+claim.
 
 ## 7.10 Future Work
 

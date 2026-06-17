@@ -6,13 +6,16 @@ IntentWeight supports a bounded but useful claim. It is a feedback-driven
 adaptive evidence-selection controller instantiated as a retrieval controller
 in the evaluated QA setting. It can control final context budget while
 preserving dense-level retrieval quality. On LoTTE technology/search,
-calibration/test validation shows that frozen budget policies can save 6-18%
-final evidence-context tokens while avoiding the $\mathrm{Hit@10}$ losses of
-dense-only adaptive truncation. A conservative confidence-only policy provides a
-stable baseline, reducing final retrieved context tokens by about 4.7-5.3% from
-100k to 638k corpus chunks while preserving dense-level query hit. LoTTE
-science/search further supports ranking-side generalization, but also shows
-that compression strength must be calibrated per domain and scale.
+calibration/test validation shows that calibration-eligible operating points at
+100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
+the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
+result is positive on frozen test but remains a diagnostic follow-up point
+because it did not pass the calibration eligibility gate. A conservative
+confidence-only policy provides a stable baseline, reducing final retrieved
+context tokens by about 4.7-5.3% from 100k to 638k corpus chunks while
+preserving dense-level query hit. LoTTE science/search further supports
+ranking-side generalization, but also shows that compression strength must be
+calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. The value of

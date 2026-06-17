@@ -47,8 +47,10 @@ Evidence basis: the frozen calibration/test context-budget protocol and dense
 adaptive truncation baseline.
 
 Purpose: main quantitative result. It shows that calibrated token-budget
-policies reduce final LLM evidence-context input tokens by 6-18% while
-avoiding the $\mathrm{Hit@10}$ loss of dense-only adaptive truncation.
+policies reduce final LLM evidence-context input tokens while avoiding the
+larger $\mathrm{Hit@10}$ loss of dense-only adaptive truncation. The table
+must distinguish calibration-eligible operating points from the 400k
+diagnostic follow-up point.
 
 Keep in the main paper because this is the central evidence for the
 quality-cost trade-off and directly addresses the strongest alternative
@@ -58,7 +60,9 @@ Recommended columns:
 
 - scale;
 - frozen budget policy;
+- calibration eligibility;
 - IntentWeight hit delta versus dense;
+- strict non-inferiority seed count if space allows;
 - IntentWeight token saving versus dense;
 - dense adaptive hit delta;
 - dense adaptive token saving.

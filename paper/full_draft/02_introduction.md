@@ -65,14 +65,16 @@ from 100k to 638k corpus chunks and compare against dense-only retrieval using
 `sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Our main
 cost-quality evidence uses a calibration/test context-budget protocol: the
 final-context policy is selected on calibration queries and frozen before test
-evaluation. Under this protocol, IntentWeight saves 6-18% final
-evidence-context tokens across LoTTE technology/search scales while
-outperforming dense-only adaptive truncation in $\mathrm{Hit@10}$, although
-strict seed-level non-inferiority remains scale-dependent. A conservative
-confidence-only policy provides a stable baseline, reducing final retrieved
-context tokens by approximately 4.7-5.3% across all scales while preserving
-dense-level query hit. We treat these as bounded operating points rather than
-universal or statistically significant dominance claims.
+evaluation. Under this protocol, calibration-eligible operating points at
+100k, 200k, and 638k save 6-18% final evidence-context tokens, while a 400k
+diagnostic point shows positive frozen-test behavior but does not satisfy the
+calibration eligibility gate. Across these scales, IntentWeight avoids the
+larger $\mathrm{Hit@10}$ losses observed under dense-only adaptive truncation,
+although strict seed-level non-inferiority remains scale-dependent. A
+conservative confidence-only policy provides a stable baseline, reducing final
+retrieved context tokens by approximately 4.7-5.3% across all scales while
+preserving dense-level query hit. We treat these as bounded operating points
+rather than universal or statistically significant dominance claims.
 
 We further evaluate two reviewer-facing concerns. First, a LoTTE science/search
 replication shows that the fixed top-10 IntentWeight ranking improves
@@ -86,24 +88,26 @@ not a claim of first-pass IID improvement on all future queries.
 The contributions of this paper are:
 
 1. We formulate evidence selection over structured vertical-domain data as an
-   adaptive route-control problem rather than a fixed retriever selection
-   problem.
+   adaptive route-control problem motivated by local relevance structure rather
+   than a fixed retriever selection problem.
 2. We state a bounded piecewise relevance-manifold hypothesis and test its
    diagnostic implications with local geometry measurements across LoTTE
-   scales.
-3. We introduce IntentWeight, a feedback-guided multi-route controller combining
-   dense retrieval, BM25 lexical recall, cluster-local retrieval,
+   domains and scales.
+3. We introduce IntentWeight, a feedback-adaptive multi-route controller
+   combining dense retrieval, BM25 lexical recall, cluster-local retrieval,
    trust-weighted LinUCB route learning, and confidence-based final context
    compaction in a retrieval-augmented QA implementation.
 4. We provide large-scale LoTTE evidence that calibrated context-budget
    policies reduce the LLM input tokens consumed by retrieved evidence context
-   while preserving dense-level $\mathrm{Hit@10}$ under bounded operating
-   points.
-5. We replicate the ranking-side result on a second LoTTE domain and document
+   while avoiding the larger $\mathrm{Hit@10}$ losses of dense-only adaptive
+   truncation under bounded operating points.
+5. We report paired query-level statistics and calibration eligibility to
+   separate retrieval-quality non-inferiority from token-cost reduction.
+6. We replicate the ranking-side result on a second LoTTE domain and document
    that context-compression strength requires domain calibration.
-6. We show that simulated feedback can act as a controlled recovery mechanism
+7. We show that simulated feedback can act as a controlled recovery mechanism
    for tail queries harmed by aggressive context compression.
-7. We document limitation cases where dataset structure, weak labels, duplicate
+8. We document limitation cases where dataset structure, weak labels, duplicate
    evidence, sparse ground truth, or complete-evidence requirements reduce the
    benefit of adaptive routing.
 

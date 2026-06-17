@@ -192,12 +192,14 @@ queries and freezes it before evaluation on held-out test queries.
 |---|---|---:|---:|---:|---:|---:|
 | 100k | `token_budget_r0.95_m4` | True | +0.00 pp | 6.18% | -1.44 pp | 13.83% |
 | 200k | `token_budget_r0.85_m4` | True | +1.20 pp | 16.00% | -2.40 pp | 21.95% |
-| 400k | `token_budget_r0.98_m4` | False | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
+| 400k | `token_budget_r0.98_m4` | False / pending follow-up | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
 | 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
 
 The calibrated policies should be compared against dense-only adaptive
 truncation because both reduce final context size. IntentWeight preserves
 substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
+The 400k row is diagnostic rather than calibration-eligible in the current
+artifact set and is marked for follow-up calibration.
 
 ## H. Cross-Domain Validation
 

@@ -195,3 +195,14 @@ Some experiments use multiple prequential epochs over the same query stream to s
 The main dense baseline uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2} with exact cosine search on CPU. Embeddings and retrieval artifacts are cached to avoid repeating deterministic computation. Metrics are recomputed from saved rankings, not copied from prior summaries.
 
 KMeans/MiniBatchKMeans uses a fixed number of arms across scales. This supports LinUCB comparability and reproducibility, but it is not claimed to be the best possible clustering design.
+
+\subsection{Calibration and Paired Testing Protocol}
+\label{sec:05-experimental-setup:calibration-and-paired-testing-protocol}
+
+The final-context budget experiments use a calibration/test split over queries. For each scale, 30\% of queries are used only to select a budget policy. The selected policy is then frozen and evaluated on the remaining held-out test queries. This avoids choosing a context budget after seeing test labels.
+
+A budget policy name has the form \nolinkurl{token_budget_rX_mY}. Here, \nolinkurl{rX} is the maximum final-context token ratio relative to the original top-10 context, and \nolinkurl{mY} is the minimum safe prefix kept before token-budget filtering. For example, \nolinkurl{token_budget_r0.85_m4} keeps at least four top-ranked chunks and then admits additional chunks only while the final context remains within 85\% of the original top-10 token budget.
+
+Calibration eligibility is defined using the mean calibration $\mathrm{Hit@10}$ delta against dense top-10. The main calibration selection uses a zero observed-hit-drop margin: a policy is eligible only when its mean calibration hit delta is non-negative. Among eligible policies, the selected policy is the one with the largest final-context token saving. If no policy is eligible, the best diagnostic policy is still reported, but it is not treated as a strict calibration-eligible main operating point.
+
+Frozen test results are paired by query against dense top-10. We report bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context token savings where available, and use a 1 percentage-point non-inferiority margin for strict seed-level checks. This separates two claims: whether the method preserves retrieval quality under a conservative paired criterion, and whether it reduces the final evidence-context tokens sent to the generator.
