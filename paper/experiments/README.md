@@ -1409,12 +1409,36 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     conservative retry 合并两个 100k domains 后恢复 `23/76` affected queries，
     约 `30.3%`，近似 Wilson 区间约为 `21%` 到 `41%`；而 calibration-to-test
     泛化只能作为方向性和边界证据，不应写成显著 held-out improvement。
+13. Dense+Sentence-MMR same-budget baseline：Task46 已完成，详见
+    `paper/experiments/task46_sentence_mmr_same_budget_summary.md`。该项直接回应
+    “为什么不直接压缩 dense top-10 context”的审稿问题：在 LoTTE
+    technology/search 100k 的 Task38 frozen test split 上，Dense+Sentence-MMR
+    以 dense top-10 为候选句子池，并使用 Task38 frozen policy 的 per-query
+    final-context token budget 作为上限。结果显示该 baseline 在 chunk-support
+    `Hit@10` 上与 dense top-10 持平，同时节省约 `11.4-13.1%` selected
+    sentence tokens。该结果应作为强 compression baseline / boundary evidence
+    使用，提示论文不能声称 IntentWeight 支配句子级 compression；更稳妥的表述是
+    IntentWeight 是与 sentence compression / reranking 互补的 route-and-budget
+    controller。
+14. compressor-normalized comparison：Task48 已完成，详见
+    `paper/experiments/task48_compressor_normalized_summary.md`。该项将同一个
+    SentMMR final-context compressor 同时接到 dense top-10 和 Task38 frozen
+    IntentWeight evidence pools 后面，检验“统一 compression layer”下的公平对比。
+    在 LoTTE technology/search 100k frozen test split 上，Dense+SentMMR 在
+    `0.95/0.90/0.85` ratios 下均保持 dense chunk-support `Hit@10=0.8705`，
+    并节省约 `5.3/10.2/15.2%` tokens。IntentWeight+SentMMR 继承各自
+    IntentWeight seed 的 `Hit@10=0.8657-0.8777`，在相同 compressor ratios
+    下相对 dense 共节省约 `10.1-21.2%` tokens，相对自身未压缩 source 额外节省
+    约 `5.4/10.3/15.2%`。该结果支持把 SentMMR 写成共享 final-context
+    compressor，把 IntentWeight 写成上游 route-and-budget controller；不要写成
+    IntentWeight 支配 compression。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
 calibration/test 防御、第 11 项 Task39 science/search 跨域复现 20k/q200
-和 100k checkpoints，以及第 12 项 Task40 feedback-driven hard-case recovery
-均已完成。
+和 100k checkpoints、第 12 项 Task40 feedback-driven hard-case recovery、
+第 13 项 Task46 Dense+Sentence-MMR same-budget baseline，以及第 14 项 Task48
+compressor-normalized comparison 均已完成。
 
 ---
 

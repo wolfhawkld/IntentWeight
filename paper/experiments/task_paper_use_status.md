@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-06-14
+Updated: 2026-06-20
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -47,6 +47,7 @@ accidentally promoted into paper-facing claims.
 | `task33_7_pre_writing_consistency_audit.md` | Supporting guardrail | Pre-writing claim consistency audit. |
 | `task34_review_defense_revision_plan.md` | Supporting guardrail | Review-defense revision checklist incorporated into the draft. |
 | `task40_feedback_recovery_summary.md` | Supporting evidence | Hard-case feedback recovery on LoTTE technology/search and science/search 100k; use as post-feedback repair evidence, not as first-pass IID improvement. |
+| `task48_compressor_normalized_summary.md` | Supporting/strong baseline evidence | Applies the same SentMMR compressor to dense and IntentWeight evidence pools; use to support the route-and-budget controller plus shared-compressor framing. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |
@@ -67,6 +68,7 @@ accidentally promoted into paper-facing claims.
 |---|---|---|
 | `task26_low_cost_routing_summary.md` | Boundary/negative evidence | Candidate-cost trade-off only; does not prove final token savings. |
 | `task27_dense_linucb_tradeoff_summary.md` | Boundary/negative evidence | Two-route dense-vs-LinUCB boundary test; sub-dense candidate cost loses quality and does not prove token savings. |
+| `task46_sentence_mmr_same_budget_summary.md` | Boundary/strong baseline evidence | Dense+Sentence-MMR preserves dense chunk-support at 100k with lower selected sentence tokens; use to qualify IntentWeight as complementary to context compression, not dominant over it. |
 
 ## Historical Or Superseded
 

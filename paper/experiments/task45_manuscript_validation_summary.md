@@ -89,6 +89,16 @@ The final audit status was:
 
 ## Next Recommended Task
 
-Task46 should add a same-budget dense compression baseline, such as MMR or a
-reranker-style selector, so reviewers can separate IntentWeight's adaptive
-route-confidence contribution from generic context-budget compression.
+Task46 is now completed in `task46_sentence_mmr_same_budget_summary.md`, and
+Task48 extends it with the compressor-normalized comparison in
+`task48_compressor_normalized_summary.md`. The result shows that SentMMR is a
+strong shared final-context compression layer on LoTTE technology/search 100k
+under chunk-support metrics.
+
+The next decision is either:
+
+- Task47: add a heavier cross-encoder reranker same-budget baseline if the
+  target venue requires a stronger retrieval-system comparison;
+- manuscript framing: revise novelty and claims so IntentWeight is presented as
+  a route-and-budget controller that can be stacked with a shared final-context
+  compressor, not as a method that dominates sentence-level compression.

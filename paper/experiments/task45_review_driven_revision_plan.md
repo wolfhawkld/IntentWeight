@@ -194,6 +194,9 @@ This is the highest-priority new baseline because it directly challenges the
 central final-context budget claim and is much cheaper than full reranker or
 LLM-compression baselines.
 
+Status: completed by Task46; see
+`paper/experiments/task46_sentence_mmr_same_budget_summary.md`.
+
 ### P1-A: Reranker Same-Budget Baseline
 
 Goal:
