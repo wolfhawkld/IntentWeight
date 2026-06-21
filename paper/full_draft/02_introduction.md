@@ -48,7 +48,16 @@ retrieval-augmented question answering. We therefore use the broader agent
 framing as motivation and keep the demonstrated claims tied to retrieval-backed
 evidence selection.
 
-This design separates three cost layers that are often conflated in RAG
+This design also separates retrieval ranking from final context control. A
+late reranker can improve the ordering of a candidate pool, and a sentence
+compressor can remove redundant text from selected evidence. These components
+are useful, but they do not by themselves decide which retrieval route should
+be trusted, when dense fallback is necessary, or how much final evidence risk a
+query can tolerate. IntentWeight is positioned as the route-and-budget
+controller in this stack, not as a replacement for dense retrieval, reranking,
+or context compression.
+
+The same distinction separates three cost layers that are often conflated in RAG
 experiments: the number of source candidates considered during retrieval, the
 rate at which global dense retrieval is invoked, and the final number of
 retrieved context tokens sent to the generator. Our main efficiency claim uses
@@ -76,14 +85,21 @@ retrieved context tokens by approximately 4.7-5.3% across all scales while
 preserving dense-level query hit. We treat these as bounded operating points
 rather than universal or statistically significant dominance claims.
 
-We further evaluate two reviewer-facing concerns. First, a LoTTE science/search
-replication shows that the fixed top-10 IntentWeight ranking improves
-query-level $\mathrm{Hit@10}$ at both 20k and 100k corpus scales, while also
-showing that aggressive context compression must be domain-calibrated. Second,
-a hard-case recovery experiment shows that simulated arm-level feedback can
-repair a meaningful fraction of budget-induced tail failures in post-feedback
-retry. This recovery result supports the adaptive feedback mechanism, but it is
-not a claim of first-pass IID improvement on all future queries.
+We further evaluate three reviewer-facing concerns. First, sentence-level MMR
+over dense top-10 preserves dense chunk-support while reducing selected
+sentence tokens, showing that simple final-context compression is a strong
+baseline and should be applied uniformly when used. Second, a cross-encoder
+reranker over dense top-50 improves full top-10 support metrics but selects
+longer chunks on average; under the same per-query token budgets used by
+IntentWeight, it does not uniformly dominate the calibrated controller. Third,
+a LoTTE science/search replication shows that the fixed top-10 IntentWeight
+ranking improves query-level $\mathrm{Hit@10}$ at both 20k and 100k corpus
+scales, while also showing that aggressive context compression must be
+domain-calibrated. Finally, a hard-case recovery experiment shows that
+simulated arm-level feedback can repair a meaningful fraction of budget-induced
+tail failures in post-feedback retry. This recovery result supports the
+adaptive feedback mechanism, but it is not a claim of first-pass IID
+improvement on all future queries.
 
 The contributions of this paper are:
 
@@ -101,13 +117,18 @@ The contributions of this paper are:
    policies reduce the LLM input tokens consumed by retrieved evidence context
    while avoiding the larger $\mathrm{Hit@10}$ losses of dense-only adaptive
    truncation under bounded operating points.
-5. We report paired query-level statistics and calibration eligibility to
+5. We add strong post-retrieval baselines: dense sentence-MMR compression, a
+   compressor-normalized dense-versus-IntentWeight comparison, and a
+   cross-encoder reranker same-budget check. These baselines position
+   IntentWeight as a route-and-budget controller that is complementary to
+   compression and reranking.
+6. We report paired query-level statistics and calibration eligibility to
    separate retrieval-quality non-inferiority from token-cost reduction.
-6. We replicate the ranking-side result on a second LoTTE domain and document
+7. We replicate the ranking-side result on a second LoTTE domain and document
    that context-compression strength requires domain calibration.
-7. We show that simulated feedback can act as a controlled recovery mechanism
+8. We show that simulated feedback can act as a controlled recovery mechanism
    for tail queries harmed by aggressive context compression.
-8. We document limitation cases where dataset structure, weak labels, duplicate
+9. We document limitation cases where dataset structure, weak labels, duplicate
    evidence, sparse ground truth, or complete-evidence requirements reduce the
    benefit of adaptive routing.
 
@@ -115,4 +136,5 @@ The resulting claim is intentionally bounded. IntentWeight is not presented as
 a universal replacement for dense retrieval. It is a feedback-driven controller
 that uses dense retrieval as a recall floor and learns when route confidence is
 strong enough to reduce the final context budget or trigger a safer
-post-feedback recovery path.
+post-feedback recovery path. Reranking and sentence compression remain
+compatible downstream layers rather than competing explanations to hide.

@@ -38,6 +38,8 @@ draft. The most important internal evidence groups are:
 - calibration/test context-budget validation;
 - LoTTE science/search cross-domain validation;
 - feedback-driven hard-case recovery.
+- strong post-retrieval baselines: Dense+Sentence-MMR, compressor-normalized
+  SentMMR, and cross-encoder reranking.
 
 ## Claim Boundary
 
@@ -55,9 +57,12 @@ The paper should keep the bounded claim:
 > 4.7-5.3% saving baseline. The paper should not claim universal or
 > statistically significant dominance, nor should it imply that the current
 > experiments cover every possible knowledge-carrier format beyond the tested
-> retrieval setting. Broader agent-memory, graph, tree, or tool-context
-> applications should be framed as motivation and future work unless separately
-> evaluated.
+> retrieval setting. Strong post-retrieval baselines should be used to narrow
+> the claim: SentMMR is a shared final-context compressor, cross-encoder
+> reranking is a late ranking layer, and IntentWeight is a route-and-budget
+> controller that can be composed with both. Broader agent-memory, graph, tree,
+> or tool-context applications should be framed as motivation and future work
+> unless separately evaluated.
 
 Cross-domain LoTTE science/search results support ranking-side generalization
 while exposing domain-specific compression calibration, and simulated feedback
@@ -69,6 +74,7 @@ post-feedback retry.
 The current draft is a complete v1, not a final camera-ready paper. The next
 pass should:
 
+- integrate the strong-baseline framing into any future venue-specific cut;
 - tighten prose to the target venue style;
 - refine draft SVG figures to the selected venue's visual style;
 - compile the ACL-style LaTeX migration in TeX Live or Overleaf;

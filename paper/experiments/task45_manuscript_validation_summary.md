@@ -101,6 +101,9 @@ IntentWeight can be stacked with a shared final-context compressor and remains
 competitive under a strong reranker baseline, but it should not be presented as
 dominating compression or reranking.
 
-The next paper task is manuscript framing: revise novelty and claims around the
-completed strong-baseline evidence, then decide whether to schedule a larger
-answer-level evaluation.
+Task49 has now completed the manuscript framing pass around the strong-baseline
+evidence; see `task49_strong_baseline_reframing_summary.md`.
+
+The next paper task is a venue-specific cut: reduce the current full draft to
+the target submission length while preserving the route-and-budget controller
+framing. A larger answer-level evaluation remains a separate follow-up.

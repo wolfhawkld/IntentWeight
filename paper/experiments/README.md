@@ -1443,6 +1443,13 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `Hit@10=0.8633-0.8729`，未稳定超过 IntentWeight target 的
     `0.8657-0.8777`。该结果支持把 cross-encoder 写成强 ranking baseline，
     同时保留 IntentWeight 作为轻量 route-and-budget controller 的定位。
+16. strong-baseline-aware manuscript reframing：Task49 已完成，详见
+    `paper/experiments/task49_strong_baseline_reframing_summary.md`。该项将
+    Task46/47/48 的强 baseline 证据整合进 abstract、introduction、related
+    work、experimental setup、results、conclusion 和 appendix，并重新生成
+    LaTeX。当前论文主张已统一为：dense 是 recall floor，SentMMR 是共享
+    final-context compressor，cross-encoder 是 late ranking layer，IntentWeight
+    是可与二者叠加的 route-and-budget controller。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1450,7 +1457,8 @@ calibration/test 防御、第 11 项 Task39 science/search 跨域复现 20k/q200
 和 100k checkpoints、第 12 项 Task40 feedback-driven hard-case recovery、
 第 13 项 Task46 Dense+Sentence-MMR same-budget baseline，以及第 14 项 Task48
 compressor-normalized comparison、第 15 项 Task47 cross-encoder reranker
-same-budget baseline 均已完成。
+same-budget baseline、第 16 项 Task49 strong-baseline-aware manuscript
+reframing 均已完成。
 
 ---
 

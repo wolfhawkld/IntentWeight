@@ -24,9 +24,19 @@ compression-calibration boundary. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
 aggressive context compression.
 
+Strong post-retrieval baselines refine rather than weaken the conclusion.
+Sentence-level MMR is an effective shared final-context compressor, and
+cross-encoder reranking can improve top-ranked evidence support. However,
+reranking alone can increase final context tokens, and same-budget reranking
+does not uniformly dominate the calibrated IntentWeight policies. These results
+support a layered interpretation: candidate generation, reranking, compression,
+and route-budget control are separate system functions that can be composed.
+
 The result is intentionally bounded. IntentWeight is not a universal dense
+replacement, a universal compressor replacement, or a universal reranker
 replacement, and it does not prove that geometry alone solves retrieval. Dense
 retrieval remains an important recall floor. The contribution is a
 manifold-inspired controller that learns when multiple retrieval routes, route
 confidence, and feedback can be used to trade compact final context against
-retrieval risk and to recover some failures after feedback.
+retrieval risk, while remaining compatible with late reranking and sentence
+compression.

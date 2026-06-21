@@ -259,7 +259,59 @@ The held-out effect is small and domain-dependent. Feedback should therefore be
 used as a controlled fallback trigger rather than as unconditional global
 reranking.
 
-## J. Reproducibility and Reporting Guardrails
+## J. Strong Post-Retrieval Baselines
+
+These baselines test whether simpler post-retrieval operations explain the
+main final-context result.
+
+**Appendix Table J1. Dense+Sentence-MMR same-budget baseline on LoTTE
+technology/search 100k.**
+
+| Budget target | $\mathrm{Hit@10}$ | Hit delta vs dense | $\mathrm{EvidenceRecall@10}$ | Avg context tokens | Token saving vs dense |
+|---|---:|---:|---:|---:|---:|
+| Dense top-10 | 0.8705 | 0.0000 | 0.7081 | 1470.1 | 0.00% |
+| SentMMR seed13 budget | 0.8705 | 0.0000 | 0.7081 | 1287.8 | 12.40% |
+| SentMMR seed17 budget | 0.8705 | 0.0000 | 0.7075 | 1278.0 | 13.07% |
+| SentMMR seed19 budget | 0.8705 | 0.0000 | 0.7081 | 1302.1 | 11.43% |
+
+Dense+Sentence-MMR preserves dense chunk-support on this split while reducing
+selected sentence tokens. It is therefore a strong final-context compression
+baseline, not a weak control.
+
+**Appendix Table J2. Compressor-normalized comparison on LoTTE
+technology/search 100k.**
+
+| Source pool | Method | Ratio | $\mathrm{Hit@10}$ range | Saving vs dense |
+|---|---|---:|---:|---:|
+| Dense | top-10 | - | 0.8705 | 0.00% |
+| Dense | SentMMR | 0.95 | 0.8705 | 5.33% |
+| Dense | SentMMR | 0.90 | 0.8705 | 10.22% |
+| Dense | SentMMR | 0.85 | 0.8705 | 15.16% |
+| IntentWeight | target | - | 0.8657-0.8777 | 4.98-7.14% |
+| IntentWeight | SentMMR | 0.95 | 0.8657-0.8777 | 10.07-12.14% |
+| IntentWeight | SentMMR | 0.90 | 0.8657-0.8777 | 14.72-16.68% |
+| IntentWeight | SentMMR | 0.85 | 0.8657-0.8777 | 19.41-21.24% |
+
+Applying the same compressor to dense and IntentWeight evidence pools supports
+the route-and-budget controller framing. The compressor is shared; the evidence
+pool and budget controller determine the starting point.
+
+**Appendix Table J3. Cross-encoder reranker baseline on LoTTE
+technology/search 100k.**
+
+| Method | $\mathrm{Hit@10}$ | $\mathrm{EvidenceRecall@10}$ | Avg context tokens | Token saving vs dense |
+|---|---:|---:|---:|---:|
+| Dense top-10 | 0.8705 | 0.7081 | 1470 | 0.00% |
+| Cross-encoder top-10 | 0.8777 | 0.7332 | 1792 | -21.91% |
+| IntentWeight target | 0.8657-0.8777 | 0.6766-0.6871 | 1365-1397 | 4.98-7.14% |
+| Cross-encoder same budget | 0.8633-0.8729 | 0.6975-0.7044 | 1360-1390 | 5.43-7.49% |
+
+The cross-encoder reranker improves full top-10 support metrics, but that full
+reranked context is longer on average. Under the same per-query token budgets
+as IntentWeight, reranking does not uniformly dominate the calibrated
+controller.
+
+## K. Reproducibility and Reporting Guardrails
 
 The following rules apply when migrating the draft into a submission template:
 

@@ -35,12 +35,15 @@ settings [@thakur2021beir].
 
 Hybrid retrieval combines sparse and dense signals through score interpolation,
 rank fusion, or reranking. Reciprocal rank fusion is a simple and widely used
-rank-level fusion method [@cormack2009rrf]. In this paper, dense retrieval is a
-strong baseline and an explicit recall floor, not a weak component to be
-replaced. BM25 contributes lexical coverage, and cluster-local dense retrieval
-contributes a structured local search path. The contribution is not that any
-single route is best, but that a controller can learn when and how to combine
-routes under a final context budget.
+rank-level fusion method [@cormack2009rrf]. Cross-encoder rerankers provide a
+strong late-ranking layer because they jointly score a query and a candidate
+passage, but they rerank a retrieved candidate pool rather than searching the
+full corpus directly. In this paper, dense retrieval is a strong baseline and
+an explicit recall floor, not a weak component to be replaced. BM25 contributes
+lexical coverage, cluster-local dense retrieval contributes a structured local
+search path, and reranking can be added after candidate generation. The
+contribution is not that any single route is best, but that a controller can
+learn when and how to combine routes under a final context budget.
 
 ## 2.3 Adaptive Retrieval and Contextual Bandits
 
@@ -119,13 +122,17 @@ refines retrieved passages through sentence-level reranking and reconstruction
 black-box language model can be paired with a tuneable retrieval model
 [@shi2024replug].
 
-IntentWeight operates earlier in the pipeline. It selects and compacts evidence
-units before generation rather than compressing tokens inside already selected
-passages or tuning a retriever against language-model likelihood. Its
-confidence-based context policy is therefore compatible with prompt
-compression, reranking, and black-box generation methods. The paper measures
-final context tokens because source-candidate counts alone do not establish
-downstream context savings.
+IntentWeight operates earlier in the pipeline. It selects evidence routes and
+sets final-context budgets before generation rather than compressing tokens
+inside already selected passages or tuning a retriever against language-model
+likelihood. Its confidence-based context policy is therefore compatible with
+prompt compression, sentence-level MMR selection, reranking, and black-box
+generation methods. The strong-baseline experiments in this paper use this
+decomposition explicitly: SentMMR is treated as a shared final-context
+compressor, while the cross-encoder is treated as a late reranking layer over a
+dense candidate pool. The paper measures final context tokens because
+source-candidate counts, reranker scores, or retrieval depth alone do not
+establish downstream context savings.
 
 ## 2.6 User Feedback, RLHF-Inspired Optimization, and Trust Weighting
 

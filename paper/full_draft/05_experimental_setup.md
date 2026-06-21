@@ -31,12 +31,19 @@ The baseline family includes:
 - Full multi-route IntentWeight.
 - Gated cost-aware IntentWeight.
 - Confidence-based final context IntentWeight.
+- Dense+Sentence-MMR final-context compression.
+- Cross-encoder reranking over dense top-50 candidates.
 - Static geometry controls such as nearest-cluster routing.
 - Naive controls such as random or epsilon-greedy arm selection.
 
 Dense-only retrieval is the primary quality baseline. The paper should avoid
 weak baseline framing: dense is strong and remains a required recall floor in
-the proposed method.
+the proposed method. Sentence-MMR and cross-encoder reranking are reported as
+post-retrieval strong baselines. Sentence-MMR tests whether simple
+final-context compression can explain the token saving, while the cross-encoder
+tests whether a heavier late-ranking layer can select a smaller context more
+simply. These are not mutually exclusive alternatives to IntentWeight; they
+occupy different stages in the retrieval-to-context pipeline.
 
 ## 4.3 Metrics
 
@@ -232,6 +239,16 @@ rankings, not copied from prior summaries.
 KMeans/MiniBatchKMeans uses a fixed number of arms across scales. This supports
 LinUCB comparability and reproducibility, but it is not claimed to be the best
 possible clustering design.
+
+The Sentence-MMR baseline starts from dense or IntentWeight evidence pools,
+splits selected chunks into sentence-like units, and greedily selects
+query-relevant but diverse sentences under a target token ratio or per-query
+budget. The cross-encoder baseline reranks dense top-50 candidates with
+`cross-encoder/ms-marco-MiniLM-L-6-v2`; it is evaluated both as a full reranked
+top-10 and as a same-budget variant constrained by the calibrated IntentWeight
+per-query token budgets. Reranker compute cost is not charged in final context
+tokens, so reranker results should be interpreted as retrieval-quality
+baselines rather than end-to-end latency measurements.
 
 ## 4.7 Calibration and Paired Testing Protocol
 

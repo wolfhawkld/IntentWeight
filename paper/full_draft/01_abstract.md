@@ -23,9 +23,13 @@ behavior but fails the calibration eligibility gate. Across these scales,
 IntentWeight avoids the larger $\mathrm{Hit@10}$ losses observed under
 dense-only adaptive truncation, while strict seed-level non-inferiority remains
 scale-dependent. A conservative confidence policy provides a stable 4.7-5.3%
-saving baseline on the same generator-input-token measure. Results generalize
-to a second LoTTE domain with domain-calibrated compression, and simulated
-feedback recovers a meaningful fraction of compression-induced tail failures.
-IntentWeight is therefore not a universal dense replacement, but a
-manifold-inspired, feedback-adaptive controller for quality-efficiency trade-offs
-in structured domain evidence selection.
+saving baseline on the same generator-input-token measure. Stronger
+post-retrieval baselines refine the claim: sentence-level MMR can compress both
+dense and IntentWeight evidence pools, and a cross-encoder reranker improves
+top-ranked evidence support but can increase final context tokens unless
+paired with budget control. Results generalize to a second LoTTE domain with
+domain-calibrated compression, and simulated feedback recovers a meaningful
+fraction of compression-induced tail failures. IntentWeight is therefore not a
+universal replacement for dense retrieval, compressors, or rerankers, but a
+manifold-inspired, feedback-adaptive controller for quality-efficiency
+trade-offs in structured domain evidence selection.

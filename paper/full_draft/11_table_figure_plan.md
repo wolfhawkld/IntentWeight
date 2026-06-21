@@ -19,6 +19,8 @@ The table labels in the current draft are aligned with this plan:
 - Table 6: LoTTE geometry diagnostics;
 - Appendix Tables A1, D1, and F1: seed stability, eManual diagnostics, and the
   downstream answer-quality check.
+- Appendix Tables J1-J3: Dense+Sentence-MMR, compressor-normalized SentMMR, and
+  cross-encoder reranker strong-baseline checks.
 
 ## Main-Paper Tables
 
@@ -170,6 +172,25 @@ Recommended columns:
 - $\mathrm{NearestClusterHit@3}$;
 - $\mathrm{ContextRetention@10}$;
 - conservative-policy hit delta.
+
+### Strong Post-Retrieval Baselines
+
+Evidence basis: Dense+Sentence-MMR same-budget baseline, compressor-normalized
+SentMMR comparison, and cross-encoder reranker same-budget baseline.
+
+Purpose: defend the paper against the strongest simple alternatives: directly
+compress dense context, apply the same compressor to all evidence pools, or
+rerank dense candidates with a cross-encoder.
+
+Keep the interpretive summary in the main Results section and move the numeric
+tables to Appendix J unless the target venue asks for stronger baseline
+coverage in the main body.
+
+Recommended appendix tables:
+
+- Dense+Sentence-MMR same-budget baseline;
+- compressor-normalized dense versus IntentWeight comparison;
+- cross-encoder full top-10 and same-budget reranker comparison.
 
 ## Main-Paper Figures
 

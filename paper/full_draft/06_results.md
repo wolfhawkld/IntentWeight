@@ -193,3 +193,39 @@ LoTTE 100k queries with dense top-10 and compressed context; it does not show
 obvious answer-quality degradation, but it remains a small sanity check rather
 than a full human evaluation. Appendix D-F report the full boundary,
 robustness, and downstream tables.
+
+## 5.7 Strong Post-Retrieval Baselines
+
+The post-retrieval baselines clarify what IntentWeight should and should not
+claim. Dense+Sentence-MMR starts from dense top-10 chunks and selects
+query-relevant, diverse sentence units under the same per-query final-context
+token budgets used by IntentWeight. On LoTTE technology/search 100k, it
+preserves dense chunk-support $\mathrm{Hit@10}=0.8705$ while reducing selected
+sentence tokens by 11.4-13.1%. This is a strong final-context compression
+baseline and means IntentWeight should not be framed as the only path to lower
+generator input tokens.
+
+The compressor-normalized comparison applies the same SentMMR layer to both
+dense and IntentWeight evidence pools. Dense+SentMMR preserves dense
+$\mathrm{Hit@10}$ at 0.95, 0.90, and 0.85 token ratios while saving roughly
+5.3%, 10.2%, and 15.2% tokens. IntentWeight+SentMMR preserves each source
+IntentWeight policy's chunk-support result and reaches larger total savings,
+roughly 10.1-21.2% relative to dense, because it starts from a smaller evidence
+pool. This supports a component view: SentMMR is a shared final-context
+compressor, while IntentWeight is the upstream route-and-budget controller.
+
+The cross-encoder reranker baseline tests a different challenge. Reranking
+dense top-50 candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2` improves
+full top-10 support metrics from dense $\mathrm{Hit@10}=0.8705$ and
+$\mathrm{EvidenceRecall@10}=0.7081$ to $\mathrm{Hit@10}=0.8777$ and
+$\mathrm{EvidenceRecall@10}=0.7332$. However, the reranked top-10 contains
+longer chunks and increases final context tokens by about 21.9% relative to
+dense top-10. When constrained under the same calibrated per-query budgets as
+IntentWeight, the reranker same-budget variants reach
+$\mathrm{Hit@10}=0.8633$-$0.8729$, which does not uniformly dominate the
+IntentWeight target policies at $0.8657$-$0.8777$.
+
+Together, these baselines narrow and strengthen the paper claim. IntentWeight
+is not a replacement for sentence compression or cross-encoder reranking. It is
+a low-compute controller that decides which evidence pool and budget should be
+trusted before optional late-stage compression or reranking layers are applied.
