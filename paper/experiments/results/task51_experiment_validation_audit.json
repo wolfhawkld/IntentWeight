@@ -1,0 +1,1937 @@
+{
+  "checks": [
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "result_json",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "queries",
+      "role": "main_frontier",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "corpus",
+      "role": "main_frontier",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "ground_truth_refs",
+      "role": "main_frontier",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "paired_columns",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "paired_numeric_values",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "paired_num_queries",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "paired_arithmetic",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "paired_ranges",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "ranking_variants",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "ranking_query_count",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "ranking_query_ids",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.77",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "ranking_lengths",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "markdown_heading",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "markdown_table",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task38_lotte_technology_100k_context_budget",
+      "item": "token_language",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_100k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "result_json",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "queries",
+      "role": "main_frontier",
+      "source": "paper/experiments/data/processed/lotte_technology_search_200k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "skipped by manifest for large or unavailable corpus",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "corpus_ref_check",
+      "role": "main_frontier",
+      "source": "lotte_technology_search_200k",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "paired_columns",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "paired_numeric_values",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "paired_num_queries",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "paired_arithmetic",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "paired_ranges",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "ranking_variants",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "ranking_query_count",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "ranking_query_ids",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.38",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "ranking_lengths",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "markdown_heading",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "markdown_table",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task38_lotte_technology_200k_context_budget",
+      "item": "token_language",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_200k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "result_json",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "queries",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/data/processed/lotte_technology_search_400k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "skipped by manifest for large or unavailable corpus",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "corpus_ref_check",
+      "role": "diagnostic_frontier",
+      "source": "lotte_technology_search_400k",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "paired_columns",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "paired_numeric_values",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "paired_num_queries",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "paired_arithmetic",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "paired_ranges",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "ranking_variants",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "ranking_query_count",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "ranking_query_ids",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.83",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "ranking_lengths",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "markdown_heading",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "markdown_table",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task38_lotte_technology_400k_context_budget",
+      "item": "token_language",
+      "role": "diagnostic_frontier",
+      "source": "paper/experiments/results/task38_400k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "result_json",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "queries",
+      "role": "main_frontier",
+      "source": "paper/experiments/data/processed/lotte_technology_search_638k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "skipped by manifest for large or unavailable corpus",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "corpus_ref_check",
+      "role": "main_frontier",
+      "source": "lotte_technology_search_638k",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "paired_columns",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "paired_numeric_values",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "paired_num_queries",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "paired_arithmetic",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "paired_ranges",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "ranking_variants",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "ranking_query_count",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "ranking_query_ids",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.41",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "ranking_lengths",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "markdown_heading",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "markdown_table",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task38_lotte_technology_638k_context_budget",
+      "item": "token_language",
+      "role": "main_frontier",
+      "source": "paper/experiments/results/task38_638k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "result_json",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=200, queries_with_gt=200",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "queries",
+      "role": "cross_domain",
+      "source": "paper/experiments/data/processed/lotte_science_search_20k_q200_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=20977",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "corpus",
+      "role": "cross_domain",
+      "source": "paper/experiments/data/processed/lotte_science_search_20k_q200_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "ground_truth_refs",
+      "role": "cross_domain",
+      "source": "paper/experiments/data/processed/lotte_science_search_20k_q200_queries.json -> paper/experiments/data/processed/lotte_science_search_20k_q200_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "paired_columns",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "paired_numeric_values",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=140",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "paired_num_queries",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "paired_arithmetic",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "paired_ranges",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "ranking_variants",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=200, variants=6",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "ranking_query_count",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "ranking_query_ids",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.46",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "ranking_lengths",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "markdown_heading",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "markdown_table",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task39_lotte_science_20k_q200_context_budget",
+      "item": "token_language",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "result_json",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "queries",
+      "role": "cross_domain",
+      "source": "paper/experiments/data/processed/lotte_science_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=102369",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "corpus",
+      "role": "cross_domain",
+      "source": "paper/experiments/data/processed/lotte_science_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "ground_truth_refs",
+      "role": "cross_domain",
+      "source": "paper/experiments/data/processed/lotte_science_search_100k_queries.json -> paper/experiments/data/processed/lotte_science_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "paired_columns",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "paired_numeric_values",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "paired_num_queries",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "paired_arithmetic",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "paired_ranges",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "ranking_variants",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "ranking_query_count",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "ranking_query_ids",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.42",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "ranking_lengths",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "markdown_heading",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "markdown_table",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task39_lotte_science_100k_context_budget",
+      "item": "token_language",
+      "role": "cross_domain",
+      "source": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=3",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "result_json",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=3",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "json_paired_rows",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=3",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "corpus",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "ground_truth_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=33",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "summary_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=7",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "summary_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "summary_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=3",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=4",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "ranking_variants",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=417, variants=4",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "ranking_query_count",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "ranking_query_ids",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=9.99",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "ranking_lengths",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "ranking_chunk_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "markdown_heading",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "markdown_table",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task46_sentence_mmr_same_budget",
+      "item": "token_language",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task46_100k_sent_mmr_same_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=4",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "result_json",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=7",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "json_paired_rows",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=7",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "corpus",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "ground_truth_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=30",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "summary_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=8",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "summary_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "summary_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=40",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=7",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=8",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "ranking_variants",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=417, variants=8",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "ranking_query_count",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "ranking_query_ids",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=9.44",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "ranking_lengths",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "ranking_duplicate_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "ranking_chunk_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "markdown_heading",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "markdown_table",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task47_cross_encoder_reranker",
+      "item": "token_language",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task47_100k_cross_encoder_reranker.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=3",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "result_json",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=27",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "json_paired_rows",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=27",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "corpus",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "ground_truth_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=40",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "summary_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=16",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "summary_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "summary_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=43",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=27",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=16",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "ranking_variants",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=417, variants=16",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "ranking_query_count",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "ranking_query_ids",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=9.17",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "ranking_lengths",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "ranking_duplicate_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "ranking_chunk_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "markdown_heading",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "markdown_table",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task48_compressor_normalized_comparison",
+      "item": "token_language",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task48_100k_compressor_normalized.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=73",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "result_json",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_metrics.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "queries",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "corpus",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "ground_truth_refs",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=60",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "summary_columns",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_baseline_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=1",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "summary_numeric_values",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_baseline_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=596",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "summary_num_queries",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_baseline_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=1",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "ranking_variants",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=1",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "ranking_query_count",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "ranking_query_ids",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=50.00",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "ranking_lengths",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "ranking_duplicate_refs",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task52_bge_base_100k_dense_all_queries",
+      "item": "ranking_chunk_refs",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=3",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "result_json",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=5",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "json_paired_rows",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=5",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_numeric_values",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_arithmetic",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_ranges",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "queries",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "corpus",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "ground_truth_refs",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=57",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "summary_columns",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=5",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "summary_numeric_values",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "summary_num_queries",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=40",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_columns",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=5",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_numeric_values",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_num_queries",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_arithmetic",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "paired_ranges",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "markdown_heading",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "markdown_table",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task52_bge_base_100k_task38_test_comparison",
+      "item": "token_language",
+      "role": "strong_embedding_baseline",
+      "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.md",
+      "status": "PASS"
+    }
+  ],
+  "manifest": "paper/experiments/task51_experiment_manifest.json",
+  "summary": {
+    "by_category": {
+      "dimension": {
+        "PASS": 108
+      },
+      "display": {
+        "PASS": 30
+      },
+      "statistics": {
+        "PASS": 71
+      }
+    },
+    "by_experiment": {
+      "task38_lotte_technology_100k_context_budget": {
+        "PASS": 18
+      },
+      "task38_lotte_technology_200k_context_budget": {
+        "PASS": 16
+      },
+      "task38_lotte_technology_400k_context_budget": {
+        "PASS": 16
+      },
+      "task38_lotte_technology_638k_context_budget": {
+        "PASS": 16
+      },
+      "task39_lotte_science_100k_context_budget": {
+        "PASS": 18
+      },
+      "task39_lotte_science_20k_q200_context_budget": {
+        "PASS": 18
+      },
+      "task46_sentence_mmr_same_budget": {
+        "PASS": 25
+      },
+      "task47_cross_encoder_reranker": {
+        "PASS": 25
+      },
+      "task48_compressor_normalized_comparison": {
+        "PASS": 25
+      },
+      "task52_bge_base_100k_dense_all_queries": {
+        "PASS": 13
+      },
+      "task52_bge_base_100k_task38_test_comparison": {
+        "PASS": 19
+      }
+    },
+    "status_counts": {
+      "PASS": 209
+    }
+  }
+}

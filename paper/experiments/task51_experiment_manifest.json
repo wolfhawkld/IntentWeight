@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "updated": "2026-06-22",
+  "description": "Default Task51 audit manifest for paper-critical and recent strong-baseline experiment artifacts.",
+  "defaults": {
+    "top_k": 10,
+    "paired_tolerance": 1e-6
+  },
+  "experiments": [
+    {
+      "id": "task38_lotte_technology_100k_context_budget",
+      "role": "main_frontier",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task38_100k_calibrated_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task38_100k_calibrated_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task38_100k_calibrated_context_budget.md"
+      ]
+    },
+    {
+      "id": "task38_lotte_technology_200k_context_budget",
+      "role": "main_frontier",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_200k",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_200k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": false
+      },
+      "result_jsons": [
+        "paper/experiments/results/task38_200k_calibrated_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task38_200k_calibrated_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task38_200k_calibrated_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task38_200k_calibrated_context_budget.md"
+      ]
+    },
+    {
+      "id": "task38_lotte_technology_400k_context_budget",
+      "role": "diagnostic_frontier",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_400k",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_400k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": false
+      },
+      "result_jsons": [
+        "paper/experiments/results/task38_400k_calibrated_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task38_400k_calibrated_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task38_400k_calibrated_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task38_400k_calibrated_context_budget.md"
+      ]
+    },
+    {
+      "id": "task38_lotte_technology_638k_context_budget",
+      "role": "main_frontier",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_638k",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_638k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": false
+      },
+      "result_jsons": [
+        "paper/experiments/results/task38_638k_calibrated_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task38_638k_calibrated_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task38_638k_calibrated_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task38_638k_calibrated_context_budget.md"
+      ]
+    },
+    {
+      "id": "task39_lotte_science_20k_q200_context_budget",
+      "role": "cross_domain",
+      "expected_num_queries": 140,
+      "dataset": {
+        "name": "lotte_science_search_20k_q200",
+        "corpus": "paper/experiments/data/processed/lotte_science_search_20k_q200_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_science_search_20k_q200_queries.json",
+        "expected_queries": 200,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.rankings.json",
+          "expected_ranked_queries": 200,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task39_lotte_science_20k_q200_calibrated_context_budget.md"
+      ]
+    },
+    {
+      "id": "task39_lotte_science_100k_context_budget",
+      "role": "cross_domain",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_science_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_science_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_science_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task39_lotte_science_100k_calibrated_context_budget.md"
+      ]
+    },
+    {
+      "id": "task46_sentence_mmr_same_budget",
+      "role": "strong_baseline",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task46_100k_sent_mmr_same_budget.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task46_100k_sent_mmr_same_budget.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task46_100k_sent_mmr_same_budget.paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task46_100k_sent_mmr_same_budget.rankings.json",
+          "expected_ranked_queries": 417,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task46_100k_sent_mmr_same_budget.md"
+      ]
+    },
+    {
+      "id": "task47_cross_encoder_reranker",
+      "role": "strong_baseline",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task47_100k_cross_encoder_reranker.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task47_100k_cross_encoder_reranker.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task47_100k_cross_encoder_reranker.paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task47_100k_cross_encoder_reranker.rankings.json",
+          "expected_ranked_queries": 417,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task47_100k_cross_encoder_reranker.md"
+      ]
+    },
+    {
+      "id": "task48_compressor_normalized_comparison",
+      "role": "strong_baseline",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task48_100k_compressor_normalized.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task48_100k_compressor_normalized.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task48_100k_compressor_normalized.paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task48_100k_compressor_normalized.rankings.json",
+          "expected_ranked_queries": 417,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task48_100k_compressor_normalized.md"
+      ]
+    },
+    {
+      "id": "task52_bge_base_100k_dense_all_queries",
+      "role": "strong_embedding_baseline",
+      "expected_num_queries": 596,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_metrics.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task52_bge_base_100k_dense/dense_baseline_summary.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 50,
+          "check_top_k_chunks": 10
+        }
+      ]
+    },
+    {
+      "id": "task52_bge_base_100k_task38_test_comparison",
+      "role": "strong_embedding_baseline",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task52_bge_base_100k_strong_embedding.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task52_bge_base_100k_strong_embedding.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task52_bge_base_100k_strong_embedding.paired.csv"
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task52_bge_base_100k_strong_embedding.md"
+      ]
+    }
+  ]
+}

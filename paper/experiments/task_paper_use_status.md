@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-06-21
+Updated: 2026-06-22
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -49,6 +49,7 @@ accidentally promoted into paper-facing claims.
 | `task40_feedback_recovery_summary.md` | Supporting evidence | Hard-case feedback recovery on LoTTE technology/search and science/search 100k; use as post-feedback repair evidence, not as first-pass IID improvement. |
 | `task47_cross_encoder_reranker_summary.md` | Supporting/strong reranker baseline evidence | Cross-encoder reranking over dense top-50 improves support metrics at full top-10 but increases context tokens; same-budget reranking does not uniformly dominate IntentWeight. |
 | `task48_compressor_normalized_summary.md` | Supporting/strong baseline evidence | Applies the same SentMMR compressor to dense and IntentWeight evidence pools; use to support the route-and-budget controller plus shared-compressor framing. |
+| `task52_strong_embedding_baseline_summary.md` | Supporting/strong embedding baseline evidence | BGE-base dense raises the dense quality floor on Task38 held-out LoTTE 100k while increasing context tokens; use to tighten claims and motivate rerunning IntentWeight with a stronger dense branch. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |
@@ -63,6 +64,7 @@ accidentally promoted into paper-facing claims.
 | `task36_12_acl_latex_migration.md` | Supporting writing revision | Adds a modular ACL-style LaTeX migration, official ACL style files, PDF figure assets, and static validation; the subsequent PDF compile audit is recorded in `task36_13_pdf_compile_audit.md`. |
 | `task36_13_pdf_compile_audit.md` | Supporting writing revision | Installs lightweight TinyTeX, resolves real ACL compile issues, adds PDF rendering audit, and records the 19-page complete-draft layout; the next pass must produce a shorter submission cut. |
 | `task49_strong_baseline_reframing_summary.md` | Supporting writing revision | Integrates Task46/47/48 strong baselines into the manuscript framing; use for the route-and-budget controller plus shared compressor/reranker decomposition. |
+| `task51_experiment_validation_framework.md` | Supporting guardrail | Unified artifact audit for dimension, paired-statistics, and display-readiness checks; use before promoting new experiment outputs into paper-facing claims. |
 
 ## Boundary Or Negative Evidence
 
@@ -86,6 +88,7 @@ accidentally promoted into paper-facing claims.
 |---|---|---|
 | `task33_5_llm_generation_smoke_handoff.md` | Internal handoff | Superseded by `task33_5_llm_generation_smoke_summary.md`. |
 | `task33_pre_writing_validation_backlog.md` | Internal backlog | Use only for project management, not paper evidence. |
+| `task53_embedding_backbone_generalization_plan.md` | Internal handoff/backlog | Next matched-backbone experiment plan: BGE IntentWeight replacement plus E5-base-v2 as a third open-source embedding backbone. |
 
 ## Paper-Facing Rule
 

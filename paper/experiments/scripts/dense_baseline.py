@@ -113,6 +113,18 @@ def encode_texts(encoder, texts: Sequence[str], *, batch_size: int) -> np.ndarra
     return normalize_embeddings(embeddings)
 
 
+def records_with_text_prefix(records: Sequence[Mapping], prefix: str) -> List[Mapping]:
+    """Return shallow record copies with a text prefix applied for encoding."""
+    if not prefix:
+        return list(records)
+    prefixed = []
+    for record in records:
+        item = dict(record)
+        item["text"] = f"{prefix}{record.get('text', '')}"
+        prefixed.append(item)
+    return prefixed
+
+
 def encode_records_with_optional_cache(
     records: Sequence[Mapping],
     encoder,
@@ -121,16 +133,18 @@ def encode_records_with_optional_cache(
     model_name: str,
     record_kind: str,
     batch_size: int,
+    text_prefix: str = "",
     embedding_cache_dir: Path | None = None,
     use_embedding_cache: bool = False,
     force_embedding_cache: bool = False,
 ) -> tuple[np.ndarray, Dict[str, object]]:
     """Encode records, optionally using the shared on-disk embedding cache."""
+    encoding_records = records_with_text_prefix(records, text_prefix)
     if use_embedding_cache:
         if embedding_cache_dir is None:
             raise ValueError("embedding_cache_dir is required when use_embedding_cache=True")
         return embedding_cache.load_or_compute_embeddings(
-            records,
+            encoding_records,
             dataset=dataset,
             model_name=model_name,
             record_kind=record_kind,
@@ -141,13 +155,13 @@ def encode_records_with_optional_cache(
         )
     embeddings = encode_texts(
         encoder,
-        [str(record.get("text", "")) for record in records],
+        [str(record.get("text", "")) for record in encoding_records],
         batch_size=batch_size,
     )
     return embeddings, {
         "cache_hit": False,
         "cache_enabled": False,
-        "record_count": len(records),
+        "record_count": len(encoding_records),
         "record_kind": record_kind,
     }
 
@@ -217,6 +231,8 @@ def run_dense(
     batch_size: int = 64,
     max_queries: int | None = None,
     max_corpus: int | None = None,
+    query_prefix: str = "",
+    corpus_prefix: str = "",
 ) -> Dict[str, object]:
     """Run exact cosine-similarity dense retrieval and evaluate rankings."""
     if top_k <= 0:
@@ -235,12 +251,12 @@ def run_dense(
 
     corpus_embeddings = encode_texts(
         encoder,
-        [str(chunk.get("text", "")) for chunk in corpus],
+        [f"{corpus_prefix}{chunk.get('text', '')}" for chunk in corpus],
         batch_size=batch_size,
     )
     query_embeddings = encode_texts(
         encoder,
-        [str(query.get("text", "")) for query in queries],
+        [f"{query_prefix}{query.get('text', '')}" for query in queries],
         batch_size=batch_size,
     )
 
@@ -316,6 +332,8 @@ def run_dataset(
     scale_store_dir: Path | None = None,
     use_scale_store: bool = False,
     scale_store_canonical_name: str = "lotte_technology_search",
+    query_prefix: str = "",
+    corpus_prefix: str = "",
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
@@ -342,6 +360,8 @@ def run_dataset(
 
     start = time.perf_counter()
     if use_scale_store:
+        if corpus_prefix:
+            raise ValueError("--corpus-prefix is incompatible with --use-scale-store because corpus embeddings are precomputed")
         corpus_embeddings, scale_store_info = load_corpus_embeddings_from_scale_store(
             selected_corpus,
             canonical_name=scale_store_canonical_name,
@@ -359,6 +379,7 @@ def run_dataset(
             model_name=model_name,
             record_kind="queries",
             batch_size=batch_size,
+            text_prefix=query_prefix,
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=use_embedding_cache,
             force_embedding_cache=force_embedding_cache,
@@ -398,6 +419,7 @@ def run_dataset(
             model_name=model_name,
             record_kind="corpus",
             batch_size=batch_size,
+            text_prefix=corpus_prefix,
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=True,
             force_embedding_cache=force_embedding_cache,
@@ -409,6 +431,7 @@ def run_dataset(
             model_name=model_name,
             record_kind="queries",
             batch_size=batch_size,
+            text_prefix=query_prefix,
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=True,
             force_embedding_cache=force_embedding_cache,
@@ -450,6 +473,8 @@ def run_dataset(
             top_k=top_k,
             ks=ks,
             batch_size=batch_size,
+            query_prefix=query_prefix,
+            corpus_prefix=corpus_prefix,
         )
     elapsed_sec = time.perf_counter() - start
 
@@ -461,6 +486,8 @@ def run_dataset(
         "dataset": dataset,
         "method": "dense",
         "model": model_name,
+        "query_prefix": query_prefix,
+        "corpus_prefix": corpus_prefix,
         "top_k": top_k,
         "ks": list(ks),
         "batch_size": batch_size,
@@ -515,21 +542,39 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
     if not rows:
         return
 
-    existing: Dict[tuple[str, str, str], Mapping] = {}
+    existing: Dict[tuple[str, str, str, str, str], Mapping] = {}
     if summary_path.exists():
         with summary_path.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                existing[(row.get("dataset", ""), row.get("method", ""), row.get("model", ""))] = row
+                existing[
+                    (
+                        row.get("dataset", ""),
+                        row.get("method", ""),
+                        row.get("model", ""),
+                        row.get("query_prefix", ""),
+                        row.get("corpus_prefix", ""),
+                    )
+                ] = row
 
     for row in rows:
-        existing[(str(row["dataset"]), str(row["method"]), str(row.get("model", "")))] = row
+        existing[
+            (
+                str(row["dataset"]),
+                str(row["method"]),
+                str(row.get("model", "")),
+                str(row.get("query_prefix", "")),
+                str(row.get("corpus_prefix", "")),
+            )
+        ] = row
 
     metric_keys = sorted({key for row in existing.values() for key in row if "@" in key})
     fieldnames = [
         "dataset",
         "method",
         "model",
+        "query_prefix",
+        "corpus_prefix",
         "num_queries",
         "num_skipped_no_gt",
         "num_corpus_chunks",
@@ -597,6 +642,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--device", default=None, help="SentenceTransformer device, e.g. cpu/cuda")
     parser.add_argument("--local-files-only", action="store_true", help="Load model from local HF cache only")
+    parser.add_argument("--query-prefix", default="", help="Optional prefix applied only to query text before encoding")
+    parser.add_argument("--corpus-prefix", default="", help="Optional prefix applied only to corpus text before encoding")
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
     parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
@@ -651,6 +698,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             scale_store_dir=args.scale_store_dir,
             use_scale_store=args.use_scale_store,
             scale_store_canonical_name=args.scale_store_canonical_name,
+            query_prefix=args.query_prefix,
+            corpus_prefix=args.corpus_prefix,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)

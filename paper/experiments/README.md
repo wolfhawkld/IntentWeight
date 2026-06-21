@@ -94,6 +94,37 @@ python paper/experiments/scripts/preprocess_pubmedqa.py --include-artificial
 python paper/experiments/scripts/validate_processed.py --dataset all
 ```
 
+### Step 3.5: 统一实验 artifact 审计
+
+Task51 提供一个不重跑实验的统一审计入口，用于后续新增实验前后的
+dimension/statistics/display readiness 检查：
+
+```bash
+.venv/bin/python paper/experiments/scripts/task51_experiment_validation.py
+```
+
+默认 manifest 是 `paper/experiments/task51_experiment_manifest.json`，输出为：
+
+```text
+paper/experiments/results/task51_experiment_validation_audit.csv
+paper/experiments/results/task51_experiment_validation_audit.json
+paper/experiments/results/task51_experiment_validation_audit.md
+```
+
+常用变体：
+
+```bash
+.venv/bin/python paper/experiments/scripts/task51_experiment_validation.py --list-experiments
+
+.venv/bin/python paper/experiments/scripts/task51_experiment_validation.py \
+  --experiments task47_cross_encoder_reranker,task48_compressor_normalized_comparison
+```
+
+该审计检查已经生成的 artifacts：processed query/corpus shape、ranking
+variant/query/chunk 引用、paired CSV 统计一致性、CI/p-value/range 合法性、
+token-ratio 算术、以及 paper-facing Markdown 摘要是否具备基本展示结构。它不
+替代真实实验，也不生成新的实验结论。
+
 预处理完成后，`data/processed/` 下应有以下文件：
 
 ```
@@ -1450,6 +1481,31 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     LaTeX。当前论文主张已统一为：dense 是 recall floor，SentMMR 是共享
     final-context compressor，cross-encoder 是 late ranking layer，IntentWeight
     是可与二者叠加的 route-and-budget controller。
+17. experiment validation framework：Task51 已完成，详见
+    `paper/experiments/task51_experiment_validation_framework.md`。该项新增
+    `task51_experiment_manifest.json` 和
+    `scripts/task51_experiment_validation.py`，把后续新增实验统一纳入
+    dimension/statistics/display readiness 审计。默认审计覆盖 Task38 主
+    token-quality frontier、Task39 science/search cross-domain validation、
+    Task46 Sentence-MMR、Task47 cross-encoder reranker、Task48
+    compressor-normalized comparison，以及 Task52 BGE-base dense baseline。
+    当前审计结果为 `209 PASS / 0 WARN / 0 ERROR`；Task39 science/search
+    processed dataset 已在本地 manifest 中配置，并开启 query、GT 与 top-k
+    ranking chunk 引用校验。
+18. strong embedding dense baseline：Task52 已完成，详见
+    `paper/experiments/task52_strong_embedding_baseline_summary.md`。该项用
+    `.venv-rocm` 和 AMD Radeon RX 9070 XT 跑
+    `BAAI/bge-base-en-v1.5`，在 LoTTE technology/search 100k 上生成
+    top-50 dense rankings，并用 Task38 frozen test split 做强 embedding
+    baseline 对比。BGE-base dense 将 held-out `Hit@10` 从 MiniLM dense 的
+    `0.8705` 提升到 `0.8993`，paired delta 为 `+2.88pp`，95% bootstrap CI
+    为 `+0.48pp` 到 `+5.28pp`，McNemar `p=0.0357`；同时平均 top-10 context
+    tokens 从 `1470` 增加到 `1708`，相对 MiniLM dense 增加约 `16.18%`。
+    当前 MiniLM-branch IntentWeight target policies 相对 BGE 仍节省约
+    `18.22-20.07%` tokens，但 `Hit@10` 低 `2.16-3.36pp`。该结果应写成
+    claim-tightening strong baseline：强 dense 会抬高质量 floor，后续需要
+    将 IntentWeight 的 dense branch 也替换为 BGE 后再比较统一 route-and-budget
+    frontier。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1458,7 +1514,8 @@ calibration/test 防御、第 11 项 Task39 science/search 跨域复现 20k/q200
 第 13 项 Task46 Dense+Sentence-MMR same-budget baseline，以及第 14 项 Task48
 compressor-normalized comparison、第 15 项 Task47 cross-encoder reranker
 same-budget baseline、第 16 项 Task49 strong-baseline-aware manuscript
-reframing 均已完成。
+reframing、第 17 项 Task51 experiment validation framework、第 18 项 Task52
+strong embedding dense baseline 均已完成。
 
 ---
 
@@ -1474,4 +1531,4 @@ reframing 均已完成。
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-05-25*
+*更新时间: 2026-06-22*
