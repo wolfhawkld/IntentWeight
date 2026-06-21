@@ -52,6 +52,8 @@ The current paper-facing claims are backed by these artifact families:
 - final-context token accounting and LLM-input-cost framing from the Task29 and
   later manuscript revisions;
 - harmed-query feedback recovery evidence from Task40;
+- strong compression and reranker baseline coverage from Task46, Task47, and
+  Task48;
 - table and figure traceability audit from Task43;
 - LaTeX migration and PDF build audit from Task36/Task43 tooling.
 
@@ -64,8 +66,9 @@ The current paper-facing claims are backed by these artifact families:
   evidence.
 - `Hit@10` supports "at least one usable evidence chunk" and does not prove
   complete evidence collection.
-- Same-budget MMR and reranker-style compression baselines remain important
-  follow-up checks for Task46/Task47.
+- Same-budget MMR, compressor-normalized, and cross-encoder reranker baselines
+  have now been run as Task46, Task48, and Task47; answer-level validation
+  remains the larger remaining evidence gap.
 
 ## Verification
 
@@ -89,16 +92,15 @@ The final audit status was:
 
 ## Next Recommended Task
 
-Task46 is now completed in `task46_sentence_mmr_same_budget_summary.md`, and
-Task48 extends it with the compressor-normalized comparison in
-`task48_compressor_normalized_summary.md`. The result shows that SentMMR is a
-strong shared final-context compression layer on LoTTE technology/search 100k
-under chunk-support metrics.
+Task46 is completed in `task46_sentence_mmr_same_budget_summary.md`, Task48
+extends it with the compressor-normalized comparison in
+`task48_compressor_normalized_summary.md`, and Task47 adds the heavier
+cross-encoder reranker baseline in `task47_cross_encoder_reranker_summary.md`.
+Together, these results support the route-and-budget controller framing:
+IntentWeight can be stacked with a shared final-context compressor and remains
+competitive under a strong reranker baseline, but it should not be presented as
+dominating compression or reranking.
 
-The next decision is either:
-
-- Task47: add a heavier cross-encoder reranker same-budget baseline if the
-  target venue requires a stronger retrieval-system comparison;
-- manuscript framing: revise novelty and claims so IntentWeight is presented as
-  a route-and-budget controller that can be stacked with a shared final-context
-  compressor, not as a method that dominates sentence-level compression.
+The next paper task is manuscript framing: revise novelty and claims around the
+completed strong-baseline evidence, then decide whether to schedule a larger
+answer-level evaluation.

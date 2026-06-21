@@ -112,6 +112,6 @@ sentence is:
 
 ## Next Step
 
-Task47 can add a heavier cross-encoder reranker same-budget baseline if the
-target venue requires a stronger retrieval-system comparison. Otherwise, the
-next paper task is to revise novelty and claim framing around this new baseline.
+Task47 has now added the heavier cross-encoder reranker same-budget baseline.
+The next paper task is to revise novelty and claim framing around the completed
+compression and reranker baselines.

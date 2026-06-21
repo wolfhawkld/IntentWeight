@@ -71,9 +71,11 @@ counts complicate the current LinUCB setup.
 
 The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. The
 paper adds a CPU-friendly encoder robustness check with
-`sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, but the paper should not
-generalize the result to stronger domain-specific encoders, rerankers, or
-late-interaction models without additional experiments.
+`sentence-transformers/multi-qa-MiniLM-L6-cos-v1` and a cross-encoder reranker
+check with `cross-encoder/ms-marco-MiniLM-L-6-v2`. These checks improve
+baseline coverage, but the paper should not generalize the result to all
+stronger domain-specific encoders, rerankers, or late-interaction models
+without additional experiments.
 
 LoTTE technology/search is the main positive large-scale domain. LoTTE
 science/search strengthens external validity but does not replace evaluation on

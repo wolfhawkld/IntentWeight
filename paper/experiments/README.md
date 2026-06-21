@@ -1432,13 +1432,25 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     约 `5.4/10.3/15.2%`。该结果支持把 SentMMR 写成共享 final-context
     compressor，把 IntentWeight 写成上游 route-and-budget controller；不要写成
     IntentWeight 支配 compression。
+15. cross-encoder reranker same-budget baseline：Task47 已完成，详见
+    `paper/experiments/task47_cross_encoder_reranker_summary.md`。该项以 dense
+    top-50 为候选池，用 `cross-encoder/ms-marco-MiniLM-L-6-v2` 对 query-chunk
+    对重排，并在 LoTTE technology/search 100k 的 Task38 frozen test split 上
+    比较 full reranked top-10 与同预算重排结果。Full reranked top-10 将
+    `Hit@10` 从 dense 的 `0.8705` 提升到 `0.8777`，`EvidenceRecall@10` 从
+    `0.7081` 提升到 `0.7332`，但平均 context tokens 从 `1470` 增加到
+    `1792`。在 Task38 per-query token budget 下，reranker same-budget 的
+    `Hit@10=0.8633-0.8729`，未稳定超过 IntentWeight target 的
+    `0.8657-0.8777`。该结果支持把 cross-encoder 写成强 ranking baseline，
+    同时保留 IntentWeight 作为轻量 route-and-budget controller 的定位。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
 calibration/test 防御、第 11 项 Task39 science/search 跨域复现 20k/q200
 和 100k checkpoints、第 12 项 Task40 feedback-driven hard-case recovery、
 第 13 项 Task46 Dense+Sentence-MMR same-budget baseline，以及第 14 项 Task48
-compressor-normalized comparison 均已完成。
+compressor-normalized comparison、第 15 项 Task47 cross-encoder reranker
+same-budget baseline 均已完成。
 
 ---
 

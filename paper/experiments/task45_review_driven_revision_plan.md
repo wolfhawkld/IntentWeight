@@ -225,6 +225,12 @@ Possible outcomes:
 - Reranker dominates: claim should be narrowed, but the paper becomes more
   honest.
 
+Status: completed by Task47; see
+`paper/experiments/task47_cross_encoder_reranker_summary.md`. On LoTTE
+technology/search 100k, full cross-encoder reranked top-10 improves support
+metrics but increases final context tokens, while same-budget reranking does
+not uniformly dominate IntentWeight.
+
 ### P1-B: Expand Answer-Level Evaluation
 
 Goal:

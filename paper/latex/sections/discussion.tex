@@ -17,6 +17,13 @@ A static combination of dense, BM25, and cluster-local retrieval can improve cov
 
 The confidence-only policy is intentionally conservative. It compresses only high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is why the saving is modest but stable. The calibrated token-budget policies use a frozen calibration/test protocol to expose a stronger operating frontier, while dense-only adaptive truncation shows that saving more tokens by simply reducing dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy should therefore be interpreted as a safe baseline, not the highest-compression configuration.
 
+\subsection{Reranking and Final-Context Control}
+\label{sec:07-discussion:reranking-and-final-context-control}
+
+A cross-encoder reranker is a natural stronger ranking baseline, but it solves a different subproblem from final-context budgeting. A reranker applied after dense or multi-route retrieval can reorder a candidate pool and improve the quality of the top-ranked evidence, but it does not expand recall beyond the candidate pool and it does not by itself control LLM input length. In the LoTTE technology/search 100k check, reranking dense top-50 candidates with a cross-encoder improves the full top-10 support metrics ($\mathrm{Hit@10}=0.8777$ and $\mathrm{EvidenceRecall@10}=0.7332$, versus dense top-10 at $0.8705$ and $0.7081$). However, the reranked top-10 contains longer chunks on average, increasing selected evidence-context tokens by about 21.9\% relative to dense top-10.
+
+This clarifies the intended system decomposition. Reranking is useful as a late ranking layer, while SentMMR-style sentence selection and IntentWeight-style budget control are final-context layers. When the cross-encoder output is forced under the same per-query token budgets used by IntentWeight, its $\mathrm{Hit@10}$ range does not uniformly dominate the calibrated IntentWeight policies. The appropriate comparison is therefore not "IntentWeight versus reranking" as mutually exclusive choices, but whether a pipeline can combine candidate generation, reranking, and budgeted context selection while keeping the quality-cost frontier explicit.
+
 \subsection{Feedback Improves the Policy Field}
 \label{sec:07-discussion:feedback-improves-the-policy-field}
 
@@ -49,6 +56,7 @@ The correct deployment interpretation is therefore:
 
 \begin{itemize}
 \item keep dense retrieval as a recall floor;
+\item optionally add reranking as a late ranking layer before final context selection;
 \item use feedback and confidence to reduce final context when the policy is stable;
 \item use negative feedback to trigger safer local fallback for risky regions;
 \item monitor evidence quality and fallback rates;

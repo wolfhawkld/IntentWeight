@@ -122,6 +122,6 @@ Use Task48 to justify this framing:
 > positions IntentWeight as a route-and-budget controller that is complementary
 > to final-context compression rather than a replacement for it.
 
-The next highest-value paper task is claim and novelty reframing. Task47
-cross-encoder reranker remains useful if the target venue expects a heavier
-retrieval baseline.
+Task47 cross-encoder reranker is now completed. The next highest-value paper
+task is claim and novelty reframing around the completed strong-baseline
+evidence.

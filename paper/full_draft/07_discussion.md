@@ -40,7 +40,31 @@ dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy
 should therefore be interpreted as a safe baseline, not the highest-compression
 configuration.
 
-## 6.3 Feedback Improves the Policy Field
+## 6.3 Reranking and Final-Context Control
+
+A cross-encoder reranker is a natural stronger ranking baseline, but it solves
+a different subproblem from final-context budgeting. A reranker applied after
+dense or multi-route retrieval can reorder a candidate pool and improve the
+quality of the top-ranked evidence, but it does not expand recall beyond the
+candidate pool and it does not by itself control LLM input length. In the LoTTE
+technology/search 100k check, reranking dense top-50 candidates with a
+cross-encoder improves the full top-10 support metrics
+($\mathrm{Hit@10}=0.8777$ and $\mathrm{EvidenceRecall@10}=0.7332$, versus
+dense top-10 at $0.8705$ and $0.7081$). However, the reranked top-10 contains
+longer chunks on average, increasing selected evidence-context tokens by about
+21.9% relative to dense top-10.
+
+This clarifies the intended system decomposition. Reranking is useful as a late
+ranking layer, while SentMMR-style sentence selection and IntentWeight-style
+budget control are final-context layers. When the cross-encoder output is
+forced under the same per-query token budgets used by IntentWeight, its
+$\mathrm{Hit@10}$ range does not uniformly dominate the calibrated
+IntentWeight policies. The appropriate comparison is therefore not
+"IntentWeight versus reranking" as mutually exclusive choices, but whether a
+pipeline can combine candidate generation, reranking, and budgeted context
+selection while keeping the quality-cost frontier explicit.
+
+## 6.4 Feedback Improves the Policy Field
 
 Dense and BM25 fallback can saturate final $\mathrm{Hit@10}$. This can hide the
 effect of feedback in final fused retrieval metrics. The clearer feedback
@@ -61,7 +85,7 @@ fallback policy. This should be treated as a controlled recovery mechanism. It
 does not mean that feedback should blindly boost the same arm for all future
 queries.
 
-## 6.4 Geometry Is Useful but Not Sufficient
+## 6.5 Geometry Is Useful but Not Sufficient
 
 The geometry diagnostics support a piecewise relevance-manifold framing.
 $\mathrm{NearestClusterHit@3}$ remains high across LoTTE scales, and local
@@ -73,7 +97,7 @@ IntentWeight therefore uses geometry as one signal in a controller. Dense
 retrieval remains a fallback, BM25 provides lexical anchors, and LinUCB learns
 route confidence over repeated interactions.
 
-## 6.5 Evidence Completeness Versus Usable Evidence
+## 6.6 Evidence Completeness Versus Usable Evidence
 
 The main retrieval headline is query-level $\mathrm{Hit@10}$. This metric asks
 whether at least one relevant chunk appears in the final context. It is
@@ -87,7 +111,7 @@ medical synthesis, or compliance workflows where complete evidence coverage is
 required, the system should use a more conservative context policy or disable
 compaction.
 
-## 6.6 Production Interpretation
+## 6.7 Production Interpretation
 
 The measured 6-18% calibrated evidence-context token reduction applies to the
 most expensive recurring component of a retrieval-augmented answer: LLM input
@@ -103,6 +127,8 @@ proven by the current experiments.
 The correct deployment interpretation is therefore:
 
 - keep dense retrieval as a recall floor;
+- optionally add reranking as a late ranking layer before final context
+  selection;
 - use feedback and confidence to reduce final context when the policy is stable;
 - use negative feedback to trigger safer local fallback for risky regions;
 - monitor evidence quality and fallback rates;
