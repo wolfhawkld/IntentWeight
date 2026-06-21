@@ -2,34 +2,28 @@
 
 Knowledge-augmented agents must select enough evidence to support answer
 quality while limiting latency, noise, and final context cost. This trade-off is
-especially difficult for vertical-domain data, where relevance is shaped by
-domain terminology, local semantic neighborhoods, workflow structure, and
-evolving user intent. We propose IntentWeight, a feedback-adaptive evidence
-selection controller motivated by the hypothesis that vertical-domain
-query-document relevance often exposes exploitable local structure rather than
-a uniform embedding-space distribution. IntentWeight combines dense semantic
-retrieval, BM25 lexical recall, and cluster-local routing, and uses
-trust-weighted LinUCB to learn when compact local evidence should be trusted
-and when dense fallback remains necessary. A confidence-based final context
-policy then compacts the selected evidence sent to the generator under bounded
-risk.
+especially difficult in vertical domains, where relevance depends on
+terminology, local semantic neighborhoods, workflows, and evolving intent. We
+propose IntentWeight, a feedback-adaptive evidence-selection controller
+motivated by the hypothesis that vertical-domain query-document relevance often
+exposes exploitable local structure rather than a uniform embedding-space
+distribution. IntentWeight combines dense retrieval, BM25 recall, and
+cluster-local routing; uses trust-weighted LinUCB to learn when compact local
+evidence is reliable and when dense fallback is needed; and applies a
+confidence-based policy to compact the final evidence sent to the generator.
 
-We instantiate this framework in retrieval-augmented question answering on
-LoTTE technology/search from 100k to 638k corpus chunks. Under frozen
+We evaluate on LoTTE technology/search from 100k to 638k chunks. Under frozen
 calibration/test budget policies, calibration-eligible operating points reduce
-the LLM input tokens consumed by retrieved evidence context by 6-18% at 100k,
-200k, and 638k, while a 400k diagnostic point shows similar frozen-test
-behavior but fails the calibration eligibility gate. Across these scales,
-IntentWeight avoids the larger $\mathrm{Hit@10}$ losses observed under
-dense-only adaptive truncation, while strict seed-level non-inferiority remains
-scale-dependent. A conservative confidence policy provides a stable 4.7-5.3%
-saving baseline on the same generator-input-token measure. Stronger
-post-retrieval baselines refine the claim: sentence-level MMR can compress both
-dense and IntentWeight evidence pools, and a cross-encoder reranker improves
-top-ranked evidence support but can increase final context tokens unless
-paired with budget control. Results generalize to a second LoTTE domain with
-domain-calibrated compression, and simulated feedback recovers a meaningful
-fraction of compression-induced tail failures. IntentWeight is therefore not a
-universal replacement for dense retrieval, compressors, or rerankers, but a
-manifold-inspired, feedback-adaptive controller for quality-efficiency
-trade-offs in structured domain evidence selection.
+language-model input tokens consumed by retrieved evidence context by 6-18% at
+100k, 200k, and 638k; a 400k diagnostic point shows positive frozen-test
+behavior but fails the calibration eligibility gate. IntentWeight avoids the
+larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation, although
+strict seed-level non-inferiority is scale-dependent. Strong post-retrieval
+baselines narrow the claim: sentence-level MMR compresses both dense and
+IntentWeight evidence pools, while cross-encoder reranking improves top-ranked
+support but can increase final context tokens without budget control. Results
+replicate on LoTTE science/search with domain-calibrated compression, and
+simulated feedback recovers a meaningful fraction of compression-induced tail
+failures. IntentWeight is therefore a route-and-budget controller for
+quality-efficiency trade-offs, not a replacement for dense retrieval,
+compressors, or rerankers.

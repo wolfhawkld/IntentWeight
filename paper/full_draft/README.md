@@ -74,12 +74,17 @@ post-feedback retry.
 The current draft is a complete v1, not a final camera-ready paper. The next
 pass should:
 
-- integrate the strong-baseline framing into any future venue-specific cut;
-- tighten prose to the target venue style;
+- use `paper/journal_submission/` as the journal-first preparation package;
+- treat IP&M as the primary target and ESWA as the fallback target;
+- migrate the current ACL-style LaTeX draft to Elsevier `elsarticle` before
+  formal submission;
+- tighten prose to the selected journal style;
 - refine draft SVG figures to the selected venue's visual style;
-- compile the ACL-style LaTeX migration in TeX Live or Overleaf;
+- build separate anonymized manuscript and title-page files for double
+  anonymized review;
 - visually inspect table density, float placement, and page budget;
-- select a specific submission cycle before camera-ready formatting.
+- fill real author, affiliation, funding, competing-interest, data/code, and
+  AI-use declarations before submission.
 
 ## Draft Validation
 

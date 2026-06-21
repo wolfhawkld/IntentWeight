@@ -137,4 +137,4 @@ a universal replacement for dense retrieval. It is a feedback-driven controller
 that uses dense retrieval as a recall floor and learns when route confidence is
 strong enough to reduce the final context budget or trigger a safer
 post-feedback recovery path. Reranking and sentence compression remain
-compatible downstream layers rather than competing explanations to hide.
+compatible downstream layers rather than competing explanations.
