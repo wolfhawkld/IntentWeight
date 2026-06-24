@@ -1540,6 +1540,17 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `+0.88pp`、seed SD 为 `0.14pp`，同时节省 `7.23%` tokens；BGE/E5
     gated variants 均表现为稳定负向 Hit@10 delta，应作为 cost-aggressive
     boundary，而不是主推 setting。
+22. claim-evidence alignment：Task56 已完成，详见
+    `paper/experiments/task56_claim_evidence_alignment.md`。该项不新增实验，
+    而是把 manifold-inspired motivation、LoTTE 几何诊断、Task38/39
+    calibration evidence、Task46/47/48 strong baselines、Task53 matched
+    backbone、Task54 BGE positive-hit tuning 和 Task55 seed stability 统一成
+    claim-evidence map。当前建议的核心写法是：IntentWeight 是由流形假设启发、
+    经几何诊断支持的 route-and-budget controller；它不证明流形定理，也不
+    universal dominate dense，但在 calibrated/frozen 与 matched-backbone
+    设置下可以形成可统计检验的 dense-level / near-dense quality-cost
+    trade-off，并在 BGE quality-first operating point 上取得高于 BGE dense
+    的 Hit@10 且节省 final context tokens。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1551,7 +1562,8 @@ same-budget baseline、第 16 项 Task49 strong-baseline-aware manuscript
 reframing、第 17 项 Task51 experiment validation framework、第 18 项 Task52
 strong embedding dense baseline、第 19 项 Task53 embedding backbone
 generalization、第 20 项 Task54 positive-hit trade-off tuning、第 21 项
-Task55 backbone stability summary 均已完成。
+Task55 backbone stability summary、第 22 项 Task56 claim-evidence alignment
+均已完成。
 
 ---
 

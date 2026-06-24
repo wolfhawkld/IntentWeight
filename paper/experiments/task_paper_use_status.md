@@ -68,6 +68,7 @@ accidentally promoted into paper-facing claims.
 | `task36_13_pdf_compile_audit.md` | Supporting writing revision | Installs lightweight TinyTeX, resolves real ACL compile issues, adds PDF rendering audit, and records the 19-page complete-draft layout; the next pass must produce a shorter submission cut. |
 | `task49_strong_baseline_reframing_summary.md` | Supporting writing revision | Integrates Task46/47/48 strong baselines into the manuscript framing; use for the route-and-budget controller plus shared compressor/reranker decomposition. |
 | `task51_experiment_validation_framework.md` | Supporting guardrail | Unified artifact audit for dimension, paired-statistics, and display-readiness checks; use before promoting new experiment outputs into paper-facing claims. |
+| `task56_claim_evidence_alignment.md` | Supporting writing revision | Aligns manifold-inspired motivation, geometry diagnostics, matched-backbone results, strong baselines, and stability evidence into bounded paper-facing claims. |
 
 ## Boundary Or Negative Evidence
 
