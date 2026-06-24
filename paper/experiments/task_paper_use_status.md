@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-06-22
+Updated: 2026-06-24
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -50,6 +50,9 @@ accidentally promoted into paper-facing claims.
 | `task47_cross_encoder_reranker_summary.md` | Supporting/strong reranker baseline evidence | Cross-encoder reranking over dense top-50 improves support metrics at full top-10 but increases context tokens; same-budget reranking does not uniformly dominate IntentWeight. |
 | `task48_compressor_normalized_summary.md` | Supporting/strong baseline evidence | Applies the same SentMMR compressor to dense and IntentWeight evidence pools; use to support the route-and-budget controller plus shared-compressor framing. |
 | `task52_strong_embedding_baseline_summary.md` | Supporting/strong embedding baseline evidence | BGE-base dense raises the dense quality floor on Task38 held-out LoTTE 100k while increasing context tokens; use to tighten claims and motivate rerunning IntentWeight with a stronger dense branch. |
+| `task53_embedding_backbone_generalization_summary.md` | Supporting/backbone robustness evidence | Matched-backbone MiniLM/BGE/E5 comparison; use full multi-route rows as quality-preserving token-saving evidence and gated rows as cost-aggressive boundary evidence. |
+| `task54_positive_hit_tradeoff_summary.md` | Supporting/tunability evidence | BGE quality-first operating point: slightly above BGE dense Hit@10 while still saving final context tokens; note that E5 does not currently show the same positive-Hit point. |
+| `task55_backbone_stability_summary.md` | Supporting/stability evidence | Fixed-seed stability check for MiniLM/BGE/E5 matched-backbone results; use to show the claims are statistically checkable without presenting seeds as tuning targets. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |
@@ -88,7 +91,7 @@ accidentally promoted into paper-facing claims.
 |---|---|---|
 | `task33_5_llm_generation_smoke_handoff.md` | Internal handoff | Superseded by `task33_5_llm_generation_smoke_summary.md`. |
 | `task33_pre_writing_validation_backlog.md` | Internal backlog | Use only for project management, not paper evidence. |
-| `task53_embedding_backbone_generalization_plan.md` | Internal handoff/backlog | Next matched-backbone experiment plan: BGE IntentWeight replacement plus E5-base-v2 as a third open-source embedding backbone. |
+| `task53_embedding_backbone_generalization_plan.md` | Internal handoff/backlog | Superseded by `task53_embedding_backbone_generalization_summary.md`; kept as task provenance. |
 
 ## Paper-Facing Rule
 

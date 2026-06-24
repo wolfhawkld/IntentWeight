@@ -1024,6 +1024,8 @@ def run_dataset(
     scale_store_dir: Path | None = None,
     use_scale_store: bool = False,
     scale_store_canonical_name: str = "lotte_technology_search",
+    query_prefix: str = "",
+    corpus_prefix: str = "",
 ) -> List[Dict[str, object]]:
     if reward_attribution not in REWARD_ATTRIBUTIONS:
         raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
@@ -1064,6 +1066,8 @@ def run_dataset(
     start = time.perf_counter()
     scale_store_info: Dict[str, object] = {"enabled": False}
     if use_scale_store:
+        if corpus_prefix:
+            raise ValueError("--corpus-prefix is incompatible with --use-scale-store because corpus embeddings are precomputed")
         corpus_embeddings, scale_store_info = dense_baseline.load_corpus_embeddings_from_scale_store(
             corpus,
             canonical_name=scale_store_canonical_name,
@@ -1082,6 +1086,7 @@ def run_dataset(
             model_name=model_name,
             record_kind="corpus",
             batch_size=batch_size,
+            text_prefix=corpus_prefix,
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=use_embedding_cache,
             force_embedding_cache=force_embedding_cache,
@@ -1093,6 +1098,7 @@ def run_dataset(
         model_name=model_name,
         record_kind="queries",
         batch_size=batch_size,
+        text_prefix=query_prefix,
         embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
         use_embedding_cache=use_embedding_cache,
         force_embedding_cache=force_embedding_cache,
@@ -1224,6 +1230,8 @@ def run_dataset(
             "dataset": dataset,
             "method": f"linucb_cost_{routing_mode}",
             "model": model_name,
+            "query_prefix": query_prefix,
+            "corpus_prefix": corpus_prefix,
             "protocol": "prequential_cost_aware_feedback",
             "routing_mode": routing_mode,
             "feedback_mode": feedback_mode,
@@ -1353,7 +1361,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
     new_rows = list(rows)
     if not new_rows:
         return
-    existing: Dict[tuple[str, str, str, str, str, str, str, str, str, str], Mapping] = {}
+    existing: Dict[tuple[str, str, str, str, str, str, str, str, str, str, str, str], Mapping] = {}
     if summary_path.exists():
         with summary_path.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
@@ -1362,6 +1370,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
                     row.get("dataset", ""),
                     row.get("method", ""),
                     row.get("model", ""),
+                    row.get("query_prefix", ""),
+                    row.get("corpus_prefix", ""),
                     row.get("routing_mode", ""),
                     row.get("reward_attribution", ""),
                     row.get("confidence_mode", ""),
@@ -1375,6 +1385,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
             str(row["dataset"]),
             str(row["method"]),
             str(row.get("model", "")),
+            str(row.get("query_prefix", "")),
+            str(row.get("corpus_prefix", "")),
             str(row.get("routing_mode", "")),
             str(row.get("reward_attribution", "")),
             str(row.get("confidence_mode", "")),
@@ -1393,6 +1405,8 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "confidence_mode",
         "final_context_policy",
         "model",
+        "query_prefix",
+        "corpus_prefix",
         "protocol",
         "task_type",
         "scope",
@@ -1553,6 +1567,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--device", default=None)
     parser.add_argument("--local-files-only", action="store_true")
+    parser.add_argument("--query-prefix", default="", help="Optional prefix applied only to query text before encoding")
+    parser.add_argument("--corpus-prefix", default="", help="Optional prefix applied only to corpus text before encoding")
     parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
     parser.add_argument("--no-embedding-cache", action="store_true", help="Disable reusable on-disk embeddings")
     parser.add_argument("--force-embedding-cache", action="store_true", help="Recompute embeddings even when cache files exist")
@@ -1702,6 +1718,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             scale_store_dir=args.scale_store_dir,
             use_scale_store=args.use_scale_store,
             scale_store_canonical_name=args.scale_store_canonical_name,
+            query_prefix=args.query_prefix,
+            corpus_prefix=args.corpus_prefix,
         )
         all_rows.extend(rows)
         for row in rows:

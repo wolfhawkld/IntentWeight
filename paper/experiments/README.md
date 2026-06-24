@@ -1488,10 +1488,13 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     dimension/statistics/display readiness 审计。默认审计覆盖 Task38 主
     token-quality frontier、Task39 science/search cross-domain validation、
     Task46 Sentence-MMR、Task47 cross-encoder reranker、Task48
-    compressor-normalized comparison，以及 Task52 BGE-base dense baseline。
-    当前审计结果为 `209 PASS / 0 WARN / 0 ERROR`；Task39 science/search
-    processed dataset 已在本地 manifest 中配置，并开启 query、GT 与 top-k
-    ranking chunk 引用校验。
+    compressor-normalized comparison、Task52 BGE-base dense baseline、Task53
+    matched-backbone embedding generalization，以及 Task54 positive-hit
+    trade-off tuning，以及 Task55 backbone stability summary。当前审计结果为
+    `332 PASS / 0 WARN / 0 ERROR`；Task39 science/search processed dataset、
+    Task53 artifacts、Task54 positive-hit artifacts 和 Task55 stability
+    artifacts 已在本地 manifest 中配置，并开启 query、GT、top-k ranking
+    chunk 引用、paired 统计与展示结构校验。
 18. strong embedding dense baseline：Task52 已完成，详见
     `paper/experiments/task52_strong_embedding_baseline_summary.md`。该项用
     `.venv-rocm` 和 AMD Radeon RX 9070 XT 跑
@@ -1506,6 +1509,37 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     claim-tightening strong baseline：强 dense 会抬高质量 floor，后续需要
     将 IntentWeight 的 dense branch 也替换为 BGE 后再比较统一 route-and-budget
     frontier。
+19. embedding backbone generalization：Task53 已完成，详见
+    `paper/experiments/task53_embedding_backbone_generalization_summary.md`。
+    该项把 IntentWeight 与 dense baseline 统一为 matched-backbone 对比：
+    MiniLM、BGE-base 和 E5-base 均使用同一 LoTTE technology/search 100k
+    corpus、Task38 frozen split、context-token accounting 和 Task51 审计。
+    BGE-base full multi-route 在 held-out 上相对 BGE dense 的平均
+    `Hit@10` delta 为 `-0.08pp`，同时节省约 `11.99%` final context
+    tokens；E5-base full multi-route 平均 delta 为 `-0.64pp`，节省约
+    `12.20%` tokens。BGE/E5 gated-cost variants 则分别降低约 `2.48pp`
+    和 `3.44pp` Hit@10，可作为更激进 retrieval-cost boundary，而不是主
+    quality-preserving 结论。该结果支持把论文主张写成 matched-backbone
+    route-and-budget trade off，而不是 MiniLM-specific dominance claim。
+20. positive-hit trade-off tuning：Task54 已完成，详见
+    `paper/experiments/task54_positive_hit_tradeoff_summary.md`。该项在 BGE
+    full multi-route rankings 上改用更保守的 `token_budget_r0.97_m4`
+    operating point，使 frozen test 三个 seed 的 `Hit@10` 均高于 BGE dense：
+    delta 为 `+0.72pp` 到 `+0.96pp`，同时仍节省 `6.50-8.11%` final
+    context tokens。E5-base 在当前 frozen split 下没有找到同时高于 dense
+    且省 token 的点，因此 Task54 应写成 BGE quality-first tunability
+    evidence，而不是所有 backbone 的通用正向结论。
+21. backbone stability summary：Task55 已完成，详见
+    `paper/experiments/task55_backbone_stability_summary.md`。该项不重跑
+    retrieval，而是复用 Task38、Task53、Task54 既有 artifacts，对固定
+    seeds `13,17,19` 做 seed-level stability 汇总。其目的不是寻找最佳
+    seed，而是验证 matched-backbone route-and-budget 主张在随机聚类、
+    query 顺序和模拟反馈变化下是否稳定且可统计检验。结果显示 BGE full
+    的 mean Hit@10 delta 为 `-0.08pp`、seed SD 为 `0.37pp`，同时节省
+    `11.99%` final context tokens；BGE positive 的 mean delta 为
+    `+0.88pp`、seed SD 为 `0.14pp`，同时节省 `7.23%` tokens；BGE/E5
+    gated variants 均表现为稳定负向 Hit@10 delta，应作为 cost-aggressive
+    boundary，而不是主推 setting。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1515,7 +1549,9 @@ calibration/test 防御、第 11 项 Task39 science/search 跨域复现 20k/q200
 compressor-normalized comparison、第 15 项 Task47 cross-encoder reranker
 same-budget baseline、第 16 项 Task49 strong-baseline-aware manuscript
 reframing、第 17 项 Task51 experiment validation framework、第 18 项 Task52
-strong embedding dense baseline 均已完成。
+strong embedding dense baseline、第 19 项 Task53 embedding backbone
+generalization、第 20 项 Task54 positive-hit trade-off tuning、第 21 项
+Task55 backbone stability summary 均已完成。
 
 ---
 
@@ -1531,4 +1567,4 @@ strong embedding dense baseline 均已完成。
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-06-22*
+*更新时间: 2026-06-24*

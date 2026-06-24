@@ -69,14 +69,16 @@ Command:
 
 Result:
 
-- PASS: 209
+- PASS: 332
 - WARN: 0
 - ERROR: 0
 
-The Task39 science/search processed datasets are now available locally and
-configured in the manifest. Task51 audits those runs with query count,
-ground-truth reference, and top-k ranking chunk-reference checks in addition to
-the metrics/ranking artifact checks.
+The Task39 science/search processed datasets and Task53 matched-backbone
+artifacts, plus the Task54 positive-hit operating point and Task55 backbone
+stability summary, are now available locally and configured in the manifest.
+Task51 audits those runs with query count, ground-truth reference, top-k ranking
+chunk-reference, paired-statistics, and display-readiness checks where
+applicable.
 
 ## Usage For Future Experiments
 

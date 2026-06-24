@@ -1880,19 +1880,1126 @@
       "role": "strong_embedding_baseline",
       "source": "paper/experiments/results/task52_bge_base_100k_strong_embedding.md",
       "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=2",
+      "experiment": "task53_embedding_backbone_generalization_summary",
+      "item": "result_json",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_embedding_backbone_generalization.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task53_embedding_backbone_generalization_summary",
+      "item": "queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task53_embedding_backbone_generalization_summary",
+      "item": "corpus",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task53_embedding_backbone_generalization_summary",
+      "item": "ground_truth_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task53_embedding_backbone_generalization_summary",
+      "item": "markdown_heading",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_embedding_backbone_generalization.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task53_embedding_backbone_generalization_summary",
+      "item": "markdown_table",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_embedding_backbone_generalization.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task53_embedding_backbone_generalization_summary",
+      "item": "token_language",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_embedding_backbone_generalization.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=73",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "result_json",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_metrics.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "corpus",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "ground_truth_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=60",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "summary_columns",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_baseline_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=1",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "summary_numeric_values",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_baseline_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=596",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "summary_num_queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_baseline_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=1",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "ranking_variants",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=1",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "ranking_query_count",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "ranking_query_ids",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=50.00",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "ranking_lengths",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "ranking_duplicate_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task53_e5_base_100k_dense_all_queries",
+      "item": "ranking_chunk_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "result_json",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "corpus",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "ground_truth_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "paired_columns",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "paired_numeric_values",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "paired_num_queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "paired_arithmetic",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "paired_ranges",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "ranking_variants",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "ranking_query_count",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "ranking_query_ids",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.67",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "ranking_lengths",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "markdown_heading",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "markdown_table",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task53_bge_base_100k_full_context_budget",
+      "item": "token_language",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_full_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "result_json",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "corpus",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "ground_truth_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "paired_columns",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "paired_numeric_values",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "paired_num_queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "paired_arithmetic",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "paired_ranges",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "ranking_variants",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "ranking_query_count",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "ranking_query_ids",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.49",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "ranking_lengths",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "markdown_heading",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "markdown_table",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task53_bge_base_100k_gated_context_budget",
+      "item": "token_language",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "result_json",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "corpus",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "ground_truth_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "paired_columns",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "paired_numeric_values",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "paired_num_queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "paired_arithmetic",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "paired_ranges",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "ranking_variants",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "ranking_query_count",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "ranking_query_ids",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.49",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "ranking_lengths",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "markdown_heading",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "markdown_table",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task53_e5_base_100k_full_context_budget",
+      "item": "token_language",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_full_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "result_json",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "corpus",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "ground_truth_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "paired_columns",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "paired_numeric_values",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "paired_num_queries",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "paired_arithmetic",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "paired_ranges",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "ranking_variants",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "ranking_query_count",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "ranking_query_ids",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.78",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "ranking_lengths",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "markdown_heading",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "markdown_table",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task53_e5_base_100k_gated_context_budget",
+      "item": "token_language",
+      "role": "embedding_backbone_generalization",
+      "source": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "result_json",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "queries",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "corpus",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "ground_truth_refs",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "paired_columns",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "paired_numeric_values",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "paired_num_queries",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "paired_arithmetic",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "paired_ranges",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "ranking_variants",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "ranking_query_count",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "ranking_query_ids",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.82",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "ranking_lengths",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "ranking_duplicate_refs",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "ranking_chunk_refs",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "markdown_heading",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "markdown_table",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task54_bge_base_100k_positive_hit_context_budget",
+      "item": "token_language",
+      "role": "positive_hit_tradeoff",
+      "source": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=3",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "result_json",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "queries",
+      "role": "seed_stability",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "corpus",
+      "role": "seed_stability",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "ground_truth_refs",
+      "role": "seed_stability",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=24",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "summary_columns",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "summary_numeric_values",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "summary_num_queries",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=18",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "summary_columns",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.per_seed.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=18",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "summary_numeric_values",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.per_seed.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "summary_num_queries",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.per_seed.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "markdown_heading",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "markdown_table",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task55_backbone_stability_summary",
+      "item": "token_language",
+      "role": "seed_stability",
+      "source": "paper/experiments/results/task55_backbone_stability_summary.md",
+      "status": "PASS"
     }
   ],
   "manifest": "paper/experiments/task51_experiment_manifest.json",
   "summary": {
     "by_category": {
       "dimension": {
-        "PASS": 108
+        "PASS": 182
       },
       "display": {
-        "PASS": 30
+        "PASS": 51
       },
       "statistics": {
-        "PASS": 71
+        "PASS": 99
       }
     },
     "by_experiment": {
@@ -1928,10 +3035,34 @@
       },
       "task52_bge_base_100k_task38_test_comparison": {
         "PASS": 19
+      },
+      "task53_bge_base_100k_full_context_budget": {
+        "PASS": 18
+      },
+      "task53_bge_base_100k_gated_context_budget": {
+        "PASS": 18
+      },
+      "task53_e5_base_100k_dense_all_queries": {
+        "PASS": 13
+      },
+      "task53_e5_base_100k_full_context_budget": {
+        "PASS": 18
+      },
+      "task53_e5_base_100k_gated_context_budget": {
+        "PASS": 18
+      },
+      "task53_embedding_backbone_generalization_summary": {
+        "PASS": 7
+      },
+      "task54_bge_base_100k_positive_hit_context_budget": {
+        "PASS": 18
+      },
+      "task55_backbone_stability_summary": {
+        "PASS": 13
       }
     },
     "status_counts": {
-      "PASS": 209
+      "PASS": 332
     }
   }
 }

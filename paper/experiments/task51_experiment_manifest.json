@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-06-22",
+  "updated": "2026-06-24",
   "description": "Default Task51 audit manifest for paper-critical and recent strong-baseline experiment artifacts.",
   "defaults": {
     "top_k": 10,
@@ -319,6 +319,216 @@
       ],
       "markdown_reports": [
         "paper/experiments/results/task52_bge_base_100k_strong_embedding.md"
+      ]
+    },
+    {
+      "id": "task53_embedding_backbone_generalization_summary",
+      "role": "embedding_backbone_generalization",
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task53_embedding_backbone_generalization.json"
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task53_embedding_backbone_generalization.md"
+      ]
+    },
+    {
+      "id": "task53_e5_base_100k_dense_all_queries",
+      "role": "embedding_backbone_generalization",
+      "expected_num_queries": 596,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_metrics.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task53_e5_base_100k_dense/dense_baseline_summary.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 50,
+          "check_top_k_chunks": 10
+        }
+      ]
+    },
+    {
+      "id": "task53_bge_base_100k_full_context_budget",
+      "role": "embedding_backbone_generalization",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task53_bge_base_100k_full_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task53_bge_base_100k_full_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task53_bge_base_100k_full_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task53_bge_base_100k_full_context_budget.md"
+      ]
+    },
+    {
+      "id": "task53_bge_base_100k_gated_context_budget",
+      "role": "embedding_backbone_generalization",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task53_bge_base_100k_matched_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task53_bge_base_100k_matched_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task53_bge_base_100k_matched_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task53_bge_base_100k_matched_context_budget.md"
+      ]
+    },
+    {
+      "id": "task53_e5_base_100k_full_context_budget",
+      "role": "embedding_backbone_generalization",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task53_e5_base_100k_full_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task53_e5_base_100k_full_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task53_e5_base_100k_full_context_budget.md"
+      ]
+    },
+    {
+      "id": "task53_e5_base_100k_gated_context_budget",
+      "role": "embedding_backbone_generalization",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task53_e5_base_100k_gated_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task53_e5_base_100k_gated_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task53_e5_base_100k_gated_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task53_e5_base_100k_gated_context_budget.md"
+      ]
+    },
+    {
+      "id": "task54_bge_base_100k_positive_hit_context_budget",
+      "role": "positive_hit_tradeoff",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.json"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.md"
+      ]
+    },
+    {
+      "id": "task55_backbone_stability_summary",
+      "role": "seed_stability",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task55_backbone_stability_summary.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task55_backbone_stability_summary.csv",
+        "paper/experiments/results/task55_backbone_stability_summary.per_seed.csv"
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task55_backbone_stability_summary.md"
       ]
     }
   ]

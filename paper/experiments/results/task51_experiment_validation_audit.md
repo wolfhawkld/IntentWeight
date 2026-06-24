@@ -1,8 +1,8 @@
 # Task51 Experiment Validation Audit
 
 - Manifest: `paper/experiments/task51_experiment_manifest.json`
-- Total checks: 209
-- PASS: 209
+- Total checks: 332
+- PASS: 332
 - WARN: 0
 - ERROR: 0
 
@@ -21,14 +21,22 @@
 | task48_compressor_normalized_comparison | PASS | 25 | 0 | 0 |
 | task52_bge_base_100k_dense_all_queries | PASS | 13 | 0 | 0 |
 | task52_bge_base_100k_task38_test_comparison | PASS | 19 | 0 | 0 |
+| task53_bge_base_100k_full_context_budget | PASS | 18 | 0 | 0 |
+| task53_bge_base_100k_gated_context_budget | PASS | 18 | 0 | 0 |
+| task53_e5_base_100k_dense_all_queries | PASS | 13 | 0 | 0 |
+| task53_e5_base_100k_full_context_budget | PASS | 18 | 0 | 0 |
+| task53_e5_base_100k_gated_context_budget | PASS | 18 | 0 | 0 |
+| task53_embedding_backbone_generalization_summary | PASS | 7 | 0 | 0 |
+| task54_bge_base_100k_positive_hit_context_budget | PASS | 18 | 0 | 0 |
+| task55_backbone_stability_summary | PASS | 13 | 0 | 0 |
 
 ## Category Status
 
 | category | status | pass | warn | error |
 | --- | --- | ---: | ---: | ---: |
-| dimension | PASS | 108 | 0 | 0 |
-| display | PASS | 30 | 0 | 0 |
-| statistics | PASS | 71 | 0 | 0 |
+| dimension | PASS | 182 | 0 | 0 |
+| display | PASS | 51 | 0 | 0 |
+| statistics | PASS | 99 | 0 | 0 |
 
 ## Warnings And Errors
 
