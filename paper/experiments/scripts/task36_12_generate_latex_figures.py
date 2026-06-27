@@ -185,8 +185,8 @@ def geometry() -> None:
     save(fig, "figure3_geometry_diagnostics.pdf")
 
 
-def geometry_to_gain() -> None:
-    rows = read_csv("figure4_geometry_to_gain_data.csv")
+def geometry_to_control() -> None:
+    rows = read_csv("figure3_geometry_to_control_data.csv")
     retention = [float(row["context_retention_at_10"]) for row in rows]
     hit_delta = [float(row["policy_hit_delta_pp"]) for row in rows]
     saving = [float(row["policy_saving_pct"]) for row in rows]
@@ -214,7 +214,7 @@ def geometry_to_gain() -> None:
     ]
     axes[1].legend(handles=handles, fontsize=8, loc="lower right")
     fig.tight_layout()
-    save(fig, "figure4_geometry_to_gain.pdf")
+    save(fig, "figure3_geometry_to_control.pdf")
 
 
 def feedback_adaptation() -> None:
@@ -252,7 +252,7 @@ def main() -> None:
     system_diagram()
     token_quality()
     geometry()
-    geometry_to_gain()
+    geometry_to_control()
     feedback_adaptation()
     print("figure_assets=5")
     print("latex_figures=passed")

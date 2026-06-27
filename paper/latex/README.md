@@ -1,6 +1,6 @@
 # IntentRoute ACL-Style LaTeX Draft
 
-Updated: 2026-05-31
+Updated: 2026-06-27
 
 This directory contains the formal LaTeX migration of the paper-facing
 Markdown draft. It uses the official ACL style files from
@@ -75,7 +75,7 @@ make audit
 
 The audit checks page rendering, nonblank pages, references and appendix
 locations, and critical LaTeX log warnings. Contact sheets are written under
-`/tmp/intentweight_pdf_audit/`.
+`/tmp/intentroute_pdf_audit/`.
 
 ## Official ACL Style Files
 

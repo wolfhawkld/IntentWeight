@@ -1,6 +1,6 @@
 # Draft Figure Assets
 
-Updated: 2026-06-16
+Updated: 2026-06-27
 
 These assets are draft paper figures generated from existing experiment
 artifacts. They are intended for writing and review, not as final camera-ready
@@ -14,13 +14,14 @@ venue artwork.
   science/search Hit@10 and final context-token frontier plotted by corpus
   chunk count.
 - `figure2_token_quality_frontier_data.csv`: source data for Figure 2.
-- `figure3_geometry_diagnostics.svg`: LoTTE technology/search and
-  science/search geometry diagnostic trend plotted by corpus chunk count.
-- `figure3_geometry_diagnostics_data.csv`: source data for Figure 3.
-- `figure4_geometry_to_gain.svg`: geometry-to-gain diagnostic scatter plot.
-- `figure4_geometry_to_gain_data.csv`: source data for Figure 4.
-- `figure5_feedback_adaptation.svg`: feedback adaptation policy-metric plot.
-- `figure5_feedback_adaptation_data.csv`: source data for Figure 5.
+- `figure3_geometry_to_control.svg`: main-paper geometry-to-control diagnostic.
+- `figure3_geometry_to_control_data.csv`: source data for Figure 3.
+
+The geometry scale trend and feedback-adaptation assets are retained as
+supplementary review material:
+
+- `figure3_geometry_diagnostics.svg` and its source CSV;
+- `figure5_feedback_adaptation.svg` and its source CSV.
 
 ## Regeneration
 

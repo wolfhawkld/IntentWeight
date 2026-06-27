@@ -182,7 +182,7 @@ answers and 2,100 schema-valid judgments under the same
 | E5 dense | 0.9167 | 0.9300 | 0.4100 | 0.0700 | 1525 | 1663 |
 | E5 IntentRoute | 0.9200 | 0.9333 | 0.3633 | 0.0567 | 1341 | 1458 |
 | Dense+MMR | 0.8900 | 0.9100 | 0.0733 | 0.0800 | 1240 | 1393 |
-| IW+MMR | 0.9133 | 0.9267 | 0.0833 | 0.0900 | 1157 | 1267 |
+| IntentRoute+MMR | 0.9133 | 0.9267 | 0.0833 | 0.0900 | 1157 | 1267 |
 
 **Appendix Table F2. Paired downstream comparisons.**
 
@@ -190,7 +190,7 @@ answers and 2,100 schema-valid judgments under the same
 |---|---:|---:|---:|---:|---:|
 | BGE IntentRoute vs dense | +0.00 pp | [-2.67, +2.67] pp | 1.000 | 6.00% | [4.01%, 7.97%] |
 | E5 IntentRoute vs dense | +0.33 pp | [-3.00, +3.67] pp | 1.000 | 12.04% | [9.93%, 14.16%] |
-| IW+MMR vs Dense+MMR | +2.33 pp | [-1.67, +6.33] pp | 0.324 | 6.65% | [4.28%, 8.97%] |
+| IntentRoute+MMR vs Dense+MMR | +2.33 pp | [-1.67, +6.33] pp | 0.324 | 6.65% | [4.28%, 8.97%] |
 
 The context-saving intervals are positive while correctness intervals include
 zero. This supports answer-level correctness preservation with lower context,

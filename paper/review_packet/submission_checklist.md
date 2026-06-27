@@ -1,6 +1,6 @@
 # Submission Review Checklist
 
-Updated: 2026-05-31
+Updated: 2026-06-27
 
 ## Claim Boundary
 
@@ -33,9 +33,10 @@ Updated: 2026-05-31
   token-saving interval.
 - [ ] Mention the five-seed LoTTE 100k extension without claiming statistical
   superiority.
-- [ ] Mention the same-resource-class encoder robustness check and remaining
-  stronger-encoder limitation.
-- [ ] Keep the 60-query LLM generation result framed as a smoke test.
+- [ ] Report the matched MiniLM, BGE-base, and E5-base comparisons against
+  their own dense baselines.
+- [ ] Keep the 300-query downstream evaluation framed as single-generator,
+  single-judge support rather than human evaluation.
 - [ ] Keep PubMedQA and Banking77 as supporting evidence; keep eManual and CUAD
   as boundary cases.
 

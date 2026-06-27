@@ -1647,6 +1647,21 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `30.57%`。该结果支持把 prompt compression 写成强 downstream baseline，
     不是 IntentRoute 要替代的对象；正确主张是 IntentRoute 作为上游
     route-and-budget controller 可与 prompt compression 叠加。
+29. downstream answer-level evaluation：Task63 已完成，详见
+    `paper/experiments/task63_downstream_llm_evaluation_summary.md`。冻结 300
+    个 queries，覆盖 7 种方法、2,100 个 answers 和 2,100 个有效 judgments。
+    三组 matched comparisons 的 token-saving intervals 均为正，correctness
+    delta intervals 均包含 0，因此支持“更低 context 下未检测到正确率变化”，
+    不支持显著 answer-quality improvement。
+30. manuscript claim reframe：Task64 已完成，详见
+    `paper/experiments/task64_manuscript_claim_reframe_summary.md`。论文主线已
+    调整为 route-confidence-to-budget control，同时保留 geometry/manifold
+    的启发与诊断作用，以及 LinUCB/feedback 的自适应置信度和恢复作用。
+31. table and figure refresh：Task65 已完成，详见
+    `paper/experiments/task65_table_figure_refresh_summary.md`。正文结果展示已
+    收敛为 5 张主表和 3 幅主图，完整 cross-domain、recovery、compressor、
+    reranker 和 control 明细保留于附录；ACL-style 工作 PDF 从 30 页降至
+    28 页且 PDF audit 通过。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1662,7 +1677,9 @@ Task55 backbone stability summary、第 22 项 Task56 claim-evidence alignment
 和第 23 项 Task57 review response action map、第 24 项 Task58 geometry
 random ablation、第 25 项 Task59 feedback-control ablation、第 26 项
 Task60 arm-count sensitivity、第 27 项 Task61 geometry-to-control analysis
-和第 28 项 Task62 prompt-compression baseline 均已完成。
+和第 28 项 Task62 prompt-compression baseline、第 29 项 Task63 downstream
+answer-level evaluation、第 30 项 Task64 manuscript claim reframe 及第 31 项
+Task65 table and figure refresh 均已完成。
 
 ---
 
@@ -1678,4 +1695,4 @@ Task60 arm-count sensitivity、第 27 项 Task61 geometry-to-control analysis
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-06-26*
+*更新时间: 2026-06-27*

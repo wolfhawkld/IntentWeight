@@ -44,9 +44,9 @@ FIGURES = [
     ),
     (
         "Figure 3",
-        "Geometry diagnostic trend across LoTTE scale",
-        DRAFT / "figures" / "figure3_geometry_diagnostics.svg",
-        DRAFT / "figures" / "figure3_geometry_diagnostics_data.csv",
+        "Geometry-to-control diagnostic",
+        DRAFT / "figures" / "figure3_geometry_to_control.svg",
+        DRAFT / "figures" / "figure3_geometry_to_control_data.csv",
     ),
 ]
 
@@ -80,7 +80,7 @@ def figure_index() -> str:
     rows = [
         "# Figure Index",
         "",
-        "Updated: 2026-05-31",
+        "Updated: 2026-06-27",
         "",
         "Draft figure assets are generated from existing experiment artifacts.",
         "They are review assets, not final camera-ready artwork.",
@@ -109,7 +109,7 @@ def figure_index() -> str:
 def submission_checklist() -> str:
     return """# Submission Review Checklist
 
-Updated: 2026-05-31
+Updated: 2026-06-27
 
 ## Claim Boundary
 
@@ -142,9 +142,10 @@ Updated: 2026-05-31
   token-saving interval.
 - [ ] Mention the five-seed LoTTE 100k extension without claiming statistical
   superiority.
-- [ ] Mention the same-resource-class encoder robustness check and remaining
-  stronger-encoder limitation.
-- [ ] Keep the 60-query LLM generation result framed as a smoke test.
+- [ ] Report the matched MiniLM, BGE-base, and E5-base comparisons against
+  their own dense baselines.
+- [ ] Keep the 300-query downstream evaluation framed as single-generator,
+  single-judge support rather than human evaluation.
 - [ ] Keep PubMedQA and Banking77 as supporting evidence; keep eManual and CUAD
   as boundary cases.
 
@@ -161,7 +162,7 @@ Updated: 2026-05-31
 def packet_readme() -> str:
     return """# IntentRoute Review Packet
 
-Updated: 2026-05-31
+Updated: 2026-06-27
 
 This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent
@@ -263,7 +264,7 @@ def main() -> None:
     word_count = len(re.findall(r"\b[\w-]+\b", manuscript))
     report = f"""# Review Packet Validation Report
 
-Updated: 2026-05-31
+Updated: 2026-06-27
 
 ## Source Draft Audit
 

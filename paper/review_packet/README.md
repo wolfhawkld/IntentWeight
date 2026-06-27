@@ -1,6 +1,6 @@
 # IntentRoute Review Packet
 
-Updated: 2026-05-31
+Updated: 2026-06-27
 
 This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent

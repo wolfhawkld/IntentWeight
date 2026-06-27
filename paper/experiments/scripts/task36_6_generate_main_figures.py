@@ -653,7 +653,7 @@ def generate_geometry_figure(rows: list[GeometryRow]) -> None:
 
 def generate_geometry_gain_figure(rows: list[GeometryGainRow]) -> None:
     write_csv(
-        FIGURES / "figure4_geometry_to_gain_data.csv",
+        FIGURES / "figure3_geometry_to_control_data.csv",
         [
             "domain",
             "scale",
@@ -678,8 +678,8 @@ def generate_geometry_gain_figure(rows: list[GeometryGainRow]) -> None:
     )
 
     parts = svg_header(1120, 520)
-    parts.append(text(40, 42, "Figure 4. Geometry-to-gain diagnostic", "title"))
-    parts.append(text(40, 64, "Local geometry is useful for calibration, but it is not a sufficient predictor of universal gains.", "subtitle"))
+    parts.append(text(40, 42, "Figure 3. Geometry-to-control diagnostic", "title"))
+    parts.append(text(40, 64, "Local geometry informs calibration, but does not deterministically predict final quality-cost gains.", "subtitle"))
 
     x0, y0, width, height = 95, 118, 395, 285
     draw_scatter_axes(
@@ -733,7 +733,7 @@ def generate_geometry_gain_figure(rows: list[GeometryGainRow]) -> None:
     parts.append(text(838, 123, "science/search", "legend"))
     parts.append(text(95, 468, "Caption boundary: diagnostics explain where adaptive routing is plausible; dense fallback remains necessary.", "subtitle"))
     parts.append("</svg>")
-    (FIGURES / "figure4_geometry_to_gain.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
+    (FIGURES / "figure3_geometry_to_control.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
 def generate_feedback_adaptation_figure(rows: list[FeedbackRow]) -> None:
@@ -812,7 +812,7 @@ def generate_feedback_adaptation_figure(rows: list[FeedbackRow]) -> None:
 def write_readme() -> None:
     readme = """# Draft Figure Assets
 
-Updated: 2026-06-16
+Updated: 2026-06-27
 
 These assets are draft paper figures generated from existing experiment
 artifacts. They are intended for writing and review, not as final camera-ready
@@ -826,13 +826,14 @@ venue artwork.
   science/search Hit@10 and final context-token frontier plotted by corpus
   chunk count.
 - `figure2_token_quality_frontier_data.csv`: source data for Figure 2.
-- `figure3_geometry_diagnostics.svg`: LoTTE technology/search and
-  science/search geometry diagnostic trend plotted by corpus chunk count.
-- `figure3_geometry_diagnostics_data.csv`: source data for Figure 3.
-- `figure4_geometry_to_gain.svg`: geometry-to-gain diagnostic scatter plot.
-- `figure4_geometry_to_gain_data.csv`: source data for Figure 4.
-- `figure5_feedback_adaptation.svg`: feedback adaptation policy-metric plot.
-- `figure5_feedback_adaptation_data.csv`: source data for Figure 5.
+- `figure3_geometry_to_control.svg`: main-paper geometry-to-control diagnostic.
+- `figure3_geometry_to_control_data.csv`: source data for Figure 3.
+
+The geometry scale trend and feedback-adaptation assets are retained as
+supplementary review material:
+
+- `figure3_geometry_diagnostics.svg` and its source CSV;
+- `figure5_feedback_adaptation.svg` and its source CSV.
 
 ## Regeneration
 

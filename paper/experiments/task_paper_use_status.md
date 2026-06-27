@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-06-26
+Updated: 2026-06-27
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -56,8 +56,11 @@ accidentally promoted into paper-facing claims.
 | `task58_geometry_random_ablation_summary.md` | Supporting/boundary geometry-control evidence | Static-nearest versus uniform-random cluster-arm control under the same budget protocol; use to show geometry appears in route-control metrics while dense/BM25 rescue masks final Hit@10. |
 | `task59_feedback_control_ablation_summary.md` | Supporting/boundary feedback-control evidence | Learned LinUCB versus static-nearest, no-feedback, and random controls; use to show feedback improves route quality over no-feedback/random but does not by itself explain final fused Hit@10. |
 | `task60_arm_count_sensitivity_summary.md` | Supporting/design-sensitivity evidence | KMeans arm-count grid over K={8,16,32,64,128}; use to defend n_clusters as a reproducible engineering parameter and to show full multi-route robustness plus gated-routing sensitivity. |
-| `task61_geometry_to_control_analysis.md` | Supporting/diagnostic synthesis evidence | Geometry-to-control correlation analysis across Task30/43/58/60 and Figure 4; use to show geometry is an explanatory route-control signal, not proof that geometry alone determines final Hit@10 or token saving. |
+| `task61_geometry_to_control_analysis.md` | Supporting/diagnostic synthesis evidence | Geometry-to-control correlation analysis across Task30/43/58/60 and Figure 3; use to show geometry is an explanatory route-control signal, not proof that geometry alone determines final Hit@10 or token saving. |
 | `task62_prompt_compression_baseline_summary.md` | Supporting/strong prompt-compression baseline evidence | Selective Context-style prompt-pruning baseline with tiktoken/cl100k_base accounting; use to show prompt compression is a strong downstream layer that can be stacked with IntentRoute rather than replaced by it. |
+| `task63_downstream_llm_evaluation_summary.md` | Supporting/downstream evidence | Frozen 300-query, 2,100-answer evaluation; use for lower-context answer-quality support without claiming significant correctness improvement. |
+| `task64_manuscript_claim_reframe_summary.md` | Supporting writing revision | Centers the manuscript on route-confidence-to-budget control while retaining bounded geometry and feedback roles. |
+| `task65_table_figure_refresh_summary.md` | Supporting writing revision | Defines the five-table, three-figure main display set and journal-facing evidence hierarchy. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |

@@ -74,10 +74,17 @@ while exposing domain-specific compression calibration, and simulated feedback
 can recover a meaningful fraction of budget-induced tail failures in
 post-feedback retry.
 
+## Current Display Pass
+
+Task65 reduced the main Results display from eight tables and five figures to
+five tables and three figures. Detailed cross-domain, recovery, compressor,
+reranker, and control results remain in the appendix. The regenerated
+ACL-style working PDF is 28 pages with zero critical LaTeX warnings.
+
 ## Next Editing Pass
 
-The current draft is a complete v1, not a final camera-ready paper. The next
-pass should:
+The current draft is a complete venue-neutral paper, not a final camera-ready
+submission. Task66 should:
 
 - use `paper/journal_submission/` as the journal-first preparation package;
 - treat IP&M as the primary target and ESWA as the fallback target;

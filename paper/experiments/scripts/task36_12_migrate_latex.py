@@ -36,6 +36,8 @@ TABLE_DISPLAY_ALIASES = {
     "IntentRoute token saving": "IntentRoute token saving",
     "Dense adaptive hit delta": "Dense trunc. hit delta",
     "Dense adaptive token saving": "Dense trunc. token saving",
+    "IntentRoute+MMR": "IntentRoute + MMR",
+    "IntentRoute+MMR vs Dense+MMR": "IntentRoute + MMR vs Dense + MMR",
     "Avg token saving vs dense": "Avg token saving",
     "Prompt context-token proxy ratio": "Prompt token ratio",
     "Token ratio vs dense": "Token ratio",
@@ -59,7 +61,7 @@ CHAPTERS = [
 FIGURE_REFS = {
     "Figure 1": r"Figure~\ref{fig:system}",
     "Figure 2": r"Figure~\ref{fig:token-quality}",
-    "Figure 3": r"Figure~\ref{fig:geometry}",
+    "Figure 3": r"Figure~\ref{fig:geometry-control}",
 }
 
 

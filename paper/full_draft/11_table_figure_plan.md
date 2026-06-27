@@ -1,361 +1,72 @@
 # Table and Figure Placement Plan
 
-Updated: 2026-06-11
+Updated: 2026-06-27 (Task65)
 
-This file is a paper-facing placement plan. It does not introduce new
-experiments or new claims. Its purpose is to decide which evidence belongs in
-the main paper and which evidence should be moved to an appendix or supplement.
-The appendix-facing tables are instantiated in `12_appendix.md`.
-
-The table labels in the current draft are aligned with this plan:
-
-- Dataset roles are summarized as text bullets in Experimental Setup rather
-  than as a main table;
-- Table 1: calibrated token-quality frontier;
-- Table 2: cross-domain validation;
-- Table 3: LoTTE 100k component ablation;
-- Table 4: feedback-driven policy adaptation summary;
-- Table 5: feedback-driven hard-case recovery;
-- Table 6: LoTTE geometry diagnostics;
-- Appendix Tables A1, D1, and F1: seed stability, eManual diagnostics, and the
-  downstream answer-quality check.
-- Appendix Tables J1-J3: Dense+Sentence-MMR, compressor-normalized SentMMR, and
-  cross-encoder reranker strong-baseline checks.
+This plan aligns the displays with the revised route-confidence-to-budget
+claim. It introduces no new experiment or claim. The journal-facing main text
+uses five tables and three figures; detailed seed, recovery, compressor, and
+boundary-case results remain in the appendix.
 
 ## Main-Paper Tables
 
-### Dataset Role Summary
-
-Evidence basis: dataset-role guardrails from the experimental setup.
-
-Purpose: explain why LoTTE is the main benchmark and why PubMedQA, Banking77,
-eManual, and CUAD are supporting or boundary cases.
-
-Keep in the main paper as compact prose bullets rather than a table. The
-dataset-role distinction is essential to the claim boundary, but it should not
-consume the first table slot or visually compete with the main quantitative
-result.
-
-Recommended content:
-
-- LoTTE technology/search as the main large-scale benchmark;
-- LoTTE science/search as cross-domain validation;
-- PubMedQA and Banking77 as feedback-adaptation checks;
-- eManual and CUAD as boundary cases.
-
 ### Table 1: Calibrated Token-Quality Frontier
 
-Evidence basis: the frozen calibration/test context-budget protocol and dense
-adaptive truncation baseline.
+Central evidence for final evidence-context token reduction under frozen
+calibration/test policy selection. It retains dense adaptive truncation as the
+strong simple cost baseline and marks the 400k point as diagnostic.
 
-Purpose: main quantitative result. It shows that calibrated token-budget
-policies reduce final LLM evidence-context input tokens while avoiding the
-larger $\mathrm{Hit@10}$ loss of dense-only adaptive truncation. The table
-must distinguish calibration-eligible operating points from the 400k
-diagnostic follow-up point.
+### Table 2: Matched-Backbone Robustness
 
-Keep in the main paper because this is the central evidence for the
-quality-cost trade-off and directly addresses the strongest alternative
-explanation.
+Matched MiniLM, BGE-base, and E5-base comparisons. This is the primary encoder
+robustness display and includes the BGE quality-first operating point without
+generalizing that positive-hit point to E5.
 
-Recommended columns:
+### Table 3: Route-Control Attribution
 
-- scale;
-- frozen budget policy;
-- calibration eligibility;
-- IntentRoute hit delta versus dense;
-- strict non-inferiority seed count if space allows;
-- IntentRoute token saving versus dense;
-- dense adaptive hit delta;
-- dense adaptive token saving.
+Compact geometry/random and learned/static/no-feedback controls. The table
+separates route reward and selected-cluster hit from final fused hit and token
+cost, making dense/BM25 rescue visible.
 
-### Table 2: Cross-Domain Validation
+### Table 4: Arm-Count Sensitivity
 
-Evidence basis: LoTTE science/search 20k/q200 and 100k.
+The $K=8$-$128$ grid. It shows that full multi-route quality is stable while
+gated dense use and quality are more sensitive to feedback sparsity and arm
+granularity.
 
-Purpose: show cross-domain ranking-side support and expose the boundary that
-compression strength must be calibrated per domain and scale.
+### Table 5: Downstream Answer-Level Evaluation
 
-Keep a compact version in the main paper if space allows; otherwise keep
-fixed-top-10 ranking results in the main paper and move budget details to the
-appendix.
-
-Recommended columns:
-
-- domain/scale;
-- dense $\mathrm{Hit@10}$;
-- IntentRoute fixed top-10 $\mathrm{Hit@10}$;
-- hit delta;
-- budgeted token saving.
-
-### Table 3: LoTTE 100k Component Ablation
-
-Evidence basis: the clean LoTTE 100k component ablation.
-
-Purpose: attribute the result to dense fallback, BM25, cluster-local routing,
-feedback, trust weighting, and conservative context compaction.
-
-Keep in the main paper because it answers the likely reviewer question:
-which component actually contributes?
-
-Recommended columns:
-
-- component;
-- role;
-- $\mathrm{Hit@10}$;
-- $\mathrm{EvidenceRecall@10}$;
-- $\mathrm{Tokens@10}$ or token ratio;
-- dense rate;
-- LinUCB rate;
-- selected-cluster hit;
-- last reward.
-
-If space is tight, move $\mathrm{EvidenceRecall@10}$ and last reward to an
-appendix and keep dense rate, LinUCB rate, $\mathrm{Hit@10}$, and token ratio
-in the main table.
-
-### Table 4: Feedback-Driven Policy Adaptation Summary
-
-Evidence basis: controlled feedback-sensitivity and trust-weighting analysis.
-
-Purpose: show that feedback affects route-policy internals even when final
-ranking quality is partly saturated by dense and BM25 rescue paths.
-
-Keep a compact version in the main paper because feedback-driven adaptation is
-part of the core method.
-
-Recommended columns:
-
-- feedback mode;
-- selected-cluster hit;
-- last true reward;
-- dense rate;
-- LinUCB rate;
-- token ratio;
-- $\mathrm{Hit@10}$.
-
-### Table 5: Feedback-Driven Hard-Case Recovery
-
-Evidence basis: same-query conservative retry on affected LoTTE 100k
-technology/search and science/search queries.
-
-Purpose: show that feedback provides a controlled recovery mechanism for
-budget-induced tail failures.
-
-Keep in the main paper only if the feedback-recovery claim remains central;
-otherwise move to appendix and mention the pooled rate in text.
-
-Recommended columns:
-
-- domain;
-- affected queries;
-- recovered queries;
-- recovery rate;
-- average token saving versus dense.
-
-### Table 6: Geometry Diagnostics Across LoTTE Scales
-
-Evidence basis: LoTTE geometry diagnostics across corpus scale.
-
-Purpose: support the piecewise relevance-manifold framing without claiming a
-theorem-level proof.
-
-Keep in the main paper if the venue allows five tables. If space is tight,
-move the full numeric table to the appendix and keep only the geometry figure
-in the main paper.
-
-Recommended columns:
-
-- scale;
-- $\mathrm{PCAdim90}$;
-- $\mathrm{PCAvar@64}$;
-- $\mathrm{NearestClusterHit@3}$;
-- $\mathrm{ContextRetention@10}$;
-- conservative-policy hit delta.
-
-### Strong Post-Retrieval Baselines
-
-Evidence basis: Dense+Sentence-MMR same-budget baseline, compressor-normalized
-SentMMR comparison, and cross-encoder reranker same-budget baseline.
-
-Purpose: defend the paper against the strongest simple alternatives: directly
-compress dense context, apply the same compressor to all evidence pools, or
-rerank dense candidates with a cross-encoder.
-
-Keep the interpretive summary in the main Results section and move the numeric
-tables to Appendix J unless the target venue asks for stronger baseline
-coverage in the main body.
-
-Recommended appendix tables:
-
-- Dense+Sentence-MMR same-budget baseline;
-- compressor-normalized dense versus IntentRoute comparison;
-- cross-encoder full top-10 and same-budget reranker comparison.
+Paired BGE, E5, and shared-MMR comparisons over 300 frozen queries. The display
+reports correctness uncertainty and context-token saving uncertainty. Full
+faithfulness and citation-support metrics remain in Appendix F.
 
 ## Main-Paper Figures
 
 ### Figure 1: IntentRoute System Diagram
 
-Draft asset:
+Shows global dense/BM25 recall, cluster-local LinUCB routing, rank fusion,
+confidence-based context budgeting, and trust-weighted feedback.
 
-- `figures/figure1_system_diagram.svg`
-- `figures/figure1_system_diagram.mmd`
+### Figure 2: Calibrated Token-Quality Frontier
 
-Purpose: explain the method more clearly than prose.
+Shows hit delta and final context-token saving across LoTTE scales. The caption
+states that dense truncation compresses more aggressively but loses hit rate.
 
-Recommended visual flow:
+### Figure 3: Geometry-To-Control Diagnostic
 
-1. query and optional user/session context;
-2. feature construction;
-3. global dense recall floor and global BM25 lexical recall;
-4. LinUCB cluster-arm selector;
-5. cluster-local dense search inside selected arms;
-6. rank fusion across global and cluster-local routes;
-7. confidence-based final context budget;
-8. answer generation or downstream agent response;
-9. simulated or deployment feedback returning to the LinUCB state.
+Relates context retention to observed hit delta and token saving. It supports
+geometry as a diagnostic route-control signal, not a deterministic gain law or
+theorem-level manifold proof.
 
-Caption boundary: dense and BM25 are global recall routes, while LinUCB selects
-cluster-local arms and contributes route confidence. The method does not claim
-to eliminate dense retrieval.
+## Appendix Placement
 
-### Figure 2: Calibrated Token-Quality Frontier Across Corpus Scale
+- Appendix A/G: seed stability and complete frozen-policy validation;
+- Appendix D/E: boundary datasets and encoder details;
+- Appendix F: complete downstream answer, faithfulness, and citation results;
+- Appendix H/I: cross-domain and feedback-recovery details;
+- Appendix J: Sentence-MMR, SelectiveContext-lite, and cross-encoder controls;
+- Appendix K: full geometry/random, feedback, and arm-count control tables.
 
-Draft asset:
-
-- `figures/figure2_token_quality_frontier.svg`
-- `figures/figure2_token_quality_frontier_data.csv`
-
-Purpose: visualize the main result from Table 1.
-
-Recommended plot:
-
-- x-axis: LoTTE corpus scale;
-- left y-axis: $\mathrm{Hit@10}$ delta versus dense for IntentRoute budget and
-  dense adaptive truncation;
-- right y-axis or separate panel: final context-token saving for IntentRoute
-  budget and dense adaptive truncation.
-
-Caption boundary: dense adaptive truncation can save more tokens but loses
-$\mathrm{Hit@10}$; IntentRoute targets a safer quality-cost frontier rather
-than maximum compression.
-
-### Figure 3: Geometry Diagnostic Trend
-
-Draft asset:
-
-- `figures/figure3_geometry_diagnostics.svg`
-- `figures/figure3_geometry_diagnostics_data.csv`
-
-Purpose: connect the manifold-inspired hypothesis to measured local geometry.
-
-Recommended plot:
-
-- $\mathrm{NearestClusterHit@3}$ across scale;
-- $\mathrm{ContextRetention@10}$ across scale;
-- optionally $\mathrm{PCAvar@64}$ or $\mathrm{PCAdim90}$ in a secondary panel.
-
-Caption boundary: these are diagnostics supporting a piecewise local-structure
-interpretation, not proof that the true corpus is a smooth manifold.
-
-## Appendix Tables
-
-### Appendix A: Conservative Baseline and Seed Stability Diagnostics
-
-Evidence basis: the conservative confidence-only baseline and fixed
-three-seed LoTTE engineering-stability intervals.
-
-Include the 4.7%-5.3% stable context-token saving baseline and the fixed-seed
-LoTTE 100k-638k diagnostics. Do not frame seed count as inferential expansion;
-query-level paired tests carry the main statistical claim.
-
-### Appendix B: Full Static Baseline Metrics
-
-Evidence basis: BM25, dense, and hybrid retrieval baseline artifacts.
-
-Include $\mathrm{MRR@10}$, $\mathrm{nDCG@10}$, and
-$\mathrm{EvidenceRecall@10}$ in addition to $\mathrm{Hit@10}$.
-
-### Appendix C: Source-Candidate and Dense-Invocation Diagnostics
-
-Evidence basis: source-candidate diagnostics and the final context-token
-correction audit.
-
-Use this appendix to preserve the engineering diagnostic value of historical
-candidate-cost results while keeping the main cost claim on final context
-tokens.
-
-### Appendix D: Secondary Dataset and Boundary-Case Details
-
-Evidence basis: secondary dataset synthesis, eManual duplicate-text analysis,
-CUAD sparse smoke/stress artifacts, and PubMedQA/Banking77 feedback artifacts.
-
-This appendix should make clear that PubMedQA and Banking77 support the
-feedback mechanism, while eManual and CUAD bound the method's applicability.
-Use prose bullets for cross-dataset role summaries and reserve tables for
-structured diagnostics such as eManual deduplication.
-
-### Appendix E: Encoder Robustness
-
-Evidence basis: matched MiniLM/BGE/E5 results, BGE quality-first tunability, and
-the earlier QA-tuned MiniLM-family robustness check.
-
-Include the matched-backbone table and preserve the BGE-only boundary on the
-above-dense quality-first point.
-
-### Appendix F: Downstream Answer-Level Evaluation
-
-Evidence basis: the frozen 300-query, seven-method, 2,100-answer/judgment run.
-
-Keep the compact paired comparison in the main results and the full method table
-in the appendix. State that correctness differences are non-significant while
-all paired context-saving intervals are positive.
-
-### Appendix G: Historical or Superseded Experiments
-
-Evidence basis: paper-use status index for historical and superseded artifacts.
-
-Do not include historical/superseded task results as primary evidence. They may
-be mentioned only when explaining why source-candidate cost was replaced by
-final context tokens as the main efficiency metric.
-
-## Appendix Figures
-
-### Appendix Figure A: Feedback Sensitivity Curves
-
-Plot selected-cluster hit, last true reward, dense rate, and token ratio across
-feedback modes. This supports Table 4 without overloading the main paper.
-
-### Appendix Figure B: Context-Token Distribution
-
-Plot per-query context token distributions for dense, dense adaptive
-truncation, calibrated IntentRoute budget, and conservative IntentRoute
-baseline at one or more LoTTE scales. This can show whether savings come from
-broad small reductions or a smaller number of high-confidence compaction cases.
-
-### Appendix Figure C: eManual Duplicate-Text Diagnostic
-
-Visualize strict chunk-id evaluation versus text-equivalent and deduplicated
-evaluation. This makes the boundary case easier to understand.
-
-## Main-Text Budget Recommendation
-
-For a conference-length paper, target:
-
-- 3 main figures;
-- 4 main tables, or 5 only if space permits;
-- detailed metric tables in the appendix.
-
-If one main table must be removed, move the full geometry table to the appendix
-and keep the geometry trend as Figure 3. The main paper should not drop Table 1
-or the component ablation table.
-
-## Claim Guardrail
-
-The visual and table package should support this bounded story:
-
-IntentRoute improves the quality-token trade-off in a large-scale vertical
-retrieval setting by combining dense fallback, lexical coverage, local
-geometry, and feedback-updated route control. The evidence supports practical
-context compaction and policy adaptation, not universal dense replacement,
-theorem-level manifold proof, or real-human-feedback deployment validation.
+The older clean component table, geometry scale table, cross-domain table, and
+feedback-recovery table are represented in the main text as bounded prose and
+retained in their experiment summaries or appendix tables. They no longer
+compete with the evidence that directly supports the revised central claim.
