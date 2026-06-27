@@ -72,7 +72,7 @@ def save_embeddings(embeddings, labels, splits, name, output_dir, embed_dim):
 
 def main():
     print("=" * 60)
-    print("IntentWeight - Embedding 生成")
+    print("IntentRoute - Embedding 生成")
     print("=" * 60)
     print(f"输入目录: {INPUT_DIR}")
     print(f"输出目录: {OUTPUT_DIR}")

@@ -156,7 +156,7 @@ def save_stats(all_stats, output_dir):
     print(f"\n✓ 统计信息保存到: {stats_path}")
 
 def main():
-    print("IntentWeight - 数据预处理")
+    print("IntentRoute - 数据预处理")
     print(f"数据目录: {DATA_DIR}")
     print(f"输出目录: {OUTPUT_DIR}")
     

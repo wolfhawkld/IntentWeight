@@ -1,8 +1,24 @@
-# IntentWeight 生产级模块
-# IntentWeight Production Module
+# IntentRoute Legacy Compatibility Package
 
-基于动态价值流形 (DVM) 理论的 RAG 检索优化模块。
-RAG retrieval optimization module based on Dynamic Value Manifold (DVM) theory.
+`intent_weight` is the legacy import path for the IntentRoute production
+module. New integrations should import from `intent_route`:
+
+```python
+from intent_route import IntentRouteManager
+```
+
+Existing imports remain valid:
+
+```python
+from intent_weight import IntentWeightManager
+```
+
+Both names resolve to the same implementation. Existing state directories,
+including `data/intent_weight/`, remain compatible and are not migrated.
+
+IntentRoute is a geometry-guided and feedback-adaptive evidence-routing
+controller for RAG. It uses cluster-local routing and LinUCB feedback state
+while retaining dense retrieval as a fallback.
 
 来源于 jq_kg_base 项目的工程验证实现，已去除企业隐私内容。
 Derived from jq_kg_base project's engineering validation, with enterprise-private content removed.
@@ -19,7 +35,7 @@ Derived from jq_kg_base project's engineering validation, with enterprise-privat
 
 流形导航层 (Manifold Navigation)
 ├── linucb.py             # LinUCB Contextual Bandit：在线学习导航策略
-├── __init__.py           # IntentWeightManager：导航编排器
+├── __init__.py           # IntentRouteManager + legacy alias
 └── persistence.py        # JSON 状态持久化
 
 流形标注层 (Manifold Annotation)
@@ -33,6 +49,8 @@ Derived from jq_kg_base project's engineering validation, with enterprise-privat
 ## 与 pre_validation/ 的关系
 
 - `pre_validation/` = 研究实验代码（Phase 1A-1F 验证用）
-- `intent_weight/` = 生产级实现（从 jq_kg_base 工程验证中提炼）
+- `intent_route/` = canonical public API
+- `intent_weight/` = legacy-compatible implementation package
 
-研究实验用 pre_validation/ 中的脚本，论文系统描述参考 intent_weight/ 中的实现。
+研究实验使用 `pre_validation/` 和 `paper/experiments/` 中的脚本；新代码和
+论文展示统一使用 IntentRoute 名称。

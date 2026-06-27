@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Retrieval evaluation metrics for IntentWeight baselines.
+"""Retrieval evaluation metrics for IntentRoute baselines.
 
 The processed query files use ``ground_truth_chunk_ids`` as relevance labels.
 This module evaluates ranked chunk-id lists against those labels and reports

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Shared retrieval artifacts for large-scale IntentWeight experiments."""
+"""Shared retrieval artifacts for large-scale IntentRoute experiments."""
 from __future__ import annotations
 
 import hashlib

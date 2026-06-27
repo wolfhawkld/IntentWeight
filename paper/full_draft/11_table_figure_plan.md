@@ -63,9 +63,9 @@ Recommended columns:
 - scale;
 - frozen budget policy;
 - calibration eligibility;
-- IntentWeight hit delta versus dense;
+- IntentRoute hit delta versus dense;
 - strict non-inferiority seed count if space allows;
-- IntentWeight token saving versus dense;
+- IntentRoute token saving versus dense;
 - dense adaptive hit delta;
 - dense adaptive token saving.
 
@@ -84,7 +84,7 @@ Recommended columns:
 
 - domain/scale;
 - dense $\mathrm{Hit@10}$;
-- IntentWeight fixed top-10 $\mathrm{Hit@10}$;
+- IntentRoute fixed top-10 $\mathrm{Hit@10}$;
 - hit delta;
 - budgeted token saving.
 
@@ -189,12 +189,12 @@ coverage in the main body.
 Recommended appendix tables:
 
 - Dense+Sentence-MMR same-budget baseline;
-- compressor-normalized dense versus IntentWeight comparison;
+- compressor-normalized dense versus IntentRoute comparison;
 - cross-encoder full top-10 and same-budget reranker comparison.
 
 ## Main-Paper Figures
 
-### Figure 1: IntentWeight System Diagram
+### Figure 1: IntentRoute System Diagram
 
 Draft asset:
 
@@ -231,13 +231,13 @@ Purpose: visualize the main result from Table 1.
 Recommended plot:
 
 - x-axis: LoTTE corpus scale;
-- left y-axis: $\mathrm{Hit@10}$ delta versus dense for IntentWeight budget and
+- left y-axis: $\mathrm{Hit@10}$ delta versus dense for IntentRoute budget and
   dense adaptive truncation;
-- right y-axis or separate panel: final context-token saving for IntentWeight
+- right y-axis or separate panel: final context-token saving for IntentRoute
   budget and dense adaptive truncation.
 
 Caption boundary: dense adaptive truncation can save more tokens but loses
-$\mathrm{Hit@10}$; IntentWeight targets a safer quality-cost frontier rather
+$\mathrm{Hit@10}$; IntentRoute targets a safer quality-cost frontier rather
 than maximum compression.
 
 ### Figure 3: Geometry Diagnostic Trend
@@ -262,11 +262,12 @@ interpretation, not proof that the true corpus is a smooth manifold.
 
 ### Appendix A: Conservative Baseline and Seed Stability Diagnostics
 
-Evidence basis: the conservative confidence-only baseline, LoTTE multi-seed
-confidence intervals, and the five-seed 100k extension.
+Evidence basis: the conservative confidence-only baseline and fixed
+three-seed LoTTE engineering-stability intervals.
 
-Include the 4.7%-5.3% stable context-token saving baseline, the three-seed
-LoTTE 100k-638k diagnostics, and the five-seed LoTTE 100k extension.
+Include the 4.7%-5.3% stable context-token saving baseline and the fixed-seed
+LoTTE 100k-638k diagnostics. Do not frame seed count as inferential expansion;
+query-level paired tests carry the main statistical claim.
 
 ### Appendix B: Full Static Baseline Metrics
 
@@ -296,17 +297,19 @@ structured diagnostics such as eManual deduplication.
 
 ### Appendix E: Encoder Robustness
 
-Evidence basis: CPU-friendly encoder selection rationale and MiniLM-family
-robustness check.
+Evidence basis: matched MiniLM/BGE/E5 results, BGE quality-first tunability, and
+the earlier QA-tuned MiniLM-family robustness check.
 
-Include model-resource rationale and the MiniLM-family robustness result.
+Include the matched-backbone table and preserve the BGE-only boundary on the
+above-dense quality-first point.
 
-### Appendix F: Downstream Answer-Quality Check
+### Appendix F: Downstream Answer-Level Evaluation
 
-Evidence basis: the small downstream answer-quality check.
+Evidence basis: the frozen 300-query, seven-method, 2,100-answer/judgment run.
 
-Keep this in the appendix unless the target venue specifically values a small
-generation sanity check in the main results.
+Keep the compact paired comparison in the main results and the full method table
+in the appendix. State that correctness differences are non-significant while
+all paired context-saving intervals are positive.
 
 ### Appendix G: Historical or Superseded Experiments
 
@@ -326,7 +329,7 @@ feedback modes. This supports Table 4 without overloading the main paper.
 ### Appendix Figure B: Context-Token Distribution
 
 Plot per-query context token distributions for dense, dense adaptive
-truncation, calibrated IntentWeight budget, and conservative IntentWeight
+truncation, calibrated IntentRoute budget, and conservative IntentRoute
 baseline at one or more LoTTE scales. This can show whether savings come from
 broad small reductions or a smaller number of high-confidence compaction cases.
 
@@ -351,7 +354,7 @@ or the component ablation table.
 
 The visual and table package should support this bounded story:
 
-IntentWeight improves the quality-token trade-off in a large-scale vertical
+IntentRoute improves the quality-token trade-off in a large-scale vertical
 retrieval setting by combining dense fallback, lexical coverage, local
 geometry, and feedback-updated route control. The evidence supports practical
 context compaction and policy adaptation, not universal dense replacement,

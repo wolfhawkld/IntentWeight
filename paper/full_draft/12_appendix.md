@@ -31,20 +31,6 @@ The token-saving direction is consistent across scales. The wider 400k token
 interval should be interpreted as route-confidence and context-budget variance,
 not hidden as a uniform result.
 
-A five-seed extension is also available for LoTTE 100k. The additional seeds
-test sensitivity to KMeans initialization and route-policy stochasticity.
-
-**Appendix Table A3. Five-seed LoTTE 100k extension.**
-
-| Setting | Seeds | $\mathrm{Hit@10}$ | Avg $\mathrm{Tokens@10}$ | Token ratio vs dense | Token saving |
-|---|---:|---:|---:|---:|---:|
-| Dense-only | 1 | 0.8674 | 1472.39 | 1.0000x | 0.00% |
-| Conservative policy | 5 | 0.8708 | 1399.83 | 0.9507x | 4.93% |
-
-The five-seed hit-delta interval is $[-0.0082, +0.0150]$. This supports
-dense-level retrieval quality with stable context-token reduction, not a
-statistical-superiority claim.
-
 ## B. Static Retrieval Baselines
 
 Dense retrieval is the primary quality baseline. BM25 supplies lexical
@@ -63,7 +49,7 @@ not consistently dominate dense.
 
 The declining dense score as corpus scale grows motivates adaptive context
 control, but it does not make dense retrieval obsolete. Dense remains an
-important recall floor and fallback route in IntentWeight.
+important recall floor and fallback route in IntentRoute.
 
 ## C. Cost Metric Separation
 
@@ -163,23 +149,53 @@ context tokens by 3.35%. Ranking metrics and evidence recall are lower than
 dense, so this is a bounded robustness result rather than a universal
 retrieval-metric improvement.
 
-## F. Downstream Answer-Quality Check
+**Appendix Table E2. Matched-backbone context-budget robustness on the frozen
+LoTTE technology/search 100k split.**
 
-A small downstream answer-quality check compares dense top-10 context with the
-compressed conservative-policy context on 60 sampled LoTTE 100k queries. The
-same LLM configuration generates and judges answers in this check.
+| Backbone | Route mode | Dense $\mathrm{Hit@10}$ | Method $\mathrm{Hit@10}$ | Hit delta | Token saving |
+|---|---|---:|---:|---:|---:|
+| MiniLM | calibrated multi-route | 0.8705 | 0.8705 | +0.00 pp | 6.18% |
+| BGE-base | full multi-route | 0.8993 | 0.8985 | -0.08 pp | 11.99% |
+| E5-base | full multi-route | 0.8753 | 0.8689 | -0.64 pp | 12.20% |
+| BGE-base | quality-first | 0.8993 | 0.9081 | +0.88 pp | 7.23% |
 
-**Appendix Table F1. Downstream answer-quality check.**
+The full multi-route rows show that the quality-cost pattern is not tied to the
+MiniLM backbone. More aggressive gated BGE/E5 variants lose more hit and are
+treated as boundary settings. The BGE quality-first row demonstrates that the
+frontier is tunable; an equivalent above-dense E5 point was not found on this
+split.
 
-| Method | Answer score | Faithfulness | Answer relevance | Win count | Prompt context-token proxy ratio |
+## F. Downstream Answer-Level Evaluation
+
+The formal downstream evaluation uses 300 deterministic queries from the
+frozen LoTTE technology/search 100k test split. Seven methods produce 2,100
+answers and 2,100 schema-valid judgments under the same
+`deepseek-v4-flash` generator/judge configuration.
+
+**Appendix Table F1. Downstream answer and context results.**
+
+| Method | Correct | Faithful | Strict citation support | Insufficient context | Avg context tokens | Tokens / correct |
+|---|---:|---:|---:|---:|---:|---:|
+| MiniLM dense | 0.9200 | 0.9533 | 0.3533 | 0.0967 | 1461 | 1588 |
+| BGE dense | 0.9167 | 0.9433 | 0.3567 | 0.0767 | 1698 | 1852 |
+| BGE IntentRoute | 0.9167 | 0.9200 | 0.3700 | 0.0767 | 1596 | 1741 |
+| E5 dense | 0.9167 | 0.9300 | 0.4100 | 0.0700 | 1525 | 1663 |
+| E5 IntentRoute | 0.9200 | 0.9333 | 0.3633 | 0.0567 | 1341 | 1458 |
+| Dense+MMR | 0.8900 | 0.9100 | 0.0733 | 0.0800 | 1240 | 1393 |
+| IW+MMR | 0.9133 | 0.9267 | 0.0833 | 0.0900 | 1157 | 1267 |
+
+**Appendix Table F2. Paired downstream comparisons.**
+
+| Comparison | Correct delta | 95% CI | McNemar $p$ | Token saving | 95% CI |
 |---|---:|---:|---:|---:|---:|
-| Dense top-10 | 4.4000 | 4.6500 | 4.6500 | 14 | 1.0000x |
-| Conservative policy | 4.2833 | 4.6333 | 4.4500 | 14 | 0.9321x |
-| Tie | - | - | - | 32 | - |
+| BGE IntentRoute vs dense | +0.00 pp | [-2.67, +2.67] pp | 1.000 | 6.00% | [4.01%, 7.97%] |
+| E5 IntentRoute vs dense | +0.33 pp | [-3.00, +3.67] pp | 1.000 | 12.04% | [9.93%, 14.16%] |
+| IW+MMR vs Dense+MMR | +2.33 pp | [-1.67, +6.33] pp | 0.324 | 6.65% | [4.28%, 8.97%] |
 
-The check does not show obvious answer-quality degradation from conservative
-context compaction. It is not a full human evaluation: the sample is small,
-one generator/judge model is used, and LLM-as-judge can be biased.
+The context-saving intervals are positive while correctness intervals include
+zero. This supports answer-level correctness preservation with lower context,
+not significant answer-quality improvement. The study still uses one
+generator/judge model and is not a human evaluation.
 
 ## G. Calibration/Test Context-Budget Validation
 
@@ -196,7 +212,7 @@ queries and freezes it before evaluation on held-out test queries.
 | 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
 
 The calibrated policies should be compared against dense-only adaptive
-truncation because both reduce final context size. IntentWeight preserves
+truncation because both reduce final context size. IntentRoute preserves
 substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
 The 400k row is diagnostic rather than calibration-eligible in the current
 artifact set and is marked for follow-up calibration.
@@ -208,7 +224,7 @@ for the main LoTTE technology/search scale-up.
 
 **Appendix Table H1. Science/search fixed top-10 ranking validation.**
 
-| Domain/scale | Corpus chunks | Queries | Dense $\mathrm{Hit@10}$ | IntentWeight $\mathrm{Hit@10}$ | Hit delta |
+| Domain/scale | Corpus chunks | Queries | Dense $\mathrm{Hit@10}$ | IntentRoute $\mathrm{Hit@10}$ | Hit delta |
 |---|---:|---:|---:|---:|---:|
 | science/search 20k/q200 | 20,490 | 200 | 0.8950 | 0.9267 | +3.17 pp |
 | science/search 100k | 101,187 | 596 | 0.8926 | 0.9077 | +1.51 pp |
@@ -230,7 +246,7 @@ require domain and scale calibration.
 ## I. Feedback-Driven Hard-Case Recovery
 
 Hard-case recovery focuses on affected queries where dense top-10 retrieves at
-least one GT chunk but the budgeted IntentWeight context misses.
+least one GT chunk but the budgeted IntentRoute context misses.
 
 **Appendix Table I1. Same-query feedback recovery on affected queries.**
 
@@ -287,12 +303,12 @@ technology/search 100k.**
 | Dense | SentMMR | 0.95 | 0.8705 | 5.33% |
 | Dense | SentMMR | 0.90 | 0.8705 | 10.22% |
 | Dense | SentMMR | 0.85 | 0.8705 | 15.16% |
-| IntentWeight | target | - | 0.8657-0.8777 | 4.98-7.14% |
-| IntentWeight | SentMMR | 0.95 | 0.8657-0.8777 | 10.07-12.14% |
-| IntentWeight | SentMMR | 0.90 | 0.8657-0.8777 | 14.72-16.68% |
-| IntentWeight | SentMMR | 0.85 | 0.8657-0.8777 | 19.41-21.24% |
+| IntentRoute | target | - | 0.8657-0.8777 | 4.98-7.14% |
+| IntentRoute | SentMMR | 0.95 | 0.8657-0.8777 | 10.07-12.14% |
+| IntentRoute | SentMMR | 0.90 | 0.8657-0.8777 | 14.72-16.68% |
+| IntentRoute | SentMMR | 0.85 | 0.8657-0.8777 | 19.41-21.24% |
 
-Applying the same compressor to dense and IntentWeight evidence pools supports
+Applying the same compressor to dense and IntentRoute evidence pools supports
 the route-and-budget controller framing. The compressor is shared; the evidence
 pool and budget controller determine the starting point.
 
@@ -303,15 +319,74 @@ technology/search 100k.**
 |---|---:|---:|---:|---:|
 | Dense top-10 | 0.8705 | 0.7081 | 1470 | 0.00% |
 | Cross-encoder top-10 | 0.8777 | 0.7332 | 1792 | -21.91% |
-| IntentWeight target | 0.8657-0.8777 | 0.6766-0.6871 | 1365-1397 | 4.98-7.14% |
+| IntentRoute target | 0.8657-0.8777 | 0.6766-0.6871 | 1365-1397 | 4.98-7.14% |
 | Cross-encoder same budget | 0.8633-0.8729 | 0.6975-0.7044 | 1360-1390 | 5.43-7.49% |
 
 The cross-encoder reranker improves full top-10 support metrics, but that full
 reranked context is longer on average. Under the same per-query token budgets
-as IntentWeight, reranking does not uniformly dominate the calibrated
+as IntentRoute, reranking does not uniformly dominate the calibrated
 controller.
 
-## K. Reproducibility and Reporting Guardrails
+**Appendix Table J4. SelectiveContext-lite prompt-pruning baseline.**
+
+| Source pool | Ratio | $\mathrm{Hit@10}$ | Token saving vs dense | Extra saving vs source |
+|---|---:|---:|---:|---:|
+| Dense | 0.95 | 0.8705 | 5.66% | 5.66% |
+| Dense | 0.90 | 0.8705 | 10.42% | 10.42% |
+| Dense | 0.85 | 0.8705 | 15.31% | 15.31% |
+| Dense | 0.75 | 0.8705 | 25.19% | 25.19% |
+| IntentRoute | 0.95 | 0.8657-0.8777 | 10.38-12.42% | 5.62-5.69% |
+| IntentRoute | 0.90 | 0.8657-0.8777 | 14.92-16.87% | 10.46-10.48% |
+| IntentRoute | 0.85 | 0.8657-0.8777 | 19.53-21.40% | 15.31-15.35% |
+| IntentRoute | 0.75 | 0.8657-0.8777 | 28.95-30.57% | 25.20-25.23% |
+
+SelectiveContext-lite is a deterministic local proxy, not LLMLingua. Its role
+is to show that prompt pruning can be stacked after either evidence pool and
+does not replace upstream route-confidence-to-budget control.
+
+## K. Route-Control Attribution and Arm Sensitivity
+
+**Appendix Table K1. Static geometry versus uniform-random route control.**
+
+| Setting | Full top-10 hit | Route reward | Selected-cluster hit | Test hit delta | Token saving |
+|---|---:|---:|---:|---:|---:|
+| Static nearest geometry | 0.8764 | 0.8563 | 0.8870 | +1.44 pp | 5.03% |
+| Uniform random control | 0.8842 | 0.1499 | 0.1577 | +1.04 pp | 11.92% |
+
+Dense/BM25 rescue keeps final fused hit high in both rows, while route reward
+and selected-cluster hit separate meaningful local routing from random arm
+selection. Geometry is therefore supported as a route-control signal, not a
+standalone explanation of final fused quality.
+
+**Appendix Table K2. Feedback and static route controls.**
+
+| Setting | Route reward | Selected-cluster hit | Dense rate | Test hit delta | Token saving |
+|---|---:|---:|---:|---:|---:|
+| Learned full multi-route | 0.6790 | 0.5766 | 1.0000 | -1.68 pp | 17.86% |
+| Learned gated | 0.6790 | 0.5766 | 0.7377 | -5.20 pp | 11.83% |
+| Static nearest gated | 0.8563 | 0.8870 | 0.9586 | -2.40 pp | 12.01% |
+| No-feedback gated | 0.1504 | 0.1570 | 1.0000 | -1.60 pp | 16.56% |
+
+Feedback-updated LinUCB improves route quality over no-feedback/random controls,
+but the learned gated threshold is a cost-aggressive boundary. Static geometry
+remains a strong prior, while dense fallback explains part of the fused result.
+
+**Appendix Table K3. Arm-count sensitivity.**
+
+| $K$ | Static route reward | Full test hit delta | Full token saving | Gated dense rate | Gated hit delta |
+|---:|---:|---:|---:|---:|---:|
+| 8 | 0.9128 | +1.44 pp | 6.23% | 0.4083 | -1.84 pp |
+| 16 | 0.8826 | +0.80 pp | 10.49% | 0.6089 | -1.68 pp |
+| 32 | 0.8563 | +0.56 pp | 4.68% | 0.7377 | -4.48 pp |
+| 64 | 0.8272 | +0.40 pp | 11.19% | 0.8986 | -3.76 pp |
+| 128 | 0.8479 | +1.20 pp | 10.23% | 0.9502 | -3.12 pp |
+
+Full multi-route quality is stable across the tested grid, whereas gated
+dense-saving behavior depends on arm granularity. Cross-scale correlations
+between geometry diagnostics and final quality-cost gain are mixed and
+small-sample; final behavior belongs to the complete calibrated controller.
+
+## L. Reproducibility and Reporting Guardrails
 
 The following rules apply when migrating the draft into a submission template:
 

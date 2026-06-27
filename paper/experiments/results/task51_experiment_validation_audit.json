@@ -2987,19 +2987,3898 @@
       "role": "seed_stability",
       "source": "paper/experiments/results/task55_backbone_stability_summary.md",
       "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=7",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "result_json",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_ablation_summary.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "result_json",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "result_json",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "queries",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "corpus",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ground_truth_refs",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=25",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "summary_columns",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_ablation_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=2",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "summary_numeric_values",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_ablation_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "summary_num_queries",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_ablation_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_columns",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_numeric_values",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_num_queries",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_arithmetic",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_ranges",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_columns",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_numeric_values",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_num_queries",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_arithmetic",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "paired_ranges",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_variants",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_100k_routes/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_query_count",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_100k_routes/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_query_ids",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_100k_routes/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_lengths",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_100k_routes/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_100k_routes/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_chunk_refs",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_100k_routes/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_variants",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_query_count",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_query_ids",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.83",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_lengths",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_variants",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_query_count",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_query_ids",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.49",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_lengths",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "markdown_heading",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_ablation_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "markdown_table",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_ablation_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "token_language",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_geometry_random_ablation_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "markdown_heading",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "markdown_table",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "token_language",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_static_nearest_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "markdown_heading",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "markdown_table",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task58_geometry_random_ablation",
+      "item": "token_language",
+      "role": "geometry_control_ablation",
+      "source": "paper/experiments/results/task58_uniform_random_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=7",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "result_json",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_summary.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "result_json",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "result_json",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "result_json",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "result_json",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "result_json",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "result_json",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "corpus",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ground_truth_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=36",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "summary_columns",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "summary_numeric_values",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "summary_num_queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_columns",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_numeric_values",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_num_queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_arithmetic",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_ranges",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_columns",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_numeric_values",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_num_queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_arithmetic",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_ranges",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_columns",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_numeric_values",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_num_queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_arithmetic",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_ranges",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_columns",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_numeric_values",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_num_queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_arithmetic",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_ranges",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_columns",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_numeric_values",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_num_queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_arithmetic",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_ranges",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_columns",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_numeric_values",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_num_queries",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_arithmetic",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "paired_ranges",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=9",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_trust/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=9",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_trust/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_trust/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_trust/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_trust/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_chunk_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_trust/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=3",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_none/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=3",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_none/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_none/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_none/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_none/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_chunk_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_100k_none/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.37",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.66",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.38",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.38",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.37",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_variants",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_count",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_query_ids",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.38",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_lengths",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "ranking_duplicate_refs",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_heading",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_table",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "token_language",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_feedback_control_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_heading",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_table",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "token_language",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_heading",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_table",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "token_language",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_learned_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_heading",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_table",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "token_language",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_heading",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_table",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "token_language",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_heading",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_table",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "token_language",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_heading",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "markdown_table",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task59_feedback_control_ablation",
+      "item": "token_language",
+      "role": "feedback_control_ablation",
+      "source": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=8",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_sensitivity_summary.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=10",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "result_json",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "corpus",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ground_truth_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=35",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "summary_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_sensitivity_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=15",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "summary_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_sensitivity_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "summary_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_sensitivity_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_columns",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_numeric_values",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_num_queries",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_arithmetic",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "paired_ranges",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.test_paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k8_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k8_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k8_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k8_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k8_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_chunk_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k8_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k16_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k16_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k16_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k16_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k16_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_chunk_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k16_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k32_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k32_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k32_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k32_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k32_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_chunk_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k32_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k64_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k64_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k64_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k64_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k64_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_chunk_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k64_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k128_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=9",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k128_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k128_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=10.00",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k128_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k128_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_chunk_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_k128_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.83",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.77",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.32",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.38",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.38",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.83",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.83",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.33",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.49",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.66",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.38",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.39",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_variants",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=596, variants=6",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_count",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_query_ids",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=8.50",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_lengths",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "ranking_duplicate_refs",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_sensitivity_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_sensitivity_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_arm_count_sensitivity_summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k8_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k16_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k32_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k64_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_static_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_full_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_heading",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "markdown_table",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task60_arm_count_sensitivity",
+      "item": "token_language",
+      "role": "design_sensitivity",
+      "source": "paper/experiments/results/task60_k128_gated_100k_context_budget.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=8",
+      "experiment": "task61_geometry_to_control_analysis",
+      "item": "result_json",
+      "role": "diagnostic_synthesis",
+      "source": "paper/experiments/results/task61_geometry_to_control_analysis.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task61_geometry_to_control_analysis",
+      "item": "queries",
+      "role": "diagnostic_synthesis",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "skipped by manifest for large or unavailable corpus",
+      "experiment": "task61_geometry_to_control_analysis",
+      "item": "corpus_ref_check",
+      "role": "diagnostic_synthesis",
+      "source": "multi_artifact_geometry_to_control_diagnostic",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task61_geometry_to_control_analysis",
+      "item": "markdown_heading",
+      "role": "diagnostic_synthesis",
+      "source": "paper/experiments/results/task61_geometry_to_control_analysis.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task61_geometry_to_control_analysis",
+      "item": "markdown_table",
+      "role": "diagnostic_synthesis",
+      "source": "paper/experiments/results/task61_geometry_to_control_analysis.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task61_geometry_to_control_analysis",
+      "item": "token_language",
+      "role": "diagnostic_synthesis",
+      "source": "paper/experiments/results/task61_geometry_to_control_analysis.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=3",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "result_json",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=35",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "json_paired_rows",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=35",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "corpus",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "ground_truth_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "columns=40",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "summary_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=20",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "summary_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "num_queries=417",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "summary_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=43",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_columns",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=35",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_numeric_values",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_num_queries",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_arithmetic",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "paired_ranges",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "variants=20",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "ranking_variants",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "expected=417, variants=20",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "ranking_query_count",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all ranked query IDs resolve",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "ranking_query_ids",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "avg_variant_mean_len=9.17",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "ranking_lengths",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "no duplicate chunk IDs within rankings",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "ranking_duplicate_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all top-10 chunk refs resolve",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "ranking_chunk_refs",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.rankings.json",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "markdown_heading",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "markdown_table",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task62_prompt_compression_baseline",
+      "item": "token_language",
+      "role": "strong_baseline",
+      "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.md",
+      "status": "PASS"
     }
   ],
   "manifest": "paper/experiments/task51_experiment_manifest.json",
   "summary": {
     "by_category": {
       "dimension": {
-        "PASS": 182
+        "PASS": 401
       },
       "display": {
-        "PASS": 51
+        "PASS": 135
       },
       "statistics": {
-        "PASS": 99
+        "PASS": 227
       }
     },
     "by_experiment": {
@@ -3059,10 +6938,25 @@
       },
       "task55_backbone_stability_summary": {
         "PASS": 13
+      },
+      "task58_geometry_random_ablation": {
+        "PASS": 44
+      },
+      "task59_feedback_control_ablation": {
+        "PASS": 106
+      },
+      "task60_arm_count_sensitivity": {
+        "PASS": 250
+      },
+      "task61_geometry_to_control_analysis": {
+        "PASS": 6
+      },
+      "task62_prompt_compression_baseline": {
+        "PASS": 25
       }
     },
     "status_counts": {
-      "PASS": 332
+      "PASS": 763
     }
   }
 }

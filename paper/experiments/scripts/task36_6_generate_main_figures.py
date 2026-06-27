@@ -469,7 +469,7 @@ def draw_category_axes(
 
 def generate_system_diagram() -> None:
     parts = svg_header(1120, 520)
-    parts.append(text(40, 42, "Figure 1. IntentWeight evidence-selection controller", "title"))
+    parts.append(text(40, 42, "Figure 1. IntentRoute evidence-selection controller", "title"))
     parts.append(text(40, 64, "Dense/BM25 are global recall routes; LinUCB selects cluster-local arms and budget confidence.", "subtitle"))
 
     boxes = [
@@ -562,7 +562,7 @@ def generate_token_quality_figure(rows: list[TokenRow]) -> None:
 
     parts = svg_header(1120, 520)
     parts.append(text(40, 42, "Figure 2. Calibrated token-quality frontier by corpus chunk count", "title"))
-    parts.append(text(40, 64, "IntentWeight saves final LLM evidence-context tokens while avoiding dense-truncation Hit@10 loss.", "subtitle"))
+    parts.append(text(40, 64, "IntentRoute saves final LLM evidence-context tokens while avoiding dense-truncation Hit@10 loss.", "subtitle"))
 
     x0, y0, width, height = 80, 118, 420, 290
     x_min, x_max = draw_chunk_axes(parts, rows, x0, y0, width, height, -4.0, 3.0, [-4.0, -2.0, 0.0, 2.0], "Hit@10 delta vs dense (pp)")
@@ -577,7 +577,7 @@ def generate_token_quality_figure(rows: list[TokenRow]) -> None:
     for point in dense_points:
         parts.append(circle(*point, "#1f5f8b"))
     parts.append(f'<rect x="260" y="92" width="12" height="12" fill="#2f855a" />')
-    parts.append(text(278, 103, "IntentWeight budget", "legend"))
+    parts.append(text(278, 103, "IntentRoute budget", "legend"))
     parts.append(f'<rect x="410" y="92" width="12" height="12" fill="#1f5f8b" />')
     parts.append(text(428, 103, "Dense adaptive truncation", "legend"))
     parts.append(text(80, 444, "solid=technology/search; dashed=science/search", "tick"))
@@ -595,7 +595,7 @@ def generate_token_quality_figure(rows: list[TokenRow]) -> None:
         parts.append(circle(x, y, "#1f5f8b"))
         parts.append(text(x, y + 18, f"{row.dense_adaptive_saving_pct:.1f}%", "tick", "middle"))
 
-    parts.append(text(80, 468, "Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentWeight targets the safer frontier.", "subtitle"))
+    parts.append(text(80, 468, "Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentRoute targets the safer frontier.", "subtitle"))
     parts.append("</svg>")
     (FIGURES / "figure2_token_quality_frontier.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 

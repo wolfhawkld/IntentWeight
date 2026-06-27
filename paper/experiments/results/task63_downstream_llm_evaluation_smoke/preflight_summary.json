@@ -1,0 +1,179 @@
+{
+  "credential_status": {
+    "has_base_url": true,
+    "has_key": true,
+    "provider": "deepseek"
+  },
+  "methods": [
+    {
+      "kind": "chunk",
+      "label": "minilm_dense_top10",
+      "mmr_lambda": null,
+      "ranking_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/dense_lotte_technology_search_100k_rankings.json",
+      "ratio": null,
+      "run_id": "minilm_dense_top10",
+      "selector": null,
+      "source_label": "MiniLM dense top-10"
+    },
+    {
+      "kind": "chunk",
+      "label": "bge_dense_top10",
+      "mmr_lambda": null,
+      "ranking_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task52_bge_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "ratio": null,
+      "run_id": "bge_dense_top10",
+      "selector": null,
+      "source_label": "BGE-base dense top-10"
+    },
+    {
+      "kind": "chunk",
+      "label": "bge_intentweight_positive_seed19",
+      "mmr_lambda": null,
+      "ranking_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task54_bge_base_100k_positive_hit_context_budget.rankings.json",
+      "ratio": null,
+      "run_id": "bge_intentweight_positive_seed19:task53_bge:full_multi_route:seed19:token_budget_r0.97_m4",
+      "selector": "task53_bge:full_multi_route:seed19:token_budget_r0.97_m4",
+      "source_label": "BGE-base positive IntentWeight, seed 19"
+    },
+    {
+      "kind": "chunk",
+      "label": "e5_dense_top10",
+      "mmr_lambda": null,
+      "ranking_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task53_e5_base_100k_dense/dense_lotte_technology_search_100k_rankings.json",
+      "ratio": null,
+      "run_id": "e5_dense_top10",
+      "selector": null,
+      "source_label": "E5-base dense top-10"
+    },
+    {
+      "kind": "chunk",
+      "label": "e5_intentweight_full_seed19",
+      "mmr_lambda": null,
+      "ranking_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task53_e5_base_100k_full_context_budget.rankings.json",
+      "ratio": null,
+      "run_id": "e5_intentweight_full_seed19:task53_e5:full_multi_route:seed19:token_budget_r0.88_m7",
+      "selector": "task53_e5:full_multi_route:seed19:token_budget_r0.88_m7",
+      "source_label": "E5-base full multi-route IntentWeight, seed 19"
+    },
+    {
+      "kind": "sent_mmr",
+      "label": "dense_sent_mmr_r0.85_l0.70",
+      "mmr_lambda": 0.7,
+      "ranking_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/dense_lotte_technology_search_100k_rankings.json",
+      "ratio": 0.85,
+      "run_id": "dense_sent_mmr_r0.85_l0.70",
+      "selector": null,
+      "source_label": "MiniLM dense top-10 plus sentence MMR"
+    },
+    {
+      "kind": "sent_mmr",
+      "label": "intentweight_sent_mmr_r0.85_l0.70_seed19",
+      "mmr_lambda": 0.7,
+      "ranking_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task38_100k_calibrated_context_budget.rankings.json",
+      "ratio": 0.85,
+      "run_id": "intentweight_sent_mmr_r0.85_l0.70_seed19:task37_source:gated_cost_aware:seed19:token_budget_r0.95_m4",
+      "selector": "task37_source:gated_cost_aware:seed19:token_budget_r0.95_m4",
+      "source_label": "MiniLM IntentWeight seed 19 plus sentence MMR"
+    }
+  ],
+  "rows": [
+    {
+      "avg_context_tokens@10": 1394.0,
+      "avg_selected_sentences@10": 0.0,
+      "context_token_ratio_vs_baseline@10": 1.3188268684957427,
+      "context_token_saving_percent_vs_baseline@10": -31.88268684957427,
+      "evidence_recall@10": 0.5,
+      "hit@10": 1.0,
+      "hit_delta_vs_baseline@10": 1.0,
+      "method_label": "bge_dense_top10",
+      "num_queries": 1
+    },
+    {
+      "avg_context_tokens@10": 1310.0,
+      "avg_selected_sentences@10": 0.0,
+      "context_token_ratio_vs_baseline@10": 1.239356669820246,
+      "context_token_saving_percent_vs_baseline@10": -23.935666982024607,
+      "evidence_recall@10": 0.5,
+      "hit@10": 1.0,
+      "hit_delta_vs_baseline@10": 1.0,
+      "method_label": "bge_intentweight_positive_seed19",
+      "num_queries": 1
+    },
+    {
+      "avg_context_tokens@10": 896.0,
+      "avg_selected_sentences@10": 41.0,
+      "context_token_ratio_vs_baseline@10": 0.847682119205298,
+      "context_token_saving_percent_vs_baseline@10": 15.2317880794702,
+      "evidence_recall@10": 0.0,
+      "hit@10": 0.0,
+      "hit_delta_vs_baseline@10": 0.0,
+      "method_label": "dense_sent_mmr_r0.85_l0.70",
+      "num_queries": 1
+    },
+    {
+      "avg_context_tokens@10": 556.0,
+      "avg_selected_sentences@10": 0.0,
+      "context_token_ratio_vs_baseline@10": 0.5260170293282876,
+      "context_token_saving_percent_vs_baseline@10": 47.398297067171235,
+      "evidence_recall@10": 0.0,
+      "hit@10": 0.0,
+      "hit_delta_vs_baseline@10": 0.0,
+      "method_label": "e5_dense_top10",
+      "num_queries": 1
+    },
+    {
+      "avg_context_tokens@10": 445.0,
+      "avg_selected_sentences@10": 0.0,
+      "context_token_ratio_vs_baseline@10": 0.4210028382213813,
+      "context_token_saving_percent_vs_baseline@10": 57.89971617786187,
+      "evidence_recall@10": 0.0,
+      "hit@10": 0.0,
+      "hit_delta_vs_baseline@10": 0.0,
+      "method_label": "e5_intentweight_full_seed19",
+      "num_queries": 1
+    },
+    {
+      "avg_context_tokens@10": 561.0,
+      "avg_selected_sentences@10": 26.0,
+      "context_token_ratio_vs_baseline@10": 0.5307473982970672,
+      "context_token_saving_percent_vs_baseline@10": 46.925260170293285,
+      "evidence_recall@10": 0.0,
+      "hit@10": 0.0,
+      "hit_delta_vs_baseline@10": 0.0,
+      "method_label": "intentweight_sent_mmr_r0.85_l0.70_seed19",
+      "num_queries": 1
+    },
+    {
+      "avg_context_tokens@10": 1057.0,
+      "avg_selected_sentences@10": 0.0,
+      "context_token_ratio_vs_baseline@10": 1.0,
+      "context_token_saving_percent_vs_baseline@10": 0.0,
+      "evidence_recall@10": 0.0,
+      "hit@10": 0.0,
+      "hit_delta_vs_baseline@10": 0.0,
+      "method_label": "minilm_dense_top10",
+      "num_queries": 1
+    }
+  ],
+  "sample": {
+    "available_query_counts_by_method": {
+      "bge_dense_top10": 596,
+      "bge_intentweight_positive_seed19": 596,
+      "dense_sent_mmr_r0.85_l0.70": 596,
+      "e5_dense_top10": 596,
+      "e5_intentweight_full_seed19": 596,
+      "intentweight_sent_mmr_r0.85_l0.70_seed19": 596,
+      "minilm_dense_top10": 596
+    },
+    "calibration_fraction": 0.3,
+    "calibration_query_count": 179,
+    "eligible_common_frozen_test_queries": 417,
+    "frozen_test_query_count": 417,
+    "max_queries": 1,
+    "sample_salt": "task63_downstream_llm_eval_v1",
+    "scale": "100k",
+    "selected_query_count": 1,
+    "split_salt": "task38_lotte_calibration_v1"
+  },
+  "status": "preflight_only"
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Preprocess LoTTE into the unified IntentWeight RAG experiment schema.
+"""Preprocess LoTTE into the unified IntentRoute RAG experiment schema.
 
 LoTTE on HuggingFace MTEB is exposed as three configs per domain/mode:
 - {domain}_{mode}-corpus
@@ -387,7 +387,7 @@ def preprocess_lotte(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Preprocess LoTTE for IntentWeight experiments")
+    parser = argparse.ArgumentParser(description="Preprocess LoTTE for IntentRoute experiments")
     parser.add_argument("--repo", default=DEFAULT_REPO)
     parser.add_argument("--domain", default=DEFAULT_DOMAIN)
     parser.add_argument("--mode", default=DEFAULT_MODE)

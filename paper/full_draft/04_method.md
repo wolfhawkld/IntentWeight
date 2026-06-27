@@ -9,12 +9,12 @@ ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be passed to a
 downstream generator. The objective is to preserve retrieval quality while
 controlling both retrieval cost and final context cost.
 
-IntentWeight treats retrieval as a route-control problem. For each query, the
-system chooses how much to rely on global dense retrieval, lexical BM25 recall,
-and cluster-local retrieval. The final response generator is outside the main
-experiment scope. The paper evaluates retrieval quality and the token count of
-the retrieved context that would be sent to the generator, with one small
-downstream answer-quality check.
+IntentRoute treats retrieval as a route-confidence-to-budget problem. For each
+query, the system estimates how much to rely on global dense retrieval, lexical
+BM25 recall, and cluster-local retrieval, then maps the resulting confidence to
+the final context budget. Retrieval quality and final context tokens remain the
+primary mechanism-level outcomes; a frozen 300-query generation-and-judge
+experiment evaluates whether the same trade-off reaches answer-level behavior.
 
 ## 3.2 Piecewise Relevance-Manifold Assumption
 
@@ -25,13 +25,13 @@ The method is motivated by a bounded assumption:
 > neighborhoods, document organization, and user intent.
 
 This does not mean that corpus geometry is sufficient by itself. Instead,
-IntentWeight uses geometry as one routing signal among several. Dense retrieval
+IntentRoute uses geometry as one routing signal among several. Dense retrieval
 remains a global recall floor, BM25 provides lexical anchors, and cluster-local
 retrieval provides local evidence patches.
 
 ## 3.3 Multi-Route Retrieval Surface
 
-IntentWeight uses three retrieval routes.
+IntentRoute uses three retrieval routes.
 
 **Dense route.** The dense route performs global dense retrieval over the
 selected corpus using cosine similarity in embedding space. It is the primary
@@ -65,9 +65,12 @@ arms improve reproducibility across seeds and scales, and KMeans is fast enough
 for large-scale LoTTE experiments. The same arm count is used across LoTTE
 scales to keep the LinUCB state space comparable, even though larger corpora
 therefore contain more chunks per arm.
-We use 32 routing arms as a practical balance between local routing granularity
-and per-arm feedback sample size; sensitivity to the arm count is left to future
-work.
+We use 32 routing arms as the main reproducible operating point. A sensitivity
+study over $K \in \{8,16,32,64,128\}$ shows that full multi-route fused quality
+is stable across this range, while retrieval-stage gated routing is more
+sensitive because smaller $K$ changes route granularity and larger $K$ spreads
+feedback across more arms. We therefore treat 32 as an engineering choice, not
+a manifold-derived optimum.
 
 The paper does not claim that KMeans is the best clustering algorithm for
 retrieval. HDBSCAN, graph clusters, or learned routing structures may be better
@@ -78,7 +81,7 @@ rescue cases where the cluster route misses relevant evidence.
 
 ## 3.5 LinUCB Route Policy
 
-For each query $q_t$, IntentWeight computes a context feature vector
+For each query $q_t$, IntentRoute computes a context feature vector
 $x_t \in \mathbb{R}^{p}$. Features include query embedding projections, route
 confidence signals, and local geometry signals. For each arm
 $a \in \mathcal{A}$, LinUCB maintains a linear value model:
@@ -135,7 +138,7 @@ and low drift allow the final-context policy to compact evidence.
 
 ## 3.6 Trust-Weighted Feedback
 
-IntentWeight models feedback as a noisy signal rather than a perfect oracle. In
+IntentRoute models feedback as a noisy signal rather than a perfect oracle. In
 the trust-weighted mode, each simulated user feedback event is assigned a trust
 weight. Higher-trust feedback contributes more to the arm update and local
 feedback memory. Lower-trust feedback has a weaker effect.
@@ -165,7 +168,7 @@ retrieval quality is already protected by dense and BM25 fallback.
 
 Early experiments used final fused retrieval success as the reward signal. This
 can over-credit the selected cluster arm when dense or BM25 rescue the final
-ranking. IntentWeight therefore uses a stricter `cluster_only` reward
+ranking. IntentRoute therefore uses a stricter `cluster_only` reward
 attribution mode in the main policy-learning experiments. The LinUCB arm is
 updated using the quality of its own cluster-local route.
 
@@ -197,8 +200,24 @@ generalization results.
 ## 3.9 Confidence-Based Final Context Compaction
 
 Preliminary token-cost analysis showed that reducing source candidates does not
-automatically reduce final context tokens. IntentWeight therefore adds an
-explicit final context policy.
+automatically reduce final context tokens. IntentRoute therefore adds an
+explicit route-confidence-to-budget policy, which is the method's central
+quality-cost control interface.
+
+Let $T_t^{\mathrm{dense}}$ be the token count of dense top-10 context and let
+$z_t$ collect route agreement, selected-arm confidence and maturity, semantic
+drift, and fallback state. A policy $\pi_\phi(z_t)$ produces a token ratio
+$r_t \in (0,1]$ and minimum safe prefix $m_t$. The final context is the longest
+ranked prefix of at least $m_t$ chunks satisfying
+
+$$
+\mathrm{Tokens}(C_t) \le r_t T_t^{\mathrm{dense}}.
+$$
+
+The policy parameters $\phi$ are selected on calibration queries subject to a
+retrieval-quality eligibility gate and then frozen before held-out test
+evaluation. Thus geometry and feedback affect confidence, but measured token
+saving arises only when the calibrated budget policy acts on that confidence.
 
 The conservative `confidence_topk` policy works as follows:
 
@@ -228,7 +247,7 @@ heterogeneous query distributions, drift-based fallback may become more active.
 
 ## 3.10 Feedback-Triggered Recovery
 
-IntentWeight can also use feedback as a recovery signal after a compressed
+IntentRoute can also use feedback as a recovery signal after a compressed
 context fails. In this mode, feedback does not insert the missing ground-truth
 chunk into the current answer. Instead, it updates arm-level route value and
 marks the associated local region as risky for future routing or optional

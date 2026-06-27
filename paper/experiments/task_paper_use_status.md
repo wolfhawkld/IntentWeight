@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-06-24
+Updated: 2026-06-26
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -47,12 +47,17 @@ accidentally promoted into paper-facing claims.
 | `task33_7_pre_writing_consistency_audit.md` | Supporting guardrail | Pre-writing claim consistency audit. |
 | `task34_review_defense_revision_plan.md` | Supporting guardrail | Review-defense revision checklist incorporated into the draft. |
 | `task40_feedback_recovery_summary.md` | Supporting evidence | Hard-case feedback recovery on LoTTE technology/search and science/search 100k; use as post-feedback repair evidence, not as first-pass IID improvement. |
-| `task47_cross_encoder_reranker_summary.md` | Supporting/strong reranker baseline evidence | Cross-encoder reranking over dense top-50 improves support metrics at full top-10 but increases context tokens; same-budget reranking does not uniformly dominate IntentWeight. |
-| `task48_compressor_normalized_summary.md` | Supporting/strong baseline evidence | Applies the same SentMMR compressor to dense and IntentWeight evidence pools; use to support the route-and-budget controller plus shared-compressor framing. |
-| `task52_strong_embedding_baseline_summary.md` | Supporting/strong embedding baseline evidence | BGE-base dense raises the dense quality floor on Task38 held-out LoTTE 100k while increasing context tokens; use to tighten claims and motivate rerunning IntentWeight with a stronger dense branch. |
+| `task47_cross_encoder_reranker_summary.md` | Supporting/strong reranker baseline evidence | Cross-encoder reranking over dense top-50 improves support metrics at full top-10 but increases context tokens; same-budget reranking does not uniformly dominate IntentRoute. |
+| `task48_compressor_normalized_summary.md` | Supporting/strong baseline evidence | Applies the same SentMMR compressor to dense and IntentRoute evidence pools; use to support the route-and-budget controller plus shared-compressor framing. |
+| `task52_strong_embedding_baseline_summary.md` | Supporting/strong embedding baseline evidence | BGE-base dense raises the dense quality floor on Task38 held-out LoTTE 100k while increasing context tokens; use to tighten claims and motivate rerunning IntentRoute with a stronger dense branch. |
 | `task53_embedding_backbone_generalization_summary.md` | Supporting/backbone robustness evidence | Matched-backbone MiniLM/BGE/E5 comparison; use full multi-route rows as quality-preserving token-saving evidence and gated rows as cost-aggressive boundary evidence. |
 | `task54_positive_hit_tradeoff_summary.md` | Supporting/tunability evidence | BGE quality-first operating point: slightly above BGE dense Hit@10 while still saving final context tokens; note that E5 does not currently show the same positive-Hit point. |
 | `task55_backbone_stability_summary.md` | Supporting/stability evidence | Fixed-seed stability check for MiniLM/BGE/E5 matched-backbone results; use to show the claims are statistically checkable without presenting seeds as tuning targets. |
+| `task58_geometry_random_ablation_summary.md` | Supporting/boundary geometry-control evidence | Static-nearest versus uniform-random cluster-arm control under the same budget protocol; use to show geometry appears in route-control metrics while dense/BM25 rescue masks final Hit@10. |
+| `task59_feedback_control_ablation_summary.md` | Supporting/boundary feedback-control evidence | Learned LinUCB versus static-nearest, no-feedback, and random controls; use to show feedback improves route quality over no-feedback/random but does not by itself explain final fused Hit@10. |
+| `task60_arm_count_sensitivity_summary.md` | Supporting/design-sensitivity evidence | KMeans arm-count grid over K={8,16,32,64,128}; use to defend n_clusters as a reproducible engineering parameter and to show full multi-route robustness plus gated-routing sensitivity. |
+| `task61_geometry_to_control_analysis.md` | Supporting/diagnostic synthesis evidence | Geometry-to-control correlation analysis across Task30/43/58/60 and Figure 4; use to show geometry is an explanatory route-control signal, not proof that geometry alone determines final Hit@10 or token saving. |
+| `task62_prompt_compression_baseline_summary.md` | Supporting/strong prompt-compression baseline evidence | Selective Context-style prompt-pruning baseline with tiktoken/cl100k_base accounting; use to show prompt compression is a strong downstream layer that can be stacked with IntentRoute rather than replaced by it. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |
@@ -63,12 +68,13 @@ accidentally promoted into paper-facing claims.
 | `task36_8_appendix_draft.md` | Supporting writing revision | Adds a paper-facing appendix draft for stability, baseline, cost-guardrail, boundary-case, encoder, and generation-smoke evidence; no new experiment. |
 | `task36_9_full_draft_consistency_audit.md` | Supporting writing revision | Adds an automated manuscript/BibTeX audit and tightens the broad evidence-selection framing to avoid manifold and RAG overclaiming; no new experiment. |
 | `task36_10_review_packet.md` | Supporting writing revision | Adds a regenerable venue-neutral independent-review packet with manuscript, references, figure index, checklist, validation report, and file manifest; no new experiment. |
-| `task36_11_literature_gap_expansion.md` | Supporting writing revision | Adds direct adaptive-retrieval, bandit-routing, and context-compression prior art; explicitly distinguishes IntentWeight from MBA-RAG and avoids first-use overclaiming; no new experiment. |
+| `task36_11_literature_gap_expansion.md` | Supporting writing revision | Adds direct adaptive-retrieval, bandit-routing, and context-compression prior art; explicitly distinguishes IntentRoute from MBA-RAG and avoids first-use overclaiming; no new experiment. |
 | `task36_12_acl_latex_migration.md` | Supporting writing revision | Adds a modular ACL-style LaTeX migration, official ACL style files, PDF figure assets, and static validation; the subsequent PDF compile audit is recorded in `task36_13_pdf_compile_audit.md`. |
 | `task36_13_pdf_compile_audit.md` | Supporting writing revision | Installs lightweight TinyTeX, resolves real ACL compile issues, adds PDF rendering audit, and records the 19-page complete-draft layout; the next pass must produce a shorter submission cut. |
 | `task49_strong_baseline_reframing_summary.md` | Supporting writing revision | Integrates Task46/47/48 strong baselines into the manuscript framing; use for the route-and-budget controller plus shared compressor/reranker decomposition. |
 | `task51_experiment_validation_framework.md` | Supporting guardrail | Unified artifact audit for dimension, paired-statistics, and display-readiness checks; use before promoting new experiment outputs into paper-facing claims. |
 | `task56_claim_evidence_alignment.md` | Supporting writing revision | Aligns manifold-inspired motivation, geometry diagnostics, matched-backbone results, strong baselines, and stability evidence into bounded paper-facing claims. |
+| `task57_review_response_action_map.md` | Internal handoff/backlog | Converts the Hermes/GLM review into the Task58-67 execution plan; preserves geometry and feedback/LinUCB while tightening the route-and-budget claim. |
 
 ## Boundary Or Negative Evidence
 
@@ -76,7 +82,7 @@ accidentally promoted into paper-facing claims.
 |---|---|---|
 | `task26_low_cost_routing_summary.md` | Boundary/negative evidence | Candidate-cost trade-off only; does not prove final token savings. |
 | `task27_dense_linucb_tradeoff_summary.md` | Boundary/negative evidence | Two-route dense-vs-LinUCB boundary test; sub-dense candidate cost loses quality and does not prove token savings. |
-| `task46_sentence_mmr_same_budget_summary.md` | Boundary/strong baseline evidence | Dense+Sentence-MMR preserves dense chunk-support at 100k with lower selected sentence tokens; use to qualify IntentWeight as complementary to context compression, not dominant over it. |
+| `task46_sentence_mmr_same_budget_summary.md` | Boundary/strong baseline evidence | Dense+Sentence-MMR preserves dense chunk-support at 100k with lower selected sentence tokens; use to qualify IntentRoute as complementary to context compression, not dominant over it. |
 
 ## Historical Or Superseded
 

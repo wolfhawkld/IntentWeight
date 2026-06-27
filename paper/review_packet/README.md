@@ -1,8 +1,8 @@
-# IntentWeight Review Packet
+# IntentRoute Review Packet
 
 Updated: 2026-05-31
 
-This directory is the venue-neutral review handoff for the IntentWeight paper.
+This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent
 academic review before LaTeX venue migration.
 

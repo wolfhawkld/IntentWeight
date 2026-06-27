@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-IntentWeight 状态持久化
-IntentWeight State Persistence
+IntentRoute 状态持久化
+IntentRoute State Persistence
 
 使用原子写入确保状态文件不会因进程中断而损坏。
 Uses atomic writes to prevent state file corruption from process interruption.

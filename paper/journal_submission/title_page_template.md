@@ -5,8 +5,8 @@ anonymized manuscript file.
 
 ## Article Title
 
-IntentWeight: Feedback-Adaptive Evidence Selection under Local Structure for
-Efficient Retrieval-Augmented Reasoning
+IntentRoute: Geometry-Guided and Feedback-Adaptive Route Confidence for
+Efficient Evidence Selection
 
 ## Authors
 

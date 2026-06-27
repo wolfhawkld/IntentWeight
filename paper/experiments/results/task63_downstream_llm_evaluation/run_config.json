@@ -1,0 +1,38 @@
+{
+  "api_mode": "chat-completions",
+  "credential_status": {
+    "has_base_url": true,
+    "has_key": true,
+    "provider": "deepseek"
+  },
+  "encoding": "cl100k_base",
+  "execute": true,
+  "judge_model": null,
+  "judge_models": null,
+  "local_files_only": true,
+  "model": "deepseek-v4-flash",
+  "provider": "deepseek",
+  "sample": {
+    "available_query_counts_by_method": {
+      "bge_dense_top10": 596,
+      "bge_intentweight_positive_seed19": 596,
+      "dense_sent_mmr_r0.85_l0.70": 596,
+      "e5_dense_top10": 596,
+      "e5_intentweight_full_seed19": 596,
+      "intentweight_sent_mmr_r0.85_l0.70_seed19": 596,
+      "minilm_dense_top10": 596
+    },
+    "calibration_fraction": 0.3,
+    "calibration_query_count": 179,
+    "eligible_common_frozen_test_queries": 417,
+    "frozen_test_query_count": 417,
+    "max_queries": 300,
+    "sample_salt": "task63_downstream_llm_eval_v1",
+    "scale": "100k",
+    "selected_query_count": 300,
+    "split_salt": "task38_lotte_calibration_v1"
+  },
+  "sent_mmr_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "tokenizer": "tiktoken",
+  "top_k": 10
+}

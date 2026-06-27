@@ -13,6 +13,16 @@ superseded, and internal handoff/backlog only.
 In particular, historical candidate-cost summaries before the final context
 token correction must not be cited as evidence of lower LLM context-token cost.
 
+## Naming Policy
+
+- New paper text, task summaries, figures, and human-readable method labels use
+  `IntentRoute`.
+- New Python integrations import `IntentRouteManager` from `intent_route`.
+- Historical lowercase IDs such as `intentweight_target`, existing CLI aliases,
+  result paths, and JSON selectors remain unchanged for reproducibility.
+- Do not rewrite prior result artifacts merely to rename the method; translate
+  legacy IDs to `IntentRoute` only in presentation layers.
+
 ## 目录结构
 ## Directory Structure
 
@@ -779,7 +789,7 @@ beating the cleaner confidence/drift-only S configuration.
 Task 21 consolidates the paper-facing evidence chain in
 `paper/experiments/task21_paper_ready_summary.md`. The summary frames Task19 as
 the hypothesis/Pareto validation stage and Task20 as the conditional dense
-fallback optimization stage. The bounded paper claim is that IntentWeight can
+fallback optimization stage. The bounded paper claim is that IntentRoute can
 learn useful route value from trust-weighted feedback and expose a controllable
 quality-cost frontier; it should not be claimed as a universal low-cost
 replacement for dense retrieval.
@@ -1075,7 +1085,7 @@ Task26 在 Task25 的 `cluster_only/value` 基础上降低 dense/BM25/cluster �
 - Task26 A cost-first smoke: avg source cost `84.38`，已经低于 dense top-100 成本，但 `Hit@10=0.8523`，质量损失明显。
 
 结论：目前证据支持 quality-cost frontier，而不是无条件替代 dense。
-IntentWeight 可以在 dense-heavy 高质量和 cluster-heavy 低成本之间调节；
+IntentRoute 可以在 dense-heavy 高质量和 cluster-heavy 低成本之间调节；
 越激进降低 dense，成本越低，但 Hit@10 会下降。详细记录见
 `paper/experiments/task26_low_cost_routing_summary.md` 和
 `paper/experiments/task26_low_cost_routing_comparison.csv`。
@@ -1095,7 +1105,7 @@ artifact，BM25 候选成本为 0。
 
 结论：二路 dense-LinUCB 可以把 candidate cost 压到 pure dense 以下，但当前
 LoTTE 100k 上还不能在该成本预算下保持 dense-level quality。该结果应作为
-边界实验写入论文：IntentWeight 当前支持可调 quality-cost frontier，而不是
+边界实验写入论文：IntentRoute 当前支持可调 quality-cost frontier，而不是
 保证低于 dense 成本且无损替代 dense。详细记录见
 `paper/experiments/task27_dense_linucb_tradeoff_summary.md` 和
 `paper/experiments/task27_dense_linucb_tradeoff_comparison.csv`。
@@ -1118,7 +1128,7 @@ LoTTE 100k `cl100k_base` 复算结果：
 - Task27-B: `Hit@10=0.8535`, `avg_context_tokens@10=1479.17`, `1.0046x` dense。
 
 结论：当前固定 top-10 generation 下，候选数下降没有转化为 final context
-token 下降。论文中不能声称 IntentWeight 已证明 LLM token cost 低于 dense。
+token 下降。论文中不能声称 IntentRoute 已证明 LLM token cost 低于 dense。
 目前成立的是 retrieval candidate reduction / dense invocation reduction。
 若要证明 token cost 优势，需要后续设计 variable top-k、token-budgeted context
 packing 或 confidence-based evidence compression。
@@ -1300,7 +1310,7 @@ Task32 开始正式论文写作阶段，在 `paper/draft/` 下建立可迭代的
 - `paper/draft/README.md`：写作入口、证据来源和当前主张边界。
 - `paper/draft/outline.md`：标题候选、核心 thesis、贡献、章节结构和图表计划。
 - `paper/draft/abstract.md`：摘要初稿和短版摘要。
-- `paper/draft/introduction.md`：Introduction 初稿，明确 RAG trade-off、垂类分片相关性流形假设、IntentWeight 控制器定位和贡献。
+- `paper/draft/introduction.md`：Introduction 初稿，明确 RAG trade-off、垂类分片相关性流形假设、IntentRoute 控制器定位和贡献。
 - `paper/draft/method.md`：Method 初稿，覆盖 multi-route surface、KMeans fixed arms、LinUCB、trust-weighted feedback、route-level credit、final context compaction。
 - `paper/draft/experiments.md`：Experiments 初稿，记录 dataset roles、protocol、Task29 主表、Task29.3 CI、Task30 geometry 和 limitation cases。
 - `paper/draft/limitations.md`：Limitations 初稿，明确 simulated feedback、retrieval-only、dense baseline、geometry framing、KMeans 选择和 token cost 口径。
@@ -1448,21 +1458,21 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     final-context token budget 作为上限。结果显示该 baseline 在 chunk-support
     `Hit@10` 上与 dense top-10 持平，同时节省约 `11.4-13.1%` selected
     sentence tokens。该结果应作为强 compression baseline / boundary evidence
-    使用，提示论文不能声称 IntentWeight 支配句子级 compression；更稳妥的表述是
-    IntentWeight 是与 sentence compression / reranking 互补的 route-and-budget
+    使用，提示论文不能声称 IntentRoute 支配句子级 compression；更稳妥的表述是
+    IntentRoute 是与 sentence compression / reranking 互补的 route-and-budget
     controller。
 14. compressor-normalized comparison：Task48 已完成，详见
     `paper/experiments/task48_compressor_normalized_summary.md`。该项将同一个
     SentMMR final-context compressor 同时接到 dense top-10 和 Task38 frozen
-    IntentWeight evidence pools 后面，检验“统一 compression layer”下的公平对比。
+    IntentRoute evidence pools 后面，检验“统一 compression layer”下的公平对比。
     在 LoTTE technology/search 100k frozen test split 上，Dense+SentMMR 在
     `0.95/0.90/0.85` ratios 下均保持 dense chunk-support `Hit@10=0.8705`，
-    并节省约 `5.3/10.2/15.2%` tokens。IntentWeight+SentMMR 继承各自
-    IntentWeight seed 的 `Hit@10=0.8657-0.8777`，在相同 compressor ratios
+    并节省约 `5.3/10.2/15.2%` tokens。IntentRoute+SentMMR 继承各自
+    IntentRoute seed 的 `Hit@10=0.8657-0.8777`，在相同 compressor ratios
     下相对 dense 共节省约 `10.1-21.2%` tokens，相对自身未压缩 source 额外节省
     约 `5.4/10.3/15.2%`。该结果支持把 SentMMR 写成共享 final-context
-    compressor，把 IntentWeight 写成上游 route-and-budget controller；不要写成
-    IntentWeight 支配 compression。
+    compressor，把 IntentRoute 写成上游 route-and-budget controller；不要写成
+    IntentRoute 支配 compression。
 15. cross-encoder reranker same-budget baseline：Task47 已完成，详见
     `paper/experiments/task47_cross_encoder_reranker_summary.md`。该项以 dense
     top-50 为候选池，用 `cross-encoder/ms-marco-MiniLM-L-6-v2` 对 query-chunk
@@ -1471,15 +1481,15 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `Hit@10` 从 dense 的 `0.8705` 提升到 `0.8777`，`EvidenceRecall@10` 从
     `0.7081` 提升到 `0.7332`，但平均 context tokens 从 `1470` 增加到
     `1792`。在 Task38 per-query token budget 下，reranker same-budget 的
-    `Hit@10=0.8633-0.8729`，未稳定超过 IntentWeight target 的
+    `Hit@10=0.8633-0.8729`，未稳定超过 IntentRoute target 的
     `0.8657-0.8777`。该结果支持把 cross-encoder 写成强 ranking baseline，
-    同时保留 IntentWeight 作为轻量 route-and-budget controller 的定位。
+    同时保留 IntentRoute 作为轻量 route-and-budget controller 的定位。
 16. strong-baseline-aware manuscript reframing：Task49 已完成，详见
     `paper/experiments/task49_strong_baseline_reframing_summary.md`。该项将
     Task46/47/48 的强 baseline 证据整合进 abstract、introduction、related
     work、experimental setup、results、conclusion 和 appendix，并重新生成
     LaTeX。当前论文主张已统一为：dense 是 recall floor，SentMMR 是共享
-    final-context compressor，cross-encoder 是 late ranking layer，IntentWeight
+    final-context compressor，cross-encoder 是 late ranking layer，IntentRoute
     是可与二者叠加的 route-and-budget controller。
 17. experiment validation framework：Task51 已完成，详见
     `paper/experiments/task51_experiment_validation_framework.md`。该项新增
@@ -1490,11 +1500,17 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     Task46 Sentence-MMR、Task47 cross-encoder reranker、Task48
     compressor-normalized comparison、Task52 BGE-base dense baseline、Task53
     matched-backbone embedding generalization，以及 Task54 positive-hit
-    trade-off tuning，以及 Task55 backbone stability summary。当前审计结果为
-    `332 PASS / 0 WARN / 0 ERROR`；Task39 science/search processed dataset、
-    Task53 artifacts、Task54 positive-hit artifacts 和 Task55 stability
-    artifacts 已在本地 manifest 中配置，并开启 query、GT、top-k ranking
-    chunk 引用、paired 统计与展示结构校验。
+    trade-off tuning、Task55 backbone stability summary、Task58 geometry
+    random ablation、Task59 feedback-control ablation、Task60 arm-count
+    sensitivity、Task61 geometry-to-control analysis 和 Task62
+    prompt-compression baseline。当前审计结果为
+    `763 PASS / 0 WARN / 0 ERROR`。
+    Task39 science/search processed dataset、Task53 artifacts、Task54
+    positive-hit artifacts、Task55 stability artifacts、Task58 geometry
+    ablation artifacts、Task59 feedback-control artifacts、Task60 arm-count
+    sensitivity artifacts、Task61 diagnostic artifacts 和 Task62
+    prompt-compression artifacts 已在本地 manifest 中配置，并开启 query、GT、
+    top-k ranking chunk 引用、paired 统计与展示结构校验。
 18. strong embedding dense baseline：Task52 已完成，详见
     `paper/experiments/task52_strong_embedding_baseline_summary.md`。该项用
     `.venv-rocm` 和 AMD Radeon RX 9070 XT 跑
@@ -1504,14 +1520,14 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `0.8705` 提升到 `0.8993`，paired delta 为 `+2.88pp`，95% bootstrap CI
     为 `+0.48pp` 到 `+5.28pp`，McNemar `p=0.0357`；同时平均 top-10 context
     tokens 从 `1470` 增加到 `1708`，相对 MiniLM dense 增加约 `16.18%`。
-    当前 MiniLM-branch IntentWeight target policies 相对 BGE 仍节省约
+    当前 MiniLM-branch IntentRoute target policies 相对 BGE 仍节省约
     `18.22-20.07%` tokens，但 `Hit@10` 低 `2.16-3.36pp`。该结果应写成
     claim-tightening strong baseline：强 dense 会抬高质量 floor，后续需要
-    将 IntentWeight 的 dense branch 也替换为 BGE 后再比较统一 route-and-budget
+    将 IntentRoute 的 dense branch 也替换为 BGE 后再比较统一 route-and-budget
     frontier。
 19. embedding backbone generalization：Task53 已完成，详见
     `paper/experiments/task53_embedding_backbone_generalization_summary.md`。
-    该项把 IntentWeight 与 dense baseline 统一为 matched-backbone 对比：
+    该项把 IntentRoute 与 dense baseline 统一为 matched-backbone 对比：
     MiniLM、BGE-base 和 E5-base 均使用同一 LoTTE technology/search 100k
     corpus、Task38 frozen split、context-token accounting 和 Task51 审计。
     BGE-base full multi-route 在 held-out 上相对 BGE dense 的平均
@@ -1545,12 +1561,92 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     而是把 manifold-inspired motivation、LoTTE 几何诊断、Task38/39
     calibration evidence、Task46/47/48 strong baselines、Task53 matched
     backbone、Task54 BGE positive-hit tuning 和 Task55 seed stability 统一成
-    claim-evidence map。当前建议的核心写法是：IntentWeight 是由流形假设启发、
+    claim-evidence map。当前建议的核心写法是：IntentRoute 是由流形假设启发、
     经几何诊断支持的 route-and-budget controller；它不证明流形定理，也不
     universal dominate dense，但在 calibrated/frozen 与 matched-backbone
     设置下可以形成可统计检验的 dense-level / near-dense quality-cost
     trade-off，并在 BGE quality-first operating point 上取得高于 BGE dense
     的 Hit@10 且节省 final context tokens。
+23. review response action map：Task57 已完成，详见
+    `paper/experiments/task57_review_response_action_map.md`。该项保存
+    Hermes/GLM review 后的后续任务路线，并明确不把论文降级为普通
+    compression baseline：几何/流形启发定义结构化 route，feedback-updated
+    LinUCB 估计 route confidence，confidence-based budget control 将可靠
+    route decision 转化为 final context token saving。后续任务固定使用
+    seeds `13,17,19`，不再扩 seed；统计支撑改由 query-level paired tests、
+    cross-backbone、cross-domain、cross-ablation 和 calibration/test discipline
+    共同完成。Task58-67 将依次处理 random/shuffled geometry ablation、
+    static/no-LinUCB feedback-control ablation、arm-count sensitivity、
+    geometry-to-control analysis、prompt-compression baseline、expanded
+    downstream LLM evaluation、manuscript claim reframe、table/figure refresh、
+    Elsevier/IP&M conversion 和 final validation packet。
+24. geometry random ablation：Task58 已完成，详见
+    `paper/experiments/task58_geometry_random_ablation_summary.md`。该项在
+    LoTTE technology/search 100k 上比较 static nearest-centroid geometry 与
+    uniform random cluster-arm selection，固定 seeds `13,17,19`，并使用同一
+    Task38 calibration/test final-context budget protocol。结果显示 full
+    multi-route surface 下 final `Hit@10` 会被 dense/BM25 rescue 保护：
+    random control 仍可取得 mean test Hit delta `+1.04pp` 和 `11.92%`
+    token saving；但 route-control 指标明显区分 geometry 与 random，static
+    nearest 的 route reward 为 `0.8563`、selected cluster hit 为 `0.8870`，
+    random control 分别只有 `0.1499` 和 `0.1577`。因此论文应写成：
+    geometry 是有效 route-confidence/control signal，但不是 standalone
+    dense replacement，也不能用 final fused Hit@10 alone 证明 geometry
+    解释全部收益。
+25. feedback-control ablation：Task59 已完成，详见
+    `paper/experiments/task59_feedback_control_ablation_summary.md`。该项在
+    LoTTE technology/search 100k 上比较 learned full multi-route、learned
+    gated cost-aware、static-nearest gated、no-feedback gated、static-nearest
+    ensemble 和 uniform-random ensemble，并使用同一 `task59_100k`
+    calibration/test final-context budget split。结果显示 no-feedback gated
+    的高 final Hit@10 来自 full dense/BM25 fallback：dense rate 为 `1.0000`、
+    LinUCB primary rate 为 `0.0000`、route reward 仅 `0.1504`。反馈学习
+    相比 no-feedback/random 有明显 route-quality 信号（learned route reward
+    `0.6790` vs. random/no-feedback 约 `0.15`），但 static-nearest geometry
+    仍是更强 route prior（route reward `0.8563`、selected cluster hit
+    `0.8870`）。当前 learned gated setting 能降低 dense 调用（dense rate
+    `0.7377`、primary rate `0.2623`），但 frozen-test Hit@10 下降较大
+    （`-5.20pp`），应作为 cost-aggressive boundary，而不是主
+    quality-preserving 结论。
+26. arm-count sensitivity：Task60 已完成，详见
+    `paper/experiments/task60_arm_count_sensitivity_summary.md`。该项在
+    LoTTE technology/search 100k 上测试 `K in {8,16,32,64,128}`，固定
+    seeds `13,17,19`，并比较 static-nearest geometry、full multi-route
+    和 gated cost-aware 三种模式。结果显示 static-nearest geometry 的 route
+    reward 在 `0.8272-0.9128` 范围内，selected-cluster hit 保持在
+    `0.8496-0.9480`，说明几何 arm surface 对合理 K 变化不脆弱。full
+    multi-route 的 fused Hit@10 保持在 `0.8775-0.8837`，budgeted frozen-test
+    rows 均为正 mean Hit@10 delta 且节省 final context tokens。retrieval-stage
+    gated 对 K 敏感：K=8 可把 dense rate 降到 `0.4083`，但 gated rows 均有
+    负向 frozen-test Hit@10 delta，因此仍应作为 dense-call saving 的
+    cost-aggressive boundary，而不是主质量保持结论。Task60 支持将
+    `n_clusters=32` 写成可复现工程默认值，而不是理论最优值。
+27. geometry-to-control analysis：Task61 已完成，详见
+    `paper/experiments/task61_geometry_to_control_analysis.md`。该项复用
+    Task30、Task43、Task58、Task60 和 Figure 4 的既有结果，不重跑检索，
+    用相关性诊断连接 geometry metrics、route-control outcomes 和
+    budgeted final-context results。结果显示跨规模 Figure 4 诊断是 small-N
+    且混合的：nearest-cluster hit 与 final Hit delta 为正相关，但与 token
+    saving 为负相关，说明不能写成 geometry alone 决定最终收益。控制层信号
+    更清楚：Task60 中 `arm_count` 与 learned route reward 的 Pearson
+    `r=-0.9913`，learned route reward 与 gated dense rate 的 Pearson
+    `r=-0.9141`；Task58 中 static geometry 相比 uniform random 的 route
+    reward 高 `+70.64pp`、selected-cluster hit 高 `+72.93pp`。因此论文应写成：
+    geometry 是 route-control/confidence 的解释性和设计性信号，最终
+    quality-cost trade off 来自 geometry-defined arms、feedback-updated
+    LinUCB、dense/BM25 rescue 与 calibrated budget control 的组合。
+28. prompt-compression baseline：Task62 已完成，详见
+    `paper/experiments/task62_prompt_compression_baseline_summary.md`。该项在
+    LoTTE technology/search 100k frozen test split 上新增
+    Selective Context-style prompt-pruning baseline，并使用与 Task38/46/48
+    一致的 `tiktoken/cl100k_base` token accounting。Dense+
+    SelectiveContext-lite 在 ratios `0.95/0.90/0.85/0.75` 下均保持
+    `Hit@10=0.8705`，token saving 分别为 `5.66%/10.42%/15.31%/25.19%`。
+    同一压缩器接到 IntentRoute evidence pools 后保持各自
+    `Hit@10=0.8657-0.8777`，并将 total token saving 提高到最高约
+    `30.57%`。该结果支持把 prompt compression 写成强 downstream baseline，
+    不是 IntentRoute 要替代的对象；正确主张是 IntentRoute 作为上游
+    route-and-budget controller 可与 prompt compression 叠加。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1563,7 +1659,10 @@ reframing、第 17 项 Task51 experiment validation framework、第 18 项 Task5
 strong embedding dense baseline、第 19 项 Task53 embedding backbone
 generalization、第 20 项 Task54 positive-hit trade-off tuning、第 21 项
 Task55 backbone stability summary、第 22 项 Task56 claim-evidence alignment
-均已完成。
+和第 23 项 Task57 review response action map、第 24 项 Task58 geometry
+random ablation、第 25 项 Task59 feedback-control ablation、第 26 项
+Task60 arm-count sensitivity、第 27 项 Task61 geometry-to-control analysis
+和第 28 项 Task62 prompt-compression baseline 均已完成。
 
 ---
 
@@ -1579,4 +1678,4 @@ Task55 backbone stability summary、第 22 项 Task56 claim-evidence alignment
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-06-24*
+*更新时间: 2026-06-26*

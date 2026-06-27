@@ -2,23 +2,22 @@
 
 ## Recommended Title
 
-IntentWeight: Feedback-Adaptive Evidence Selection under Local Structure for Efficient Retrieval-Augmented Reasoning
+IntentRoute: Geometry-Guided and Feedback-Adaptive Route Confidence for Efficient Evidence Selection
 
 ## Short Title
 
-IntentWeight for Adaptive Evidence Selection
+IntentRoute for Adaptive Evidence Selection
 
 ## Alternative Titles
 
-1. Manifold-Inspired Adaptive Retrieval with Risk-Calibrated Evidence Contexts
-2. Feedback-Guided Evidence Selection under a Piecewise Relevance-Manifold Assumption
-3. Contextual Bandit Control for Quality-Cost Trade-offs in Knowledge-Augmented Agents
+1. Feedback-Adaptive Evidence Selection under Local Structure for Efficient Retrieval-Augmented Reasoning
+2. Manifold-Inspired Adaptive Retrieval with Risk-Calibrated Evidence Contexts
+3. Contextual Bandit Route Confidence for Quality-Cost Control in Retrieval-Augmented Generation
 
 ## One-Sentence Thesis
 
-IntentWeight treats evidence selection over structured domain data as an
-adaptive route-control problem motivated by local relevance geometry, using
-dense, lexical, cluster-local, and trust-weighted feedback signals to learn
-when compact local evidence is sufficient and when dense fallback is required.
-The measured outcome is a quality-efficiency trade-off in the final evidence
-context passed to a retrieval-augmented agent.
+IntentRoute converts confidence over dense, lexical, and geometry-defined
+cluster routes into a calibrated final evidence-context budget, while
+trust-weighted feedback updates route confidence and dense retrieval remains a
+recall floor. The measured outcome is a quality-efficiency trade-off in the
+final evidence context passed to a retrieval-augmented agent.

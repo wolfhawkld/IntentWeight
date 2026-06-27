@@ -5,7 +5,7 @@
 This is a diagnostic same-budget baseline. It starts from dense top-k retrieved
 chunks, splits those chunks into sentence-like evidence units, selects units with
 query-sentence MMR, and caps the selected sentence context at the per-query token
-budget used by a target IntentWeight/Task38 context-budget artifact.
+budget used by a target IntentRoute/Task38 context-budget artifact.
 """
 from __future__ import annotations
 

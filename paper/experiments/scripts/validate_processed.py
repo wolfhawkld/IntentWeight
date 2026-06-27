@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Processed dataset validation script for IntentWeight paper experiments.
+Processed dataset validation script for IntentRoute paper experiments.
 
 Checks paired files in paper/experiments/data/processed:
 - {dataset}_corpus.json

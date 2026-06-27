@@ -15,7 +15,7 @@ This line of work improves factual grounding and domain adaptation, but it also
 makes evidence selection a central point of failure. If the retrieval layer
 misses relevant evidence, the generator has limited ability to recover. If it
 returns excessive or noisy evidence, downstream generation becomes more
-expensive and may become less faithful. IntentWeight is complementary to
+expensive and may become less faithful. IntentRoute is complementary to
 retriever-generator architectures: it does not propose a new generator or a new
 knowledge carrier. It studies a feedback-guided controller for deciding which
 evidence route to trust and how much selected evidence should enter the final
@@ -76,7 +76,7 @@ under partial feedback [@lattimore2020bandits].
 
 MBA-RAG is the closest bandit-based comparison: it treats retrieval methods as
 arms, dynamically selects a strategy according to question complexity, and
-penalizes retrieval steps in its reward [@tang2025mbarag]. IntentWeight does not
+penalizes retrieval steps in its reward [@tang2025mbarag]. IntentRoute does not
 claim to be the first use of bandits in retrieval-augmented generation. Its
 focus is different: it studies fixed cluster-local routes over a domain corpus,
 route-level credit assignment, trust-weighted feedback, dense rescue paths, and
@@ -104,7 +104,7 @@ These methods show that retrieval structure can matter, but structure also
 introduces routing risk: a wrong branch, cluster, or graph neighborhood can
 discard relevant evidence early.
 
-IntentWeight therefore treats geometry as one signal in a controller rather
+IntentRoute therefore treats geometry as one signal in a controller rather
 than as a complete retrieval model. Dense retrieval and BM25 remain available as
 rescue paths, and the geometry assumption is evaluated diagnostically through
 $\mathrm{NearestClusterHit@K}$, $\mathrm{PCAvar@m}$, $\mathrm{PCAdim90}$, and
@@ -122,7 +122,7 @@ refines retrieved passages through sentence-level reranking and reconstruction
 black-box language model can be paired with a tuneable retrieval model
 [@shi2024replug].
 
-IntentWeight operates earlier in the pipeline. It selects evidence routes and
+IntentRoute operates earlier in the pipeline. It selects evidence routes and
 sets final-context budgets before generation rather than compressing tokens
 inside already selected passages or tuning a retriever against language-model
 likelihood. Its confidence-based context policy is therefore compatible with
@@ -144,7 +144,7 @@ requiring care because clicks and query reformulations are biased signals
 systems, human-preference learning and RLHF-style optimization show how feedback
 can shape model behavior [@christiano2017preferences; @ouyang2022instructgpt].
 
-IntentWeight is inspired by this feedback-optimization paradigm, but it is not a
+IntentRoute is inspired by this feedback-optimization paradigm, but it is not a
 full RLHF pipeline. The current experiments use controlled simulated feedback
 to isolate whether a contextual-bandit retrieval controller can improve route
 selection under noisy and trust-weighted feedback. Trust weighting is used to

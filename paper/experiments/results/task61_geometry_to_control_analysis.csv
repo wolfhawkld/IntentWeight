@@ -1,0 +1,13 @@
+analysis_group,x_metric,y_metric,n,pearson_r,spearman_r,pearson_pattern,spearman_pattern,interpretation
+figure4_cross_scale,nearest_cluster_hit_at_3,policy_hit_delta_pp,6,0.5551428082643182,0.6087595874350709,strong_positive,strong_positive,Small-N diagnostic: local GT concentration does not by itself determine final Hit delta.
+figure4_cross_scale,nearest_cluster_hit_at_3,policy_saving_pct,6,-0.4319121131059188,-0.4058397249567139,moderate_negative,moderate_negative,"Small-N diagnostic: token saving depends on budget policy and rescue paths, not only geometry."
+figure4_cross_scale,context_retention_at_10,policy_hit_delta_pp,6,0.46006156854294444,0.37142857142857144,moderate_positive,moderate_positive,"Small-N diagnostic: context retention is a design signal, not a deterministic quality guarantee."
+figure4_cross_scale,context_retention_at_10,policy_saving_pct,6,-0.6381070673322762,-0.7142857142857143,strong_negative,strong_negative,Small-N diagnostic: retention and saving expose a quality-cost trade-off surface.
+figure4_cross_scale,pca_dim_for_90pct,context_retention_at_10,6,-0.3494684020161728,-0.2571428571428571,moderate_negative,weak_negative,Small-N diagnostic: higher effective dimensionality coincides with lower retention in this slice.
+task60_arm_count,arm_count,learned_route_reward,5,-0.991278994638586,-1.0,very_strong_negative,very_strong_negative,Control diagnostic: finer arms dilute feedback and reduce learned route reward.
+task60_arm_count,arm_count,learned_cluster_hit,5,-0.9506152394817077,-1.0,very_strong_negative,very_strong_negative,Control diagnostic: finer arms make selected learned clusters less directly reliable.
+task60_arm_count,learned_route_reward,gated_dense_rate,5,-0.9141257653612422,-1.0,very_strong_negative,very_strong_negative,Control diagnostic: weaker learned route reward pushes the gate back toward dense retrieval.
+task60_arm_count,learned_route_reward,gated_primary_rate,5,0.9141257653612422,1.0,very_strong_positive,very_strong_positive,Control diagnostic: stronger route reward allows more LinUCB-primary decisions.
+task60_arm_count,learned_route_reward,gated_hit_delta_pp,5,0.4765369199976535,0.5,moderate_positive,strong_positive,Control diagnostic: route reliability tracks the quality loss of aggressive gating.
+task60_arm_count,static_route_reward,full_hit_delta_pp,5,0.7088829524089252,0.7,strong_positive,strong_positive,"Design diagnostic: static geometry is useful, while final Hit is also protected by fusion/rescue."
+task60_arm_count,arm_count,gated_dense_rate,5,0.8594691900122545,1.0,very_strong_positive,very_strong_positive,Deployment diagnostic: larger K pushes the current learned gate toward dense fallback.

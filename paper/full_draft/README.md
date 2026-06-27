@@ -1,6 +1,6 @@
-# IntentWeight Full Draft
+# IntentRoute Full Draft
 
-Updated: 2026-06-11
+Updated: 2026-06-27
 
 This directory contains the first complete paper draft assembled after the
 paper evidence package, pre-writing validation work, and review-defense
@@ -12,7 +12,7 @@ revision.
 - `01_abstract.md`: paper abstract.
 - `02_introduction.md`: motivation, hypothesis, contributions.
 - `03_related_work.md`: related-work framework with provisional citation keys.
-- `04_method.md`: IntentWeight method.
+- `04_method.md`: IntentRoute method.
 - `05_experimental_setup.md`: datasets, metrics, baselines, protocol.
 - `06_results.md`: main results and ablations.
 - `07_discussion.md`: interpretation and deployment meaning.
@@ -34,21 +34,24 @@ draft. The most important internal evidence groups are:
 - review-defense revision plan;
 - token-quality frontier and context-token analyses;
 - clean component ablation table;
-- LoTTE geometry scale validation.
+- LoTTE geometry scale validation;
 - calibration/test context-budget validation;
 - LoTTE science/search cross-domain validation;
-- feedback-driven hard-case recovery.
+- feedback-driven hard-case recovery;
+- matched BGE/E5 backbone validation and BGE quality-first tunability;
+- geometry/random, feedback/no-feedback, and arm-count controls;
 - strong post-retrieval baselines: Dense+Sentence-MMR, compressor-normalized
-  SentMMR, and cross-encoder reranking.
+  SentMMR, SelectiveContext-lite, and cross-encoder reranking;
+- 300-query downstream answer-level evaluation.
 
 ## Claim Boundary
 
 The paper should keep the bounded claim:
 
-> IntentWeight is a feedback-guided evidence selection and context-budget
-> controller motivated by a piecewise relevance-manifold assumption for
-> vertical-domain data, instantiated in a retrieval-augmented question-answering
-> setting. Under calibration/test budget selection, calibration-eligible
+> IntentRoute is a route-confidence-to-budget controller instantiated in
+> retrieval-augmented question answering. Local geometry defines reproducible
+> route structure, trust-weighted LinUCB feedback adapts route confidence, and
+> dense retrieval remains a recall floor. Under calibration/test budget selection, calibration-eligible
 > operating points at 100k, 200k, and 638k reduce final LLM evidence-context
 > input tokens by 6-18%; the 400k point is positive on frozen test but remains
 > diagnostic pending follow-up calibration. The method avoids the larger
@@ -57,10 +60,12 @@ The paper should keep the bounded claim:
 > 4.7-5.3% saving baseline. The paper should not claim universal or
 > statistically significant dominance, nor should it imply that the current
 > experiments cover every possible knowledge-carrier format beyond the tested
-> retrieval setting. Strong post-retrieval baselines should be used to narrow
-> the claim: SentMMR is a shared final-context compressor, cross-encoder
-> reranking is a late ranking layer, and IntentWeight is a route-and-budget
-> controller that can be composed with both. Broader agent-memory, graph, tree,
+> retrieval setting. BGE/E5 and the 300-query downstream run support
+> backbone- and answer-level robustness without establishing significant answer
+> improvement. Geometry is motivation and diagnostic support, not theorem-level
+> proof. SentMMR and SelectiveContext-lite are downstream compressors,
+> cross-encoder reranking is a late ranking layer, and IntentRoute can be
+> composed with all three. Broader agent-memory, graph, tree,
 > or tool-context applications should be framed as motivation and future work
 > unless separately evaluated.
 

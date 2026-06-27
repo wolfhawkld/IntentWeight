@@ -1,46 +1,50 @@
-# IntentWeight
+# IntentRoute
 
-**意图驱动的动态权重学习系统**
+**Geometry-guided and feedback-adaptive evidence routing for RAG**
 
 ## 核心理念
 
-> 让系统从每一次用户交互中学习，将反馈沉淀为可复用的"意图-数据"权重关联
+> 使用局部几何构建可复现的检索路由，以 LinUCB 和可信反馈更新路由置信度，
+> 并在保留 dense recall floor 的前提下控制最终证据上下文。
 
 ## 研究方向
 
-在多类型RAG数据（向量、KV、KG）构成的动态多路召回系统中，通过用户反馈（显式+隐式）驱动的RL推理，动态更新"意图-数据元素"的语义关联权重，实现系统问答效果的持续提升。
+IntentRoute 在 dense、BM25 和 cluster-local 多路召回表面上进行自适应控制。
+局部几何提供路由结构，可信用户反馈更新 LinUCB 路由状态，校准策略控制最终
+送入生成模型的 evidence context。当前论文实验聚焦检索质量与 context-token
+trade-off，并保留 dense 作为质量基线和 fallback。
 
 ## 核心创新点
 
 | 创新点 | 描述 |
 |-------|------|
-| **意图聚类** | 无监督发现用户问题意图类别 |
-| **实体增强** | 融合知识图谱实体信息提升聚类质量 |
-| **反馈驱动权重** | 用户反馈 → 数据元素级权重更新 |
-| **动态闭环** | 持续学习、持续优化的自适应系统 |
+| **几何引导路由** | 使用聚类局部结构构建可复现的 route arms |
+| **反馈自适应** | 可信反馈更新 LinUCB 路由置信度和恢复状态 |
+| **多路召回保护** | dense recall floor + BM25 lexical rescue |
+| **上下文控制** | 将 route confidence 映射为校准后的 evidence context |
 
 ## 项目结构
 
 ```
-IntentWeight/
+<repository>/
 ├── README.md                   # 项目说明
 ├── requirements.txt            # 依赖
-├── venv/                       # 虚拟环境
-├── pre_validation/             # Phase 1A: 意图聚类方法验证
-├── data/                       # 数据集（待创建）
-├── models/                     # 模型（待创建）
-├── experiments/                # 实验记录（待创建）
-└── docs/                       # 文档（待创建）
+├── intent_route/               # canonical Python API
+├── intent_weight/              # legacy-compatible implementation
+├── pre_validation/             # 早期研究验证
+├── paper/experiments/          # 正式实验、结果与任务记录
+├── paper/full_draft/           # 论文 Markdown 主源
+└── paper/latex/                # 生成的 LaTeX 与 PDF
 ```
 
 ## 快速开始
 
 ```bash
-# 进入项目目录
+# 当前本地/Git 仓库目录仍保留历史名称 IntentWeight
 cd ~/.openclaw/workspace/IntentWeight
 
 # 激活虚拟环境
-source venv/bin/activate
+source .venv/bin/activate
 
 # 安装依赖
 pip install -r requirements.txt
@@ -49,16 +53,16 @@ pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
 
-## 研究阶段
+## Python API
 
-| 阶段 | 目标 | 状态 |
-|-----|------|------|
-| **Phase 1A** | 意图聚类方法验证 | 🔄 进行中 |
-| **Phase 1B** | 构建RAG验证数据集 | ⏳ 待开始 |
-| **Phase 1C** | 意图-数据关联验证 | ⏳ 待开始 |
-| **Phase 2** | 检索策略实现 | ⏳ 待开始 |
-| **Phase 3** | 用户反馈闭环 | ⏳ 待开始 |
-| **Phase 4** | 论文产出 | ⏳ 待开始 |
+```python
+from intent_route import IntentRouteManager, IntentRouteStats
+
+manager = IntentRouteManager(state_dir="data/intent_route")
+```
+
+旧接口 `from intent_weight import IntentWeightManager` 继续兼容。历史实验目录、
+结果标签和 `data/intent_weight/` 状态目录不会被重命名。
 
 ## 参考
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-IntentWeight 模块 - 基于 LinUCB 的意图驱动检索优化
-IntentWeight Module - LinUCB-based Intent-driven Retrieval Optimization
+IntentRoute 模块 - 基于 LinUCB 的意图驱动检索优化
+IntentRoute Module - LinUCB-based Intent-driven Retrieval Optimization
 
 核心流程 / Core Flow:
 1. 文件级语义聚类 → 将文档组织为 ~10-20 个聚类
@@ -10,7 +10,7 @@ IntentWeight Module - LinUCB-based Intent-driven Retrieval Optimization
 4. 用户反馈 → 更新 LinUCB 权重
 
 参考 / Reference:
-- IntentWeight 研究项目 (LinUCB Contextual Bandit)
+- IntentRoute 研究项目 (LinUCB Contextual Bandit)
 """
 import numpy as np
 from pathlib import Path
@@ -21,13 +21,13 @@ from .linucb import LinUCB
 from .reward import calculate_reward
 from .persistence import save_state, load_state
 from .clustering import load_pca_model
-from .models import FeedbackRequest, IntentWeightStats
+from .models import FeedbackRequest, IntentRouteStats, IntentWeightStats
 
 
-class IntentWeightManager:
+class IntentRouteManager:
     """
-    IntentWeight 编排器
-    IntentWeight Orchestrator
+    IntentRoute 编排器
+    IntentRoute Orchestrator
 
     封装 LinUCB + PCA + 聚类数据，提供检索过滤和反馈更新接口。
     Encapsulates LinUCB + PCA + cluster data, provides retrieval filtering
@@ -240,7 +240,7 @@ class IntentWeightManager:
             embedding_engine: embedding 引擎，用于在无缓存时重新编码 query
         """
         if not self.is_ready:
-            logger.warning("IntentWeight not ready, skipping feedback")
+            logger.warning("IntentRoute not ready, skipping feedback")
             return
 
         # 获取 query embedding：缓存 → 重新编码 → 放弃
@@ -368,7 +368,7 @@ class IntentWeightManager:
             for key in oldest:
                 del self._message_cache[key]
 
-    def get_stats(self) -> IntentWeightStats:
+    def get_stats(self) -> IntentRouteStats:
         """获取统计信息 / Get statistics"""
         arm_stats = []
         if self.linucb:
@@ -384,7 +384,7 @@ class IntentWeightManager:
                         "doc_count": self.clusters[cid].get("doc_count", 0),
                     })
 
-        return IntentWeightStats(
+        return IntentRouteStats(
             enabled=self.is_ready,
             num_clusters=len(self.clusters),
             num_documents=sum(c.get("doc_count", 0) for c in self.clusters.values()),
@@ -393,3 +393,16 @@ class IntentWeightManager:
             linucb_alpha=self.alpha,
             arm_stats=arm_stats,
         )
+
+
+# Compatibility alias. New integrations should import IntentRouteManager from
+# the canonical ``intent_route`` package.
+IntentWeightManager = IntentRouteManager
+
+__all__ = [
+    "FeedbackRequest",
+    "IntentRouteManager",
+    "IntentWeightManager",
+    "IntentRouteStats",
+    "IntentWeightStats",
+]

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-06-24",
+  "updated": "2026-06-25",
   "description": "Default Task51 audit manifest for paper-critical and recent strong-baseline experiment artifacts.",
   "defaults": {
     "top_k": 10,
@@ -529,6 +529,361 @@
       ],
       "markdown_reports": [
         "paper/experiments/results/task55_backbone_stability_summary.md"
+      ]
+    },
+    {
+      "id": "task58_geometry_random_ablation",
+      "role": "geometry_control_ablation",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task58_geometry_random_ablation_summary.json",
+        "paper/experiments/results/task58_static_nearest_100k_context_budget.json",
+        "paper/experiments/results/task58_uniform_random_100k_context_budget.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task58_geometry_random_ablation_summary.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task58_static_nearest_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task58_uniform_random_100k_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task58_geometry_random_100k_routes/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task58_static_nearest_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task58_uniform_random_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task58_geometry_random_ablation_summary.md",
+        "paper/experiments/results/task58_static_nearest_100k_context_budget.md",
+        "paper/experiments/results/task58_uniform_random_100k_context_budget.md"
+      ]
+    },
+    {
+      "id": "task59_feedback_control_ablation",
+      "role": "feedback_control_ablation",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task59_feedback_control_summary.json",
+        "paper/experiments/results/task59_learned_full_100k_context_budget.json",
+        "paper/experiments/results/task59_learned_gated_100k_context_budget.json",
+        "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.json",
+        "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.json",
+        "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.json",
+        "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task59_feedback_control_summary.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task59_learned_full_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task59_learned_gated_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task59_feedback_control_100k_trust/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task59_feedback_control_100k_none/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task59_learned_full_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task59_learned_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task59_feedback_control_summary.md",
+        "paper/experiments/results/task59_learned_full_100k_context_budget.md",
+        "paper/experiments/results/task59_learned_gated_100k_context_budget.md",
+        "paper/experiments/results/task59_static_nearest_gated_100k_context_budget.md",
+        "paper/experiments/results/task59_no_feedback_gated_100k_context_budget.md",
+        "paper/experiments/results/task59_static_nearest_ensemble_100k_context_budget.md",
+        "paper/experiments/results/task59_uniform_random_ensemble_100k_context_budget.md"
+      ]
+    },
+    {
+      "id": "task60_arm_count_sensitivity",
+      "role": "design_sensitivity",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task60_arm_count_sensitivity_summary.json",
+        "paper/experiments/results/task60_k8_static_100k_context_budget.json",
+        "paper/experiments/results/task60_k8_full_100k_context_budget.json",
+        "paper/experiments/results/task60_k8_gated_100k_context_budget.json",
+        "paper/experiments/results/task60_k16_static_100k_context_budget.json",
+        "paper/experiments/results/task60_k16_full_100k_context_budget.json",
+        "paper/experiments/results/task60_k16_gated_100k_context_budget.json",
+        "paper/experiments/results/task60_k32_static_100k_context_budget.json",
+        "paper/experiments/results/task60_k32_full_100k_context_budget.json",
+        "paper/experiments/results/task60_k32_gated_100k_context_budget.json",
+        "paper/experiments/results/task60_k64_static_100k_context_budget.json",
+        "paper/experiments/results/task60_k64_full_100k_context_budget.json",
+        "paper/experiments/results/task60_k64_gated_100k_context_budget.json",
+        "paper/experiments/results/task60_k128_static_100k_context_budget.json",
+        "paper/experiments/results/task60_k128_full_100k_context_budget.json",
+        "paper/experiments/results/task60_k128_gated_100k_context_budget.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task60_arm_count_sensitivity_summary.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task60_k8_static_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k8_full_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k8_gated_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k16_static_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k16_full_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k16_gated_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k32_static_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k32_full_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k32_gated_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k64_static_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k64_full_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k64_gated_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k128_static_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k128_full_100k_context_budget.test_paired.csv",
+        "paper/experiments/results/task60_k128_gated_100k_context_budget.test_paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task60_arm_count_k8_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task60_arm_count_k16_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task60_arm_count_k32_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task60_arm_count_k64_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task60_arm_count_k128_100k/linucb_cost_lotte-technology-search-100k_heldout-test_test_corpus-full_q596_prequential_rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        },
+        {
+          "path": "paper/experiments/results/task60_k8_static_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k8_full_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k8_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k16_static_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k16_full_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k16_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k32_static_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k32_full_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k32_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k64_static_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k64_full_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k64_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k128_static_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k128_full_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        },
+        {
+          "path": "paper/experiments/results/task60_k128_gated_100k_context_budget.rankings.json",
+          "expected_ranked_queries": 596,
+          "min_ranking_len": 1
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task60_arm_count_sensitivity_summary.md",
+        "paper/experiments/results/task60_k8_static_100k_context_budget.md",
+        "paper/experiments/results/task60_k8_full_100k_context_budget.md",
+        "paper/experiments/results/task60_k8_gated_100k_context_budget.md",
+        "paper/experiments/results/task60_k16_static_100k_context_budget.md",
+        "paper/experiments/results/task60_k16_full_100k_context_budget.md",
+        "paper/experiments/results/task60_k16_gated_100k_context_budget.md",
+        "paper/experiments/results/task60_k32_static_100k_context_budget.md",
+        "paper/experiments/results/task60_k32_full_100k_context_budget.md",
+        "paper/experiments/results/task60_k32_gated_100k_context_budget.md",
+        "paper/experiments/results/task60_k64_static_100k_context_budget.md",
+        "paper/experiments/results/task60_k64_full_100k_context_budget.md",
+        "paper/experiments/results/task60_k64_gated_100k_context_budget.md",
+        "paper/experiments/results/task60_k128_static_100k_context_budget.md",
+        "paper/experiments/results/task60_k128_full_100k_context_budget.md",
+        "paper/experiments/results/task60_k128_gated_100k_context_budget.md"
+      ]
+    },
+    {
+      "id": "task61_geometry_to_control_analysis",
+      "role": "diagnostic_synthesis",
+      "dataset": {
+        "name": "multi_artifact_geometry_to_control_diagnostic",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": false
+      },
+      "result_jsons": [
+        "paper/experiments/results/task61_geometry_to_control_analysis.json"
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task61_geometry_to_control_analysis.md"
+      ]
+    },
+    {
+      "id": "task62_prompt_compression_baseline",
+      "role": "strong_baseline",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task62_100k_prompt_compression_baseline.json"
+      ],
+      "summary_csvs": [
+        "paper/experiments/results/task62_100k_prompt_compression_baseline.csv"
+      ],
+      "paired_csvs": [
+        "paper/experiments/results/task62_100k_prompt_compression_baseline.paired.csv"
+      ],
+      "ranking_artifacts": [
+        {
+          "path": "paper/experiments/results/task62_100k_prompt_compression_baseline.rankings.json",
+          "expected_ranked_queries": 417,
+          "min_ranking_len": 1,
+          "check_top_k_chunks": 10
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task62_100k_prompt_compression_baseline.md"
       ]
     }
   ]

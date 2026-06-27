@@ -54,7 +54,7 @@ def main():
     # 确保数据目录存在
     os.makedirs(DATA_DIR, exist_ok=True)
     
-    print("IntentWeight - 数据集下载")
+    print("IntentRoute - 数据集下载")
     print(f"数据保存目录: {DATA_DIR}\n")
     
     # 下载数据集

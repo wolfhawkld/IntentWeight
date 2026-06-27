@@ -32,7 +32,7 @@ CHAPTERS = [
 FIGURES = [
     (
         "Figure 1",
-        "IntentWeight system diagram",
+        "IntentRoute system diagram",
         DRAFT / "figures" / "figure1_system_diagram.svg",
         DRAFT / "figures" / "figure1_system_diagram.mmd",
     ),
@@ -159,11 +159,11 @@ Updated: 2026-05-31
 
 
 def packet_readme() -> str:
-    return """# IntentWeight Review Packet
+    return """# IntentRoute Review Packet
 
 Updated: 2026-05-31
 
-This directory is the venue-neutral review handoff for the IntentWeight paper.
+This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent
 academic review before LaTeX venue migration.
 

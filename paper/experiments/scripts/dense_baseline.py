@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Dense embedding retrieval baseline for processed IntentWeight datasets."""
+"""Dense embedding retrieval baseline for processed IntentRoute datasets."""
 from __future__ import annotations
 
 import argparse

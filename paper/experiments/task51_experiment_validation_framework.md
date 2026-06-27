@@ -27,9 +27,17 @@ The default manifest audits:
   20k/q200 and 100k.
 - Task46 Dense+Sentence-MMR same-budget baseline.
 - Task47 cross-encoder reranker same-budget baseline.
-- Task48 compressor-normalized Dense/IntentWeight comparison.
+- Task48 compressor-normalized Dense/IntentRoute comparison.
 - Task52 BGE-base strong embedding dense baseline and Task38 held-out
   comparison.
+- Task53 matched-backbone embedding generalization.
+- Task54 BGE positive-hit operating point.
+- Task55 backbone stability summary.
+- Task58 geometry-random ablation.
+- Task59 feedback-control ablation.
+- Task60 arm-count sensitivity.
+- Task61 geometry-to-control diagnostic synthesis.
+- Task62 prompt-compression baseline.
 
 ## Checks
 
@@ -69,14 +77,17 @@ Command:
 
 Result:
 
-- PASS: 332
+- PASS: 763
 - WARN: 0
 - ERROR: 0
 
 The Task39 science/search processed datasets and Task53 matched-backbone
-artifacts, plus the Task54 positive-hit operating point and Task55 backbone
-stability summary, are now available locally and configured in the manifest.
-Task51 audits those runs with query count, ground-truth reference, top-k ranking
+artifacts, plus the Task54 positive-hit operating point, Task55 backbone
+stability summary, Task58 geometry-random ablation, and Task59
+feedback-control ablation, Task60 arm-count sensitivity, and Task61
+geometry-to-control diagnostic synthesis, and Task62 prompt-compression
+baseline are now available locally and configured in the manifest. Task51
+audits those runs with query count, ground-truth reference, top-k ranking
 chunk-reference, paired-statistics, and display-readiness checks where
 applicable.
 

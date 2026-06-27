@@ -3,7 +3,7 @@
 """Task52 strong embedding baseline comparison.
 
 This script compares a stronger dense embedding baseline against the current
-MiniLM dense floor and Task38 IntentWeight target policies on the same frozen
+MiniLM dense floor and Task38 IntentRoute target policies on the same frozen
 Task38 held-out query split. It consumes saved ranking artifacts; it does not
 recompute embeddings.
 """
@@ -291,8 +291,8 @@ def write_markdown(
         "",
         "- BGE-base raises the dense quality floor on the Task38 held-out split.",
         "- BGE also selects longer chunks on average, so stronger dense retrieval is not automatically a final-context cost reduction.",
-        "- The current MiniLM-branch IntentWeight policies remain token-saving relative to BGE dense, but they do not match BGE dense quality on this split.",
-        "- This is a claim-tightening result: future strong-encoder experiments should test whether the IntentWeight controller still provides a useful token-quality frontier when its dense branch also uses BGE.",
+        "- The current MiniLM-branch IntentRoute policies remain token-saving relative to BGE dense, but they do not match BGE dense quality on this split.",
+        "- This is a claim-tightening result: future strong-encoder experiments should test whether the IntentRoute controller still provides a useful token-quality frontier when its dense branch also uses BGE.",
     ])
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")

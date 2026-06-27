@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Summarize Task53 matched-backbone IntentWeight comparisons.
+"""Summarize Task53 matched-backbone IntentRoute comparisons.
 
 This script consumes already-generated Task38/Task53 calibration outputs. It
 does not rerun retrieval or embedding. The summary is intentionally framed as a
-matched-backbone trade-off table: each IntentWeight variant is compared against
+matched-backbone trade-off table: each IntentRoute variant is compared against
 the dense baseline produced by the same embedding backbone.
 """
 from __future__ import annotations
@@ -219,7 +219,7 @@ def write_markdown(path: Path, *, aggregate: Sequence[Mapping[str, object]], per
             "",
             "## Interpretation",
             "",
-            "- Matched-backbone comparison is essential: each IntentWeight row is compared against the dense baseline produced by the same embedding model.",
+            "- Matched-backbone comparison is essential: each IntentRoute row is compared against the dense baseline produced by the same embedding model.",
             "- BGE and E5 full multi-route variants preserve or nearly preserve dense Hit@10 on average while reducing final context tokens by about 12%.",
             "- The gated-cost variants save retrieval-stage dense calls, but they lower Hit@10 under BGE and E5; use them as cost-aggressive boundary points rather than the main quality-preserving result.",
             "- Strict 1pp CI non-inferiority is not established for these 100k single-scale seed rows, so paper wording should say quality-cost trade off rather than universal non-inferiority.",

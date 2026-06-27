@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Compressor-normalized Dense vs IntentWeight comparison for Task48.
+"""Compressor-normalized Dense vs IntentRoute comparison for Task48.
 
 This script applies the same sentence-level MMR final-context compressor to
 multiple evidence pools. It is intended to separate retrieval/controller quality
 from generic final-context compression:
 
     Dense top-k evidence pool -> SentMMR
-    IntentWeight evidence pool -> SentMMR
+    IntentRoute evidence pool -> SentMMR
 """
 from __future__ import annotations
 

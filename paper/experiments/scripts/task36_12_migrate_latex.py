@@ -31,9 +31,9 @@ TABLE_DISPLAY_ALIASES = {
     r"$\mathrm{ContextRetention@10}$": "Context ret.@10",
     r"$\mathrm{PCAdim90}$ sample": "PCA dim90",
     r"$\mathrm{PCAvar@64}$ sample": "PCA var@64",
-    r"IntentWeight fixed top-10 $\mathrm{Hit@10}$": "IntentWeight fixed Hit@10",
-    "IntentWeight hit delta vs dense": "IntentWeight hit delta",
-    "IntentWeight token saving": "IntentWeight token saving",
+    r"IntentRoute fixed top-10 $\mathrm{Hit@10}$": "IntentRoute fixed Hit@10",
+    "IntentRoute hit delta vs dense": "IntentRoute hit delta",
+    "IntentRoute token saving": "IntentRoute token saving",
     "Dense adaptive hit delta": "Dense trunc. hit delta",
     "Dense adaptive token saving": "Dense trunc. token saving",
     "Avg token saving vs dense": "Avg token saving",
@@ -68,6 +68,16 @@ def title() -> str:
     if not match:
         raise ValueError("recommended title not found")
     return match.group(1).strip()
+
+
+def update_main_title() -> None:
+    main_path = LATEX / "main.tex"
+    content = main_path.read_text(encoding="utf-8")
+    replacement = r"\title{" + title() + "}"
+    updated, count = re.subn(r"\\title\{[^\n]*\}", lambda _: replacement, content, count=1)
+    if count != 1:
+        raise ValueError("expected exactly one LaTeX title declaration")
+    main_path.write_text(updated, encoding="utf-8")
 
 
 def escape_latex(text: str) -> str:
@@ -384,6 +394,7 @@ def convert_markdown(path: Path, *, appendix: bool = False, abstract: bool = Fal
 
 
 def main() -> None:
+    update_main_title()
     SECTIONS.mkdir(parents=True, exist_ok=True)
     (SECTIONS / "abstract.tex").write_text(
         convert_markdown(DRAFT / "01_abstract.md", abstract=True), encoding="utf-8"

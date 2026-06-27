@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render and audit the compiled ACL-style IntentWeight PDF."""
+"""Render and audit the compiled ACL-style IntentRoute PDF."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[3]
 PDF = ROOT / "paper" / "latex" / "main.pdf"
 LOG = ROOT / "paper" / "latex" / "main.log"
-OUTPUT = Path("/tmp/intentweight_pdf_audit")
+OUTPUT = Path("/tmp/intentroute_pdf_audit")
 RENDER_SCALE = 1.1
 CRITICAL_LOG_RE = re.compile(
     r"Overfull|undefined citations|undefined references|"

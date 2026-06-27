@@ -112,7 +112,7 @@ def main():
     os.makedirs(RAW_DIR, exist_ok=True)
     
     print("=" * 60)
-    print("IntentWeight 论文实验 - Parquet 数据集下载")
+    print("IntentRoute 论文实验 - Parquet 数据集下载")
     print("=" * 60)
     print(f"数据保存目录: {os.path.abspath(RAW_DIR)}")
     print(f"代理: {PROXY}")

@@ -5,7 +5,7 @@ LinUCB Contextual Bandit Implementation (file-level cluster arms)
 
 参考 / Reference:
 - Li et al. (2010) "A Contextual-Bandit Approach to Personalized News Article Recommendation"
-- IntentWeight 项目 contextual_bandit.py + interactive_feedback_v6.py
+- IntentRoute 项目 contextual_bandit.py + interactive_feedback_v6.py
 """
 import json
 import numpy as np

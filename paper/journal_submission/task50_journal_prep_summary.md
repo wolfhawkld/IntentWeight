@@ -4,7 +4,7 @@ Updated: 2026-06-21
 
 ## Objective
 
-Prepare the current IntentWeight manuscript for a journal-first submission
+Prepare the current IntentRoute manuscript for a journal-first submission
 route, with IP&M as the primary target and ESWA as the fallback target.
 
 ## Completed in This Pass

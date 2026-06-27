@@ -1,32 +1,37 @@
-# IntentWeight: Feedback-Guided Evidence Selection under a Piecewise Relevance-Manifold Assumption
+# IntentRoute: Geometry-Guided and Feedback-Adaptive Route Confidence for Efficient Evidence Selection
 
 <!-- Generated review packet. Edit source chapters under paper/full_draft/. -->
 
 # Abstract
 
-Knowledge-augmented agents must select enough evidence to support answer
-quality while limiting latency, noise, and final context cost. This trade-off is
-especially difficult for vertical-domain data, where relevance is shaped by
-domain terminology, local semantic neighborhoods, workflow structure, and
-evolving user intent. We propose IntentWeight, a feedback-guided evidence
-selection controller motivated by a piecewise relevance-manifold assumption.
-IntentWeight combines dense semantic retrieval, BM25 lexical recall, and
-cluster-local routing, and uses trust-weighted LinUCB to learn route preferences
-from simulated feedback. A confidence-based final context policy then compacts
-the selected evidence sent to the generator while preserving dense fallback
-under low confidence. We instantiate this framework in a retrieval-augmented
-question-answering setting on LoTTE technology/search,
-evaluated from 100k to 638k corpus chunks; our empirical claims are limited to
-this retrieval-augmented QA setting rather than all possible knowledge-carrier
-formats. The conservative policy reduces final retrieved context tokens by
-approximately 4.7-5.3% while preserving near-dense $\mathrm{Hit@10}$ at 100k
-and achieving mean above-dense $\mathrm{Hit@10}$ at 200k, 400k, and 638k.
-Geometry diagnostics and ablations show that local cluster structure provides
-useful routing signal, while dense retrieval remains an important recall floor.
-A 60-query downstream generation smoke test shows no obvious answer-quality
-degradation from the compressed context. These results position IntentWeight
-not as a universal replacement for dense retrieval, but as an adaptive
-quality-cost controller for evidence selection over structured domain data.
+Retrieval-augmented systems must select enough evidence to support an answer
+while limiting noise and language-model context cost. We study this as a
+route-confidence-to-budget problem: confidence in a multi-route evidence pool
+should determine how much context is sent to the generator. IntentRoute
+combines dense retrieval, BM25, and geometry-defined cluster-local routes,
+uses trust-weighted LinUCB feedback to update route confidence, and maps that
+confidence to a calibrated final context budget. Dense retrieval remains a
+recall floor. A piecewise relevance-manifold hypothesis motivates the local
+route construction, but geometry is tested as a diagnostic and control signal
+rather than claimed as a standalone retrieval theory.
+
+On LoTTE technology/search from 100k to 638k chunks, frozen
+calibration/test policies at eligible operating points reduce retrieved
+evidence-context tokens by 6-18% while avoiding the larger $\mathrm{Hit@10}$
+losses of dense-only adaptive truncation; a 400k point remains diagnostic
+because it fails the calibration gate. Matched-backbone tests with BGE-base and
+E5-base find near-dense $\mathrm{Hit@10}$ with about 12% token reduction, and a
+BGE quality-first operating point reaches +0.88 percentage points in mean
+$\mathrm{Hit@10}$ with 7.23% saving. Geometry, random-route, no-feedback, and
+arm-count controls show that local structure and feedback improve route-level
+confidence signals, while dense/BM25 rescue can mask weak routes in final fused
+quality. In a frozen 300-query downstream evaluation, BGE, E5, and
+SentMMR-composed IntentRoute variants reduce context by 6.00%, 12.04%, and
+6.65%, respectively, without a statistically detectable change in judged
+answer correctness. Prompt compression and reranking remain complementary
+downstream layers. The supported contribution is therefore a calibrated
+route-and-budget controller, not universal superiority over dense retrieval or
+a proof that manifold geometry alone determines relevance.
 
 ---
 
@@ -62,67 +67,111 @@ cluster-level routing, or user-specific relevance. At the same time, geometry
 alone is not enough: a cluster route that prunes too early can miss the correct
 evidence, and dense retrieval must remain available as a recall floor.
 
-We propose IntentWeight, a feedback-guided adaptive evidence selection
-controller motivated by a piecewise relevance-manifold assumption for
-vertical-domain data. IntentWeight does not replace dense retrieval with a
-single alternative retriever. Instead, in our retrieval-augmented QA
-implementation, it builds a multi-route retrieval surface
-including dense retrieval, BM25 lexical recall, and cluster-local retrieval.
-Fixed KMeans/MiniBatchKMeans clusters provide stable arms for a LinUCB policy.
-The policy observes query and route features, selects cluster-local routes, and
-is updated by trust-weighted simulated feedback. A confidence-based final
-context policy then decides whether to compact the retrieved context or keep a
-denser fallback.
+We propose IntentRoute, a feedback-adaptive route-confidence and context-budget
+controller. Its central operation is to convert confidence over a multi-route
+evidence pool into the final amount of context sent to the generator. In our
+retrieval-augmented QA implementation, the route surface includes dense
+retrieval, BM25 lexical recall, and cluster-local retrieval. A bounded
+piecewise relevance-manifold hypothesis motivates the local route construction:
+fixed KMeans/MiniBatchKMeans regions form reproducible arms rather than a claim
+that geometry alone defines relevance. Trust-weighted LinUCB updates arm values
+from controlled feedback, turning user feedback into an adaptive estimate of
+which local routes can be trusted. Low route confidence keeps dense retrieval
+as a recall floor; high confidence allows a calibrated final context budget.
+The name IntentRoute denotes route control conditioned on query intent, local
+structure, and feedback state; it does not imply a separate intent-classification
+stage.
 
-The framework is motivated by general evidence selection in knowledge-augmented
-agents, including possible memory, graph, tree, or retrieval-backed carriers.
-However, the empirical validation in this paper is limited to
-retrieval-augmented question answering over LoTTE technology/search. Claims
-about other knowledge-carrier formats should therefore be treated as motivation
-and future work rather than demonstrated results.
+Although the control problem appears in memory, graph, tree, and
+retrieval-backed agents, our empirical validation instantiates it in
+retrieval-augmented question answering. We therefore use the broader agent
+framing as motivation and keep the demonstrated claims tied to retrieval-backed
+evidence selection.
 
-This design separates three cost layers that are often conflated in RAG
+This design separates route construction, confidence estimation, and final
+context control. Geometry defines a structured local route prior. LinUCB and
+trust-weighted feedback adapt route confidence over repeated interactions.
+Dense and BM25 rescue paths protect final recall. The budget policy consumes
+these signals and chooses the final context size. A late reranker can improve
+candidate ordering, while a sentence or prompt compressor can remove redundant
+text after evidence selection. IntentRoute occupies the upstream
+route-confidence-to-budget layer and can be composed with those downstream
+components.
+
+The same distinction separates three cost layers that are often conflated in RAG
 experiments: the number of source candidates considered during retrieval, the
 rate at which global dense retrieval is invoked, and the final number of
 retrieved context tokens sent to the generator. Our main efficiency claim uses
 the third layer. Earlier candidate-count reductions are useful retrieval-stage
 diagnostics, but they are not evidence of lower LLM context cost unless the
-final context itself is reduced.
+final context itself is reduced. Because these retrieved chunks enter the LLM
+generator as input tokens, each percentage point of evidence-context reduction
+translates directly into a proportional per-query inference-cost reduction, a
+recurring saving that scales with deployment query volume.
 
-We evaluate IntentWeight on multiple datasets and use LoTTE technology/search
+We evaluate IntentRoute on multiple datasets and use LoTTE technology/search
 as the main large-scale vertical-domain evidence benchmark. On LoTTE, we scale
 from 100k to 638k corpus chunks and compare against dense-only retrieval using
-`sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Under the
-conservative confidence-based final context policy, IntentWeight reduces final
-retrieved context tokens by approximately 4.7-5.3% across all scales. It
-preserves near-dense $\mathrm{Hit@10}$ at 100k and has mean
-$\mathrm{Hit@10}$ above dense-only retrieval at 200k, 400k, and 638k. We treat
-these as bounded mean improvements rather than universal or statistically
-significant dominance claims.
+`sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Our main
+cost-quality evidence uses a calibration/test context-budget protocol: the
+final-context policy is selected on calibration queries and frozen before test
+evaluation. Under this protocol, calibration-eligible operating points at
+100k, 200k, and 638k save 6-18% final evidence-context tokens, while a 400k
+diagnostic point shows positive frozen-test behavior but does not satisfy the
+calibration eligibility gate. Across these scales, IntentRoute avoids the
+larger $\mathrm{Hit@10}$ losses observed under dense-only adaptive truncation,
+although strict seed-level non-inferiority remains scale-dependent. A
+conservative confidence-only policy provides a stable baseline, reducing final
+retrieved context tokens by approximately 4.7-5.3% across all scales while
+preserving dense-level query hit. We treat these as bounded operating points
+rather than universal or statistically significant dominance claims.
+
+We then test whether the mechanism survives stronger alternatives and direct
+component controls. Matched-backbone BGE-base and E5-base comparisons retain
+the quality-cost pattern beyond MiniLM, while a BGE quality-first policy shows
+that the operating frontier can be moved toward higher retrieval quality at a
+smaller token saving. Random-route, static-geometry, no-feedback, and arm-count
+ablations separate route confidence from the dense/BM25 rescue surface:
+geometry and feedback strongly affect route-level reward and cluster hit, but
+final fused $\mathrm{Hit@10}$ can hide weak routes when rescue remains active.
+Sentence-MMR and a Selective Context-style prompt-pruning baseline show that
+compression is a strong shared downstream layer; a cross-encoder reranker
+improves full-context support but can select longer contexts. A 300-query
+answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
+and finds positive context-token savings without a statistically detectable
+correctness change. LoTTE science/search and feedback-driven hard-case recovery
+provide cross-domain and adaptive-recovery evidence, with domain calibration
+and simulated-feedback caveats.
 
 The contributions of this paper are:
 
-1. We formulate evidence selection over structured vertical-domain data as an
-   adaptive route-control problem rather than a fixed retriever selection
-   problem.
-2. We introduce IntentWeight, a feedback-guided multi-route controller combining
-   dense retrieval, BM25 lexical recall, cluster-local retrieval,
-   trust-weighted LinUCB route learning, and confidence-based final context
-   compaction in a retrieval-augmented QA implementation.
-3. We provide large-scale LoTTE evidence that conservative context compaction
-   can reduce final retrieved context tokens while preserving dense-level
-   $\mathrm{Hit@10}$.
-4. We add geometry diagnostics and ablations showing that local cluster
-   structure is useful for routing, but not sufficient to replace dense
-   retrieval.
-5. We document limitation cases where dataset structure, weak labels, duplicate
-   evidence, sparse ground truth, or complete-evidence requirements reduce the
-   benefit of adaptive routing.
+1. We formulate retrieval-backed evidence selection as a
+   route-confidence-to-budget problem and introduce a calibrated policy that
+   converts multi-route confidence into final evidence-context size while
+   retaining dense retrieval as a recall floor.
+2. We operationalize local relevance structure as reproducible cluster arms
+   and trust-weighted feedback as adaptive LinUCB route confidence. Geometry
+   diagnostics, random/static controls, no-feedback ablations, and arm-count
+   sensitivity identify what these components explain and what dense/BM25
+   rescue masks.
+3. We provide frozen calibration/test evidence from 100k to 638k LoTTE chunks,
+   matched BGE/E5 backbones, and a tunable BGE quality-first point, separating
+   token reduction from retrieval-quality non-inferiority with paired
+   query-level statistics.
+4. We compare against shared sentence and prompt compression plus
+   cross-encoder reranking, showing that IntentRoute is an upstream controller
+   that composes with rather than replaces these downstream layers.
+5. We add a 300-query answer-level evaluation, cross-domain LoTTE replication,
+   controlled feedback recovery, and explicit limitation cases to bound the
+   supported quality-cost claim.
 
-The resulting claim is intentionally bounded. IntentWeight is not presented as
-a universal replacement for dense retrieval. It is a feedback-driven controller
-that uses dense retrieval as a recall floor and learns when route confidence is
-strong enough to reduce the final context budget.
+The resulting claim is intentionally bounded. IntentRoute is not presented as
+a universal replacement for dense retrieval, a proof of a relevance manifold,
+or a statistically superior answer generator. It is a feedback-driven
+controller that uses local geometry to structure routes, trust-weighted LinUCB
+to adapt route confidence, and dense retrieval as a recall floor before mapping
+confidence to a final context budget. Reranking and context compression remain
+compatible downstream layers rather than competing explanations.
 
 ---
 
@@ -143,7 +192,7 @@ This line of work improves factual grounding and domain adaptation, but it also
 makes evidence selection a central point of failure. If the retrieval layer
 misses relevant evidence, the generator has limited ability to recover. If it
 returns excessive or noisy evidence, downstream generation becomes more
-expensive and may become less faithful. IntentWeight is complementary to
+expensive and may become less faithful. IntentRoute is complementary to
 retriever-generator architectures: it does not propose a new generator or a new
 knowledge carrier. It studies a feedback-guided controller for deciding which
 evidence route to trust and how much selected evidence should enter the final
@@ -163,12 +212,15 @@ settings [@thakur2021beir].
 
 Hybrid retrieval combines sparse and dense signals through score interpolation,
 rank fusion, or reranking. Reciprocal rank fusion is a simple and widely used
-rank-level fusion method [@cormack2009rrf]. In this paper, dense retrieval is a
-strong baseline and an explicit recall floor, not a weak component to be
-replaced. BM25 contributes lexical coverage, and cluster-local dense retrieval
-contributes a structured local search path. The contribution is not that any
-single route is best, but that a controller can learn when and how to combine
-routes under a final context budget.
+rank-level fusion method [@cormack2009rrf]. Cross-encoder rerankers provide a
+strong late-ranking layer because they jointly score a query and a candidate
+passage, but they rerank a retrieved candidate pool rather than searching the
+full corpus directly. In this paper, dense retrieval is a strong baseline and
+an explicit recall floor, not a weak component to be replaced. BM25 contributes
+lexical coverage, cluster-local dense retrieval contributes a structured local
+search path, and reranking can be added after candidate generation. The
+contribution is not that any single route is best, but that a controller can
+learn when and how to combine routes under a final context budget.
 
 ## 2.3 Adaptive Retrieval and Contextual Bandits
 
@@ -201,7 +253,7 @@ under partial feedback [@lattimore2020bandits].
 
 MBA-RAG is the closest bandit-based comparison: it treats retrieval methods as
 arms, dynamically selects a strategy according to question complexity, and
-penalizes retrieval steps in its reward [@tang2025mbarag]. IntentWeight does not
+penalizes retrieval steps in its reward [@tang2025mbarag]. IntentRoute does not
 claim to be the first use of bandits in retrieval-augmented generation. Its
 focus is different: it studies fixed cluster-local routes over a domain corpus,
 route-level credit assignment, trust-weighted feedback, dense rescue paths, and
@@ -229,7 +281,7 @@ These methods show that retrieval structure can matter, but structure also
 introduces routing risk: a wrong branch, cluster, or graph neighborhood can
 discard relevant evidence early.
 
-IntentWeight therefore treats geometry as one signal in a controller rather
+IntentRoute therefore treats geometry as one signal in a controller rather
 than as a complete retrieval model. Dense retrieval and BM25 remain available as
 rescue paths, and the geometry assumption is evaluated diagnostically through
 $\mathrm{NearestClusterHit@K}$, $\mathrm{PCAvar@m}$, $\mathrm{PCAdim90}$, and
@@ -247,13 +299,17 @@ refines retrieved passages through sentence-level reranking and reconstruction
 black-box language model can be paired with a tuneable retrieval model
 [@shi2024replug].
 
-IntentWeight operates earlier in the pipeline. It selects and compacts evidence
-units before generation rather than compressing tokens inside already selected
-passages or tuning a retriever against language-model likelihood. Its
-confidence-based context policy is therefore compatible with prompt
-compression, reranking, and black-box generation methods. The paper measures
-final context tokens because source-candidate counts alone do not establish
-downstream context savings.
+IntentRoute operates earlier in the pipeline. It selects evidence routes and
+sets final-context budgets before generation rather than compressing tokens
+inside already selected passages or tuning a retriever against language-model
+likelihood. Its confidence-based context policy is therefore compatible with
+prompt compression, sentence-level MMR selection, reranking, and black-box
+generation methods. The strong-baseline experiments in this paper use this
+decomposition explicitly: SentMMR is treated as a shared final-context
+compressor, while the cross-encoder is treated as a late reranking layer over a
+dense candidate pool. The paper measures final context tokens because
+source-candidate counts, reranker scores, or retrieval depth alone do not
+establish downstream context savings.
 
 ## 2.6 User Feedback, RLHF-Inspired Optimization, and Trust Weighting
 
@@ -265,7 +321,7 @@ requiring care because clicks and query reformulations are biased signals
 systems, human-preference learning and RLHF-style optimization show how feedback
 can shape model behavior [@christiano2017preferences; @ouyang2022instructgpt].
 
-IntentWeight is inspired by this feedback-optimization paradigm, but it is not a
+IntentRoute is inspired by this feedback-optimization paradigm, but it is not a
 full RLHF pipeline. The current experiments use controlled simulated feedback
 to isolate whether a contextual-bandit retrieval controller can improve route
 selection under noisy and trust-weighted feedback. Trust weighting is used to
@@ -287,12 +343,12 @@ ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be passed to a
 downstream generator. The objective is to preserve retrieval quality while
 controlling both retrieval cost and final context cost.
 
-IntentWeight treats retrieval as a route-control problem. For each query, the
-system chooses how much to rely on global dense retrieval, lexical BM25 recall,
-and cluster-local retrieval. The final response generator is outside the main
-experiment scope. The paper evaluates retrieval quality and the token count of
-the retrieved context that would be sent to the generator, with one small
-downstream generation smoke test.
+IntentRoute treats retrieval as a route-confidence-to-budget problem. For each
+query, the system estimates how much to rely on global dense retrieval, lexical
+BM25 recall, and cluster-local retrieval, then maps the resulting confidence to
+the final context budget. Retrieval quality and final context tokens remain the
+primary mechanism-level outcomes; a frozen 300-query generation-and-judge
+experiment evaluates whether the same trade-off reaches answer-level behavior.
 
 ## 3.2 Piecewise Relevance-Manifold Assumption
 
@@ -303,13 +359,13 @@ The method is motivated by a bounded assumption:
 > neighborhoods, document organization, and user intent.
 
 This does not mean that corpus geometry is sufficient by itself. Instead,
-IntentWeight uses geometry as one routing signal among several. Dense retrieval
+IntentRoute uses geometry as one routing signal among several. Dense retrieval
 remains a global recall floor, BM25 provides lexical anchors, and cluster-local
 retrieval provides local evidence patches.
 
 ## 3.3 Multi-Route Retrieval Surface
 
-IntentWeight uses three retrieval routes.
+IntentRoute uses three retrieval routes.
 
 **Dense route.** The dense route performs global dense retrieval over the
 selected corpus using cosine similarity in embedding space. It is the primary
@@ -329,13 +385,13 @@ Full multi-route retrieval improves coverage but does not automatically reduce
 final context tokens. The final context policy described below is the mechanism
 that converts route confidence into retrieved-context token savings.
 
-Figure 1 summarizes this route-control architecture. It should be read as a
-controller diagram rather than a claim that any single retrieval route is
-removed: dense retrieval remains a fallback, while LinUCB and confidence
-signals decide when cluster-local evidence is reliable enough for context
-compaction.
+Figure 1 summarizes this route-control architecture after the route surface is
+defined. It should be read as a controller diagram rather than a claim that
+LinUCB replaces dense or BM25 retrieval: dense and BM25 are global recall
+routes, LinUCB selects cluster-local arms, and route confidence is passed to
+the final context-budget controller.
 
-## 3.4 Cluster Arms
+## 3.4 Routing Arm Construction
 
 Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a
 deliberate experimental choice. LinUCB requires a fixed number of arms, fixed
@@ -343,6 +399,12 @@ arms improve reproducibility across seeds and scales, and KMeans is fast enough
 for large-scale LoTTE experiments. The same arm count is used across LoTTE
 scales to keep the LinUCB state space comparable, even though larger corpora
 therefore contain more chunks per arm.
+We use 32 routing arms as the main reproducible operating point. A sensitivity
+study over $K \in \{8,16,32,64,128\}$ shows that full multi-route fused quality
+is stable across this range, while retrieval-stage gated routing is more
+sensitive because smaller $K$ changes route granularity and larger $K$ spreads
+feedback across more arms. We therefore treat 32 as an engineering choice, not
+a manifold-derived optimum.
 
 The paper does not claim that KMeans is the best clustering algorithm for
 retrieval. HDBSCAN, graph clusters, or learned routing structures may be better
@@ -353,7 +415,7 @@ rescue cases where the cluster route misses relevant evidence.
 
 ## 3.5 LinUCB Route Policy
 
-For each query $q_t$, IntentWeight computes a context feature vector
+For each query $q_t$, IntentRoute computes a context feature vector
 $x_t \in \mathbb{R}^{p}$. Features include query embedding projections, route
 confidence signals, and local geometry signals. For each arm
 $a \in \mathcal{A}$, LinUCB maintains a linear value model:
@@ -375,9 +437,42 @@ The policy selects the top candidate arms by score. The selected arms define
 the cluster-local retrieval path and provide confidence signals for later
 context compaction.
 
+### Feature Groups and Route Confidence
+
+The LinUCB context vector is not intended to introduce a new representation
+model. It collects signals that decide whether local routing is reliable for
+the current query. The following summary lists the feature groups used by the
+controller.
+
+The feature groups are:
+
+- query representation: normalized query embedding and PCA/context projection,
+  used to place the query on the same local surface as corpus arms;
+- dense confidence: dense score concentration, top-rank margin, and fallback
+  availability, used to estimate whether global dense retrieval is already
+  reliable;
+- lexical confidence: BM25 candidate availability and lexical-match strength,
+  used to protect terminology-heavy and exact-match queries;
+- route agreement: overlap among dense, BM25, and cluster-local candidates,
+  used to detect when independent routes support the same evidence region;
+- local geometry: nearest centroid similarity, selected arm identity, and
+  semantic drift, used to estimate whether the query lies close to selected
+  local arms;
+- feedback state: selected-arm value, pull-count maturity, and recent route
+  reward, used to estimate whether LinUCB has enough evidence to trust the
+  local route;
+- budget state: route confidence tier and fallback status, used to decide
+  whether final context compaction is allowed.
+
+Route confidence is computed from the selected-arm value estimate, the
+top-versus-rest arm margin, and an arm-maturity term based on feedback count.
+Semantic drift is defined as one minus the nearest selected-centroid similarity.
+Low confidence or high drift keeps the dense fallback active; high confidence
+and low drift allow the final-context policy to compact evidence.
+
 ## 3.6 Trust-Weighted Feedback
 
-IntentWeight models feedback as a noisy signal rather than a perfect oracle. In
+IntentRoute models feedback as a noisy signal rather than a perfect oracle. In
 the trust-weighted mode, each simulated user feedback event is assigned a trust
 weight. Higher-trust feedback contributes more to the arm update and local
 feedback memory. Lower-trust feedback has a weaker effect.
@@ -407,7 +502,7 @@ retrieval quality is already protected by dense and BM25 fallback.
 
 Early experiments used final fused retrieval success as the reward signal. This
 can over-credit the selected cluster arm when dense or BM25 rescue the final
-ranking. IntentWeight therefore uses a stricter `cluster_only` reward
+ranking. IntentRoute therefore uses a stricter `cluster_only` reward
 attribution mode in the main policy-learning experiments. The LinUCB arm is
 updated using the quality of its own cluster-local route.
 
@@ -439,8 +534,24 @@ generalization results.
 ## 3.9 Confidence-Based Final Context Compaction
 
 Preliminary token-cost analysis showed that reducing source candidates does not
-automatically reduce final context tokens. IntentWeight therefore adds an
-explicit final context policy.
+automatically reduce final context tokens. IntentRoute therefore adds an
+explicit route-confidence-to-budget policy, which is the method's central
+quality-cost control interface.
+
+Let $T_t^{\mathrm{dense}}$ be the token count of dense top-10 context and let
+$z_t$ collect route agreement, selected-arm confidence and maturity, semantic
+drift, and fallback state. A policy $\pi_\phi(z_t)$ produces a token ratio
+$r_t \in (0,1]$ and minimum safe prefix $m_t$. The final context is the longest
+ranked prefix of at least $m_t$ chunks satisfying
+
+$$
+\mathrm{Tokens}(C_t) \le r_t T_t^{\mathrm{dense}}.
+$$
+
+The policy parameters $\phi$ are selected on calibration queries subject to a
+retrieval-quality eligibility gate and then frozen before held-out test
+evaluation. Thus geometry and feedback affect confidence, but measured token
+saving arises only when the calibrated budget policy acts on that confidence.
 
 The conservative `confidence_topk` policy works as follows:
 
@@ -458,12 +569,38 @@ non-fallback route. Hybrid-lite can reduce dense influence in fusion while
 retaining dense candidates as a safety net; it should not be described as
 reducing dense computation unless the global dense route is actually skipped.
 
-The main result uses this conservative confidence-based policy. It reduces
-final context tokens by about 4.7-5.3% across LoTTE 100k, 200k, 400k, and 638k
-while preserving dense-level $\mathrm{Hit@10}$, with mean above-dense
-$\mathrm{Hit@10}$ on 200k, 400k, and 638k.
+The main token-quality result uses frozen calibration/test budget policies that
+select a final context budget on calibration queries and evaluate it unchanged
+on held-out test queries. The conservative confidence-based policy remains a
+stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
+100k, 200k, 400k, and 638k while preserving dense-level query hit.
 
-## 3.10 Algorithm Sketch
+On LoTTE, semantic drift rarely exceeds the configured fallback threshold, so
+the reported compression behavior is primarily confidence-driven. In more
+heterogeneous query distributions, drift-based fallback may become more active.
+
+## 3.10 Feedback-Triggered Recovery
+
+IntentRoute can also use feedback as a recovery signal after a compressed
+context fails. In this mode, feedback does not insert the missing ground-truth
+chunk into the current answer. Instead, it updates arm-level route value and
+marks the associated local region as risky for future routing or optional
+post-feedback retry.
+
+The safe recovery behavior is conservative:
+
+1. If feedback indicates that a compressed context missed evidence, identify
+   the evidence-bearing arm or risky query-arm relation.
+2. Prefer a less aggressive final-context budget or full-context fallback for
+   that local region.
+3. Avoid unconditional global arm boosting, because a feedback-positive arm for
+   one query can transfer poorly to unrelated queries.
+
+This recovery mechanism is deployment-facing. It represents how a system can
+repair tail failures after user or evaluator feedback, not how the first-pass
+ranking is produced before feedback is observed.
+
+## 3.11 Algorithm Sketch
 
 Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 
@@ -476,8 +613,43 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 6. Evaluate retrieval quality for $q_t$.
 7. Only after evaluation, convert the ground-truth label into simulated
    feedback and update LinUCB for later queries.
+8. If the interaction is a post-feedback retry or a later query in a risky
+   local region, use the updated arm state to choose a safer context budget or
+   fallback path.
 
 Output: final retrieved context $C_t$ and updated policy state.
+
+## 3.12 Reproducibility Parameters
+
+The following summary lists the main implementation parameters used in the
+reported cost-aware LinUCB experiments. Scale-specific cache paths and dataset
+sizes are reported in the experiment artifacts; these parameters define the
+controller behavior.
+
+The main controller parameters are:
+
+- KMeans/MiniBatchKMeans arms: 32 fixed LinUCB arms;
+- candidate arms per query: 3 cluster-local routes;
+- context projection dimension: 64;
+- LinUCB exploration: $\alpha=1.0$, decay 0.01, minimum 0.3;
+- prequential epochs: 3 unless otherwise stated;
+- feedback trust: default $\tau=0.75$ for noisy feedback updates;
+- full-route candidate depths: dense/BM25/cluster = 100/100/100;
+- lite-route depths: dense/BM25 = 20/20;
+- dense safety floor: 5 full-route chunks and 2 lite-route chunks;
+- route fusion: weighted reciprocal-rank fusion with $k=60$;
+- full-route weights: dense 2.0, BM25 0.8, cluster 0.8;
+- lite-route weights: dense 0.8, BM25 0.5, cluster 2.0;
+- confidence thresholds: high 0.65 and mid 0.35;
+- drift threshold: 1.0;
+- token-budget grid: $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
+  $m \in \{4,\ldots,8\}$.
+
+The notation `token_budget_r0.85_m4` means that each query keeps a safe prefix
+of at least four chunks and then admits additional chunks only while the final
+context remains within 85% of the original dense top-10 token budget. The
+policy is chosen on calibration queries and then frozen before held-out test
+evaluation.
 
 ---
 
@@ -485,22 +657,24 @@ Output: final retrieved context $C_t$ and updated policy state.
 
 ## 4.1 Datasets
 
-The experiments use several datasets, but they have different roles. The paper
-does not treat all datasets as equal evidence for the main claim.
+The experiments use several datasets, but they have different evidentiary
+roles. We do not treat all datasets as equal support for the main claim:
 
-**Table 1. Dataset roles and evaluation guardrails.**
+- **LoTTE technology/search** is the main large-scale vertical-domain evidence
+  benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
+  596 test queries.
+- **LoTTE science/search** is the cross-domain validation benchmark. It tests
+  whether ranking and context-budget behavior transfer beyond technology/search
+  at 20k/q200 and 100k scales.
+- **PubMedQA and Banking77** are supporting feedback-adaptation checks.
+  PubMedQA is an evidence-retrieval proof-of-concept with abstract-level ground
+  truth, while Banking77 is an intent-routing proxy rather than a strict
+  evidence-retrieval benchmark.
+- **eManual and CUAD** are boundary cases. eManual exposes duplicate-text and
+  strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
 
-| Dataset | Role | Paper use | Caveat |
-|---|---|---|---|
-| LoTTE technology/search | Main vertical-domain retrieval benchmark | Main scale-up, token-quality frontier, geometry validation | No true corpus topic labels in processed qrels |
-| PubMedQA | Feedback/manifold proof-of-concept | Shows trust feedback and local propagation can improve policy | GT is abstract-level context, not strict answer sentence |
-| Banking77 | Intent/domain routing proxy | Shows strong feedback self-evolution and intent structure | Should not be mixed with evidence retrieval main table |
-| eManual | Failure/limitation case | Shows duplicate text and strict chunk-id issues | Low strict recall does not prove geometry is absent |
-| CUAD | Sparse smoke/stress case | Shows sparse legal-domain limitation | GT-anchored sample only, not full-corpus main evidence |
-
-LoTTE technology/search is the main large-scale evidence benchmark. We evaluate
-nested corpus scales from 100k to 638k chunks with 596 test queries. CUAD and
-eManual are reported as limitation cases rather than main positive evidence.
+This role separation keeps the main claim tied to LoTTE while preserving the
+diagnostic value of the secondary datasets.
 
 ## 4.2 Baselines and Variants
 
@@ -508,16 +682,28 @@ The baseline family includes:
 
 - BM25-only lexical retrieval.
 - Dense-only retrieval with `sentence-transformers/all-MiniLM-L6-v2`.
+- Matched dense and IntentRoute variants with BGE-base and E5-base embeddings.
 - BM25 + dense hybrid retrieval using reciprocal-rank fusion.
-- Full multi-route IntentWeight.
-- Gated cost-aware IntentWeight.
-- Confidence-based final context IntentWeight.
+- Full multi-route IntentRoute.
+- Gated cost-aware IntentRoute.
+- Confidence-based final context IntentRoute.
+- Dense+Sentence-MMR final-context compression.
+- Dense and IntentRoute plus SelectiveContext-lite prompt pruning.
+- Cross-encoder reranking over dense top-50 candidates.
 - Static geometry controls such as nearest-cluster routing.
 - Naive controls such as random or epsilon-greedy arm selection.
+- No-feedback and uniform-random route controls.
+- Arm-count sensitivity over $K \in \{8,16,32,64,128\}$.
 
 Dense-only retrieval is the primary quality baseline. The paper should avoid
 weak baseline framing: dense is strong and remains a required recall floor in
-the proposed method.
+the proposed method. Sentence-MMR, SelectiveContext-lite, and cross-encoder
+reranking are reported as strong post-retrieval baselines. Sentence-MMR and
+SelectiveContext-lite test whether downstream compression can explain the token
+saving, while the cross-encoder tests whether a heavier late-ranking layer can
+select a smaller context more simply. These are not mutually exclusive
+alternatives to IntentRoute; they occupy different stages in the
+retrieval-to-context pipeline.
 
 ## 4.3 Metrics
 
@@ -583,6 +769,12 @@ Cost and efficiency are separated into three layers:
 
 The main cost result uses final context tokens. Source candidate cost and dense
 invocation rate are retrieval-stage diagnostics.
+
+The downstream evaluation additionally reports LLM-judge correctness and
+faithfulness, strict chunk-id citation support, insufficient-context rate, and
+context tokens per judged-correct answer. These metrics are secondary
+answer-level validation of the route-and-budget claim, not evidence of
+generator superiority.
 
 Let $C_t$ be the final retrieved context selected for query $q_t$ and let
 $\mathrm{tok}(d)$ be the token count of chunk $d$. The final context token cost
@@ -706,102 +898,192 @@ self-evolution analysis. They are not IID held-out generalization results.
 ## 4.6 Implementation Notes
 
 The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2` with exact
-cosine search on CPU. Embeddings and retrieval artifacts are cached to avoid
-repeating deterministic computation. Metrics are recomputed from saved
-rankings, not copied from prior summaries.
+cosine search. Matched-backbone checks use BGE-base and `intfloat/e5-base-v2`;
+E5 applies the recommended `query:` and `passage:` prefixes. Embeddings and
+retrieval artifacts are cached to avoid repeating deterministic computation.
+Metrics are recomputed from saved rankings, not copied from prior summaries.
+Historical experiment directories and machine-readable method labels retain the
+legacy `IntentWeight` identifier so that existing hashes, selectors, and result
+provenance remain reproducible; paper-facing terminology uses `IntentRoute`.
 
-KMeans/MiniBatchKMeans uses a fixed number of arms across scales. This supports
-LinUCB comparability and reproducibility, but it is not claimed to be the best
-possible clustering design.
+KMeans/MiniBatchKMeans uses 32 arms in the main scale experiments. A dedicated
+100k sensitivity check evaluates 8, 16, 32, 64, and 128 arms. This supports
+LinUCB comparability and tests engineering sensitivity, but it is not claimed
+to identify a theoretically optimal clustering design.
+
+The Sentence-MMR baseline starts from dense or IntentRoute evidence pools,
+splits selected chunks into sentence-like units, and greedily selects
+query-relevant but diverse sentences under a target token ratio or per-query
+budget. SelectiveContext-lite is a deterministic Selective Context-style proxy
+that scores sentence-like units with query overlap, IDF salience, bigram
+overlap, source rank, and compactness; it is not presented as LLMLingua. The
+cross-encoder baseline reranks dense top-50 candidates with
+`cross-encoder/ms-marco-MiniLM-L-6-v2`; it is evaluated both as a full reranked
+top-10 and as a same-budget variant constrained by the calibrated IntentRoute
+per-query token budgets. Reranker compute cost is not charged in final context
+tokens, so reranker results should be interpreted as retrieval-quality
+baselines rather than end-to-end latency measurements.
+
+## 4.7 Calibration and Paired Testing Protocol
+
+The final-context budget experiments use a calibration/test split over queries.
+For each scale, 30% of queries are used only to select a budget policy. The
+selected policy is then frozen and evaluated on the remaining held-out test
+queries. This avoids choosing a context budget after seeing test labels.
+
+A budget policy name has the form `token_budget_rX_mY`. Here, `rX` is the
+maximum final-context token ratio relative to the original top-10 context, and
+`mY` is the minimum safe prefix kept before token-budget filtering. For example,
+`token_budget_r0.85_m4` keeps at least four top-ranked chunks and then admits
+additional chunks only while the final context remains within 85% of the
+original top-10 token budget.
+
+Calibration eligibility is defined using the mean calibration
+$\mathrm{Hit@10}$ delta against dense top-10. The main calibration selection
+uses a zero observed-hit-drop margin: a policy is eligible only when its mean
+calibration hit delta is non-negative. Among eligible policies, the selected
+policy is the one with the largest final-context token saving. If no policy is
+eligible, the best diagnostic policy is still reported, but it is not treated
+as a strict calibration-eligible main operating point.
+
+Frozen test results are paired by query against dense top-10. We report
+bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context
+token savings where available, and use a 1 percentage-point non-inferiority
+margin for strict seed-level checks. This separates two claims: whether the
+method preserves retrieval quality under a conservative paired criterion, and
+whether it reduces the final evidence-context tokens sent to the generator.
+
+## 4.8 Downstream Answer-Level Protocol
+
+The answer-level evaluation draws 300 deterministic queries from the 417-query
+frozen test split. Seven methods cover MiniLM dense, BGE dense and IntentRoute,
+E5 dense and IntentRoute, and matched Dense+SentMMR versus
+IntentRoute+SentMMR. The same `deepseek-v4-flash` configuration generates one
+answer from each retrieved context and judges correctness, faithfulness,
+relevance, citation support, and insufficient-context behavior against
+reference evidence.
+
+The run contains 2,100 generated answers and 2,100 schema-valid judgments.
+Correctness differences use paired query-level bootstrap intervals and exact
+McNemar tests. The experiment uses one generator/judge model, so it supports
+answer-level cost-quality preservation rather than cross-model or human-rated
+superiority.
 
 ---
 
 # 5. Results
 
-## 5.1 Main Token-Quality Frontier
+## 5.1 Main Calibrated Token-Quality Frontier
 
-The conservative confidence-based context policy is the main token-efficiency
-result because it directly measures final retrieved context tokens. It is
-selected as the conservative end of the context-compaction policy frontier.
-More aggressive policies show that stronger context reduction is possible at a
-visible $\mathrm{Hit@10}$ cost, while the conservative policy prioritizes
-quality preservation over maximum token saving.
+The main cost result uses a calibrated token-budget policy. For each corpus
+scale, the budget is selected on calibration queries and then frozen before
+test evaluation. The measured cost is final LLM evidence-context input tokens
+relative to dense top-10, not retrieval-side candidate count.
 
-**Table 2. LoTTE token-quality frontier for the conservative context policy.**
+**Table 1. Calibrated token-quality frontier on LoTTE technology/search.**
 
-| Scale | Corpus | Dense $\mathrm{Hit@10}$ | Conservative policy $\mathrm{Hit@10}$ | Hit delta | Dense $\mathrm{Tokens@10}$ | Conservative policy $\mathrm{Tokens@10}$ | Token saving |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| LoTTE 100k | 101311 | 0.8674 | 0.8652 | -0.22 pp | 1472.39 | 1401.24 | 4.83% |
-| LoTTE 200k | 201010 | 0.7970 | 0.8249 | +2.80 pp | 1444.12 | 1376.46 | 4.69% |
-| LoTTE 400k | 400674 | 0.7718 | 0.7819 | +1.01 pp | 1482.30 | 1403.43 | 5.32% |
-| LoTTE 638k | 638509 | 0.7282 | 0.7466 | +1.85 pp | 1525.62 | 1451.49 | 4.86% |
+| Scale | Frozen policy | Calib. eligible | IW hit delta | NI seeds | IW token saving | Dense-trunc hit delta | Dense-trunc token saving |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 100k | `token_budget_r0.95_m4` | True | +0.00 pp | 0/3 | 6.18% | -1.44 pp | 13.83% |
+| 200k | `token_budget_r0.85_m4` | True | +1.20 pp | 1/3 | 16.00% | -2.40 pp | 21.95% |
+| 400k | `token_budget_r0.98_m4` | False / pending follow-up | +2.32 pp | 3/3 | 6.57% | -0.24 pp | 11.44% |
+| 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 0/3 | 17.53% | -3.84 pp | 21.90% |
 
-The 100k result is near dense, with a small $\mathrm{Hit@10}$ drop. At 200k,
-400k, and 638k, the conservative policy has mean $\mathrm{Hit@10}$ above dense
-while using fewer final context tokens. The result should be framed as
-conservative final context compaction, not as aggressive dense replacement.
-Figure 2 visualizes the same result as a token-quality frontier across corpus
-scale.
+The calibration-eligible operating points at 100k, 200k, and 638k save 6-18%
+final evidence-context tokens under frozen policy selection. The 400k policy is
+reported as a diagnostic frontier point and marked for follow-up: no candidate
+satisfied the zero-observed-hit-drop calibration gate in the current run,
+although the frozen test result is positive and all three seeds pass the
+stricter 1pp non-inferiority check. This distinction prevents the table from
+overstating calibration robustness while preserving 400k as a useful but
+currently incomplete scale point.
 
-## 5.2 Seed Stability
+Dense-only adaptive truncation usually saves more tokens, but it loses
+$\mathrm{Hit@10}$ on every scale. This comparison shows that the effect is not
+merely dense top-k truncation: route confidence helps decide where a shorter
+context remains safe. Strict seed-level non-inferiority remains scale-dependent,
+so the paper should claim a bounded quality-cost frontier rather than universal
+statistical superiority.
 
-The multi-seed stability analysis reports three-seed diagnostics for the
-conservative policy. With only three seeds, these intervals should be presented
-as engineering stability diagnostics, not as strong statistical significance
-proof.
+The paired tests are query-level comparisons against dense top-10. They use
+bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context
+token savings, and McNemar-style win/loss counts for hit differences. The
+paired evidence supports token-cost superiority more consistently than strict
+quality non-inferiority: all calibrated policies reduce final context tokens,
+whereas the quality CI criterion is conservative and scale-dependent.
 
-The 400k token-saving interval is wider than the other scales. We interpret
-this as seed-level variance in route confidence and context-budget control, not
-as a contradiction of the overall direction. CI-level confirmation of
-$\mathrm{Hit@10}$ improvement is strongest at 200k. The 400k and 638k rows
-should be reported as mean above-dense results with limited seed counts.
+The earlier conservative confidence-only policy remains useful as a stable
+baseline. It reduces final retrieved context tokens by 4.7-5.3% across LoTTE
+technology/search 100k-638k while preserving dense-level $\mathrm{Hit@10}$.
+Appendix A reports the complete confidence-only scale table and seed stability
+diagnostics.
 
-An additional five-seed robustness check extends the LoTTE 100k conservative
-policy setting. The five-seed mean is $\mathrm{Hit@10}=0.8708$ versus dense
-$0.8674$, with final context token ratio $0.9507\times$. The Hit delta
-confidence interval overlaps zero, so this strengthens stability but does not
-justify a statistical-superiority claim at 100k.
+## 5.2 Cross-Domain Validation
 
-Appendix A reports the complete three-seed confidence-interval tables and the
-five-seed LoTTE 100k extension.
+We replicate the validation pattern on LoTTE science/search to test whether the
+effect is limited to technology/search.
+
+**Table 2. Cross-domain validation on LoTTE science/search.**
+
+| Domain/scale | Dense $\mathrm{Hit@10}$ | IntentRoute fixed top-10 $\mathrm{Hit@10}$ | Hit delta | Budgeted token saving |
+|---|---:|---:|---:|---:|
+| science/search 20k/q200 | 0.8950 | 0.9267 | +3.17 pp | 13.18-14.31% |
+| science/search 100k | 0.8926 | 0.9077 | +1.51 pp | 17.53-20.53% |
+
+The fixed top-10 ranking-side effect transfers to a second LoTTE domain. The
+context-budget result is more nuanced. At 20k/q200, the frozen budgeted
+policies keep above-dense $\mathrm{Hit@10}$ while saving roughly 13-14% context
+tokens. At 100k, the same aggressive budget saves roughly 17-21% tokens but can
+introduce small $\mathrm{Hit@10}$ drops. This supports adaptive ranking across
+domains while showing that compression strength must be calibrated per domain
+and scale. Figure 2 includes both the technology/search scale-up and the
+science/search budgeted validation points.
 
 ## 5.3 Component Ablation
 
-The component ablation table summarizes which parts of the system provide the
-quality floor, routing signal, feedback adaptation, and final token saving on
-LoTTE 100k.
+The component ablation summarizes which parts of the system provide the quality
+floor, routing signal, feedback adaptation, and final token saving on LoTTE
+100k.
 
-**Table 3. LoTTE 100k component ablation.**
+**Table 3. LoTTE 100k component ablation. The no-feedback gated row disables
+learning; its high $\mathrm{Hit@10}$ reflects full dense fallback
+($\mathrm{dense\ rate}=1.0$), not learned route efficiency.**
 
 | Component | Role | $\mathrm{Hit@10}$ | $\mathrm{EvidenceRecall@10}$ | $\mathrm{Tokens@10}$ | Token ratio | Dense rate | LinUCB rate | Cluster hit | Last reward |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Dense-only | Quality floor | 0.8674 | 0.7026 | 1472.39 | 1.0000 | - | - | - | - |
 | BM25-only | Lexical baseline | 0.7232 | 0.5240 | 1745.12 | 1.1852 | - | - | - | - |
 | Dense+BM25 hybrid | Static fusion | 0.8624 | 0.6848 | 1705.46 | 1.1583 | - | - | - | - |
-| No feedback gated | Dense/full fallback control | 0.8826 | 0.7246 | 1561.15 | 1.0603 | 1.0000 | 0.0000 | 0.1553 | 0.1516 |
+| No feedback gated | Full dense fallback, no learning | 0.8826 | 0.7246 | 1561.15 | 1.0603 | 1.0000 | 0.0000 | 0.1553 | 0.1516 |
 | Equal noisy feedback | No trust weighting | 0.8641 | 0.6604 | 1423.84 | 0.9670 | 0.7480 | 0.2520 | 0.5979 | 0.7517 |
 | Trust-weighted feedback | Default trust scoring | 0.8641 | 0.6661 | 1399.51 | 0.9505 | 0.6708 | 0.3292 | 0.7223 | 0.8328 |
 | Trust-weighted mild noise | Best controlled-noise point | 0.8775 | 0.6795 | 1362.68 | 0.9255 | 0.5826 | 0.4174 | 0.7908 | 0.8820 |
-| Conservative final policy | Main conservative policy | 0.8652 | 0.6737 | 1401.24 | 0.9517 | 0.6708 | 0.3292 | 0.7223 | 0.8328 |
+| Conservative final policy | Confidence-only baseline | 0.8652 | 0.6737 | 1401.24 | 0.9517 | 0.6708 | 0.3292 | 0.7223 | 0.8328 |
 | Oracle feedback | Upper bound | 0.8758 | 0.6768 | 1327.03 | 0.9013 | 0.4345 | 0.5655 | 0.8386 | 0.8932 |
 
 Dense-only remains the quality floor. BM25-only is weaker as a standalone
 retriever, and static dense+BM25 hybrid is near dense but uses more final
-context tokens. No-feedback gated routing has high $\mathrm{Hit@10}$ because it
-falls back to full dense/multi-route retrieval; it does not learn efficient
-route control.
-Trust-weighted feedback improves policy internals relative to equal noisy
-feedback, especially selected-cluster hit and last true reward. The oracle row
-shows the upper bound under clean feedback.
+context tokens. Trust-weighted feedback improves policy internals relative to
+equal noisy feedback, especially selected-cluster hit and last true reward. The
+oracle row shows the upper bound under clean feedback.
 
-## 5.4 Feedback Self-Evolution
+## 5.4 Feedback-Driven Adaptation and Recovery
 
-The feedback experiments show that final $\mathrm{Hit@10}$ can be saturated by
-dense and BM25 rescue routes, making feedback gains less visible in the fused
-final ranking. The strongest evidence for LinUCB self-evolution is therefore in
-route-policy metrics rather than only final $\mathrm{Hit@10}$.
+Final $\mathrm{Hit@10}$ can be saturated by dense and BM25 rescue routes,
+making feedback gains less visible in the fused final ranking. The clearer
+feedback signal appears in route-policy metrics such as selected-cluster hit,
+last true reward, dense rate, and LinUCB usage.
 
-**Table 4. Feedback self-evolution summary on LoTTE 100k.**
+A dedicated control confirms this attribution. On the same 100k split,
+feedback-updated LinUCB reaches route reward $0.6790$ versus $0.1504$ for the
+no-feedback control and about $0.15$ for uniform random routing. Static nearest
+geometry is a stronger prior at $0.8563$. The learned gated configuration can
+reduce dense invocation, but its current threshold loses 5.20 percentage points
+of frozen-test $\mathrm{Hit@10}$; it is therefore a cost-aggressive boundary,
+not the main quality-preserving operating point. LinUCB is supported as an
+adaptive confidence mechanism, not the sole source of fused retrieval quality.
+
+**Table 4. Feedback-driven policy adaptation on LoTTE 100k.**
 
 | Feedback mode | $\mathrm{Hit@10}$ | Token ratio | Dense rate | LinUCB rate | Selected-cluster hit | Last true reward |
 |---|---:|---:|---:|---:|---:|---:|
@@ -810,93 +1092,180 @@ route-policy metrics rather than only final $\mathrm{Hit@10}$.
 | Trust-weighted mild noise | 0.8775 | 0.9255 | 0.5826 | 0.4174 | 0.7908 | 0.8820 |
 | Oracle feedback | 0.8758 | 0.9013 | 0.4345 | 0.5655 | 0.8386 | 0.8932 |
 
-Under default noisy feedback, trust weighting improves selected-cluster hit from
-$0.5979$ to $0.7223$ and last true reward from $0.7517$ to $0.8328$ relative to
-equal noisy feedback. Under mild trust-weighted noise, selected-cluster hit
-reaches $0.7908$, last true reward reaches $0.8820$, dense rate falls to
-$0.5826$, and final context token ratio falls to $0.9255\times$.
+Under default noisy feedback, trust weighting improves selected-cluster hit
+from $0.5979$ to $0.7223$ and last true reward from $0.7517$ to $0.8328$
+relative to equal noisy feedback. Under mild trust-weighted noise,
+selected-cluster hit reaches $0.7908$, last true reward reaches $0.8820$,
+dense rate falls to $0.5826$, and final context token ratio falls to
+$0.9255\times$.
+Figure 5 visualizes the same policy-field effect: feedback quality changes the
+learned route signal before it becomes visible as a final fused-ranking gain.
 
-This supports the feedback self-evolution claim in a bounded form: controlled
-trust-weighted simulated feedback improves the route-policy value field. It
-does not prove that real human feedback has already been solved.
+Feedback also provides a recovery path for tail queries harmed by aggressive
+context budgets. A query is affected when dense top-10 retrieves at least one
+GT evidence chunk but the budgeted IntentRoute context misses. Same-query
+retry is a post-feedback repair setting, not a first-pass IID ranking claim.
 
-## 5.5 Secondary Dataset Evidence
+**Table 5. Conservative post-feedback recovery on affected LoTTE 100k queries.**
 
-The main paper claim is evaluated on LoTTE because it provides the cleanest
-large-scale vertical retrieval setting for token-quality analysis. Other
-datasets are used as supporting evidence and boundary cases rather than as
-equal main benchmarks.
+| Domain | Affected queries | Recovered | Recovery rate | Avg token saving vs dense |
+|---|---:|---:|---:|---:|
+| science/search 100k | 34 | 14 | 41.18% | 5.76% |
+| technology/search 100k | 42 | 9 | 21.43% | 11.75% |
+| pooled | 76 | 23 | 30.26% | - |
 
-PubMedQA and Banking77 support the feedback self-evolution mechanism. In both
-cases, final retrieval quality is already close to ceiling, so the important
-signal is not only final $\mathrm{Hit@10}$ but also last true reward and
-selected-cluster hit. PubMedQA is an evidence-retrieval proof-of-concept with
-section-level ground truth, while Banking77 is better understood as an
-intent-routing proxy.
+The pooled conservative retry recovery rate is approximately 30%, with an
+approximate Wilson interval around 21-41%. This supports a practical recovery
+claim: budget-induced failures are not always permanent, and feedback can
+repair a meaningful fraction of them. A stricter calibration-to-test variant
+has only small, domain-dependent effects, so feedback should be framed as a
+controlled fallback trigger rather than as unconditional global reranking.
 
-eManual and CUAD are useful because they prevent overclaiming. eManual has
-18,812 corpus chunks but only 1,729 unique text strings; many ground-truth
-references share duplicate text. Under strict chunk-id evaluation, dense
-retrieval reaches only $\mathrm{Hit@10}=0.3231$, but text-equivalent dense
-evaluation reaches $0.5615$, and the deduplicated corpus baseline reaches
-$0.8615$. This indicates that strict IDs can mark semantically equivalent
-retrievals as wrong. CUAD remains a sparse smoke case using a GT-anchored
-sample, so it should be reported only as a stress/limitation result.
-
-Appendix D reports the full secondary-dataset table and the eManual
-duplicate-text diagnostic.
-
-## 5.6 Geometry Diagnostics
+## 5.5 Geometry Diagnostics
 
 The geometry scale diagnostic validates whether LoTTE retains usable local
 geometry as scale grows.
 
-**Table 5. LoTTE geometry diagnostics across corpus scale.**
+**Table 6. LoTTE geometry diagnostics across domain and corpus scale.**
 
-| Scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Conservative policy hit delta |
+| Domain/scale | $\mathrm{PCAdim90}$ sample | $\mathrm{PCAvar@64}$ sample | $\mathrm{NearestClusterHit@3}$ | $\mathrm{ContextRetention@10}$ | Associated hit delta |
 |---|---:|---:|---:|---:|---:|
-| 100k | 182 | 0.6437 | 0.8870 | 0.9033 | -0.22 pp |
-| 200k | 186 | 0.6292 | 0.8697 | 0.8947 | +2.80 pp |
-| 400k | 190 | 0.6110 | 0.9016 | 0.8826 | +1.01 pp |
-| 638k | 196 | 0.5867 | 0.9016 | 0.8571 | +1.85 pp |
+| technology/search 100k | 182 | 0.6437 | 0.8870 | 0.9033 | -0.22 pp |
+| technology/search 200k | 186 | 0.6292 | 0.8697 | 0.8947 | +2.80 pp |
+| technology/search 400k | 190 | 0.6110 | 0.9016 | 0.8826 | +1.01 pp |
+| technology/search 638k | 196 | 0.5867 | 0.9016 | 0.8571 | +1.85 pp |
+| science/search 20k/q200 | 180 | 0.6377 | 0.9083 | 0.8939 | +3.17 pp |
+| science/search 100k | 177 | 0.6459 | 0.8574 | 0.8628 | +1.51 pp |
 
-$\mathrm{NearestClusterHit@3}$ remains high, around 0.87-0.90, suggesting
-local geometry is useful for routing. $\mathrm{PCAdim90}$ increases and
-$\mathrm{PCAvar@64}$ decreases with scale, suggesting the representation
-geometry becomes more complex. Context retention declines with scale, showing
-that geometry alone should not replace dense retrieval.
+$\mathrm{NearestClusterHit@3}$ remains high across both LoTTE domains,
+suggesting local geometry is useful for routing. On technology/search,
+$\mathrm{PCAdim90}$ increases and $\mathrm{PCAvar@64}$ decreases with scale,
+suggesting the representation geometry becomes more complex. Science/search
+also shows high local routing signal, but the 100k row has lower cluster-hit
+and context-retention diagnostics than the 20k/q200 slice, matching the
+observed need for domain-specific compression calibration. Context retention
+declines with scale, showing that geometry alone should not replace dense
+retrieval.
 
 These diagnostics support the piecewise relevance-manifold framing as a useful
-motivation and diagnostic, not as a theorem.
-Figure 3 visualizes the geometry trend: nearest-cluster hit remains high, while
-context retention and PCA concentration decline as the corpus grows.
+motivation and diagnostic, not as a theorem. Figure 3 visualizes the same trend.
+Figure 4 further connects the geometry diagnostics to the observed
+quality-cost frontier. The relationship is informative but not deterministic,
+which is why IntentRoute treats geometry as a routing signal rather than as a
+standalone retrieval rule.
 
-## 5.7 Encoder Robustness
+The geometry-versus-random control makes this boundary explicit. Static nearest
+geometry obtains route reward $0.8563$ and selected-cluster hit $0.8870$,
+compared with $0.1499$ and $0.1577$ under uniform random arm selection. Yet
+their final fused top-10 hit rates are both high ($0.8764$ and $0.8842$)
+because dense and BM25 rescue remain active. Geometry is therefore validated at
+the route-control layer; final fused hit alone cannot prove its contribution.
 
-The encoder robustness check tests whether the result depends on the exact
-`all-MiniLM-L6-v2` encoder. With
-`sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, a QA-tuned MiniLM-family
-encoder, the dense baseline becomes stronger on LoTTE 100k: $\mathrm{Hit@10}$
-increases to $0.8809$. IntentWeight still reaches mean
-$\mathrm{Hit@10}=0.8853$ under the conservative policy and reduces final
-context tokens by $3.35\%$.
+Arm-count sensitivity leads to the same mechanism-level conclusion. Across
+$K \in \{8,16,32,64,128\}$, static route reward remains $0.8272$-$0.9128$ and
+full multi-route hit remains $0.8775$-$0.8837$. Gated dense-saving behavior is
+more sensitive: small $K$ permits aggressive dense reduction, while large $K$
+spreads feedback across more arms and increases fallback. The fixed $K=32$
+setting is a reproducible engineering point, not a geometrically optimal value.
 
-This reduces the single-encoder risk but does not eliminate it. The result
-shows same-resource-class robustness within a MiniLM family; it does not prove
-the claim for all stronger encoders, rerankers, or late-interaction models.
-Appendix E reports the complete robustness table.
+## 5.6 Boundary, Robustness, and Downstream Checks
 
-## 5.8 Downstream Generation Smoke
+Secondary datasets and checks are used to bound the claim rather than expand it
+into universal dense-retrieval dominance.
 
-The downstream generation smoke test compares dense top-10 context with the
-compressed conservative-policy context on 60 sampled LoTTE 100k queries using
-`deepseek-v4-flash` with thinking enabled.
+PubMedQA and Banking77 support the feedback-adaptation mechanism near quality
+ceilings. PubMedQA is an evidence-retrieval proof-of-concept with section-level
+ground truth, while Banking77 is better understood as an intent-routing proxy.
+eManual and CUAD are limitation cases: eManual has heavy duplicate evidence
+text and strict chunk-id labels, while CUAD remains a sparse GT-anchored smoke
+case.
 
-The smoke does not show obvious answer-quality degradation from conservative
-context compaction. Dense has a small average-score and relevance edge, so this
-should not be overclaimed as the conservative policy beating dense in generated
-answer quality. It is a sanity check, not a replacement for the retrieval and
-final-context-token experiments. Appendix F reports the full smoke table.
+Matched-backbone evaluation extends the quality-cost pattern beyond MiniLM.
+
+**Table 7. Matched-backbone frozen-test operating points at LoTTE
+technology/search 100k.**
+
+| Backbone and policy | Dense $\mathrm{Hit@10}$ | Method $\mathrm{Hit@10}$ | Hit delta | Token saving |
+|---|---:|---:|---:|---:|
+| MiniLM calibrated | 0.8705 | 0.8705 | +0.00 pp | 6.18% |
+| BGE full multi-route | 0.8993 | 0.8985 | -0.08 pp | 11.99% |
+| E5 full multi-route | 0.8753 | 0.8689 | -0.64 pp | 12.20% |
+| BGE quality-first | 0.8993 | 0.9081 | +0.88 pp | 7.23% |
+
+The BGE and E5 full multi-route rows are near their own dense baselines while
+saving about 12% final context tokens. The BGE quality-first policy moves the
+same frontier toward higher hit at lower saving, demonstrating tunability rather
+than one fixed operating point. The corresponding E5 scan does not find an
+above-dense token-saving point, so the positive-hit claim is BGE-specific. The
+older QA-tuned MiniLM-family check remains in the appendix as supporting
+evidence, not the main backbone-generalization result.
+
+## 5.7 Strong Post-Retrieval Baselines
+
+The post-retrieval baselines clarify what IntentRoute should and should not
+claim. Dense+Sentence-MMR starts from dense top-10 chunks and selects
+query-relevant, diverse sentence units under the same per-query final-context
+token budgets used by IntentRoute. On LoTTE technology/search 100k, it
+preserves dense chunk-support $\mathrm{Hit@10}=0.8705$ while reducing selected
+sentence tokens by 11.4-13.1%. This is a strong final-context compression
+baseline and means IntentRoute should not be framed as the only path to lower
+generator input tokens.
+
+The compressor-normalized comparison applies the same SentMMR layer to both
+dense and IntentRoute evidence pools. Dense+SentMMR preserves dense
+$\mathrm{Hit@10}$ at 0.95, 0.90, and 0.85 token ratios while saving roughly
+5.3%, 10.2%, and 15.2% tokens. IntentRoute+SentMMR preserves each source
+IntentRoute policy's chunk-support result and reaches larger total savings,
+roughly 10.1-21.2% relative to dense, because it starts from a smaller evidence
+pool. This supports a component view: SentMMR is a shared final-context
+compressor, while IntentRoute is the upstream route-and-budget controller.
+
+SelectiveContext-lite provides a second downstream prompt-pruning control.
+Applied to dense top-10, it preserves chunk-support $\mathrm{Hit@10}=0.8705$
+while saving 5.66%, 10.42%, 15.31%, and 25.19% tokens at ratios 0.95, 0.90,
+0.85, and 0.75. Applied to IntentRoute evidence pools, it preserves each
+source pool's hit result and adds the requested compression, reaching up to
+30.57% total saving versus dense. This proxy is not LLMLingua; it demonstrates
+that prompt pruning is complementary to upstream route-and-budget control.
+
+The cross-encoder reranker baseline tests a different challenge. Reranking
+dense top-50 candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2` improves
+full top-10 support metrics from dense $\mathrm{Hit@10}=0.8705$ and
+$\mathrm{EvidenceRecall@10}=0.7081$ to $\mathrm{Hit@10}=0.8777$ and
+$\mathrm{EvidenceRecall@10}=0.7332$. However, the reranked top-10 contains
+longer chunks and increases final context tokens by about 21.9% relative to
+dense top-10. When constrained under the same calibrated per-query budgets as
+IntentRoute, the reranker same-budget variants reach
+$\mathrm{Hit@10}=0.8633$-$0.8729$, which does not uniformly dominate the
+IntentRoute target policies at $0.8657$-$0.8777$.
+
+Together, these baselines narrow and strengthen the paper claim. IntentRoute
+is not a replacement for sentence compression or cross-encoder reranking. It is
+a low-compute controller that decides which evidence pool and budget should be
+trusted before optional late-stage compression or reranking layers are applied.
+
+## 5.8 Downstream Answer-Level Evaluation
+
+The frozen downstream evaluation contains 300 queries, seven retrieval/context
+methods, 2,100 generated answers, and 2,100 valid judgments. The matched
+comparisons use the same query set and report paired uncertainty.
+
+**Table 8. Matched downstream answer-quality and context-token comparisons.**
+
+| Comparison | Baseline correct | IntentRoute correct | Correct delta (95% CI) | Token saving (95% CI) |
+|---|---:|---:|---:|---:|
+| BGE IntentRoute vs BGE dense | 0.9167 | 0.9167 | +0.00 pp [-2.67, +2.67] | 6.00% [4.01%, 7.97%] |
+| E5 IntentRoute vs E5 dense | 0.9167 | 0.9200 | +0.33 pp [-3.00, +3.67] | 12.04% [9.93%, 14.16%] |
+| IW+MMR vs Dense+MMR | 0.8900 | 0.9133 | +2.33 pp [-1.67, +6.33] | 6.65% [4.28%, 8.97%] |
+
+All three context-saving intervals are positive, while every correctness-delta
+interval includes zero and exact McNemar tests are non-significant. The result
+supports judged correctness preservation with lower context, not a significant
+answer-quality improvement. Faithfulness deltas are also non-significant; the
+BGE point estimate is -2.33 percentage points and is retained as uncertainty
+rather than hidden. Because only one generator/judge model is used, the table
+is downstream support for the controller claim rather than a human-evaluation
+or cross-model superiority result.
 
 ---
 
@@ -904,36 +1273,72 @@ final-context-token experiments. Appendix F reports the full smoke table.
 
 ## 6.1 Supported Claim
 
-IntentWeight supports a bounded but useful claim. It is a feedback-driven
-adaptive evidence-selection controller instantiated as a retrieval controller
-in the evaluated QA setting. It can control final context budget while
-preserving dense-level retrieval quality. On LoTTE technology/search, the
-conservative confidence-based context policy reduces final retrieved context
-tokens by about 4.7-5.3% from 100k to 638k corpus chunks. Mean
-$\mathrm{Hit@10}$ is above dense-only retrieval on 200k, 400k, and 638k.
+IntentRoute supports a bounded route-confidence-to-budget claim. It estimates
+confidence over dense, lexical, and geometry-defined local routes, adapts that
+confidence through trust-weighted feedback, and uses a frozen policy to control
+the final evidence-context budget. On LoTTE technology/search,
+calibration/test validation shows that calibration-eligible operating points at
+100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
+the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
+result is positive on frozen test but remains a diagnostic follow-up point
+because it did not pass the calibration eligibility gate. A conservative
+confidence-only policy provides a stable baseline, reducing final retrieved
+context tokens by about 4.7-5.3% from 100k to 638k corpus chunks while
+preserving dense-level query hit. Matched BGE/E5 experiments extend the
+quality-cost pattern beyond MiniLM, and the 300-query downstream evaluation
+finds positive context savings without a statistically detectable correctness
+change. LoTTE science/search further supports ranking-side generalization, but
+also shows that compression strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. The value of
-IntentWeight is that it learns when dense fallback is needed, when local
+IntentRoute is that it learns when dense fallback is needed, when local
 geometry is reliable, and when the final context can be safely compacted.
 
-## 6.2 Why Multi-Route Retrieval Alone Is Not Enough
+## 6.2 Role of Confidence-Based Context Compaction
 
 A static combination of dense, BM25, and cluster-local retrieval can improve
 coverage, but it does not automatically reduce final context tokens. In fact,
 static dense+BM25 hybrid retrieval can use more context tokens than dense-only
 retrieval because it surfaces longer or noisier chunks. The token-saving
-mechanism is therefore not "more routes." It is confidence-based final context
-control.
+mechanism is therefore not "more routes." It is the calibrated mapping from
+route confidence to final context budget.
 
-The main confidence-based policy is intentionally conservative. It compresses
-only high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$.
-This is why the saving is modest but stable. More aggressive configurations
-save more tokens, but they produce visible $\mathrm{Hit@10}$ loss. The
-conservative policy should therefore be interpreted as a safe operating point
-on a token-quality frontier.
+The confidence-only policy is intentionally conservative. It compresses only
+high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is
+why the saving is modest but stable. The calibrated token-budget policies use a
+frozen calibration/test protocol to expose a stronger operating frontier, while
+dense-only adaptive truncation shows that saving more tokens by simply reducing
+dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy
+should therefore be interpreted as a safe baseline, not the highest-compression
+configuration.
 
-## 6.3 Feedback Improves the Policy Field
+## 6.3 Reranking and Final-Context Control
+
+A cross-encoder reranker is a natural stronger ranking baseline, but it solves
+a different subproblem from final-context budgeting. A reranker applied after
+dense or multi-route retrieval can reorder a candidate pool and improve the
+quality of the top-ranked evidence, but it does not expand recall beyond the
+candidate pool and it does not by itself control LLM input length. In the LoTTE
+technology/search 100k check, reranking dense top-50 candidates with a
+cross-encoder improves the full top-10 support metrics
+($\mathrm{Hit@10}=0.8777$ and $\mathrm{EvidenceRecall@10}=0.7332$, versus
+dense top-10 at $0.8705$ and $0.7081$). However, the reranked top-10 contains
+longer chunks on average, increasing selected evidence-context tokens by about
+21.9% relative to dense top-10.
+
+This clarifies the intended system decomposition. Reranking is useful as a late
+ranking layer, SentMMR and SelectiveContext-lite are downstream prompt-context
+compression layers, and IntentRoute controls the upstream evidence pool and
+budget passed to them. When the cross-encoder output is
+forced under the same per-query token budgets used by IntentRoute, its
+$\mathrm{Hit@10}$ range does not uniformly dominate the calibrated
+IntentRoute policies. The appropriate comparison is therefore not
+"IntentRoute versus reranking" as mutually exclusive choices, but whether a
+pipeline can combine candidate generation, reranking, and budgeted context
+selection while keeping the quality-cost frontier explicit.
+
+## 6.4 Feedback Improves the Policy Field
 
 Dense and BM25 fallback can saturate final $\mathrm{Hit@10}$. This can hide the
 effect of feedback in final fused retrieval metrics. The clearer feedback
@@ -941,13 +1346,23 @@ signal appears in route-policy metrics such as selected-cluster hit and last
 true reward.
 
 Trust weighting improves these policy metrics under controlled simulated
-feedback. This supports the idea that the system can self-improve under a
-usable feedback signal. However, the current feedback is simulated and
+feedback. Dedicated controls place the learned route reward at $0.6790$, above
+the no-feedback/random level of about $0.15$ but below the $0.8563$ static
+nearest-geometry prior. This supports feedback as adaptive route-confidence
+estimation, not as the sole source of final fused quality. However, the current
+feedback is simulated and
 ground-truth-derived. Production systems still need real feedback collection,
 trust scoring, delayed-feedback handling, and safeguards against unreliable or
 adversarial signals.
 
-## 6.4 Geometry Is Useful but Not Sufficient
+The hard-case recovery experiment adds a more operational interpretation of
+feedback. When aggressive compression loses evidence, arm-level feedback can
+repair a meaningful fraction of affected queries through a safer retry or
+fallback policy. This should be treated as a controlled recovery mechanism. It
+does not mean that feedback should blindly boost the same arm for all future
+queries.
+
+## 6.5 Geometry Is Useful but Not Sufficient
 
 The geometry diagnostics support a piecewise relevance-manifold framing.
 $\mathrm{NearestClusterHit@3}$ remains high across LoTTE scales, and local
@@ -955,11 +1370,19 @@ geometry provides useful routing information. However, context retention
 declines with scale, and geometry alone is not a complete retrieval model. If a
 cluster route prunes too early, correct evidence can be lost.
 
-IntentWeight therefore uses geometry as one signal in a controller. Dense
+IntentRoute therefore uses geometry as one signal in a controller. Dense
 retrieval remains a fallback, BM25 provides lexical anchors, and LinUCB learns
 route confidence over repeated interactions.
 
-## 6.5 Evidence Completeness Versus Usable Evidence
+The random-route control is important to this interpretation. Static geometry
+strongly improves route reward and selected-cluster hit over random routing,
+but final fused hit remains protected in both cases by dense/BM25 rescue. Mixed
+small-sample correlations between geometry diagnostics and final token-quality
+gain further show that geometry guides route construction without fully
+determining the end result. The gain belongs to the complete calibrated
+controller, not geometry in isolation.
+
+## 6.6 Evidence Completeness Versus Usable Evidence
 
 The main retrieval headline is query-level $\mathrm{Hit@10}$. This metric asks
 whether at least one relevant chunk appears in the final context. It is
@@ -967,25 +1390,32 @@ appropriate for many RAG settings where one good supporting chunk is enough to
 ground an answer. However, context compaction can reduce
 $\mathrm{EvidenceRecall@10}$, the fraction of all GT chunks retrieved.
 
-This is an expected trade-off. IntentWeight optimizes usable evidence under a
+This is an expected trade-off. IntentRoute optimizes usable evidence under a
 smaller context budget, not exhaustive evidence collection. For legal review,
 medical synthesis, or compliance workflows where complete evidence coverage is
 required, the system should use a more conservative context policy or disable
 compaction.
 
-## 6.6 Production Interpretation
+## 6.7 Production Interpretation
 
-The measured 4.7-5.3% token reduction is conservative. It is measured with
-limited simulated interaction history and a cautious $k=8$ high-confidence
-compression policy. In production, repeated query patterns, user-specific
-feedback, and richer confidence tiers may increase the fraction of queries that
-can be safely compacted. This is a hypothesis for production evaluation rather
-than a claim proven by the current experiments.
+The measured 6-18% calibrated evidence-context token reduction applies to the
+most expensive recurring component of a retrieval-augmented answer: LLM input
+tokens. At enterprise query volumes, even the conservative end of this range can
+compound into meaningful cumulative inference-cost reduction. The older
+4.7-5.3% confidence-only policy is best interpreted as a stable conservative
+baseline, while calibrated budgets show the stronger operating frontier. In
+production, repeated query patterns, user-specific feedback, and richer
+confidence tiers may increase the fraction of queries that can be safely
+compacted. This is a hypothesis for production evaluation rather than a claim
+proven by the current experiments.
 
 The correct deployment interpretation is therefore:
 
 - keep dense retrieval as a recall floor;
+- optionally add reranking as a late ranking layer before final context
+  selection;
 - use feedback and confidence to reduce final context when the policy is stable;
+- use negative feedback to trigger safer local fallback for risky regions;
 - monitor evidence quality and fallback rates;
 - avoid aggressive compaction for complete-evidence tasks;
 - treat token saving as a controllable frontier rather than a fixed guarantee.
@@ -1002,18 +1432,26 @@ under a feedback signal, but it does not prove the same behavior under real
 human feedback. Real deployments must handle delayed feedback, biased implicit
 signals, adversarial or low-quality users, and non-stationary intent.
 
+The hard-case recovery experiment also uses GT-derived simulated feedback.
+Same-query retry should be interpreted as an engineering recovery test after a
+failed compressed answer, not as first-pass IID held-out improvement. The result
+shows that feedback can repair a meaningful fraction of affected queries when
+the evidence remains reachable through the candidate pool and arm structure; it
+does not imply universal recovery.
+
 ## 7.2 Limited Generation Evaluation
 
-The main experiments evaluate retrieval and final retrieved context tokens.
-A 60-query LLM generation smoke test shows no obvious answer-quality
-degradation from conservative context compaction, but this is not a full
-end-to-end human evaluation. The supported main claim remains evidence
-retrieval and retrieved context budget, not generated answer superiority or
-user satisfaction.
+The downstream evaluation expands to 300 frozen-test queries, seven methods,
+2,100 generated answers, and 2,100 valid LLM judgments. It finds positive
+context-token savings for matched BGE, E5, and SentMMR comparisons without a
+statistically detectable correctness change. However, one model serves as both
+generator and judge, no human ratings are collected, and the benchmark covers
+one LoTTE domain. The result supports answer-level quality preservation under
+this protocol, not generated-answer superiority or user satisfaction.
 
 ## 7.3 Dense Remains Strong
 
-Dense-only retrieval remains a strong baseline. IntentWeight should not be
+Dense-only retrieval remains a strong baseline. IntentRoute should not be
 claimed as a universal replacement for dense retrieval. The evidence supports a
 controller that can reduce final context tokens while preserving dense-level
 $\mathrm{Hit@10}$ in the main LoTTE setting, and that can expose a quality-cost
@@ -1028,7 +1466,17 @@ require complete evidence collection, such as legal review, medical evidence
 synthesis, or exhaustive compliance analysis, a more conservative context
 policy or no compaction may be preferable.
 
-## 7.5 Geometry Is Diagnostic, Not a Proof
+## 7.5 Context Budget Requires Domain Calibration
+
+The LoTTE science/search replication shows that fixed top-10 ranking gains can
+transfer to a second domain, but context-budget strength does not transfer
+automatically. At science/search 100k, an aggressive budget still saves
+17-21% final context tokens but can introduce small $\mathrm{Hit@10}$ drops on
+the frozen test split. Compression should therefore be calibrated per domain
+and scale, with dense fallback retained for low-confidence or high-risk local
+regions.
+
+## 7.6 Geometry Is Diagnostic, Not a Proof
 
 The piecewise relevance-manifold framing is supported by diagnostics such as
 $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These
@@ -1036,84 +1484,120 @@ diagnostics do not prove a mathematical manifold theorem. They show that local
 geometry is informative for routing on LoTTE, while dense retrieval remains
 necessary.
 
-## 7.6 KMeans Is an Experimental Arm Design
+## 7.7 Fixed Routing Arms Are an Experimental Design
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and
 the experiments need reproducible, scalable arms. This is not a claim that
 KMeans is the best clustering method for all RAG systems. HDBSCAN or
 graph-based clusters may perform better in some deployments, but dynamic arm
-counts complicate the current LinUCB setup.
+counts complicate the current LinUCB setup. The tested $K=8$-$128$ grid shows
+stable full multi-route quality but sensitive gated routing, so $K=32$ remains
+an engineering operating point rather than an optimum.
 
-## 7.7 Limited Encoder and Domain Coverage
+## 7.8 Limited Encoder and Domain Coverage
 
-The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. The
-paper adds a CPU-friendly encoder robustness check with
-`sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, but the paper should not
-generalize the result to stronger domain-specific encoders, rerankers, or
-late-interaction models without additional experiments.
+The paper evaluates matched MiniLM, BGE-base, and E5-base dense/IntentRoute
+backbones, plus a QA-tuned MiniLM-family check and a cross-encoder reranker.
+This establishes backbone-level robustness within the tested LoTTE setting,
+but it does not cover domain-specific encoders, late-interaction models, or
+proprietary embedding systems. The above-dense quality-first point is currently
+demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
-LoTTE technology/search is the main positive large-scale domain. Additional
-LoTTE domains or other vertical corpora would strengthen external validity.
+LoTTE technology/search is the main positive large-scale domain. LoTTE
+science/search strengthens external validity but does not replace evaluation on
+additional vertical corpora.
 
-## 7.8 Seed Count and 400k Variance
+## 7.9 Seed Count and 400k Variance
 
-The stability analysis reports three-seed confidence intervals across LoTTE
-100k-638k, and an additional robustness check extends LoTTE 100k to five seeds.
-These are useful engineering stability diagnostics, but they should not be
-over-framed as strong statistical significance proof. The LoTTE 400k
+The stability analysis uses the fixed seeds 13, 17, and 19 across the main
+LoTTE route experiments. These are engineering stability diagnostics, not a
+claim that a large seed population has been sampled. Query-level paired tests
+provide the main inferential evidence. The LoTTE 400k
 token-saving interval is notably wider than the other scales and should be
 interpreted as seed-level variance in route confidence and context-budget
-control.
+control. In the calibrated-budget experiment, the 400k frozen-test result is
+positive but the selected policy is not calibration-eligible under the
+zero-observed-hit-drop gate; this scale is therefore marked as a follow-up
+calibration gap rather than pooled into the strongest eligible operating-point
+claim.
 
-## 7.9 Future Work
+## 7.10 Future Work
 
 Future work should evaluate:
 
 - real user feedback with trust scoring and delayed-feedback handling;
-- larger end-to-end LLM answer-quality and citation-faithfulness studies;
+- multi-model and human-rated answer-quality and citation-faithfulness studies;
 - stronger dense encoders, rerankers, and late-interaction retrieval models;
 - graph or density-based dynamic clustering under bandit-compatible arm
   management;
-- larger seed counts and additional vertical-domain corpora;
+- repeated evaluations on additional vertical-domain corpora;
 - production policies that lower dense usage only after route confidence is
   demonstrably stable.
+- recovery policies evaluated with real delayed feedback rather than
+  GT-derived same-query retry.
 
 ---
 
 # 8. Conclusion
 
-This paper presents IntentWeight, a feedback-driven adaptive evidence-selection
-controller motivated by a piecewise relevance-manifold assumption. In the
-evaluated retrieval-backed QA implementation, IntentWeight builds a multi-route
-retrieval surface over dense, BM25, and cluster-local retrieval, uses
-trust-weighted LinUCB to learn route preferences from controlled feedback, and
-applies confidence-based final context compaction to reduce retrieved context
-tokens.
+This paper presents IntentRoute, a feedback-adaptive
+route-confidence-to-budget controller motivated by local relevance structure
+in vertical-domain data. In the evaluated retrieval-backed QA implementation,
+geometry defines reproducible cluster-local routes, trust-weighted LinUCB
+updates route confidence, dense and BM25 provide rescue paths, and a calibrated
+policy maps confidence to the final evidence-context budget.
 
 The main evidence comes from LoTTE technology/search at 100k to 638k corpus
-chunks. Under the conservative confidence-based context policy, IntentWeight
-reduces final retrieved context tokens by approximately 4.7-5.3% while
-preserving dense-level $\mathrm{Hit@10}$. Mean $\mathrm{Hit@10}$ is above
-dense-only retrieval at 200k, 400k, and 638k. Additional diagnostics show that
-local geometry provides useful routing signal, trust-weighted feedback improves
-route-policy metrics, and a small downstream generation smoke test does not
-show obvious answer-quality degradation from context compaction.
+chunks. Under calibration/test budget selection, calibration-eligible operating
+points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
+by 6-18%; the 400k point remains a positive diagnostic result pending
+follow-up calibration. Across these scales, IntentRoute avoids the larger
+$\mathrm{Hit@10}$ losses of dense-only adaptive truncation, while strict
+seed-level non-inferiority remains scale-dependent. A conservative
+confidence-only policy remains a stable 4.7-5.3% saving baseline. Additional
+diagnostics and controls show that local geometry provides useful route signal
+over random routing and trust-weighted feedback improves route confidence over
+no-feedback controls, without implying that either alone explains fused
+quality. Matched BGE/E5 comparisons retain near-dense retrieval quality with
+about 12% context saving, while a BGE quality-first point demonstrates frontier
+tunability. A 300-query downstream evaluation finds 6.00-12.04% matched context
+savings without a statistically detectable correctness change.
+LoTTE science/search provides cross-domain ranking support with a clear
+compression-calibration boundary. Hard-case recovery experiments further show
+that simulated feedback can repair part of the tail failures caused by
+aggressive context compression.
 
-The result is intentionally bounded. IntentWeight is not a universal dense
+Strong post-retrieval baselines refine rather than weaken the conclusion.
+Sentence-level MMR and SelectiveContext-lite are effective shared downstream
+compressors, and cross-encoder reranking can improve top-ranked evidence
+support. However,
+reranking alone can increase final context tokens, and same-budget reranking
+does not uniformly dominate the calibrated IntentRoute policies. These results
+support a layered interpretation: candidate generation, reranking, compression,
+and route-budget control are separate system functions that can be composed.
+
+The result is intentionally bounded. IntentRoute is not a universal dense
+replacement, a universal compressor replacement, or a universal reranker
 replacement, and it does not prove that geometry alone solves retrieval. Dense
-retrieval remains an important recall floor. The contribution is a controller
-that learns when multiple retrieval routes and route confidence can be used to
-preserve retrieval quality while reducing the final context budget.
+retrieval remains an important recall floor. The contribution is a calibrated
+controller that turns geometry- and feedback-informed route confidence into a
+final context budget, trading compact context against retrieval risk while
+remaining compatible with late reranking and prompt compression. The manifold
+hypothesis remains the motivation for local route structure, not a
+theorem-level claim.
 
 ---
 
 # Appendix
 
-## A. Seed Stability Diagnostics
+## A. Conservative Baseline and Seed Stability Diagnostics
 
-The conservative confidence-based context policy is evaluated with three seeds
-at every LoTTE scale. These intervals are engineering stability diagnostics,
-not strong inferential proof: each scale has only three observations.
+The conservative confidence-only context policy is the stable baseline for
+context compaction. The main text reports calibrated token-budget policies as
+the primary cost result; this appendix keeps the earlier confidence-only scale
+table and seed diagnostics. These intervals are engineering stability
+diagnostics, not strong inferential proof: each scale has only three
+observations.
 
 **Appendix Table A1. Multi-seed retrieval-quality stability.**
 
@@ -1137,20 +1621,6 @@ The token-saving direction is consistent across scales. The wider 400k token
 interval should be interpreted as route-confidence and context-budget variance,
 not hidden as a uniform result.
 
-A five-seed extension is also available for LoTTE 100k. The additional seeds
-test sensitivity to KMeans initialization and route-policy stochasticity.
-
-**Appendix Table A3. Five-seed LoTTE 100k extension.**
-
-| Setting | Seeds | $\mathrm{Hit@10}$ | Avg $\mathrm{Tokens@10}$ | Token ratio vs dense | Token saving |
-|---|---:|---:|---:|---:|---:|
-| Dense-only | 1 | 0.8674 | 1472.39 | 1.0000x | 0.00% |
-| Conservative policy | 5 | 0.8708 | 1399.83 | 0.9507x | 4.93% |
-
-The five-seed hit-delta interval is $[-0.0082, +0.0150]$. This supports
-dense-level retrieval quality with stable context-token reduction, not a
-statistical-superiority claim.
-
 ## B. Static Retrieval Baselines
 
 Dense retrieval is the primary quality baseline. BM25 supplies lexical
@@ -1169,9 +1639,9 @@ not consistently dominate dense.
 
 The declining dense score as corpus scale grows motivates adaptive context
 control, but it does not make dense retrieval obsolete. Dense remains an
-important recall floor and fallback route in IntentWeight.
+important recall floor and fallback route in IntentRoute.
 
-## C. Cost-Metric Guardrail
+## C. Cost Metric Separation
 
 The experiments separate three efficiency layers:
 
@@ -1203,19 +1673,27 @@ token savings.
 
 ## D. Secondary Datasets and Boundary Cases
 
-The secondary datasets have different roles. PubMedQA supports the
-evidence-retrieval mechanism near a dense ceiling. Banking77 is an
-intent-routing proxy rather than an evidence-retrieval benchmark. eManual and
-CUAD are boundary cases that prevent universal claims.
+The secondary datasets have different roles and should not be pooled into the
+main LoTTE evidence claim.
 
-**Appendix Table D1. Secondary dataset evidence and boundary cases.**
-
-| Dataset | Role | Dense/reference $\mathrm{Hit@10}$ | Supporting or diagnostic result | Interpretation |
-|---|---|---|---|---|
-| PubMedQA | Evidence retrieval proof-of-concept | 0.9930 | Trust-weighted $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, selected-cluster hit $0.8860$ | Feedback improves policy internals near a dense ceiling; GT is abstract-level context. |
-| Banking77 | Intent routing proxy | 0.9805 | Trust-weighted $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, selected-cluster hit $0.9983$ | Strong intent structure; do not mix with evidence-retrieval headline results. |
-| eManual | Duplicate-text limitation | 0.3231 strict; 0.5615 text-equivalent | Deduplicated dense $\mathrm{Hit@10}=0.8615$ | Strict chunk IDs understate success because many evidence texts are duplicated. |
-| CUAD | Sparse legal smoke/stress case | 0.0759 | Trust-weighted smoke $\mathrm{Hit@10}=0.0886$ | GT-anchored sample only; do not treat as positive full-corpus evidence. |
+- **PubMedQA** is an evidence-retrieval proof-of-concept near a dense ceiling.
+  Dense reaches $\mathrm{Hit@10}=0.9930$; trust-weighted feedback reaches
+  $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, and selected-cluster hit
+  $0.8860$. The ground truth is abstract-level context, not a strict answer
+  sentence.
+- **Banking77** is an intent-routing proxy rather than an evidence-retrieval
+  benchmark. Dense/reference $\mathrm{Hit@10}$ is $0.9805$; trust-weighted
+  feedback reaches $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, and
+  selected-cluster hit $0.9983$. It supports the feedback mechanism, not the
+  main evidence-retrieval headline.
+- **eManual** is a duplicate-text limitation case. Strict dense
+  $\mathrm{Hit@10}$ is $0.3231$, text-equivalent dense $\mathrm{Hit@10}$ is
+  $0.5615$, and deduplicated dense $\mathrm{Hit@10}$ rises to $0.8615$. Strict
+  chunk IDs can therefore understate useful retrieval.
+- **CUAD** is a sparse legal smoke/stress case. Dense/reference
+  $\mathrm{Hit@10}$ is $0.0759$ and the trust-weighted smoke reaches
+  $\mathrm{Hit@10}=0.0886$. It is a GT-anchored sample, not positive
+  full-corpus evidence.
 
 ### D.1 eManual Duplicate-Text Diagnostic
 
@@ -1223,7 +1701,7 @@ eManual contains 18,812 corpus chunks but only 1,729 unique text strings.
 Strict chunk-id evaluation can therefore mark semantically equivalent
 retrievals as incorrect.
 
-**Appendix Table D2. eManual strict, text-equivalent, and deduplicated
+**Appendix Table D1. eManual strict, text-equivalent, and deduplicated
 evaluation.**
 
 | Method | Evaluation mode | $\mathrm{Hit@10}$ | $\mathrm{MRR@10}$ | $\mathrm{nDCG@10}$ |
@@ -1261,25 +1739,244 @@ context tokens by 3.35%. Ranking metrics and evidence recall are lower than
 dense, so this is a bounded robustness result rather than a universal
 retrieval-metric improvement.
 
-## F. Downstream Generation Smoke
+**Appendix Table E2. Matched-backbone context-budget robustness on the frozen
+LoTTE technology/search 100k split.**
 
-A small downstream generation smoke compares dense top-10 context with the
-compressed conservative-policy context on 60 sampled LoTTE 100k queries. The
-same LLM configuration generates and judges answers in this smoke.
+| Backbone | Route mode | Dense $\mathrm{Hit@10}$ | Method $\mathrm{Hit@10}$ | Hit delta | Token saving |
+|---|---|---:|---:|---:|---:|
+| MiniLM | calibrated multi-route | 0.8705 | 0.8705 | +0.00 pp | 6.18% |
+| BGE-base | full multi-route | 0.8993 | 0.8985 | -0.08 pp | 11.99% |
+| E5-base | full multi-route | 0.8753 | 0.8689 | -0.64 pp | 12.20% |
+| BGE-base | quality-first | 0.8993 | 0.9081 | +0.88 pp | 7.23% |
 
-**Appendix Table F1. Downstream generation smoke test.**
+The full multi-route rows show that the quality-cost pattern is not tied to the
+MiniLM backbone. More aggressive gated BGE/E5 variants lose more hit and are
+treated as boundary settings. The BGE quality-first row demonstrates that the
+frontier is tunable; an equivalent above-dense E5 point was not found on this
+split.
 
-| Method | Answer score | Faithfulness | Answer relevance | Win count | Prompt context-token proxy ratio |
+## F. Downstream Answer-Level Evaluation
+
+The formal downstream evaluation uses 300 deterministic queries from the
+frozen LoTTE technology/search 100k test split. Seven methods produce 2,100
+answers and 2,100 schema-valid judgments under the same
+`deepseek-v4-flash` generator/judge configuration.
+
+**Appendix Table F1. Downstream answer and context results.**
+
+| Method | Correct | Faithful | Strict citation support | Insufficient context | Avg context tokens | Tokens / correct |
+|---|---:|---:|---:|---:|---:|---:|
+| MiniLM dense | 0.9200 | 0.9533 | 0.3533 | 0.0967 | 1461 | 1588 |
+| BGE dense | 0.9167 | 0.9433 | 0.3567 | 0.0767 | 1698 | 1852 |
+| BGE IntentRoute | 0.9167 | 0.9200 | 0.3700 | 0.0767 | 1596 | 1741 |
+| E5 dense | 0.9167 | 0.9300 | 0.4100 | 0.0700 | 1525 | 1663 |
+| E5 IntentRoute | 0.9200 | 0.9333 | 0.3633 | 0.0567 | 1341 | 1458 |
+| Dense+MMR | 0.8900 | 0.9100 | 0.0733 | 0.0800 | 1240 | 1393 |
+| IW+MMR | 0.9133 | 0.9267 | 0.0833 | 0.0900 | 1157 | 1267 |
+
+**Appendix Table F2. Paired downstream comparisons.**
+
+| Comparison | Correct delta | 95% CI | McNemar $p$ | Token saving | 95% CI |
 |---|---:|---:|---:|---:|---:|
-| Dense top-10 | 4.4000 | 4.6500 | 4.6500 | 14 | 1.0000x |
-| Conservative policy | 4.2833 | 4.6333 | 4.4500 | 14 | 0.9321x |
-| Tie | - | - | - | 32 | - |
+| BGE IntentRoute vs dense | +0.00 pp | [-2.67, +2.67] pp | 1.000 | 6.00% | [4.01%, 7.97%] |
+| E5 IntentRoute vs dense | +0.33 pp | [-3.00, +3.67] pp | 1.000 | 12.04% | [9.93%, 14.16%] |
+| IW+MMR vs Dense+MMR | +2.33 pp | [-1.67, +6.33] pp | 0.324 | 6.65% | [4.28%, 8.97%] |
 
-The smoke does not show obvious answer-quality degradation from conservative
-context compaction. It is not a full human evaluation: the sample is small,
-one generator/judge model is used, and LLM-as-judge can be biased.
+The context-saving intervals are positive while correctness intervals include
+zero. This supports answer-level correctness preservation with lower context,
+not significant answer-quality improvement. The study still uses one
+generator/judge model and is not a human evaluation.
 
-## G. Reproducibility and Reporting Guardrails
+## G. Calibration/Test Context-Budget Validation
+
+The calibration/test protocol selects the final-context budget on calibration
+queries and freezes it before evaluation on held-out test queries.
+
+**Appendix Table G1. Frozen context-budget validation on LoTTE technology/search.**
+
+| Scale | Selected policy | Calibration eligible | Hit delta vs dense | Token saving | Dense adaptive hit delta | Dense adaptive token saving |
+|---|---|---:|---:|---:|---:|---:|
+| 100k | `token_budget_r0.95_m4` | True | +0.00 pp | 6.18% | -1.44 pp | 13.83% |
+| 200k | `token_budget_r0.85_m4` | True | +1.20 pp | 16.00% | -2.40 pp | 21.95% |
+| 400k | `token_budget_r0.98_m4` | False / pending follow-up | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
+| 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
+
+The calibrated policies should be compared against dense-only adaptive
+truncation because both reduce final context size. IntentRoute preserves
+substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
+The 400k row is diagnostic rather than calibration-eligible in the current
+artifact set and is marked for follow-up calibration.
+
+## H. Cross-Domain Validation
+
+LoTTE science/search is used as a second-domain validation, not as a replacement
+for the main LoTTE technology/search scale-up.
+
+**Appendix Table H1. Science/search fixed top-10 ranking validation.**
+
+| Domain/scale | Corpus chunks | Queries | Dense $\mathrm{Hit@10}$ | IntentRoute $\mathrm{Hit@10}$ | Hit delta |
+|---|---:|---:|---:|---:|---:|
+| science/search 20k/q200 | 20,490 | 200 | 0.8950 | 0.9267 | +3.17 pp |
+| science/search 100k | 101,187 | 596 | 0.8926 | 0.9077 | +1.51 pp |
+
+**Appendix Table H2. Science/search frozen context-budget validation.**
+
+| Domain/scale | Budget policy | Seed | Frozen test hit delta vs dense | Token saving | Strict NI by CI |
+|---|---|---:|---:|---:|---:|
+| 20k/q200 | `token_budget_r0.85_m4` | 13 | +2.86 pp | 13.18% | True |
+| 20k/q200 | `token_budget_r0.85_m4` | 17 | +1.43 pp | 14.31% | False |
+| 20k/q200 | `token_budget_r0.85_m4` | 19 | +0.71 pp | 13.91% | False |
+| 100k | `token_budget_r0.85_m4` | 13 | -1.20 pp | 19.21% | False |
+| 100k | `token_budget_r0.85_m4` | 17 | +0.00 pp | 17.53% | False |
+| 100k | `token_budget_r0.85_m4` | 19 | -0.96 pp | 20.53% | False |
+
+The fixed top-10 ranking gains transfer, while aggressive final-context budgets
+require domain and scale calibration.
+
+## I. Feedback-Driven Hard-Case Recovery
+
+Hard-case recovery focuses on affected queries where dense top-10 retrieves at
+least one GT chunk but the budgeted IntentRoute context misses.
+
+**Appendix Table I1. Same-query feedback recovery on affected queries.**
+
+| Domain | Retry method | Affected queries | Recovered | Recovery rate | Avg token saving vs dense |
+|---|---|---:|---:|---:|---:|
+| science 100k | arm boost | 34 | 5 | 14.71% | 17.40% |
+| science 100k | arm boost + conservative budget | 34 | 14 | 41.18% | 5.76% |
+| science 100k | full-context fallback | 34 | 17 | 50.00% | -8.07% |
+| technology 100k | arm boost | 42 | 8 | 19.05% | 13.68% |
+| technology 100k | arm boost + conservative budget | 42 | 9 | 21.43% | 11.75% |
+| technology 100k | full-context fallback | 42 | 12 | 28.57% | 0.96% |
+
+Same-query retry is post-feedback repair evidence. It is not a first-pass
+generalization result.
+
+**Appendix Table I2. Calibration-to-test recovery generalization.**
+
+| Domain | Frozen test recovery policy | Mean hit delta versus budgeted-before-feedback | Avg token saving vs dense |
+|---|---|---:|---:|
+| science 100k | conservative budget on learned risky arms after calibration | +0.16 pp | 16.13% |
+| science 100k | full-context fallback on learned risky arms after calibration | +0.48 pp | 13.09% |
+| technology 100k | conservative budget on learned risky arms after calibration | -0.16 pp | 5.88% |
+| technology 100k | full-context fallback on learned risky arms after calibration | +0.16 pp | 4.25% |
+
+The held-out effect is small and domain-dependent. Feedback should therefore be
+used as a controlled fallback trigger rather than as unconditional global
+reranking.
+
+## J. Strong Post-Retrieval Baselines
+
+These baselines test whether simpler post-retrieval operations explain the
+main final-context result.
+
+**Appendix Table J1. Dense+Sentence-MMR same-budget baseline on LoTTE
+technology/search 100k.**
+
+| Budget target | $\mathrm{Hit@10}$ | Hit delta vs dense | $\mathrm{EvidenceRecall@10}$ | Avg context tokens | Token saving vs dense |
+|---|---:|---:|---:|---:|---:|
+| Dense top-10 | 0.8705 | 0.0000 | 0.7081 | 1470.1 | 0.00% |
+| SentMMR seed13 budget | 0.8705 | 0.0000 | 0.7081 | 1287.8 | 12.40% |
+| SentMMR seed17 budget | 0.8705 | 0.0000 | 0.7075 | 1278.0 | 13.07% |
+| SentMMR seed19 budget | 0.8705 | 0.0000 | 0.7081 | 1302.1 | 11.43% |
+
+Dense+Sentence-MMR preserves dense chunk-support on this split while reducing
+selected sentence tokens. It is therefore a strong final-context compression
+baseline, not a weak control.
+
+**Appendix Table J2. Compressor-normalized comparison on LoTTE
+technology/search 100k.**
+
+| Source pool | Method | Ratio | $\mathrm{Hit@10}$ range | Saving vs dense |
+|---|---|---:|---:|---:|
+| Dense | top-10 | - | 0.8705 | 0.00% |
+| Dense | SentMMR | 0.95 | 0.8705 | 5.33% |
+| Dense | SentMMR | 0.90 | 0.8705 | 10.22% |
+| Dense | SentMMR | 0.85 | 0.8705 | 15.16% |
+| IntentRoute | target | - | 0.8657-0.8777 | 4.98-7.14% |
+| IntentRoute | SentMMR | 0.95 | 0.8657-0.8777 | 10.07-12.14% |
+| IntentRoute | SentMMR | 0.90 | 0.8657-0.8777 | 14.72-16.68% |
+| IntentRoute | SentMMR | 0.85 | 0.8657-0.8777 | 19.41-21.24% |
+
+Applying the same compressor to dense and IntentRoute evidence pools supports
+the route-and-budget controller framing. The compressor is shared; the evidence
+pool and budget controller determine the starting point.
+
+**Appendix Table J3. Cross-encoder reranker baseline on LoTTE
+technology/search 100k.**
+
+| Method | $\mathrm{Hit@10}$ | $\mathrm{EvidenceRecall@10}$ | Avg context tokens | Token saving vs dense |
+|---|---:|---:|---:|---:|
+| Dense top-10 | 0.8705 | 0.7081 | 1470 | 0.00% |
+| Cross-encoder top-10 | 0.8777 | 0.7332 | 1792 | -21.91% |
+| IntentRoute target | 0.8657-0.8777 | 0.6766-0.6871 | 1365-1397 | 4.98-7.14% |
+| Cross-encoder same budget | 0.8633-0.8729 | 0.6975-0.7044 | 1360-1390 | 5.43-7.49% |
+
+The cross-encoder reranker improves full top-10 support metrics, but that full
+reranked context is longer on average. Under the same per-query token budgets
+as IntentRoute, reranking does not uniformly dominate the calibrated
+controller.
+
+**Appendix Table J4. SelectiveContext-lite prompt-pruning baseline.**
+
+| Source pool | Ratio | $\mathrm{Hit@10}$ | Token saving vs dense | Extra saving vs source |
+|---|---:|---:|---:|---:|
+| Dense | 0.95 | 0.8705 | 5.66% | 5.66% |
+| Dense | 0.90 | 0.8705 | 10.42% | 10.42% |
+| Dense | 0.85 | 0.8705 | 15.31% | 15.31% |
+| Dense | 0.75 | 0.8705 | 25.19% | 25.19% |
+| IntentRoute | 0.95 | 0.8657-0.8777 | 10.38-12.42% | 5.62-5.69% |
+| IntentRoute | 0.90 | 0.8657-0.8777 | 14.92-16.87% | 10.46-10.48% |
+| IntentRoute | 0.85 | 0.8657-0.8777 | 19.53-21.40% | 15.31-15.35% |
+| IntentRoute | 0.75 | 0.8657-0.8777 | 28.95-30.57% | 25.20-25.23% |
+
+SelectiveContext-lite is a deterministic local proxy, not LLMLingua. Its role
+is to show that prompt pruning can be stacked after either evidence pool and
+does not replace upstream route-confidence-to-budget control.
+
+## K. Route-Control Attribution and Arm Sensitivity
+
+**Appendix Table K1. Static geometry versus uniform-random route control.**
+
+| Setting | Full top-10 hit | Route reward | Selected-cluster hit | Test hit delta | Token saving |
+|---|---:|---:|---:|---:|---:|
+| Static nearest geometry | 0.8764 | 0.8563 | 0.8870 | +1.44 pp | 5.03% |
+| Uniform random control | 0.8842 | 0.1499 | 0.1577 | +1.04 pp | 11.92% |
+
+Dense/BM25 rescue keeps final fused hit high in both rows, while route reward
+and selected-cluster hit separate meaningful local routing from random arm
+selection. Geometry is therefore supported as a route-control signal, not a
+standalone explanation of final fused quality.
+
+**Appendix Table K2. Feedback and static route controls.**
+
+| Setting | Route reward | Selected-cluster hit | Dense rate | Test hit delta | Token saving |
+|---|---:|---:|---:|---:|---:|
+| Learned full multi-route | 0.6790 | 0.5766 | 1.0000 | -1.68 pp | 17.86% |
+| Learned gated | 0.6790 | 0.5766 | 0.7377 | -5.20 pp | 11.83% |
+| Static nearest gated | 0.8563 | 0.8870 | 0.9586 | -2.40 pp | 12.01% |
+| No-feedback gated | 0.1504 | 0.1570 | 1.0000 | -1.60 pp | 16.56% |
+
+Feedback-updated LinUCB improves route quality over no-feedback/random controls,
+but the learned gated threshold is a cost-aggressive boundary. Static geometry
+remains a strong prior, while dense fallback explains part of the fused result.
+
+**Appendix Table K3. Arm-count sensitivity.**
+
+| $K$ | Static route reward | Full test hit delta | Full token saving | Gated dense rate | Gated hit delta |
+|---:|---:|---:|---:|---:|---:|
+| 8 | 0.9128 | +1.44 pp | 6.23% | 0.4083 | -1.84 pp |
+| 16 | 0.8826 | +0.80 pp | 10.49% | 0.6089 | -1.68 pp |
+| 32 | 0.8563 | +0.56 pp | 4.68% | 0.7377 | -4.48 pp |
+| 64 | 0.8272 | +0.40 pp | 11.19% | 0.8986 | -3.76 pp |
+| 128 | 0.8479 | +1.20 pp | 10.23% | 0.9502 | -3.12 pp |
+
+Full multi-route quality is stable across the tested grid, whereas gated
+dense-saving behavior depends on arm granularity. Cross-scale correlations
+between geometry diagnostics and final quality-cost gain are mixed and
+small-sample; final behavior belongs to the complete calibrated controller.
+
+## L. Reproducibility and Reporting Guardrails
 
 The following rules apply when migrating the draft into a submission template:
 

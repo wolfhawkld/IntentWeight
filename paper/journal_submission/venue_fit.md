@@ -12,7 +12,7 @@ Official fit anchors:
   and critical application manuscripts concerning system design research.
 - The journal uses double anonymized peer review.
 
-Fit for IntentWeight:
+Fit for IntentRoute:
 
 - Strong fit as an information retrieval and RAG evidence-selection paper.
 - The strongest contribution is not a new retriever alone, but a controller
@@ -22,7 +22,7 @@ Fit for IntentWeight:
 
 Primary IP&M framing:
 
-IntentWeight is a feedback-adaptive route-and-budget controller for
+IntentRoute is a feedback-adaptive route-and-budget controller for
 quality-efficiency trade-offs in retrieval-backed evidence selection.
 
 Keep:
@@ -54,7 +54,7 @@ Official fit anchors:
 - It discourages superficial metaphor-based algorithm claims and asks authors
   to use standard terminology and explain genuine component adaptation.
 
-Fit for IntentWeight:
+Fit for IntentRoute:
 
 - Viable if framed as an intelligent-system engineering method for
   knowledge-augmented applications.
@@ -63,7 +63,7 @@ Fit for IntentWeight:
 
 Primary ESWA framing:
 
-IntentWeight is an intelligent evidence-selection controller that combines
+IntentRoute is an intelligent evidence-selection controller that combines
 standard retrieval, contextual-bandit routing, and calibrated final-context
 budgeting for retrieval-augmented applications.
 

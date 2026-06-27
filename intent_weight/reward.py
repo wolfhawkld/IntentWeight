@@ -4,7 +4,7 @@
 Reward Calculation Module (v2 with Context Reward)
 
 参考 / Reference:
-- IntentWeight 项目 calculate_rewards.py / infer_context_score()
+- IntentRoute 项目 calculate_rewards.py / infer_context_score()
 - 显式反馈 + 隐式信号 + 上下文追问分析
 """
 from typing import Dict, List, Optional

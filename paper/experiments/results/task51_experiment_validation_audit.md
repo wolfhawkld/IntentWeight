@@ -1,8 +1,8 @@
 # Task51 Experiment Validation Audit
 
 - Manifest: `paper/experiments/task51_experiment_manifest.json`
-- Total checks: 332
-- PASS: 332
+- Total checks: 763
+- PASS: 763
 - WARN: 0
 - ERROR: 0
 
@@ -29,14 +29,19 @@
 | task53_embedding_backbone_generalization_summary | PASS | 7 | 0 | 0 |
 | task54_bge_base_100k_positive_hit_context_budget | PASS | 18 | 0 | 0 |
 | task55_backbone_stability_summary | PASS | 13 | 0 | 0 |
+| task58_geometry_random_ablation | PASS | 44 | 0 | 0 |
+| task59_feedback_control_ablation | PASS | 106 | 0 | 0 |
+| task60_arm_count_sensitivity | PASS | 250 | 0 | 0 |
+| task61_geometry_to_control_analysis | PASS | 6 | 0 | 0 |
+| task62_prompt_compression_baseline | PASS | 25 | 0 | 0 |
 
 ## Category Status
 
 | category | status | pass | warn | error |
 | --- | --- | ---: | ---: | ---: |
-| dimension | PASS | 182 | 0 | 0 |
-| display | PASS | 51 | 0 | 0 |
-| statistics | PASS | 99 | 0 | 0 |
+| dimension | PASS | 401 | 0 | 0 |
+| display | PASS | 135 | 0 | 0 |
+| statistics | PASS | 227 | 0 | 0 |
 
 ## Warnings And Errors
 

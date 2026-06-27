@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Manifold-structure diagnostics for IntentWeight retrieval datasets.
+"""Manifold-structure diagnostics for IntentRoute retrieval datasets.
 
 Task 14 measures whether each dataset has exploitable local structure before
 further optimizing feedback or cost-aware routing. The diagnostics are designed

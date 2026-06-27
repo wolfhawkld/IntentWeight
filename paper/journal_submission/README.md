@@ -3,7 +3,7 @@
 Updated: 2026-06-21
 
 This directory tracks the journal-oriented submission package for the current
-IntentWeight manuscript.
+IntentRoute manuscript.
 
 ## Recommended Route
 

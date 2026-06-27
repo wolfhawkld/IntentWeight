@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-IntentWeight 数据模型
-IntentWeight Data Models
+IntentRoute 数据模型
+IntentRoute Data Models
 """
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
@@ -26,8 +26,8 @@ class ClusterInfo(BaseModel):
     doc_count: int = 0
 
 
-class IntentWeightStats(BaseModel):
-    """IntentWeight 统计信息 / IntentWeight statistics"""
+class IntentRouteStats(BaseModel):
+    """IntentRoute 统计信息 / IntentRoute statistics"""
     enabled: bool = False
     num_clusters: int = 0
     num_documents: int = 0
@@ -35,3 +35,14 @@ class IntentWeightStats(BaseModel):
     cold_start: bool = True
     linucb_alpha: float = 1.0
     arm_stats: List[Dict] = Field(default_factory=list)
+
+
+# Backward-compatible public name for existing integrations and stored schemas.
+IntentWeightStats = IntentRouteStats
+
+__all__ = [
+    "ClusterInfo",
+    "FeedbackRequest",
+    "IntentRouteStats",
+    "IntentWeightStats",
+]

@@ -17,16 +17,17 @@ does not imply universal recovery.
 
 ## 7.2 Limited Generation Evaluation
 
-The main experiments evaluate retrieval and final retrieved context tokens.
-A 60-query LLM answer-quality check shows no obvious answer-quality
-degradation from conservative context compaction, but this is not a full
-end-to-end human evaluation. The supported main claim remains evidence
-retrieval and retrieved context budget, not generated answer superiority or
-user satisfaction.
+The downstream evaluation expands to 300 frozen-test queries, seven methods,
+2,100 generated answers, and 2,100 valid LLM judgments. It finds positive
+context-token savings for matched BGE, E5, and SentMMR comparisons without a
+statistically detectable correctness change. However, one model serves as both
+generator and judge, no human ratings are collected, and the benchmark covers
+one LoTTE domain. The result supports answer-level quality preservation under
+this protocol, not generated-answer superiority or user satisfaction.
 
 ## 7.3 Dense Remains Strong
 
-Dense-only retrieval remains a strong baseline. IntentWeight should not be
+Dense-only retrieval remains a strong baseline. IntentRoute should not be
 claimed as a universal replacement for dense retrieval. The evidence supports a
 controller that can reduce final context tokens while preserving dense-level
 $\mathrm{Hit@10}$ in the main LoTTE setting, and that can expose a quality-cost
@@ -65,17 +66,18 @@ KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and
 the experiments need reproducible, scalable arms. This is not a claim that
 KMeans is the best clustering method for all RAG systems. HDBSCAN or
 graph-based clusters may perform better in some deployments, but dynamic arm
-counts complicate the current LinUCB setup.
+counts complicate the current LinUCB setup. The tested $K=8$-$128$ grid shows
+stable full multi-route quality but sensitive gated routing, so $K=32$ remains
+an engineering operating point rather than an optimum.
 
 ## 7.8 Limited Encoder and Domain Coverage
 
-The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2`. The
-paper adds a CPU-friendly encoder robustness check with
-`sentence-transformers/multi-qa-MiniLM-L6-cos-v1` and a cross-encoder reranker
-check with `cross-encoder/ms-marco-MiniLM-L-6-v2`. These checks improve
-baseline coverage, but the paper should not generalize the result to all
-stronger domain-specific encoders, rerankers, or late-interaction models
-without additional experiments.
+The paper evaluates matched MiniLM, BGE-base, and E5-base dense/IntentRoute
+backbones, plus a QA-tuned MiniLM-family check and a cross-encoder reranker.
+This establishes backbone-level robustness within the tested LoTTE setting,
+but it does not cover domain-specific encoders, late-interaction models, or
+proprietary embedding systems. The above-dense quality-first point is currently
+demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
 LoTTE technology/search is the main positive large-scale domain. LoTTE
 science/search strengthens external validity but does not replace evaluation on
@@ -83,10 +85,10 @@ additional vertical corpora.
 
 ## 7.9 Seed Count and 400k Variance
 
-The stability analysis reports three-seed confidence intervals across LoTTE
-100k-638k, and an additional robustness check extends LoTTE 100k to five seeds.
-These are useful engineering stability diagnostics, but they should not be
-over-framed as strong statistical significance proof. The LoTTE 400k
+The stability analysis uses the fixed seeds 13, 17, and 19 across the main
+LoTTE route experiments. These are engineering stability diagnostics, not a
+claim that a large seed population has been sampled. Query-level paired tests
+provide the main inferential evidence. The LoTTE 400k
 token-saving interval is notably wider than the other scales and should be
 interpreted as seed-level variance in route confidence and context-budget
 control. In the calibrated-budget experiment, the 400k frozen-test result is
@@ -100,11 +102,11 @@ claim.
 Future work should evaluate:
 
 - real user feedback with trust scoring and delayed-feedback handling;
-- larger end-to-end LLM answer-quality and citation-faithfulness studies;
+- multi-model and human-rated answer-quality and citation-faithfulness studies;
 - stronger dense encoders, rerankers, and late-interaction retrieval models;
 - graph or density-based dynamic clustering under bandit-compatible arm
   management;
-- larger seed counts and additional vertical-domain corpora;
+- repeated evaluations on additional vertical-domain corpora;
 - production policies that lower dense usage only after route confidence is
   demonstrably stable.
 - recovery policies evaluated with real delayed feedback rather than

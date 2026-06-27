@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate pdflatex-compatible IntentWeight figure assets."""
+"""Generate pdflatex-compatible IntentRoute figure assets."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import csv
 import os
 from pathlib import Path
 
-os.environ.setdefault("MPLCONFIGDIR", "/tmp/intentweight-matplotlib")
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/intentroute-matplotlib")
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
@@ -118,7 +118,7 @@ def system_diagram() -> None:
     arrow((9.25, 3.35), (9.25, 1.95))
     arrow((8.4, 1.62), (6.1, 1.02))
     arrow((5.25, 1.35), (5.15, 2.15))
-    ax.text(0.3, 4.75, "IntentWeight evidence-selection controller", fontsize=13, weight="bold")
+    ax.text(0.3, 4.75, "IntentRoute evidence-selection controller", fontsize=13, weight="bold")
     ax.text(
         0.3,
         4.5,
@@ -141,7 +141,7 @@ def token_quality() -> None:
     for domain, indices in domain_groups(rows).items():
         linestyle = "-" if domain == "technology/search" else "--"
         xs = [x_values[idx] for idx in indices]
-        axes[0].plot(xs, [policy_hit_delta[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentWeight {domain_name(domain)}")
+        axes[0].plot(xs, [policy_hit_delta[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentRoute {domain_name(domain)}")
         axes[0].plot(xs, [dense_hit_delta[idx] for idx in indices], marker="x", linestyle=linestyle, label=f"Dense trunc. {domain_name(domain)}")
     axes[0].axhline(0.0, color="#52606d", linestyle="--", linewidth=1)
     axes[0].set_ylabel("Hit@10 delta vs dense (pp)")
@@ -152,7 +152,7 @@ def token_quality() -> None:
     for domain, indices in domain_groups(rows).items():
         linestyle = "-" if domain == "technology/search" else "--"
         xs = [x_values[idx] for idx in indices]
-        axes[1].plot(xs, [policy_saving[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentWeight {domain_name(domain)}")
+        axes[1].plot(xs, [policy_saving[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentRoute {domain_name(domain)}")
         axes[1].plot(xs, [dense_saving[idx] for idx in indices], marker="x", linestyle=linestyle, label=f"Dense trunc. {domain_name(domain)}")
     axes[1].set_ylabel("Final context token saving (%)")
     set_chunk_axis(axes[1])
@@ -198,7 +198,7 @@ def geometry_to_gain() -> None:
     for row, x, y in zip(rows, retention, hit_delta):
         axes[0].annotate(row["scale"], (x, y), textcoords="offset points", xytext=(0, 6), ha="center", fontsize=7)
     axes[0].set_xlabel("ContextRetention@10")
-    axes[0].set_ylabel("IntentWeight Hit@10 delta vs dense (pp)")
+    axes[0].set_ylabel("IntentRoute Hit@10 delta vs dense (pp)")
     axes[0].grid(alpha=0.3)
 
     axes[1].scatter(retention, saving, c=colors, s=42, edgecolors="white", linewidths=0.8)

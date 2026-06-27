@@ -28,7 +28,7 @@
 
 \graphicspath{{figures/}}
 
-\title{IntentWeight: Feedback-Guided Evidence Selection under a Piecewise Relevance-Manifold Assumption}
+\title{IntentRoute: Geometry-Guided and Feedback-Adaptive Route Confidence for Efficient Evidence Selection}
 
 \author{Anonymous ACL submission}
 
@@ -46,7 +46,7 @@
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figure1_system_diagram.pdf}
-\caption{IntentWeight evidence-selection controller. Dense and BM25 remain
+\caption{IntentRoute evidence-selection controller. Dense and BM25 remain
 global recall routes; LinUCB selects cluster-local arms and contributes route
 confidence for final context-budget control.}
 \label{fig:system}
@@ -58,7 +58,7 @@ confidence for final context-budget control.}
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figure2_token_quality_frontier.pdf}
-\caption{Calibrated token-quality frontier by corpus chunk count. IntentWeight
+\caption{Calibrated token-quality frontier by corpus chunk count. IntentRoute
 reduces final LLM evidence-context input tokens while avoiding the query-level
 hit loss of dense-only adaptive truncation across LoTTE technology/search and
 science/search validation points.}

@@ -4,7 +4,7 @@
 Keyword-based Cold-start Prior for LinUCB
 
 参考 / Reference:
-- IntentWeight 项目 keyword_clustering.py (Phase 1F)
+- IntentRoute 项目 keyword_clustering.py (Phase 1F)
 - 通过 TF-IDF 关键词分析，为 LinUCB arms 计算初始权重
 """
 import numpy as np

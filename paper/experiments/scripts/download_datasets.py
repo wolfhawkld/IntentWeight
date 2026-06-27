@@ -223,7 +223,7 @@ def main():
 
     os.makedirs(RAW_DIR, exist_ok=True)
 
-    print("IntentWeight 论文实验 - 数据集下载")
+    print("IntentRoute 论文实验 - 数据集下载")
     print(f"数据保存目录: {os.path.abspath(RAW_DIR)}")
     print(f"待下载: {', '.join(datasets_to_download)}\n")
 

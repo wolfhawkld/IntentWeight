@@ -18,7 +18,7 @@ text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
 </defs>
 <rect width="100%" height="100%" fill="#ffffff" />
 <text x="40.0" y="42.0" class="title" text-anchor="start">Figure 2. Calibrated token-quality frontier by corpus chunk count</text>
-<text x="40.0" y="64.0" class="subtitle" text-anchor="start">IntentWeight saves final LLM evidence-context tokens while avoiding dense-truncation Hit@10 loss.</text>
+<text x="40.0" y="64.0" class="subtitle" text-anchor="start">IntentRoute saves final LLM evidence-context tokens while avoiding dense-truncation Hit@10 loss.</text>
 <line x1="80.0" y1="118.0" x2="80.0" y2="408.0" stroke="#9aa5b1" stroke-width="1.2" />
 <line x1="80.0" y1="408.0" x2="500.0" y2="408.0" stroke="#9aa5b1" stroke-width="1.2" />
 <text x="80.0" y="102.0" class="subtitle" text-anchor="start">Hit@10 delta vs dense (pp)</text>
@@ -59,7 +59,7 @@ text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
 <circle cx="93.1" cy="271.9" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
 <circle cx="144.6" cy="301.9" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
 <rect x="260" y="92" width="12" height="12" fill="#2f855a" />
-<text x="278.0" y="103.0" class="legend" text-anchor="start">IntentWeight budget</text>
+<text x="278.0" y="103.0" class="legend" text-anchor="start">IntentRoute budget</text>
 <rect x="410" y="92" width="12" height="12" fill="#1f5f8b" />
 <text x="428.0" y="103.0" class="legend" text-anchor="start">Dense adaptive truncation</text>
 <text x="80.0" y="444.0" class="tick" text-anchor="start">solid=technology/search; dashed=science/search</text>
@@ -113,5 +113,5 @@ text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
 <text x="642.5" y="151.9" class="tick" text-anchor="middle">22.7%</text>
 <circle cx="691.5" cy="134.9" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
 <text x="691.5" y="152.9" class="tick" text-anchor="middle">22.6%</text>
-<text x="80.0" y="468.0" class="subtitle" text-anchor="start">Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentWeight targets the safer frontier.</text>
+<text x="80.0" y="468.0" class="subtitle" text-anchor="start">Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentRoute targets the safer frontier.</text>
 </svg>

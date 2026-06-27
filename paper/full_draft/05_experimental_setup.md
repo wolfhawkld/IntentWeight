@@ -27,23 +27,28 @@ The baseline family includes:
 
 - BM25-only lexical retrieval.
 - Dense-only retrieval with `sentence-transformers/all-MiniLM-L6-v2`.
+- Matched dense and IntentRoute variants with BGE-base and E5-base embeddings.
 - BM25 + dense hybrid retrieval using reciprocal-rank fusion.
-- Full multi-route IntentWeight.
-- Gated cost-aware IntentWeight.
-- Confidence-based final context IntentWeight.
+- Full multi-route IntentRoute.
+- Gated cost-aware IntentRoute.
+- Confidence-based final context IntentRoute.
 - Dense+Sentence-MMR final-context compression.
+- Dense and IntentRoute plus SelectiveContext-lite prompt pruning.
 - Cross-encoder reranking over dense top-50 candidates.
 - Static geometry controls such as nearest-cluster routing.
 - Naive controls such as random or epsilon-greedy arm selection.
+- No-feedback and uniform-random route controls.
+- Arm-count sensitivity over $K \in \{8,16,32,64,128\}$.
 
 Dense-only retrieval is the primary quality baseline. The paper should avoid
 weak baseline framing: dense is strong and remains a required recall floor in
-the proposed method. Sentence-MMR and cross-encoder reranking are reported as
-post-retrieval strong baselines. Sentence-MMR tests whether simple
-final-context compression can explain the token saving, while the cross-encoder
-tests whether a heavier late-ranking layer can select a smaller context more
-simply. These are not mutually exclusive alternatives to IntentWeight; they
-occupy different stages in the retrieval-to-context pipeline.
+the proposed method. Sentence-MMR, SelectiveContext-lite, and cross-encoder
+reranking are reported as strong post-retrieval baselines. Sentence-MMR and
+SelectiveContext-lite test whether downstream compression can explain the token
+saving, while the cross-encoder tests whether a heavier late-ranking layer can
+select a smaller context more simply. These are not mutually exclusive
+alternatives to IntentRoute; they occupy different stages in the
+retrieval-to-context pipeline.
 
 ## 4.3 Metrics
 
@@ -109,6 +114,12 @@ Cost and efficiency are separated into three layers:
 
 The main cost result uses final context tokens. Source candidate cost and dense
 invocation rate are retrieval-stage diagnostics.
+
+The downstream evaluation additionally reports LLM-judge correctness and
+faithfulness, strict chunk-id citation support, insufficient-context rate, and
+context tokens per judged-correct answer. These metrics are secondary
+answer-level validation of the route-and-budget claim, not evidence of
+generator superiority.
 
 Let $C_t$ be the final retrieved context selected for query $q_t$ and let
 $\mathrm{tok}(d)$ be the token count of chunk $d$. The final context token cost
@@ -232,20 +243,28 @@ self-evolution analysis. They are not IID held-out generalization results.
 ## 4.6 Implementation Notes
 
 The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2` with exact
-cosine search on CPU. Embeddings and retrieval artifacts are cached to avoid
-repeating deterministic computation. Metrics are recomputed from saved
-rankings, not copied from prior summaries.
+cosine search. Matched-backbone checks use BGE-base and `intfloat/e5-base-v2`;
+E5 applies the recommended `query:` and `passage:` prefixes. Embeddings and
+retrieval artifacts are cached to avoid repeating deterministic computation.
+Metrics are recomputed from saved rankings, not copied from prior summaries.
+Historical experiment directories and machine-readable method labels retain the
+legacy `IntentWeight` identifier so that existing hashes, selectors, and result
+provenance remain reproducible; paper-facing terminology uses `IntentRoute`.
 
-KMeans/MiniBatchKMeans uses a fixed number of arms across scales. This supports
-LinUCB comparability and reproducibility, but it is not claimed to be the best
-possible clustering design.
+KMeans/MiniBatchKMeans uses 32 arms in the main scale experiments. A dedicated
+100k sensitivity check evaluates 8, 16, 32, 64, and 128 arms. This supports
+LinUCB comparability and tests engineering sensitivity, but it is not claimed
+to identify a theoretically optimal clustering design.
 
-The Sentence-MMR baseline starts from dense or IntentWeight evidence pools,
+The Sentence-MMR baseline starts from dense or IntentRoute evidence pools,
 splits selected chunks into sentence-like units, and greedily selects
 query-relevant but diverse sentences under a target token ratio or per-query
-budget. The cross-encoder baseline reranks dense top-50 candidates with
+budget. SelectiveContext-lite is a deterministic Selective Context-style proxy
+that scores sentence-like units with query overlap, IDF salience, bigram
+overlap, source rank, and compactness; it is not presented as LLMLingua. The
+cross-encoder baseline reranks dense top-50 candidates with
 `cross-encoder/ms-marco-MiniLM-L-6-v2`; it is evaluated both as a full reranked
-top-10 and as a same-budget variant constrained by the calibrated IntentWeight
+top-10 and as a same-budget variant constrained by the calibrated IntentRoute
 per-query token budgets. Reranker compute cost is not charged in final context
 tokens, so reranker results should be interpreted as retrieval-quality
 baselines rather than end-to-end latency measurements.
@@ -278,3 +297,19 @@ token savings where available, and use a 1 percentage-point non-inferiority
 margin for strict seed-level checks. This separates two claims: whether the
 method preserves retrieval quality under a conservative paired criterion, and
 whether it reduces the final evidence-context tokens sent to the generator.
+
+## 4.8 Downstream Answer-Level Protocol
+
+The answer-level evaluation draws 300 deterministic queries from the 417-query
+frozen test split. Seven methods cover MiniLM dense, BGE dense and IntentRoute,
+E5 dense and IntentRoute, and matched Dense+SentMMR versus
+IntentRoute+SentMMR. The same `deepseek-v4-flash` configuration generates one
+answer from each retrieved context and judges correctness, faithfulness,
+relevance, citation support, and insufficient-context behavior against
+reference evidence.
+
+The run contains 2,100 generated answers and 2,100 schema-valid judgments.
+Correctness differences use paired query-level bootstrap intervals and exact
+McNemar tests. The experiment uses one generator/judge model, so it supports
+answer-level cost-quality preservation rather than cross-model or human-rated
+superiority.

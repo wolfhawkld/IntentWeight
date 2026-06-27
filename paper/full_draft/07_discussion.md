@@ -2,10 +2,10 @@
 
 ## 6.1 Supported Claim
 
-IntentWeight supports a bounded but useful claim. It is a feedback-driven
-adaptive evidence-selection controller instantiated as a retrieval controller
-in the evaluated QA setting. It can control final context budget while
-preserving dense-level retrieval quality. On LoTTE technology/search,
+IntentRoute supports a bounded route-confidence-to-budget claim. It estimates
+confidence over dense, lexical, and geometry-defined local routes, adapts that
+confidence through trust-weighted feedback, and uses a frozen policy to control
+the final evidence-context budget. On LoTTE technology/search,
 calibration/test validation shows that calibration-eligible operating points at
 100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
 the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
@@ -13,13 +13,15 @@ result is positive on frozen test but remains a diagnostic follow-up point
 because it did not pass the calibration eligibility gate. A conservative
 confidence-only policy provides a stable baseline, reducing final retrieved
 context tokens by about 4.7-5.3% from 100k to 638k corpus chunks while
-preserving dense-level query hit. LoTTE science/search further supports
-ranking-side generalization, but also shows that compression strength must be
-calibrated per domain and scale.
+preserving dense-level query hit. Matched BGE/E5 experiments extend the
+quality-cost pattern beyond MiniLM, and the 300-query downstream evaluation
+finds positive context savings without a statistically detectable correctness
+change. LoTTE science/search further supports ranking-side generalization, but
+also shows that compression strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. The value of
-IntentWeight is that it learns when dense fallback is needed, when local
+IntentRoute is that it learns when dense fallback is needed, when local
 geometry is reliable, and when the final context can be safely compacted.
 
 ## 6.2 Role of Confidence-Based Context Compaction
@@ -28,8 +30,8 @@ A static combination of dense, BM25, and cluster-local retrieval can improve
 coverage, but it does not automatically reduce final context tokens. In fact,
 static dense+BM25 hybrid retrieval can use more context tokens than dense-only
 retrieval because it surfaces longer or noisier chunks. The token-saving
-mechanism is therefore not "more routes." It is confidence-based final context
-control.
+mechanism is therefore not "more routes." It is the calibrated mapping from
+route confidence to final context budget.
 
 The confidence-only policy is intentionally conservative. It compresses only
 high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is
@@ -55,12 +57,13 @@ longer chunks on average, increasing selected evidence-context tokens by about
 21.9% relative to dense top-10.
 
 This clarifies the intended system decomposition. Reranking is useful as a late
-ranking layer, while SentMMR-style sentence selection and IntentWeight-style
-budget control are final-context layers. When the cross-encoder output is
-forced under the same per-query token budgets used by IntentWeight, its
+ranking layer, SentMMR and SelectiveContext-lite are downstream prompt-context
+compression layers, and IntentRoute controls the upstream evidence pool and
+budget passed to them. When the cross-encoder output is
+forced under the same per-query token budgets used by IntentRoute, its
 $\mathrm{Hit@10}$ range does not uniformly dominate the calibrated
-IntentWeight policies. The appropriate comparison is therefore not
-"IntentWeight versus reranking" as mutually exclusive choices, but whether a
+IntentRoute policies. The appropriate comparison is therefore not
+"IntentRoute versus reranking" as mutually exclusive choices, but whether a
 pipeline can combine candidate generation, reranking, and budgeted context
 selection while keeping the quality-cost frontier explicit.
 
@@ -72,8 +75,11 @@ signal appears in route-policy metrics such as selected-cluster hit and last
 true reward.
 
 Trust weighting improves these policy metrics under controlled simulated
-feedback. This supports the idea that the system can self-improve under a
-usable feedback signal. However, the current feedback is simulated and
+feedback. Dedicated controls place the learned route reward at $0.6790$, above
+the no-feedback/random level of about $0.15$ but below the $0.8563$ static
+nearest-geometry prior. This supports feedback as adaptive route-confidence
+estimation, not as the sole source of final fused quality. However, the current
+feedback is simulated and
 ground-truth-derived. Production systems still need real feedback collection,
 trust scoring, delayed-feedback handling, and safeguards against unreliable or
 adversarial signals.
@@ -93,9 +99,17 @@ geometry provides useful routing information. However, context retention
 declines with scale, and geometry alone is not a complete retrieval model. If a
 cluster route prunes too early, correct evidence can be lost.
 
-IntentWeight therefore uses geometry as one signal in a controller. Dense
+IntentRoute therefore uses geometry as one signal in a controller. Dense
 retrieval remains a fallback, BM25 provides lexical anchors, and LinUCB learns
 route confidence over repeated interactions.
+
+The random-route control is important to this interpretation. Static geometry
+strongly improves route reward and selected-cluster hit over random routing,
+but final fused hit remains protected in both cases by dense/BM25 rescue. Mixed
+small-sample correlations between geometry diagnostics and final token-quality
+gain further show that geometry guides route construction without fully
+determining the end result. The gain belongs to the complete calibrated
+controller, not geometry in isolation.
 
 ## 6.6 Evidence Completeness Versus Usable Evidence
 
@@ -105,7 +119,7 @@ appropriate for many RAG settings where one good supporting chunk is enough to
 ground an answer. However, context compaction can reduce
 $\mathrm{EvidenceRecall@10}$, the fraction of all GT chunks retrieved.
 
-This is an expected trade-off. IntentWeight optimizes usable evidence under a
+This is an expected trade-off. IntentRoute optimizes usable evidence under a
 smaller context budget, not exhaustive evidence collection. For legal review,
 medical synthesis, or compliance workflows where complete evidence coverage is
 required, the system should use a more conservative context policy or disable

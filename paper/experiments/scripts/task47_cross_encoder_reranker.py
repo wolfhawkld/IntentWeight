@@ -4,7 +4,7 @@
 
 This diagnostic baseline starts from a dense candidate pool, reranks each
 query-chunk pair with a cross-encoder, and then evaluates both reranked top-k
-and same-budget final contexts against dense top-k and IntentWeight budget
+and same-budget final contexts against dense top-k and IntentRoute budget
 artifacts.
 """
 from __future__ import annotations
@@ -415,7 +415,7 @@ def write_markdown(
         "## Notes",
         "",
         "- The cross-encoder reranks dense candidates; it does not retrieve over the full corpus.",
-        "- Same-budget rows greedily keep reranked chunks under each target IntentWeight per-query token budget, with a one-chunk safety prefix.",
+        "- Same-budget rows greedily keep reranked chunks under each target IntentRoute per-query token budget, with a one-chunk safety prefix.",
         "- Token metrics count selected chunk text only; they do not include reranker compute or model prompt tokens.",
     ])
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -428,7 +428,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--corpus", type=Path, required=True)
     parser.add_argument("--queries", type=Path, required=True)
     parser.add_argument("--dense-candidates", required=True, help="label=path with dense top-N rankings")
-    parser.add_argument("--target-ranking", required=True, help="label=path with IntentWeight budget rankings")
+    parser.add_argument("--target-ranking", required=True, help="label=path with IntentRoute budget rankings")
     parser.add_argument("--target-include", default=None)
     parser.add_argument("--model", default=DEFAULT_CROSS_ENCODER)
     parser.add_argument("--device", default=None)

@@ -1,4 +1,4 @@
-# IntentWeight ACL-Style LaTeX Draft
+# IntentRoute ACL-Style LaTeX Draft
 
 Updated: 2026-05-31
 
