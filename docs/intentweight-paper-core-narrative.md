@@ -1,4 +1,4 @@
-# IntentWeight Paper Core Narrative
+# IntentRoute Paper Core Narrative
 
 Updated: 2026-06-17
 
@@ -6,7 +6,7 @@ Updated: 2026-06-17
 
 ## One-Sentence Thesis
 
-IntentWeight 是一个面向结构化垂类知识载体的反馈驱动证据选择控制器：它在 dense recall floor 之上结合 lexical anchor、局部几何路由和 LinUCB feedback adaptation，在保持答案可用证据召回的同时，动态控制最终送入 LLM 的 context token 成本，并为压缩导致的尾部失败提供反馈恢复路径。
+IntentRoute 是一个面向结构化垂类知识载体的反馈驱动证据选择控制器：它在 dense recall floor 之上结合 lexical anchor、局部几何路由和 LinUCB feedback adaptation，在保持答案可用证据召回的同时，动态控制最终送入 LLM 的 context token 成本，并为压缩导致的尾部失败提供反馈恢复路径。
 
 ## Core Problem
 
@@ -38,7 +38,7 @@ IntentWeight 是一个面向结构化垂类知识载体的反馈驱动证据选�
 
 ## Method Logic
 
-IntentWeight 不替代 dense retrieval，而是在 dense recall floor 上做 adaptive control。
+IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adaptive control。
 
 方法链路是：
 
@@ -79,7 +79,7 @@ IntentWeight 不替代 dense retrieval，而是在 dense recall floor 上做 ada
 
 - **Introduction**：提出证据选择的 quality-cost-control 问题，强调本文不是替代 dense，而是在 dense 之上学习何时路由、何时压缩、何时恢复。
 - **Related Work**：连接 RAG/dense/BM25/hybrid retrieval、contextual bandits、geometry-inspired retrieval、context compression 和 feedback/RLHF-inspired optimization。
-- **Method**：描述 IntentWeight 的 controller 设计，而不是把各个组件写成工程流水线。
+- **Method**：描述 IntentRoute 的 controller 设计，而不是把各个组件写成工程流水线。
 - **Experimental Setup**：明确数据集角色、metrics、prequential simulated feedback、cost layer separation。
 - **Results**：先给 calibrated token-quality frontier，再给 cross-domain、component ablation、feedback adaptation/recovery、geometry 和 boundary/robustness checks。
 - **Discussion**：解释为什么 multi-route 本身不等于省 token，真正的成本收益来自 confidence-based final context compaction 和 feedback-triggered fallback。
@@ -100,7 +100,7 @@ Use:
 
 Avoid:
 
-- IntentWeight universally beats dense；
+- IntentRoute universally beats dense；
 - LinUCB alone explains all gains；
 - KMeans is the best clustering method；
 - geometry diagnostics prove a manifold theorem；

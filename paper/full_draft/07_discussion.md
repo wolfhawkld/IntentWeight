@@ -2,10 +2,10 @@
 
 ## 6.1 Supported Claim
 
-IntentRoute supports a bounded route-confidence-to-budget claim. It estimates
+IntentRoute supports a bounded confidence-gated-route plus calibrated-budget claim. It estimates
 confidence over dense, lexical, and geometry-defined local routes, adapts that
-confidence through trust-weighted feedback, and uses a frozen policy to control
-the final evidence-context budget. On LoTTE technology/search,
+confidence through trust-weighted feedback, uses it to gate route usage, and
+applies a separately frozen final-context policy. On LoTTE technology/search,
 calibration/test validation shows that calibration-eligible operating points at
 100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
 the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
@@ -20,9 +20,9 @@ change. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
-the primary quality baseline and an important recall floor. The value of
-IntentRoute is that it learns when dense fallback is needed, when local
-geometry is reliable, and when the final context can be safely compacted.
+the primary quality baseline and an important recall floor. IntentRoute's value
+is the explicit separation of adaptive route control, dense rescue, and
+calibrated final-context compaction.
 
 ## 6.2 Role of Confidence-Based Context Compaction
 
@@ -30,8 +30,8 @@ A static combination of dense, BM25, and cluster-local retrieval can improve
 coverage, but it does not automatically reduce final context tokens. In fact,
 static dense+BM25 hybrid retrieval can use more context tokens than dense-only
 retrieval because it surfaces longer or noisier chunks. The token-saving
-mechanism is therefore not "more routes." It is the calibrated mapping from
-route confidence to final context budget.
+mechanism is therefore not "more routes." It is the calibrated budget applied
+after confidence-gated route construction.
 
 The confidence-only policy is intentionally conservative. It compresses only
 high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is
@@ -110,6 +110,17 @@ small-sample correlations between geometry diagnostics and final token-quality
 gain further show that geometry guides route construction without fully
 determining the end result. The gain belongs to the complete calibrated
 controller, not geometry in isolation.
+
+A factorial safe-compression audit holds the dense top-10 ranking, split,
+budget grid, and seeds fixed while crossing geometry versus a randomized
+partition with feedback versus no feedback. Geometry with feedback does not
+outperform random-partition feedback in held-out failure discrimination (mean
+AUROC $0.434$ versus $0.573$); at an approximately 10% saving target their
+Hit@10 difference is only $+0.08$ percentage points and every seed-level paired
+bootstrap interval includes zero. Safe-action labels are highly imbalanced
+($97.8\%$ safe), so this is boundary evidence rather than proof of inverse
+prediction. It prevents attributing the stronger 6--18% token frontier directly
+to per-query confidence precision.
 
 ## 6.6 Evidence Completeness Versus Usable Evidence
 

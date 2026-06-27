@@ -9,8 +9,9 @@ while limiting noise and language-model context cost. We study this as a
 route-confidence-to-budget problem: confidence in a multi-route evidence pool
 should determine how much context is sent to the generator. IntentRoute
 combines dense retrieval, BM25, and geometry-defined cluster-local routes,
-uses trust-weighted LinUCB feedback to update route confidence, and maps that
-confidence to a calibrated final context budget. Dense retrieval remains a
+uses trust-weighted LinUCB feedback to update route confidence, gates route
+usage with that confidence, and applies a separately calibrated final context
+budget. Dense retrieval remains a
 recall floor. A piecewise relevance-manifold hypothesis motivates the local
 route construction, but geometry is tested as a diagnostic and control signal
 rather than claimed as a standalone retrieval theory.
@@ -25,7 +26,9 @@ BGE quality-first operating point reaches +0.88 percentage points in mean
 $\mathrm{Hit@10}$ with 7.23% saving. Geometry, random-route, no-feedback, and
 arm-count controls show that local structure and feedback improve route-level
 confidence signals, while dense/BM25 rescue can mask weak routes in final fused
-quality. In a frozen 300-query downstream evaluation, BGE, E5, and
+quality. A matched selector audit does not show that learned confidence or
+geometry predicts safe per-query compression better than random controls. In a
+frozen 300-query downstream evaluation, BGE, E5, and
 SentMMR-composed IntentRoute variants reduce context by 6.00%, 12.04%, and
 6.65%, respectively, without a statistically detectable change in judged
 answer correctness. Prompt compression and reranking remain complementary
@@ -68,8 +71,8 @@ alone is not enough: a cluster route that prunes too early can miss the correct
 evidence, and dense retrieval must remain available as a recall floor.
 
 We propose IntentRoute, a feedback-adaptive route-confidence and context-budget
-controller. Its central operation is to convert confidence over a multi-route
-evidence pool into the final amount of context sent to the generator. In our
+controller. Its central operation is to use confidence to gate a multi-route
+evidence pool and then apply a calibrated final-context budget. In our
 retrieval-augmented QA implementation, the route surface includes dense
 retrieval, BM25 lexical recall, and cluster-local retrieval. A bounded
 piecewise relevance-manifold hypothesis motivates the local route construction:
@@ -77,7 +80,8 @@ fixed KMeans/MiniBatchKMeans regions form reproducible arms rather than a claim
 that geometry alone defines relevance. Trust-weighted LinUCB updates arm values
 from controlled feedback, turning user feedback into an adaptive estimate of
 which local routes can be trusted. Low route confidence keeps dense retrieval
-as a recall floor; high confidence allows a calibrated final context budget.
+as a recall floor; the final budget is calibrated separately on the resulting
+evidence rankings.
 The name IntentRoute denotes route control conditioned on query intent, local
 structure, and feedback state; it does not imply a separate intent-classification
 stage.
@@ -91,8 +95,8 @@ evidence selection.
 This design separates route construction, confidence estimation, and final
 context control. Geometry defines a structured local route prior. LinUCB and
 trust-weighted feedback adapt route confidence over repeated interactions.
-Dense and BM25 rescue paths protect final recall. The budget policy consumes
-these signals and chooses the final context size. A late reranker can improve
+Dense and BM25 rescue paths protect final recall. A separate calibration stage
+chooses the final context-budget parameters. A late reranker can improve
 candidate ordering, while a sentence or prompt compressor can remove redundant
 text after evidence selection. IntentRoute occupies the upstream
 route-confidence-to-budget layer and can be composed with those downstream
@@ -146,8 +150,8 @@ and simulated-feedback caveats.
 The contributions of this paper are:
 
 1. We formulate retrieval-backed evidence selection as a
-   route-confidence-to-budget problem and introduce a calibrated policy that
-   converts multi-route confidence into final evidence-context size while
+   confidence-gated-routing and calibrated-budget problem and introduce a
+   controller that separates route confidence from final evidence-context size while
    retaining dense retrieval as a recall floor.
 2. We operationalize local relevance structure as reproducible cluster arms
    and trust-weighted feedback as adaptive LinUCB route confidence. Geometry
@@ -169,8 +173,8 @@ The resulting claim is intentionally bounded. IntentRoute is not presented as
 a universal replacement for dense retrieval, a proof of a relevance manifold,
 or a statistically superior answer generator. It is a feedback-driven
 controller that uses local geometry to structure routes, trust-weighted LinUCB
-to adapt route confidence, and dense retrieval as a recall floor before mapping
-confidence to a final context budget. Reranking and context compression remain
+to adapt route confidence, and dense retrieval as a recall floor before a
+separately calibrated final context budget. Reranking and context compression remain
 compatible downstream layers rather than competing explanations.
 
 ---
@@ -343,10 +347,10 @@ ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be passed to a
 downstream generator. The objective is to preserve retrieval quality while
 controlling both retrieval cost and final context cost.
 
-IntentRoute treats retrieval as a route-confidence-to-budget problem. For each
-query, the system estimates how much to rely on global dense retrieval, lexical
-BM25 recall, and cluster-local retrieval, then maps the resulting confidence to
-the final context budget. Retrieval quality and final context tokens remain the
+IntentRoute separates confidence-gated routing from final-context budgeting.
+For each query, the system estimates how much to rely on global dense retrieval,
+lexical BM25 recall, and cluster-local retrieval. A separately calibrated policy
+then budgets the resulting ranked evidence. Retrieval quality and final context tokens remain the
 primary mechanism-level outcomes; a frozen 300-query generation-and-judge
 experiment evaluates whether the same trade-off reaches answer-level behavior.
 
@@ -534,24 +538,25 @@ generalization results.
 ## 3.9 Confidence-Based Final Context Compaction
 
 Preliminary token-cost analysis showed that reducing source candidates does not
-automatically reduce final context tokens. IntentRoute therefore adds an
-explicit route-confidence-to-budget policy, which is the method's central
+automatically reduce final context tokens. IntentRoute therefore combines
+confidence-gated routing with an explicit calibrated budget policy, the central
 quality-cost control interface.
 
-Let $T_t^{\mathrm{dense}}$ be the token count of dense top-10 context and let
-$z_t$ collect route agreement, selected-arm confidence and maturity, semantic
-drift, and fallback state. A policy $\pi_\phi(z_t)$ produces a token ratio
-$r_t \in (0,1]$ and minimum safe prefix $m_t$. The final context is the longest
-ranked prefix of at least $m_t$ chunks satisfying
+Let $R_t$ be the ranking produced by the confidence-gated route surface. A
+calibration policy $\pi_\phi$ selects a token ratio $r \in (0,1]$ and minimum
+prefix $m$. The final context is the longest ranked prefix of at least $m$
+chunks satisfying
 
 $$
-\mathrm{Tokens}(C_t) \le r_t T_t^{\mathrm{dense}}.
+\mathrm{Tokens}(C_t) \le r\,\mathrm{Tokens}(R_t[:10]).
 $$
 
 The policy parameters $\phi$ are selected on calibration queries subject to a
 retrieval-quality eligibility gate and then frozen before held-out test
-evaluation. Thus geometry and feedback affect confidence, but measured token
-saving arises only when the calibrated budget policy acts on that confidence.
+evaluation. Geometry and feedback affect route construction, while the stronger
+token saving arises when the separately calibrated length budget acts on the
+routed ranking. The implementation does not learn a direct per-query mapping
+from confidence to token ratio.
 
 The conservative `confidence_topk` policy works as follows:
 
@@ -570,8 +575,9 @@ retaining dense candidates as a safety net; it should not be described as
 reducing dense computation unless the global dense route is actually skipped.
 
 The main token-quality result uses frozen calibration/test budget policies that
-select a final context budget on calibration queries and evaluate it unchanged
-on held-out test queries. The conservative confidence-based policy remains a
+select global ratio/minimum-prefix parameters on calibration queries and
+evaluate them unchanged on held-out test queries. The conservative
+confidence-based policy remains a
 stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
 100k, 200k, 400k, and 638k while preserving dense-level query hit.
 
@@ -1145,10 +1151,10 @@ support rather than human-evaluation or cross-model superiority evidence.
 
 ## 6.1 Supported Claim
 
-IntentRoute supports a bounded route-confidence-to-budget claim. It estimates
+IntentRoute supports a bounded confidence-gated-route plus calibrated-budget claim. It estimates
 confidence over dense, lexical, and geometry-defined local routes, adapts that
-confidence through trust-weighted feedback, and uses a frozen policy to control
-the final evidence-context budget. On LoTTE technology/search,
+confidence through trust-weighted feedback, uses it to gate route usage, and
+applies a separately frozen final-context policy. On LoTTE technology/search,
 calibration/test validation shows that calibration-eligible operating points at
 100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
 the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
@@ -1163,9 +1169,9 @@ change. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
-the primary quality baseline and an important recall floor. The value of
-IntentRoute is that it learns when dense fallback is needed, when local
-geometry is reliable, and when the final context can be safely compacted.
+the primary quality baseline and an important recall floor. IntentRoute's value
+is the explicit separation of adaptive route control, dense rescue, and
+calibrated final-context compaction.
 
 ## 6.2 Role of Confidence-Based Context Compaction
 
@@ -1173,8 +1179,8 @@ A static combination of dense, BM25, and cluster-local retrieval can improve
 coverage, but it does not automatically reduce final context tokens. In fact,
 static dense+BM25 hybrid retrieval can use more context tokens than dense-only
 retrieval because it surfaces longer or noisier chunks. The token-saving
-mechanism is therefore not "more routes." It is the calibrated mapping from
-route confidence to final context budget.
+mechanism is therefore not "more routes." It is the calibrated budget applied
+after confidence-gated route construction.
 
 The confidence-only policy is intentionally conservative. It compresses only
 high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is
@@ -1253,6 +1259,17 @@ small-sample correlations between geometry diagnostics and final token-quality
 gain further show that geometry guides route construction without fully
 determining the end result. The gain belongs to the complete calibrated
 controller, not geometry in isolation.
+
+A factorial safe-compression audit holds the dense top-10 ranking, split,
+budget grid, and seeds fixed while crossing geometry versus a randomized
+partition with feedback versus no feedback. Geometry with feedback does not
+outperform random-partition feedback in held-out failure discrimination (mean
+AUROC $0.434$ versus $0.573$); at an approximately 10% saving target their
+Hit@10 difference is only $+0.08$ percentage points and every seed-level paired
+bootstrap interval includes zero. Safe-action labels are highly imbalanced
+($97.8\%$ safe), so this is boundary evidence rather than proof of inverse
+prediction. It prevents attributing the stronger 6--18% token frontier directly
+to per-query confidence precision.
 
 ## 6.6 Evidence Completeness Versus Usable Evidence
 
@@ -1395,6 +1412,15 @@ claim.
 
 ## 7.10 Future Work
 
+The factorial safe-compression attribution audit finds no held-out
+discrimination advantage for geometry-feedback confidence over a matched
+random-partition feedback control under a fixed dense candidate pool and
+compression action. Only about $2.2\%$ of dense-hit test queries are unsafe for
+the diagnostic action, so AUROC intervals are wide and AUPRC, Brier, and ECE are
+strongly affected by class imbalance. The current evidence supports
+confidence-gated routing and a separately calibrated budget, not a learned
+per-query confidence-to-token-ratio mapping.
+
 Future work should evaluate:
 
 - real user feedback with trust scoring and delayed-feedback handling;
@@ -1413,11 +1439,11 @@ Future work should evaluate:
 # 8. Conclusion
 
 This paper presents IntentRoute, a feedback-adaptive
-route-confidence-to-budget controller motivated by local relevance structure
+confidence-gated route and calibrated-budget controller motivated by local relevance structure
 in vertical-domain data. In the evaluated retrieval-backed QA implementation,
 geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
-policy maps confidence to the final evidence-context budget.
+separately calibrated policy controls the final evidence-context budget.
 
 The main evidence comes from LoTTE technology/search at 100k to 638k corpus
 chunks. Under calibration/test budget selection, calibration-eligible operating
@@ -1452,8 +1478,8 @@ The result is intentionally bounded. IntentRoute is not a universal dense
 replacement, a universal compressor replacement, or a universal reranker
 replacement, and it does not prove that geometry alone solves retrieval. Dense
 retrieval remains an important recall floor. The contribution is a calibrated
-controller that turns geometry- and feedback-informed route confidence into a
-final context budget, trading compact context against retrieval risk while
+controller that combines geometry- and feedback-informed route control with a
+separately calibrated final context budget, trading compact context against retrieval risk while
 remaining compatible with late reranking and prompt compression. The manifold
 hypothesis remains the motivation for local route structure, not a
 theorem-level claim.

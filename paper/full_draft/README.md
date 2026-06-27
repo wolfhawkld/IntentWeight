@@ -43,6 +43,8 @@ draft. The most important internal evidence groups are:
 - strong post-retrieval baselines: Dense+Sentence-MMR, compressor-normalized
   SentMMR, SelectiveContext-lite, and cross-encoder reranking;
 - 300-query downstream answer-level evaluation.
+- fixed-dense-pool factorial safe-compression attribution separating route
+  confidence from the calibrated length budget.
 
 ## Claim Boundary
 

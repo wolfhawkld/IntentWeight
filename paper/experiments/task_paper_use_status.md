@@ -61,6 +61,8 @@ accidentally promoted into paper-facing claims.
 | `task63_downstream_llm_evaluation_summary.md` | Supporting/downstream evidence | Frozen 300-query, 2,100-answer evaluation; use for lower-context answer-quality support without claiming significant correctness improvement. |
 | `task64_manuscript_claim_reframe_summary.md` | Supporting writing revision | Centers the manuscript on route-confidence-to-budget control while retaining bounded geometry and feedback roles. |
 | `task65_table_figure_refresh_summary.md` | Supporting writing revision | Defines the five-table, three-figure main display set and journal-facing evidence hierarchy. |
+| `task65_1_safe_compression_attribution_summary.md` | Boundary/mechanism evidence | Matched selector audit showing that learned confidence and geometry do not currently outperform random controls for per-query safe-compression discrimination; use to separate confidence-gated routing from the calibrated length budget. |
+| `task65_2_factorial_safe_compression_summary.md` | Boundary/mechanism evidence | Fixed-dense-pool geometry/random-partition by feedback/no-feedback audit; confirms strong route-quality differences but no stable per-query safe-compression identification advantage. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |

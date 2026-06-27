@@ -54,6 +54,8 @@ ROUTING_MODES = (
     "static_nearest_ensemble",
     "static_nearest_gated",
     "uniform_random_ensemble",
+    "random_partition_feedback_ensemble",
+    "random_partition_static_ensemble",
     "epsilon_greedy_ensemble",
 )
 REWARD_ATTRIBUTIONS = (
@@ -312,7 +314,13 @@ def decide_route(
             confidence,
             semantic_drift,
         )
-    if routing_mode in {"static_nearest_ensemble", "uniform_random_ensemble", "epsilon_greedy_ensemble"}:
+    if routing_mode in {
+        "static_nearest_ensemble",
+        "uniform_random_ensemble",
+        "random_partition_feedback_ensemble",
+        "random_partition_static_ensemble",
+        "epsilon_greedy_ensemble",
+    }:
         return RoutingDecision(
             routing_mode,
             routing_mode,
@@ -524,6 +532,10 @@ def run_prequential_seed(
         arm_labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
         n_effective_arms = int(np.max(arm_labels)) + 1
         centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
+    if routing_mode in {"random_partition_feedback_ensemble", "random_partition_static_ensemble"}:
+        partition_rng = np.random.default_rng(65020 + int(seed))
+        arm_labels = partition_rng.permutation(arm_labels)
+        centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
     policy = global_linucb.GlobalLinUCBPolicy(
         n_arms=n_effective_arms,
         context_dim=query_context.shape[1],
@@ -532,7 +544,11 @@ def run_prequential_seed(
         alpha_min=alpha_min,
         seed=seed,
     )
-    linucb_learning_enabled = routing_mode in {"full_multi_route", "gated_cost_aware"}
+    linucb_learning_enabled = routing_mode in {
+        "full_multi_route",
+        "gated_cost_aware",
+        "random_partition_feedback_ensemble",
+    }
     simple_bandit_enabled = routing_mode == "epsilon_greedy_ensemble"
     simple_reward_sums = np.zeros(n_effective_arms, dtype=np.float64)
     simple_pull_counts = np.zeros(n_effective_arms, dtype=np.float64)
@@ -550,6 +566,7 @@ def run_prequential_seed(
         bm25 = bm25_baseline.SparseBM25(tokenized_corpus)
 
     rankings: Dict[str, List[str]] = {}
+    query_traces: Dict[str, Dict[str, object]] = {}
     feedback_contexts: List[np.ndarray] = []
     feedback_arm_rewards: List[Dict[int, float]] = []
     total_update_weight = 0.0
@@ -582,6 +599,8 @@ def run_prequential_seed(
         "full_multi_route": 0,
         "static_nearest_ensemble": 0,
         "uniform_random_ensemble": 0,
+        "random_partition_feedback_ensemble": 0,
+        "random_partition_static_ensemble": 0,
         "epsilon_greedy_ensemble": 0,
         "full_dense_fallback": 0,
         "hybrid_lite": 0,
@@ -591,6 +610,8 @@ def run_prequential_seed(
         "full_multi_route": 0,
         "static_nearest_ensemble": 0,
         "uniform_random_ensemble": 0,
+        "random_partition_feedback_ensemble": 0,
+        "random_partition_static_ensemble": 0,
         "epsilon_greedy_ensemble": 0,
         "linucb_primary_ready": 0,
         "hybrid_lite_ready": 0,
@@ -642,7 +663,11 @@ def run_prequential_seed(
                         boosts,
                         confidence_feedback_floor=confidence_feedback_floor,
                     )
-            elif routing_mode in {"static_nearest_ensemble", "static_nearest_gated"}:
+            elif routing_mode in {
+                "static_nearest_ensemble",
+                "static_nearest_gated",
+                "random_partition_static_ensemble",
+            }:
                 selected_arms = nearest_centroid_arms(context, centroids, candidate_arms)
                 confidence = 0.0
             elif routing_mode == "uniform_random_ensemble":
@@ -661,7 +686,7 @@ def run_prequential_seed(
             else:
                 raise ValueError(f"Unsupported routing_mode: {routing_mode}")
             semantic_drift = selected_semantic_drift(context, centroids, selected_arms)
-            if routing_mode == "static_nearest_gated":
+            if routing_mode in {"static_nearest_gated", "random_partition_static_ensemble"}:
                 confidence = centroid_similarity_confidence(context, centroids, selected_arms)
             recent_reward_delta = _recent_window_delta(observed_rewards, window_size)
             decision = decide_route(
@@ -819,6 +844,22 @@ def run_prequential_seed(
             interaction_final_true = max(selected_final_true_rewards) if selected_final_true_rewards else 0.0
             interaction_route_true = max(selected_route_true_rewards) if selected_route_true_rewards else 0.0
             interaction_observed = max(selected_observed_rewards) if selected_observed_rewards else 0.0
+            if epoch == epochs - 1:
+                query_traces[qid] = {
+                    "epoch": epoch + 1,
+                    "confidence": float(confidence),
+                    "semantic_drift": float(semantic_drift),
+                    "route": decision.route,
+                    "route_reason": decision.route_reason,
+                    "dense_queried": bool(decision.dense_depth > 0),
+                    "selected_arms": [int(arm) for arm in selected_arms],
+                    "selected_cluster_hit": float(selected_cluster_hit),
+                    "final_hit": int(final_hit),
+                    "final_context_k": int(final_context_decision.final_k),
+                    "route_true_reward": float(interaction_route_true),
+                    "final_true_reward": float(interaction_final_true),
+                    "source_candidate_cost": float(interaction_cost),
+                }
             true_rewards.append(float(interaction_true))
             final_true_rewards.append(float(interaction_final_true))
             route_true_rewards.append(float(interaction_route_true))
@@ -904,12 +945,24 @@ def run_prequential_seed(
         "full_multi_route_rate": route_counts["full_multi_route"] / num_interactions,
         "static_nearest_ensemble_rate": route_counts["static_nearest_ensemble"] / num_interactions,
         "uniform_random_ensemble_rate": route_counts["uniform_random_ensemble"] / num_interactions,
+        "random_partition_feedback_ensemble_rate": (
+            route_counts["random_partition_feedback_ensemble"] / num_interactions
+        ),
+        "random_partition_static_ensemble_rate": (
+            route_counts["random_partition_static_ensemble"] / num_interactions
+        ),
         "epsilon_greedy_ensemble_rate": route_counts["epsilon_greedy_ensemble"] / num_interactions,
         "full_dense_fallback_rate": route_counts["full_dense_fallback"] / num_interactions,
         "hybrid_lite_rate": route_counts["hybrid_lite"] / num_interactions,
         "linucb_primary_rate": route_counts["linucb_primary"] / num_interactions,
         "static_nearest_ensemble_reason_rate": route_reason_counts["static_nearest_ensemble"] / num_interactions,
         "uniform_random_ensemble_reason_rate": route_reason_counts["uniform_random_ensemble"] / num_interactions,
+        "random_partition_feedback_ensemble_reason_rate": (
+            route_reason_counts["random_partition_feedback_ensemble"] / num_interactions
+        ),
+        "random_partition_static_ensemble_reason_rate": (
+            route_reason_counts["random_partition_static_ensemble"] / num_interactions
+        ),
         "epsilon_greedy_ensemble_reason_rate": route_reason_counts["epsilon_greedy_ensemble"] / num_interactions,
         "fallback_low_confidence_rate": route_reason_counts["fallback_low_confidence"] / num_interactions,
         "fallback_high_drift_rate": route_reason_counts["fallback_high_drift"] / num_interactions,
@@ -946,7 +999,7 @@ def run_prequential_seed(
         "propagated_updates": int(propagated_updates),
         "epoch_metrics": epoch_rows,
     })
-    return {"rankings": rankings, "metrics": metrics}
+    return {"rankings": rankings, "metrics": metrics, "query_traces": query_traces}
 
 
 def aggregate_seed_metrics(seed_metrics: Sequence[Mapping]) -> Dict[str, object]:
@@ -1026,6 +1079,7 @@ def run_dataset(
     scale_store_canonical_name: str = "lotte_technology_search",
     query_prefix: str = "",
     corpus_prefix: str = "",
+    write_query_traces: bool = False,
 ) -> List[Dict[str, object]]:
     if reward_attribution not in REWARD_ATTRIBUTIONS:
         raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
@@ -1161,6 +1215,7 @@ def run_dataset(
 
     rows: List[Dict[str, object]] = []
     all_rankings: Dict[str, Dict[str, Dict[str, List[str]]]] = {}
+    all_query_traces: Dict[str, Dict[str, Dict[str, Dict[str, object]]]] = {}
     for routing_mode in routing_modes:
         seed_results = []
         for seed in seeds:
@@ -1240,7 +1295,12 @@ def run_dataset(
             "final_context_policy": final_context_policy,
             "feedback_source": (
                 "simulated_feedback_recorded_no_policy_update"
-                if routing_mode in {"static_nearest_ensemble", "static_nearest_gated", "uniform_random_ensemble"}
+                if routing_mode in {
+                    "static_nearest_ensemble",
+                    "static_nearest_gated",
+                    "uniform_random_ensemble",
+                    "random_partition_static_ensemble",
+                }
                 else "trust_weighted_simulated_user_feedback"
             ),
             "online_learning_scope": (
@@ -1248,6 +1308,12 @@ def run_dataset(
                     "static_nearest_ensemble": "static_nearest_centroid_multiroute_no_policy_update",
                     "static_nearest_gated": "static_nearest_centroid_cost_gated_no_policy_update",
                     "uniform_random_ensemble": "uniform_random_multiroute_no_policy_update",
+                    "random_partition_feedback_ensemble": (
+                        "randomized_partition_with_contextual_feedback_policy"
+                    ),
+                    "random_partition_static_ensemble": (
+                        "randomized_partition_nearest_centroid_no_policy_update"
+                    ),
                     "epsilon_greedy_ensemble": "non_contextual_epsilon_greedy_multiroute",
                 }.get(routing_mode, "confidence_gated_cost_aware_routing")
             ),
@@ -1344,12 +1410,23 @@ def run_dataset(
             str(result["metrics"]["seed"]): result["rankings"]
             for result in seed_results
         }
+        if write_query_traces:
+            all_query_traces[routing_mode] = {
+                str(result["metrics"]["seed"]): result["query_traces"]
+                for result in seed_results
+            }
 
     output_dir.mkdir(parents=True, exist_ok=True)
     metrics_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_metrics.json"
     rankings_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_rankings.json"
     metrics_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     rankings_path.write_text(json.dumps(all_rankings, ensure_ascii=False), encoding="utf-8")
+    if write_query_traces:
+        traces_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_traces.json"
+        traces_path.write_text(
+            json.dumps(all_query_traces, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
     return rows
 
 
@@ -1506,6 +1583,8 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "dense_saved_rate_mean",
         "static_nearest_ensemble_rate_mean",
         "uniform_random_ensemble_rate_mean",
+        "random_partition_feedback_ensemble_rate_mean",
+        "random_partition_static_ensemble_rate_mean",
         "epsilon_greedy_ensemble_rate_mean",
         "linucb_primary_rate_mean",
         "hybrid_lite_rate_mean",
@@ -1545,6 +1624,8 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
         "- `static_nearest_ensemble` uses the same dense/BM25/cluster fusion surface but selects cluster arms by nearest centroid and applies no feedback policy update.",
         "- `static_nearest_gated` uses nearest-centroid arm selection plus the same cost-aware route shapes, with centroid similarity as a non-learned confidence proxy.",
         "- `uniform_random_ensemble` and `epsilon_greedy_ensemble` are non-contextual arm-selection baselines over the same multi-route retrieval surface.",
+        "- `random_partition_feedback_ensemble` preserves the contextual LinUCB feedback estimator but shuffles geometry-derived cluster membership before learning.",
+        "- `random_partition_static_ensemble` applies nearest-centroid selection to the same shuffled partition without policy updates.",
         "- `gated_cost_aware` shifts to LinUCB-primary or hybrid-lite routes when confidence is high and semantic drift is low; otherwise it uses full dense fallback.",
         "- `reward_attribution=cluster_only` updates LinUCB from the selected cluster route alone, separating policy credit from dense/BM25 rescue hits.",
         "- `confidence_mode=route_quality` gates from historical cluster-route reward instead of the LinUCB value estimate.",
@@ -1637,6 +1718,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         choices=sorted(experiment_guardrails.CORPUS_SAMPLING_STRATEGIES),
     )
     parser.add_argument("--sampling-seed", type=int, default=13)
+    parser.add_argument(
+        "--write-query-traces",
+        action="store_true",
+        help="Write final-epoch per-query confidence and route traces for attribution audits.",
+    )
     args = parser.parse_args(argv)
 
     datasets = parse_datasets(args.dataset)
@@ -1720,6 +1806,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             scale_store_canonical_name=args.scale_store_canonical_name,
             query_prefix=args.query_prefix,
             corpus_prefix=args.corpus_prefix,
+            write_query_traces=args.write_query_traces,
         )
         all_rows.extend(rows)
         for row in rows:

@@ -1662,6 +1662,22 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     收敛为 5 张主表和 3 幅主图，完整 cross-domain、recovery、compressor、
     reranker 和 control 明细保留于附录；ACL-style 工作 PDF 从 30 页降至
     28 页且 PDF audit 通过。
+32. safe-compression attribution：Task65.1 已完成，详见
+    `paper/experiments/task65_1_safe_compression_attribution_summary.md`。该项
+    精确复现 Task37 100k 配置并导出逐 query trace，在固定上游排序下比较
+    learned confidence、geometry similarity、shuffled/random selector 与
+    budget-only。结果未证明 confidence 或 geometry 能优于随机信号预测逐
+    query 安全压缩；当前较强 `6-18%` frontier 应归因于 confidence-gated
+    evidence pool 与独立校准长度预算的组合。该结果收紧机制归因，但不否定
+    geometry/LinUCB 在 route-control 和 dense fallback 决策中的作用。
+33. factorial safe-compression attribution：Task65.2 已完成，详见
+    `paper/experiments/task65_2_factorial_safe_compression_summary.md`。该项在
+    完全固定的 dense top-10 candidate pool、Task38 split、budget grid 和
+    seeds 下，完成 geometry/random-partition × feedback/no-feedback 2×2
+    对照并加入 dense budget-only。结果显示 geometry 对 route reward 的作用
+    明显，但 geometry+feedback 相比 random-partition+feedback 在约 `10%`
+    saving 下仅有 `+0.08pp` Hit 差，三个 seed 的 paired bootstrap CI 均跨
+    0；固定动作 AUROC 也未显示 geometry/feedback 的稳定安全压缩识别优势。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1679,7 +1695,8 @@ random ablation、第 25 项 Task59 feedback-control ablation、第 26 项
 Task60 arm-count sensitivity、第 27 项 Task61 geometry-to-control analysis
 和第 28 项 Task62 prompt-compression baseline、第 29 项 Task63 downstream
 answer-level evaluation、第 30 项 Task64 manuscript claim reframe 及第 31 项
-Task65 table and figure refresh 均已完成。
+Task65 table and figure refresh、第 32 项 Task65.1 safe-compression
+attribution、第 33 项 Task65.2 factorial safe-compression attribution 均已完成。
 
 ---
 

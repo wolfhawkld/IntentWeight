@@ -31,8 +31,8 @@ alone is not enough: a cluster route that prunes too early can miss the correct
 evidence, and dense retrieval must remain available as a recall floor.
 
 We propose IntentRoute, a feedback-adaptive route-confidence and context-budget
-controller. Its central operation is to convert confidence over a multi-route
-evidence pool into the final amount of context sent to the generator. In our
+controller. Its central operation is to use confidence to gate a multi-route
+evidence pool and then apply a calibrated final-context budget. In our
 retrieval-augmented QA implementation, the route surface includes dense
 retrieval, BM25 lexical recall, and cluster-local retrieval. A bounded
 piecewise relevance-manifold hypothesis motivates the local route construction:
@@ -40,7 +40,8 @@ fixed KMeans/MiniBatchKMeans regions form reproducible arms rather than a claim
 that geometry alone defines relevance. Trust-weighted LinUCB updates arm values
 from controlled feedback, turning user feedback into an adaptive estimate of
 which local routes can be trusted. Low route confidence keeps dense retrieval
-as a recall floor; high confidence allows a calibrated final context budget.
+as a recall floor; the final budget is calibrated separately on the resulting
+evidence rankings.
 The name IntentRoute denotes route control conditioned on query intent, local
 structure, and feedback state; it does not imply a separate intent-classification
 stage.
@@ -54,8 +55,8 @@ evidence selection.
 This design separates route construction, confidence estimation, and final
 context control. Geometry defines a structured local route prior. LinUCB and
 trust-weighted feedback adapt route confidence over repeated interactions.
-Dense and BM25 rescue paths protect final recall. The budget policy consumes
-these signals and chooses the final context size. A late reranker can improve
+Dense and BM25 rescue paths protect final recall. A separate calibration stage
+chooses the final context-budget parameters. A late reranker can improve
 candidate ordering, while a sentence or prompt compressor can remove redundant
 text after evidence selection. IntentRoute occupies the upstream
 route-confidence-to-budget layer and can be composed with those downstream
@@ -109,8 +110,8 @@ and simulated-feedback caveats.
 The contributions of this paper are:
 
 1. We formulate retrieval-backed evidence selection as a
-   route-confidence-to-budget problem and introduce a calibrated policy that
-   converts multi-route confidence into final evidence-context size while
+   confidence-gated-routing and calibrated-budget problem and introduce a
+   controller that separates route confidence from final evidence-context size while
    retaining dense retrieval as a recall floor.
 2. We operationalize local relevance structure as reproducible cluster arms
    and trust-weighted feedback as adaptive LinUCB route confidence. Geometry
@@ -132,6 +133,6 @@ The resulting claim is intentionally bounded. IntentRoute is not presented as
 a universal replacement for dense retrieval, a proof of a relevance manifold,
 or a statistically superior answer generator. It is a feedback-driven
 controller that uses local geometry to structure routes, trust-weighted LinUCB
-to adapt route confidence, and dense retrieval as a recall floor before mapping
-confidence to a final context budget. Reranking and context compression remain
+to adapt route confidence, and dense retrieval as a recall floor before a
+separately calibrated final context budget. Reranking and context compression remain
 compatible downstream layers rather than competing explanations.

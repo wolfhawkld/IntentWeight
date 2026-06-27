@@ -1,11 +1,11 @@
 # 8. Conclusion
 
 This paper presents IntentRoute, a feedback-adaptive
-route-confidence-to-budget controller motivated by local relevance structure
+confidence-gated route and calibrated-budget controller motivated by local relevance structure
 in vertical-domain data. In the evaluated retrieval-backed QA implementation,
 geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
-policy maps confidence to the final evidence-context budget.
+separately calibrated policy controls the final evidence-context budget.
 
 The main evidence comes from LoTTE technology/search at 100k to 638k corpus
 chunks. Under calibration/test budget selection, calibration-eligible operating
@@ -40,8 +40,8 @@ The result is intentionally bounded. IntentRoute is not a universal dense
 replacement, a universal compressor replacement, or a universal reranker
 replacement, and it does not prove that geometry alone solves retrieval. Dense
 retrieval remains an important recall floor. The contribution is a calibrated
-controller that turns geometry- and feedback-informed route confidence into a
-final context budget, trading compact context against retrieval risk while
+controller that combines geometry- and feedback-informed route control with a
+separately calibrated final context budget, trading compact context against retrieval risk while
 remaining compatible with late reranking and prompt compression. The manifold
 hypothesis remains the motivation for local route structure, not a
 theorem-level claim.

@@ -99,6 +99,15 @@ claim.
 
 ## 7.10 Future Work
 
+The factorial safe-compression attribution audit finds no held-out
+discrimination advantage for geometry-feedback confidence over a matched
+random-partition feedback control under a fixed dense candidate pool and
+compression action. Only about $2.2\%$ of dense-hit test queries are unsafe for
+the diagnostic action, so AUROC intervals are wide and AUPRC, Brier, and ECE are
+strongly affected by class imbalance. The current evidence supports
+confidence-gated routing and a separately calibrated budget, not a learned
+per-query confidence-to-token-ratio mapping.
+
 Future work should evaluate:
 
 - real user feedback with trust scoring and delayed-feedback handling;

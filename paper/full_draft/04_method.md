@@ -9,10 +9,10 @@ ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be passed to a
 downstream generator. The objective is to preserve retrieval quality while
 controlling both retrieval cost and final context cost.
 
-IntentRoute treats retrieval as a route-confidence-to-budget problem. For each
-query, the system estimates how much to rely on global dense retrieval, lexical
-BM25 recall, and cluster-local retrieval, then maps the resulting confidence to
-the final context budget. Retrieval quality and final context tokens remain the
+IntentRoute separates confidence-gated routing from final-context budgeting.
+For each query, the system estimates how much to rely on global dense retrieval,
+lexical BM25 recall, and cluster-local retrieval. A separately calibrated policy
+then budgets the resulting ranked evidence. Retrieval quality and final context tokens remain the
 primary mechanism-level outcomes; a frozen 300-query generation-and-judge
 experiment evaluates whether the same trade-off reaches answer-level behavior.
 
@@ -200,24 +200,25 @@ generalization results.
 ## 3.9 Confidence-Based Final Context Compaction
 
 Preliminary token-cost analysis showed that reducing source candidates does not
-automatically reduce final context tokens. IntentRoute therefore adds an
-explicit route-confidence-to-budget policy, which is the method's central
+automatically reduce final context tokens. IntentRoute therefore combines
+confidence-gated routing with an explicit calibrated budget policy, the central
 quality-cost control interface.
 
-Let $T_t^{\mathrm{dense}}$ be the token count of dense top-10 context and let
-$z_t$ collect route agreement, selected-arm confidence and maturity, semantic
-drift, and fallback state. A policy $\pi_\phi(z_t)$ produces a token ratio
-$r_t \in (0,1]$ and minimum safe prefix $m_t$. The final context is the longest
-ranked prefix of at least $m_t$ chunks satisfying
+Let $R_t$ be the ranking produced by the confidence-gated route surface. A
+calibration policy $\pi_\phi$ selects a token ratio $r \in (0,1]$ and minimum
+prefix $m$. The final context is the longest ranked prefix of at least $m$
+chunks satisfying
 
 $$
-\mathrm{Tokens}(C_t) \le r_t T_t^{\mathrm{dense}}.
+\mathrm{Tokens}(C_t) \le r\,\mathrm{Tokens}(R_t[:10]).
 $$
 
 The policy parameters $\phi$ are selected on calibration queries subject to a
 retrieval-quality eligibility gate and then frozen before held-out test
-evaluation. Thus geometry and feedback affect confidence, but measured token
-saving arises only when the calibrated budget policy acts on that confidence.
+evaluation. Geometry and feedback affect route construction, while the stronger
+token saving arises when the separately calibrated length budget acts on the
+routed ranking. The implementation does not learn a direct per-query mapping
+from confidence to token ratio.
 
 The conservative `confidence_topk` policy works as follows:
 
@@ -236,8 +237,9 @@ retaining dense candidates as a safety net; it should not be described as
 reducing dense computation unless the global dense route is actually skipped.
 
 The main token-quality result uses frozen calibration/test budget policies that
-select a final context budget on calibration queries and evaluate it unchanged
-on held-out test queries. The conservative confidence-based policy remains a
+select global ratio/minimum-prefix parameters on calibration queries and
+evaluate them unchanged on held-out test queries. The conservative
+confidence-based policy remains a
 stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
 100k, 200k, 400k, and 638k while preserving dense-level query hit.
 
