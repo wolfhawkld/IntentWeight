@@ -125,7 +125,7 @@ black-box language model can be paired with a tuneable retrieval model
 IntentRoute operates earlier in the pipeline. It selects evidence routes and
 sets final-context budgets before generation rather than compressing tokens
 inside already selected passages or tuning a retriever against language-model
-likelihood. Its confidence-based context policy is therefore compatible with
+likelihood. Its route-control and final-budget policies are therefore compatible with
 prompt compression, sentence-level MMR selection, reranking, and black-box
 generation methods. The strong-baseline experiments in this paper use this
 decomposition explicitly: SentMMR is treated as a shared final-context

@@ -18,7 +18,7 @@ text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
 </defs>
 <rect width="100%" height="100%" fill="#ffffff" />
 <text x="40.0" y="42.0" class="title" text-anchor="start">Figure 1. IntentRoute evidence-selection controller</text>
-<text x="40.0" y="64.0" class="subtitle" text-anchor="start">Dense/BM25 are global recall routes; LinUCB selects cluster-local arms and budget confidence.</text>
+<text x="40.0" y="64.0" class="subtitle" text-anchor="start">Confidence gates route usage; calibration independently sets the final context budget.</text>
 <rect x="40" y="120" width="150" height="88" rx="8" fill="#e8f4fd" stroke="#1f5f8b" stroke-width="1.5" />
 <text x="54.0" y="147.0" class="box-title" text-anchor="start">Query</text>
 <text x="54.0" y="170.0" class="box-text" text-anchor="start">user/session</text>
@@ -48,7 +48,7 @@ text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
 <rect x="905" y="130" width="175" height="76" rx="8" fill="#eefcf6" stroke="#2f855a" stroke-width="1.5" />
 <text x="919.0" y="157.0" class="box-title" text-anchor="start">Context budget</text>
 <text x="919.0" y="180.0" class="box-text" text-anchor="start">LLM input context</text>
-<text x="919.0" y="197.0" class="box-text" text-anchor="start">compact if safe</text>
+<text x="919.0" y="197.0" class="box-text" text-anchor="start">calibration/test policy</text>
 <rect x="905" y="300" width="175" height="76" rx="8" fill="#e8f4fd" stroke="#1f5f8b" stroke-width="1.5" />
 <text x="919.0" y="327.0" class="box-title" text-anchor="start">Generator / agent</text>
 <text x="919.0" y="350.0" class="box-text" text-anchor="start">answer from selected</text>
@@ -66,7 +66,7 @@ text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
 <line x1="630" y1="183" x2="690" y2="168" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />
 <line x1="865" y1="266" x2="735" y2="206" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />
 <line x1="865" y1="168" x2="905" y2="168" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />
-<line x1="630" y1="266" x2="905" y2="206" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />
+<line x1="630" y1="266" x2="690" y2="190" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />
 <line x1="992" y1="206" x2="992" y2="300" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />
 <line x1="905" y1="338" x2="645" y2="388" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />
 <line x1="550" y1="350" x2="550" y2="302" stroke="#425466" stroke-width="1.8" marker-end="url(#arrow)" />

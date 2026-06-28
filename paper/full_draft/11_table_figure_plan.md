@@ -1,8 +1,8 @@
 # Table and Figure Placement Plan
 
-Updated: 2026-06-27 (Task65)
+Updated: 2026-06-28 (Task65.5)
 
-This plan aligns the displays with the revised route-confidence-to-budget
+This plan aligns the displays with the revised route-control and calibrated-budget
 claim. It introduces no new experiment or claim. The journal-facing main text
 uses five tables and three figures; detailed seed, recovery, compressor, and
 boundary-case results remain in the appendix.
@@ -44,7 +44,7 @@ faithfulness and citation-support metrics remain in Appendix F.
 ### Figure 1: IntentRoute System Diagram
 
 Shows global dense/BM25 recall, cluster-local LinUCB routing, rank fusion,
-confidence-based context budgeting, and trust-weighted feedback.
+separately calibrated context budgeting, and trust-weighted feedback.
 
 ### Figure 2: Calibrated Token-Quality Frontier
 
@@ -59,7 +59,8 @@ theorem-level manifold proof.
 
 ## Appendix Placement
 
-- Appendix A/G: seed stability and complete frozen-policy validation;
+- Appendix A/G: seed stability, independent Dense calibration, complete
+  frozen-policy validation, and calibration-split sensitivity;
 - Appendix D/E: boundary datasets and encoder details;
 - Appendix F: complete downstream answer, faithfulness, and citation results;
 - Appendix H/I: cross-domain and feedback-recovery details;

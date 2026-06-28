@@ -29,7 +29,7 @@ The baseline family includes:
 \item BM25 + dense hybrid retrieval using reciprocal-rank fusion.
 \item Full multi-route IntentRoute.
 \item Gated cost-aware IntentRoute.
-\item Confidence-based final context IntentRoute.
+\item Conservative confidence-conditioned final-context baseline.
 \item Dense+Sentence-MMR final-context compression.
 \item Dense and IntentRoute plus SelectiveContext-lite prompt pruning.
 \item Cross-encoder reranking over dense top-50 candidates.
@@ -216,6 +216,8 @@ A budget policy name has the form \nolinkurl{token_budget_rX_mY}. Here, \nolinku
 Calibration eligibility is defined using the mean calibration $\mathrm{Hit@10}$ delta against dense top-10. The main calibration selection uses a zero observed-hit-drop margin: a policy is eligible only when its mean calibration hit delta is non-negative. Among eligible policies, the selected policy is the one with the largest final-context token saving. If no policy is eligible, the best diagnostic policy is still reported, but it is not treated as a strict calibration-eligible main operating point.
 
 Frozen test results are paired by query against dense top-10. We report bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context token savings where available, and use a 1 percentage-point non-inferiority margin for strict seed-level checks. This separates two claims: whether the method preserves retrieval quality under a conservative paired criterion, and whether it reduces the final evidence-context tokens sent to the generator.
+
+Two additional audits test selection robustness. First, Dense and IntentRoute independently select actions on the same 100k calibration split over a fine ratio grid from 1.00 to 0.80 in 0.01 increments, so the comparison does not force Dense to inherit the routed policy's nominal action. Second, the original calibration grid is repeated over 20 deterministic 30/70 query partitions at each scale. These overlapping partitions diagnose split sensitivity; they are not treated as additional training seeds or independent inferential samples.
 
 \subsection{Downstream Answer-Level Protocol}
 \label{sec:05-experimental-setup:downstream-answer-level-protocol}

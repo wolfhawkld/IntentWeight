@@ -1,0 +1,5 @@
+analysis_role,dense_interpolated_hit_delta_pp,intentroute_interpolated_hit_delta_pp,intentroute_minus_dense_hit_pp,target_test_saving_pct
+post_hoc_frontier_diagnostic,-0.39359059316941714,0.07965838431469474,0.4732489774841119,5.0
+post_hoc_frontier_diagnostic,-0.7871811863388343,-0.7488748085663557,0.038306377772478584,10.0
+post_hoc_frontier_diagnostic,-1.205725008403336,-0.9905191065330339,0.21520590187030209,15.0
+post_hoc_frontier_diagnostic,-1.5383354921269117,-1.5456703609563605,-0.007334868829448782,20.0

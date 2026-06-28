@@ -1,6 +1,6 @@
 # Draft Figure Assets
 
-Updated: 2026-06-27
+Updated: 2026-06-28
 
 These assets are draft paper figures generated from existing experiment
 artifacts. They are intended for writing and review, not as final camera-ready

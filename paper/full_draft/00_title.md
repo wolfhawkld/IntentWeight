@@ -16,8 +16,9 @@ IntentRoute for Adaptive Evidence Selection
 
 ## One-Sentence Thesis
 
-IntentRoute converts confidence over dense, lexical, and geometry-defined
-cluster routes into a calibrated final evidence-context budget, while
-trust-weighted feedback updates route confidence and dense retrieval remains a
-recall floor. The measured outcome is a quality-efficiency trade-off in the
-final evidence context passed to a retrieval-augmented agent.
+IntentRoute uses confidence over dense, lexical, and geometry-defined cluster
+routes to control route usage and fallback, while an independently calibrated
+policy sets the final evidence-context budget. Trust-weighted feedback updates
+route confidence, and dense retrieval remains a recall floor. The measured
+outcome is a quality-efficiency trade-off in the final evidence context passed
+to a retrieval-augmented agent.

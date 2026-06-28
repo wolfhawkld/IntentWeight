@@ -1571,8 +1571,8 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `paper/experiments/task57_review_response_action_map.md`。该项保存
     Hermes/GLM review 后的后续任务路线，并明确不把论文降级为普通
     compression baseline：几何/流形启发定义结构化 route，feedback-updated
-    LinUCB 估计 route confidence，confidence-based budget control 将可靠
-    route decision 转化为 final context token saving。后续任务固定使用
+    LinUCB 估计 route confidence 并控制 route shape/fallback，独立校准的
+    final-context budget 负责形成 token-quality operating points。后续任务固定使用
     seeds `13,17,19`，不再扩 seed；统计支撑改由 query-level paired tests、
     cross-backbone、cross-domain、cross-ablation 和 calibration/test discipline
     共同完成。Task58-67 将依次处理 random/shuffled geometry ablation、
@@ -1655,13 +1655,15 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     不支持显著 answer-quality improvement。
 30. manuscript claim reframe：Task64 已完成，详见
     `paper/experiments/task64_manuscript_claim_reframe_summary.md`。论文主线已
-    调整为 route-confidence-to-budget control，同时保留 geometry/manifold
-    的启发与诊断作用，以及 LinUCB/feedback 的自适应置信度和恢复作用。
+    调整为 confidence-gated route control 与 independent budget calibration，
+    同时保留 geometry/manifold 的启发与诊断作用，以及 LinUCB/feedback 的
+    自适应置信度和恢复作用。
 31. table and figure refresh：Task65 已完成，详见
     `paper/experiments/task65_table_figure_refresh_summary.md`。正文结果展示已
     收敛为 5 张主表和 3 幅主图，完整 cross-domain、recovery、compressor、
     reranker 和 control 明细保留于附录；ACL-style 工作 PDF 从 30 页降至
-    28 页且 PDF audit 通过。
+    28 页且 PDF audit 通过。Task65.3-65.5 新增防御证据后，当前工作 PDF
+    为 30 页且 critical warnings 仍为 0。
 32. safe-compression attribution：Task65.1 已完成，详见
     `paper/experiments/task65_1_safe_compression_attribution_summary.md`。该项
     精确复现 Task37 100k 配置并导出逐 query trace，在固定上游排序下比较
@@ -1678,6 +1680,33 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     明显，但 geometry+feedback 相比 random-partition+feedback 在约 `10%`
     saving 下仅有 `+0.08pp` Hit 差，三个 seed 的 paired bootstrap CI 均跨
     0；固定动作 AUROC 也未显示 geometry/feedback 的稳定安全压缩识别优势。
+34. dynamic-route mediation：Task65.3 已完成，详见
+    `paper/experiments/task65_3_dynamic_route_mediation_summary.md`。该项冻结
+    Task37 的 selected arms、feedback state 与 confidence trajectory，并在相同
+    candidate components 和 `r0.95/m4` budget 下回放 dynamic gating、fixed
+    full fusion、always cluster-primary、shuffled tiers 和 dense。原始
+    query-to-tier assignment 相比保持 tier 频率不变的 shuffled control，在预算
+    前后均高 `+4.80pp` Hit@10，三个 seed 的 paired bootstrap CI 均不跨 0；
+    相比 always cluster-primary，预算后高 `+10.79pp`。但 fixed full fusion
+    仍高 `+0.40pp`，且 route confidence 与 oracle safe-token headroom 的平均
+    Spearman 仅 `-0.056`。因此结果支持 confidence 用于 query-specific route
+    shape 和 fallback，不支持把它解释为逐 query 压缩安全分数。
+35. independently calibrated matched frontier：Task65.4 已完成，详见
+    `paper/experiments/task65_4_matched_frontier_summary.md`。该项在原 100k
+    calibration/test split 上给 Dense 与 IntentRoute 相同的 fine budget grid，
+    但允许各自独立选动作。零 observed-drop gate 下，IntentRoute 选择
+    `r0.95/m4`，frozen-test mean Hit delta `0.00pp` 且 saving `6.18%`；Dense
+    只能选择 `r1.00/m4`、saving `0%`。但 IntentRoute strict NI 仍为 `0/3`。
+    held-out same-saving interpolation 在 5%-20% saving 上仅显示
+    `+0.47pp` 到 `-0.01pp` 的小差异，因此支持 conservative operating point，
+    不支持 universal Pareto dominance。
+36. calibration-split sensitivity：Task65.5 已完成，详见
+    `paper/experiments/task65_5_calibration_split_sensitivity_summary.md`。该项
+    复用四个规模的 frozen rankings，在每个规模上运行 20 个 deterministic
+    30/70 partitions。200k/638k 的 selected-policy test Hit 在 20/20 splits
+    均保持 dense `-1pp` 以内；100k 为 14/20，400k 为 17/20。该结果强化
+    200k/638k，要求 100k 标注 split sensitivity，并继续把 400k 保留为
+    diagnostic。overlapping splits 不作为新增 training seeds 或独立重复。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1697,6 +1726,9 @@ Task60 arm-count sensitivity、第 27 项 Task61 geometry-to-control analysis
 answer-level evaluation、第 30 项 Task64 manuscript claim reframe 及第 31 项
 Task65 table and figure refresh、第 32 项 Task65.1 safe-compression
 attribution、第 33 项 Task65.2 factorial safe-compression attribution 均已完成。
+第 34 项 Task65.3 dynamic-route mediation 也已完成。
+第 35 项 Task65.4 independently calibrated matched frontier 和第 36 项
+Task65.5 calibration-split sensitivity 也已完成。
 
 ---
 
@@ -1712,4 +1744,4 @@ attribution、第 33 项 Task65.2 factorial safe-compression attribution 均已�
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-06-27*
+*更新时间: 2026-06-28*

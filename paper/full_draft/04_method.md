@@ -48,14 +48,15 @@ without searching the entire corpus as aggressively.
 The routes are fused in the retrieval layer. The system can run in a full
 multi-route mode, a gated cost-aware mode, or a final context compaction mode.
 Full multi-route retrieval improves coverage but does not automatically reduce
-final context tokens. The final context policy described below is the mechanism
-that converts route confidence into retrieved-context token savings.
+final context tokens. The stronger token-saving policy described below is
+calibrated independently after route construction; it does not convert route
+confidence into a per-query token ratio.
 
 Figure 1 summarizes this route-control architecture after the route surface is
 defined. It should be read as a controller diagram rather than a claim that
 LinUCB replaces dense or BM25 retrieval: dense and BM25 are global recall
-routes, LinUCB selects cluster-local arms, and route confidence is passed to
-the final context-budget controller.
+routes, LinUCB selects cluster-local arms, and the resulting ranking is passed
+to a separately calibrated final context-budget controller.
 
 ## 3.4 Routing Arm Construction
 
@@ -100,8 +101,8 @@ exploration-exploitation balance: larger values encourage the policy to explore
 arms whose value estimate is uncertain.
 
 The policy selects the top candidate arms by score. The selected arms define
-the cluster-local retrieval path and provide confidence signals for later
-context compaction.
+the cluster-local retrieval path and provide confidence signals for route
+gating and fallback.
 
 ### Feature Groups and Route Confidence
 
@@ -127,14 +128,16 @@ The feature groups are:
 - feedback state: selected-arm value, pull-count maturity, and recent route
   reward, used to estimate whether LinUCB has enough evidence to trust the
   local route;
-- budget state: route confidence tier and fallback status, used to decide
-  whether final context compaction is allowed.
+- budget state: route confidence tier and fallback status, used by the older
+  conservative `confidence_topk` diagnostic; the main calibrated budget does
+  not map these features to a per-query token ratio.
 
 Route confidence is computed from the selected-arm value estimate, the
 top-versus-rest arm margin, and an arm-maturity term based on feedback count.
 Semantic drift is defined as one minus the nearest selected-centroid similarity.
 Low confidence or high drift keeps the dense fallback active; high confidence
-and low drift allow the final-context policy to compact evidence.
+and low drift can enable a lighter route. Only the conservative diagnostic
+policy additionally uses this tier to reduce context size.
 
 ## 3.6 Trust-Weighted Feedback
 
@@ -197,7 +200,7 @@ from that query. Multi-epoch results are therefore controlled repeated
 interaction studies. They should not be over-interpreted as single-pass
 generalization results.
 
-## 3.9 Confidence-Based Final Context Compaction
+## 3.9 Final Context Budgeting and Conservative Confidence Baseline
 
 Preliminary token-cost analysis showed that reducing source candidates does not
 automatically reduce final context tokens. IntentRoute therefore combines
@@ -243,9 +246,12 @@ confidence-based policy remains a
 stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
 100k, 200k, 400k, and 638k while preserving dense-level query hit.
 
-On LoTTE, semantic drift rarely exceeds the configured fallback threshold, so
-the reported compression behavior is primarily confidence-driven. In more
-heterogeneous query distributions, drift-based fallback may become more active.
+For the conservative `confidence_topk` baseline only, semantic drift rarely
+exceeds the configured fallback threshold, so context-size decisions are
+primarily confidence-conditioned. The fixed-pool factorial audit does not show
+that this confidence predicts compression safety better than matched controls;
+the baseline is an empirical operating point rather than a validated causal
+mechanism.
 
 ## 3.10 Feedback-Triggered Recovery
 
@@ -277,7 +283,8 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 3. Retrieve candidates from the global dense route, the global BM25 route, and
    dense search within selected cluster arms.
 4. Fuse route rankings.
-5. Apply confidence-based final context policy.
+5. Apply the independently calibrated final-context budget, or the explicitly
+   labeled conservative `confidence_topk` baseline.
 6. Evaluate retrieval quality for $q_t$.
 7. Only after evaluation, convert the ground-truth label into simulated
    feedback and update LinUCB for later queries.

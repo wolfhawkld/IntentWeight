@@ -52,6 +52,14 @@ the frozen test split. Compression should therefore be calibrated per domain
 and scale, with dense fallback retained for low-confidence or high-risk local
 regions.
 
+Calibration is also sensitive to the query partition. Across 20 deterministic
+partitions, selected-policy mean Hit remains within `1pp` of dense on every 200k and
+638k test partition, but only 70% of 100k and 85% of 400k partitions. These
+partitions overlap and therefore measure sensitivity rather than independent
+replication. The pre-specified frozen split remains valid, but production use
+should prefer repeated or nested calibration and should not infer a universal
+no-loss policy from one partition.
+
 ## 7.6 Geometry Is Diagnostic, Not a Proof
 
 The piecewise relevance-manifold framing is supported by diagnostics such as
@@ -90,8 +98,8 @@ LoTTE route experiments. These are engineering stability diagnostics, not a
 claim that a large seed population has been sampled. Query-level paired tests
 provide the main inferential evidence. The LoTTE 400k
 token-saving interval is notably wider than the other scales and should be
-interpreted as seed-level variance in route confidence and context-budget
-control. In the calibrated-budget experiment, the 400k frozen-test result is
+interpreted as seed-level operating-point variance across routed rankings and
+context-budget control. In the calibrated-budget experiment, the 400k frozen-test result is
 positive but the selected policy is not calibration-eligible under the
 zero-observed-hit-drop gate; this scale is therefore marked as a follow-up
 calibration gap rather than pooled into the strongest eligible operating-point

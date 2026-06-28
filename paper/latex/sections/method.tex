@@ -32,9 +32,9 @@ IntentRoute uses three retrieval routes.
 
 \textbf{Cluster-local route.} The cluster-local route performs dense retrieval within LinUCB-selected cluster arms. It allows the system to exploit local structure without searching the entire corpus as aggressively.
 
-The routes are fused in the retrieval layer. The system can run in a full multi-route mode, a gated cost-aware mode, or a final context compaction mode. Full multi-route retrieval improves coverage but does not automatically reduce final context tokens. The final context policy described below is the mechanism that converts route confidence into retrieved-context token savings.
+The routes are fused in the retrieval layer. The system can run in a full multi-route mode, a gated cost-aware mode, or a final context compaction mode. Full multi-route retrieval improves coverage but does not automatically reduce final context tokens. The stronger token-saving policy described below is calibrated independently after route construction; it does not convert route confidence into a per-query token ratio.
 
-Figure~\ref{fig:system} summarizes this route-control architecture after the route surface is defined. It should be read as a controller diagram rather than a claim that LinUCB replaces dense or BM25 retrieval: dense and BM25 are global recall routes, LinUCB selects cluster-local arms, and route confidence is passed to the final context-budget controller.
+Figure~\ref{fig:system} summarizes this route-control architecture after the route surface is defined. It should be read as a controller diagram rather than a claim that LinUCB replaces dense or BM25 retrieval: dense and BM25 are global recall routes, LinUCB selects cluster-local arms, and the resulting ranking is passed to a separately calibrated final context-budget controller.
 
 \subsection{Routing Arm Construction}
 \label{sec:04-method:routing-arm-construction}
@@ -58,7 +58,7 @@ s_t(a) &= \hat{\theta}_a^\top x_t
 
 The first term estimates the arm value under the current query context. The second term is an exploration bonus. The parameter $\alpha$ controls the exploration-exploitation balance: larger values encourage the policy to explore arms whose value estimate is uncertain.
 
-The policy selects the top candidate arms by score. The selected arms define the cluster-local retrieval path and provide confidence signals for later context compaction.
+The policy selects the top candidate arms by score. The selected arms define the cluster-local retrieval path and provide confidence signals for route gating and fallback.
 
 \subsection{Feature Groups and Route Confidence}
 \label{sec:04-method:feature-groups-and-route-confidence}
@@ -74,10 +74,10 @@ The feature groups are:
 \item route agreement: overlap among dense, BM25, and cluster-local candidates, used to detect when independent routes support the same evidence region;
 \item local geometry: nearest centroid similarity, selected arm identity, and semantic drift, used to estimate whether the query lies close to selected local arms;
 \item feedback state: selected-arm value, pull-count maturity, and recent route reward, used to estimate whether LinUCB has enough evidence to trust the local route;
-\item budget state: route confidence tier and fallback status, used to decide whether final context compaction is allowed.
+\item budget state: route confidence tier and fallback status, used by the older conservative \nolinkurl{confidence_topk} diagnostic; the main calibrated budget does not map these features to a per-query token ratio.
 \end{itemize}
 
-Route confidence is computed from the selected-arm value estimate, the top-versus-rest arm margin, and an arm-maturity term based on feedback count. Semantic drift is defined as one minus the nearest selected-centroid similarity. Low confidence or high drift keeps the dense fallback active; high confidence and low drift allow the final-context policy to compact evidence.
+Route confidence is computed from the selected-arm value estimate, the top-versus-rest arm margin, and an arm-maturity term based on feedback count. Semantic drift is defined as one minus the nearest selected-centroid similarity. Low confidence or high drift keeps the dense fallback active; high confidence and low drift can enable a lighter route. Only the conservative diagnostic policy additionally uses this tier to reduce context size.
 
 \subsection{Trust-Weighted Feedback}
 \label{sec:04-method:trust-weighted-feedback}
@@ -115,8 +115,8 @@ This means feedback for $q_t$ cannot improve the ranking of $q_t$ itself. Earlie
 
 Several repeated-feedback experiments use multiple prequential epochs over the same query stream to simulate repeated interactions. Each epoch preserves the same discipline: rank and evaluate the current query before applying feedback from that query. Multi-epoch results are therefore controlled repeated interaction studies. They should not be over-interpreted as single-pass generalization results.
 
-\subsection{Confidence-Based Final Context Compaction}
-\label{sec:04-method:confidence-based-final-context-compaction}
+\subsection{Final Context Budgeting and Conservative Confidence Baseline}
+\label{sec:04-method:final-context-budgeting-and-conservative-confidence-baseline}
 
 Preliminary token-cost analysis showed that reducing source candidates does not automatically reduce final context tokens. IntentRoute therefore combines confidence-gated routing with an explicit calibrated budget policy, the central quality-cost control interface.
 
@@ -141,7 +141,7 @@ For the conservative policy, the effective compaction rate is therefore the high
 
 The main token-quality result uses frozen calibration/test budget policies that select global ratio/minimum-prefix parameters on calibration queries and evaluate them unchanged on held-out test queries. The conservative confidence-based policy remains a stable baseline: it reduces final context tokens by about 4.7-5.3\% across LoTTE 100k, 200k, 400k, and 638k while preserving dense-level query hit.
 
-On LoTTE, semantic drift rarely exceeds the configured fallback threshold, so the reported compression behavior is primarily confidence-driven. In more heterogeneous query distributions, drift-based fallback may become more active.
+For the conservative \nolinkurl{confidence_topk} baseline only, semantic drift rarely exceeds the configured fallback threshold, so context-size decisions are primarily confidence-conditioned. The fixed-pool factorial audit does not show that this confidence predicts compression safety better than matched controls; the baseline is an empirical operating point rather than a validated causal mechanism.
 
 \subsection{Feedback-Triggered Recovery}
 \label{sec:04-method:feedback-triggered-recovery}
@@ -168,7 +168,7 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 \item Score cluster arms with LinUCB using $s_t(a)$.
 \item Retrieve candidates from the global dense route, the global BM25 route, and dense search within selected cluster arms.
 \item Fuse route rankings.
-\item Apply confidence-based final context policy.
+\item Apply the independently calibrated final-context budget, or the explicitly labeled conservative \nolinkurl{confidence_topk} baseline.
 \item Evaluate retrieval quality for $q_t$.
 \item Only after evaluation, convert the ground-truth label into simulated feedback and update LinUCB for later queries.
 \item If the interaction is a post-feedback retry or a later query in a risky local region, use the updated arm state to choose a safer context budget or fallback path.

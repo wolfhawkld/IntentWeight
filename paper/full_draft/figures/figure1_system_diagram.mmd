@@ -7,7 +7,8 @@ flowchart LR
     D --> R[Rank fusion]
     B --> R
     C --> R
-    P --> G[Confidence-based final context budget]
+    P --> R
+    K[Calibrated budget policy] --> G[Final context budget]
     R --> G
     G --> A[Generator or downstream agent response]
     A --> T[Trust-weighted feedback]

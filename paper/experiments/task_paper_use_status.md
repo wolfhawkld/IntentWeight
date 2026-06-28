@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-06-27
+Updated: 2026-06-28
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -59,10 +59,13 @@ accidentally promoted into paper-facing claims.
 | `task61_geometry_to_control_analysis.md` | Supporting/diagnostic synthesis evidence | Geometry-to-control correlation analysis across Task30/43/58/60 and Figure 3; use to show geometry is an explanatory route-control signal, not proof that geometry alone determines final Hit@10 or token saving. |
 | `task62_prompt_compression_baseline_summary.md` | Supporting/strong prompt-compression baseline evidence | Selective Context-style prompt-pruning baseline with tiktoken/cl100k_base accounting; use to show prompt compression is a strong downstream layer that can be stacked with IntentRoute rather than replaced by it. |
 | `task63_downstream_llm_evaluation_summary.md` | Supporting/downstream evidence | Frozen 300-query, 2,100-answer evaluation; use for lower-context answer-quality support without claiming significant correctness improvement. |
-| `task64_manuscript_claim_reframe_summary.md` | Supporting writing revision | Centers the manuscript on route-confidence-to-budget control while retaining bounded geometry and feedback roles. |
+| `task64_manuscript_claim_reframe_summary.md` | Supporting writing revision | Historical reframe task; the current manuscript further separates confidence-gated route control from independently calibrated final-context budgeting. |
 | `task65_table_figure_refresh_summary.md` | Supporting writing revision | Defines the five-table, three-figure main display set and journal-facing evidence hierarchy. |
 | `task65_1_safe_compression_attribution_summary.md` | Boundary/mechanism evidence | Matched selector audit showing that learned confidence and geometry do not currently outperform random controls for per-query safe-compression discrimination; use to separate confidence-gated routing from the calibrated length budget. |
 | `task65_2_factorial_safe_compression_summary.md` | Boundary/mechanism evidence | Fixed-dense-pool geometry/random-partition by feedback/no-feedback audit; confirms strong route-quality differences but no stable per-query safe-compression identification advantage. |
+| `task65_3_dynamic_route_mediation_summary.md` | Mechanism and boundary evidence | Frozen-trajectory replay shows that correct confidence-tier assignment materially protects route quality versus shuffled or unconditional cluster-primary routing, while confidence remains unrelated to compression headroom. |
+| `task65_4_matched_frontier_summary.md` | Main/supporting calibration evidence | Independent Dense and IntentRoute action selection on a common fine grid; supports a nonzero conservative IntentRoute point under the pre-specified zero-drop calibration rule without claiming strict NI or Pareto dominance. |
+| `task65_5_calibration_split_sensitivity_summary.md` | Supporting/boundary calibration evidence | Twenty overlapping query partitions per scale strengthen 200k/638k stability while exposing moderate 100k and mixed 400k split sensitivity. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |

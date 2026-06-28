@@ -31,7 +31,7 @@ The baseline family includes:
 - BM25 + dense hybrid retrieval using reciprocal-rank fusion.
 - Full multi-route IntentRoute.
 - Gated cost-aware IntentRoute.
-- Confidence-based final context IntentRoute.
+- Conservative confidence-conditioned final-context baseline.
 - Dense+Sentence-MMR final-context compression.
 - Dense and IntentRoute plus SelectiveContext-lite prompt pruning.
 - Cross-encoder reranking over dense top-50 candidates.
@@ -297,6 +297,14 @@ token savings where available, and use a 1 percentage-point non-inferiority
 margin for strict seed-level checks. This separates two claims: whether the
 method preserves retrieval quality under a conservative paired criterion, and
 whether it reduces the final evidence-context tokens sent to the generator.
+
+Two additional audits test selection robustness. First, Dense and IntentRoute
+independently select actions on the same 100k calibration split over a fine
+ratio grid from 1.00 to 0.80 in 0.01 increments, so the comparison does not
+force Dense to inherit the routed policy's nominal action. Second, the original
+calibration grid is repeated over 20 deterministic 30/70 query partitions at each
+scale. These overlapping partitions diagnose split sensitivity; they are not
+treated as additional training seeds or independent inferential samples.
 
 ## 4.8 Downstream Answer-Level Protocol
 

@@ -113,5 +113,5 @@ text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }
 <text x="642.5" y="151.9" class="tick" text-anchor="middle">22.7%</text>
 <circle cx="691.5" cy="134.9" r="4.2" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />
 <text x="691.5" y="152.9" class="tick" text-anchor="middle">22.6%</text>
-<text x="80.0" y="468.0" class="subtitle" text-anchor="start">Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentRoute targets the safer frontier.</text>
+<text x="80.0" y="468.0" class="subtitle" text-anchor="start">Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentRoute targets the more quality-preserving frontier.</text>
 </svg>

@@ -58,8 +58,8 @@ trust-weighted feedback adapt route confidence over repeated interactions.
 Dense and BM25 rescue paths protect final recall. A separate calibration stage
 chooses the final context-budget parameters. A late reranker can improve
 candidate ordering, while a sentence or prompt compressor can remove redundant
-text after evidence selection. IntentRoute occupies the upstream
-route-confidence-to-budget layer and can be composed with those downstream
+text after evidence selection. IntentRoute occupies the upstream route-control
+and budget-calibration layers and can be composed with those downstream
 components.
 
 The same distinction separates three cost layers that are often conflated in RAG

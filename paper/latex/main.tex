@@ -48,7 +48,8 @@
 \includegraphics[width=\textwidth]{figure1_system_diagram.pdf}
 \caption{IntentRoute evidence-selection controller. Dense and BM25 remain
 global recall routes; LinUCB selects cluster-local arms and contributes route
-confidence for final context-budget control.}
+confidence for route gating, while an independently calibrated policy controls
+the final context budget.}
 \label{fig:system}
 \end{figure*}
 

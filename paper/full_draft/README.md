@@ -1,6 +1,6 @@
 # IntentRoute Full Draft
 
-Updated: 2026-06-27
+Updated: 2026-06-28
 
 This directory contains the first complete paper draft assembled after the
 paper evidence package, pre-writing validation work, and review-defense
@@ -45,12 +45,16 @@ draft. The most important internal evidence groups are:
 - 300-query downstream answer-level evaluation.
 - fixed-dense-pool factorial safe-compression attribution separating route
   confidence from the calibrated length budget.
+- frozen-trajectory route mediation testing query-specific confidence-tier
+  assignment against shuffled and fixed-route controls.
+- independently calibrated Dense/IntentRoute matched frontiers and multi-split
+  calibration sensitivity diagnostics.
 
 ## Claim Boundary
 
 The paper should keep the bounded claim:
 
-> IntentRoute is a route-confidence-to-budget controller instantiated in
+> IntentRoute is a route-control and budget-calibration controller instantiated in
 > retrieval-augmented question answering. Local geometry defines reproducible
 > route structure, trust-weighted LinUCB feedback adapts route confidence, and
 > dense retrieval remains a recall floor. Under calibration/test budget selection, calibration-eligible
@@ -80,8 +84,9 @@ post-feedback retry.
 
 Task65 reduced the main Results display from eight tables and five figures to
 five tables and three figures. Detailed cross-domain, recovery, compressor,
-reranker, and control results remain in the appendix. The regenerated
-ACL-style working PDF is 28 pages with zero critical LaTeX warnings.
+reranker, and control results remain in the appendix. After adding the
+Task65.3-65.5 reviewer-defense evidence, the regenerated ACL-style working PDF
+is 30 pages with zero critical LaTeX warnings.
 
 ## Next Editing Pass
 

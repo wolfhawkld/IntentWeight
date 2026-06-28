@@ -1,0 +1,5 @@
+dense_calibration_eligible,dense_policy,dense_test_hit_delta_pp,dense_test_saving_pct,intentroute_calibration_eligible,intentroute_minus_dense_hit_pp,intentroute_minus_dense_saving_pp,intentroute_policy,intentroute_test_hit_delta_pp,intentroute_test_saving_pct,quality_margin_pp
+True,token_budget_r1.00_m4,0.0,0.0,True,-3.700743415417189e-15,6.181271477663219,token_budget_r0.95_m4,-3.700743415417189e-15,6.181271477663219,0.0
+True,token_budget_r1.00_m4,0.0,0.0,True,-0.3197442046362964,7.968213058419238,token_budget_r0.93_m4,-0.3197442046362964,7.968213058419238,0.5
+True,token_budget_r1.00_m4,0.0,0.0,True,-1.278976818545167,17.131345426073334,token_budget_r0.84_m4,-1.278976818545167,17.131345426073334,1.0
+True,token_budget_r0.82_m4,-2.3980815347721895,25.21858280046978,True,0.7993605115907336,-4.321305841924396,token_budget_r0.80_m4,-1.598721023181456,20.897276958545383,2.0

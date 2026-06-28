@@ -21,7 +21,27 @@ final context tokens. The 400k row is retained as a diagnostic point because
 no candidate met the zero-observed-hit-drop calibration gate, even though its
 frozen-test result is positive. Dense-only adaptive truncation saves more
 tokens but loses $\mathrm{Hit@10}$ at every scale. IntentRoute therefore
-targets a safer bounded frontier rather than maximum compression.
+targets a more quality-preserving bounded frontier rather than maximum
+compression.
+
+An independently calibrated 100k audit gives Dense and IntentRoute the same
+fine budget grid but lets each select its own action. Under the zero observed
+calibration-drop rule, IntentRoute selects `r0.95/m4` and retains the Table 1
+result of `6.18%` test saving with `0.00pp` mean Hit delta; Dense selects
+`r1.00/m4`, or no compression. Their mean test Hit is equal, although strict
+IntentRoute non-inferiority is not established in any seed. A descriptive
+same-saving interpolation over the held-out Pareto curves shows only small Hit
+differences: `+0.47pp`, `+0.04pp`, `+0.22pp`, and `-0.01pp` at 5%, 10%, 15%,
+and 20% saving, respectively. This supports a bounded conservative operating
+point, not universal frontier dominance.
+
+A 20-partition sensitivity audit further separates stable scales from split
+sensitivity. Frozen selected policies retain mean Hit within `1pp` of dense on
+all 20 test partitions at 200k and 638k, versus 14/20 at 100k and 17/20 at 400k.
+The 100k mean range is `-2.00pp` to `+0.72pp`; 400k varies from `-2.08pp` to
+`+2.80pp`. The original pre-specified split remains the primary result, while
+the repeated partitions strengthen 200k/638k and keep 100k/400k interpretation
+more cautious.
 
 Query-level paired bootstrap intervals and McNemar-style win/loss counts show
 that token savings are more consistent than strict quality non-inferiority.
@@ -81,6 +101,17 @@ Feedback remains useful as a recovery trigger. Conservative same-query retry
 recovers 23 of 76 budget-induced misses across the two LoTTE 100k domains, but
 the stricter calibration-to-test effect is small and domain-dependent.
 Appendix I and K contain the full recovery and control tables.
+
+A frozen-trajectory route replay further isolates the confidence gate. Keeping
+the selected arms and feedback state fixed, the original query-to-tier
+assignment exceeds a shuffled-tier control with identical tier frequencies by
+4.80 percentage points of Hit@10, both before and after the common
+`r0.95/m4` budget; all three seed-level paired intervals exclude zero. It also
+exceeds an always-cluster-primary route by 10.79 percentage points after
+budgeting. Fixed full fusion remains 0.40 percentage points above dynamic
+gating while saving 0.91 percentage points fewer tokens, and that hit
+difference is not statistically detected. The result supports confidence as a
+route/fallback assignment signal, not as a direct compression-safety score.
 
 ## 5.4 Arm Granularity And Geometry-To-Control Analysis
 

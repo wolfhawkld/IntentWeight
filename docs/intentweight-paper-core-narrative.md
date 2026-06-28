@@ -1,6 +1,6 @@
 # IntentRoute Paper Core Narrative
 
-Updated: 2026-06-17
+Updated: 2026-06-28
 
 本文档用于后续写作纠偏：当论文继续扩写、改标题、调图表或回应审稿意见时，优先对照这里的核心叙事，避免重新滑回“工程 task 汇报”或“泛化过度”的表达。
 
@@ -47,7 +47,9 @@ IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adap
 3. Fixed routing arms 用 KMeans/MiniBatchKMeans 构造稳定的局部路由空间。
 4. LinUCB 根据 query/context/route features 学习哪些局部区域更可能有用。
 5. Trust-weighted simulated feedback 更新 route-policy value field。
-6. Confidence-based context compaction 根据路由置信度决定是否减少最终 context。
+6. Independently calibrated context budgeting 在 routed ranking 上选择全局
+   token ratio 与 minimum prefix，不把 route confidence 当作 per-query
+   compression-safety predictor。
 7. Feedback-triggered recovery 在压缩失败后触发更安全的预算或 fallback 策略。
 
 ## Evidence Chain
@@ -56,6 +58,10 @@ IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adap
 
 1. **Main calibrated token-quality frontier**:
    在 calibration/test 协议下，100k、200k、638k 的 calibration-eligible operating points 可节省 6-18% evidence-context tokens，并避免 dense-only adaptive truncation 的明显 Hit@10 损失。400k 当前 frozen-test 结果为正，但 calibration eligibility 未通过，应标记为 diagnostic / pending follow-up，不能混入最强主张。
+   独立 Dense calibration 在原 100k split 上选择 0% saving，而 IntentRoute
+   选择 6.18% saving 且 mean Hit delta 为 0；但 strict NI 仍未建立。20-split
+   sensitivity 强化 200k/638k，显示 100k 中等敏感、400k 混合，因此不能写成
+   split-invariant guarantee。
 
 2. **Conservative confidence-only baseline**:
    在 100k-638k corpus chunks 上，保守 context policy 减少约 4.7-5.3% final retrieved context tokens，并保持 dense-level Hit@10。该结果作为稳定 baseline 和 seed-diagnostic 支撑，主结果应以前一项 calibrated policy 为核心。
@@ -66,13 +72,20 @@ IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adap
 4. **Feedback-driven policy adaptation**  
    Feedback 的价值不一定总反映在最终 fused Hit@10，因为 dense/BM25 fallback 可能已经保护了最终质量。更清晰的证据是 selected-cluster hit、last true reward、dense rate 和 LinUCB route usage 的变化。
 
-5. **Feedback-triggered recovery**  
+5. **Dynamic route mediation**
+   冻结 selected arms 与 feedback trajectory 后，原始 confidence-tier assignment
+   相比保持 tier 频率不变的 shuffled control，在相同预算前后均提高 4.80pp
+   Hit@10；低置信 query 强制使用 cluster-primary 时明显失效。这支持
+   `geometry/feedback -> confidence -> route shape/fallback -> evidence-pool quality`
+   的操作化链路，但不支持 `confidence -> per-query compression safety`。
+
+6. **Feedback-triggered recovery**
    对被 aggressive compression 伤害的 tail queries，arm-level simulated feedback 能恢复一部分失败样本。该证据支持 post-feedback recovery，不支持“首轮检索必然改善”的过度表述。
 
-6. **Geometry diagnostics**  
+7. **Geometry diagnostics**
    NearestClusterHit@3、PCA spectrum 和 context retention 支持“局部结构有用”的解释，但不能写成数学证明。
 
-7. **Boundary cases**  
+8. **Boundary cases**
    eManual、CUAD、secondary datasets 用于限制主张边界，避免把结果写成所有 dataset、所有任务、所有指标上的全面胜利。
 
 ## Section-Level Intent
@@ -82,7 +95,9 @@ IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adap
 - **Method**：描述 IntentRoute 的 controller 设计，而不是把各个组件写成工程流水线。
 - **Experimental Setup**：明确数据集角色、metrics、prequential simulated feedback、cost layer separation。
 - **Results**：先给 calibrated token-quality frontier，再给 cross-domain、component ablation、feedback adaptation/recovery、geometry 和 boundary/robustness checks。
-- **Discussion**：解释为什么 multi-route 本身不等于省 token，真正的成本收益来自 confidence-based final context compaction 和 feedback-triggered fallback。
+- **Discussion**：解释为什么 multi-route 本身不等于省 token；route confidence
+  用于 routing/fallback，主要成本收益来自独立校准的 final-context budget，
+  feedback-triggered fallback 用于失败恢复。
 - **Limitations**：主动限制 simulated feedback、single-resource-class encoder、Hit@10 只代表 usable evidence、geometry 只是 diagnostic support。
 - **Conclusion**：回到 controller 贡献：quality、context token cost 和 recovery 的动态 trade-off。
 

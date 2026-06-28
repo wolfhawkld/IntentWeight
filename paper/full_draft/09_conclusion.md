@@ -5,7 +5,7 @@ confidence-gated route and calibrated-budget controller motivated by local relev
 in vertical-domain data. In the evaluated retrieval-backed QA implementation,
 geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
-separately calibrated policy controls the final evidence-context budget.
+policy separately controls the final evidence-context budget.
 
 The main evidence comes from LoTTE technology/search at 100k to 638k corpus
 chunks. Under calibration/test budget selection, calibration-eligible operating
@@ -14,8 +14,10 @@ by 6-18%; the 400k point remains a positive diagnostic result pending
 follow-up calibration. Across these scales, IntentRoute avoids the larger
 $\mathrm{Hit@10}$ losses of dense-only adaptive truncation, while strict
 seed-level non-inferiority remains scale-dependent. A conservative
-confidence-only policy remains a stable 4.7-5.3% saving baseline. Additional
-diagnostics and controls show that local geometry provides useful route signal
+confidence-only policy remains a stable 4.7-5.3% saving baseline. Split
+sensitivity checks strengthen the 200k and 638k operating points while showing
+that 100k and especially 400k policy selection is more partition-dependent.
+Additional diagnostics and controls show that local geometry provides useful route signal
 over random routing and trust-weighted feedback improves route confidence over
 no-feedback controls, without implying that either alone explains fused
 quality. Matched BGE/E5 comparisons retain near-dense retrieval quality with
@@ -34,7 +36,8 @@ support. However,
 reranking alone can increase final context tokens, and same-budget reranking
 does not uniformly dominate the calibrated IntentRoute policies. These results
 support a layered interpretation: candidate generation, reranking, compression,
-and route-budget control are separate system functions that can be composed.
+route control, and budget calibration are separate system functions that can be
+composed.
 
 The result is intentionally bounded. IntentRoute is not a universal dense
 replacement, a universal compressor replacement, or a universal reranker

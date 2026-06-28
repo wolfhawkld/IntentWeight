@@ -24,7 +24,7 @@ the primary quality baseline and an important recall floor. IntentRoute's value
 is the explicit separation of adaptive route control, dense rescue, and
 calibrated final-context compaction.
 
-## 6.2 Role of Confidence-Based Context Compaction
+## 6.2 Role of Calibrated Context Budgeting
 
 A static combination of dense, BM25, and cluster-local retrieval can improve
 coverage, but it does not automatically reduce final context tokens. In fact,
@@ -39,8 +39,8 @@ why the saving is modest but stable. The calibrated token-budget policies use a
 frozen calibration/test protocol to expose a stronger operating frontier, while
 dense-only adaptive truncation shows that saving more tokens by simply reducing
 dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy
-should therefore be interpreted as a safe baseline, not the highest-compression
-configuration.
+should therefore be interpreted as a stable empirical baseline, not the
+highest-compression configuration or a per-query safety guarantee.
 
 ## 6.3 Reranking and Final-Context Control
 
@@ -91,6 +91,15 @@ fallback policy. This should be treated as a controlled recovery mechanism. It
 does not mean that feedback should blindly boost the same arm for all future
 queries.
 
+A frozen-trajectory counterfactual clarifies where route confidence acts.
+Shuffling confidence tiers while preserving their frequency lowers Hit@10 by
+4.80 percentage points, whereas the original assignment sends high-confidence
+queries to a cluster-primary route with mean source Hit@10 of 0.924 and retains
+full fallback for the low-confidence group, where forced cluster-primary Hit@10
+falls to 0.240. Confidence therefore has a supported controlled role in
+route-shape assignment. This role precedes and is distinct from final-context
+budgeting.
+
 ## 6.5 Geometry Is Useful but Not Sufficient
 
 The geometry diagnostics support a piecewise relevance-manifold framing.
@@ -122,6 +131,14 @@ bootstrap interval includes zero. Safe-action labels are highly imbalanced
 prediction. It prevents attributing the stronger 6--18% token frontier directly
 to per-query confidence precision.
 
+The same frozen replay finds mean Spearman correlation $-0.056$ between route
+confidence and oracle safe-token headroom, with every seed-level interval
+including zero. Dynamic routing also contains fewer relevant top-10 chunks than
+fixed full fusion (2.121 versus 2.315). These results rule out a simple account
+in which confidence gating improves compression by creating greater evidence
+redundancy. Its measured benefit is assigning route shapes without the severe
+quality loss of shuffled or unconditional cluster-primary routing.
+
 ## 6.6 Evidence Completeness Versus Usable Evidence
 
 The main retrieval headline is query-level $\mathrm{Hit@10}$. This metric asks
@@ -144,17 +161,18 @@ tokens. At enterprise query volumes, even the conservative end of this range can
 compound into meaningful cumulative inference-cost reduction. The older
 4.7-5.3% confidence-only policy is best interpreted as a stable conservative
 baseline, while calibrated budgets show the stronger operating frontier. In
-production, repeated query patterns, user-specific feedback, and richer
-confidence tiers may increase the fraction of queries that can be safely
-compacted. This is a hypothesis for production evaluation rather than a claim
-proven by the current experiments.
+production, repeated query patterns and richer post-fusion features may support
+a dedicated compression-safety estimator. Route confidence alone is not
+established as such an estimator by the current experiments. This remains a
+hypothesis for production evaluation rather than a current claim.
 
 The correct deployment interpretation is therefore:
 
 - keep dense retrieval as a recall floor;
 - optionally add reranking as a late ranking layer before final context
   selection;
-- use feedback and confidence to reduce final context when the policy is stable;
+- use feedback and confidence for route control, and calibrate the final
+  context budget separately;
 - use negative feedback to trigger safer local fallback for risky regions;
 - monitor evidence quality and fallback rates;
 - avoid aggressive compaction for complete-evidence tasks;

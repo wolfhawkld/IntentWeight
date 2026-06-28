@@ -84,7 +84,7 @@ def system_diagram() -> None:
         "LinUCB selector": (4.4, 2.15, 1.55, 0.65, "#fff7e6"),
         "Cluster-local": (6.4, 2.15, 1.45, 0.65, "#fff7e6"),
         "Rank fusion": (6.4, 3.35, 1.45, 0.65, "#eefcf6"),
-        "Context budget": (8.4, 3.35, 1.7, 0.7, "#eefcf6"),
+        "Calibrated budget": (8.4, 3.35, 1.7, 0.7, "#eefcf6"),
         "Generator": (8.4, 1.3, 1.7, 0.65, "#e8f4fd"),
         "Trust feedback": (4.4, 0.7, 1.7, 0.65, "#fff1f2"),
     }
@@ -114,7 +114,7 @@ def system_diagram() -> None:
     arrow((5.9, 3.37), (6.4, 3.68))
     arrow((7.85, 2.47), (7.1, 3.35))
     arrow((7.85, 3.68), (8.4, 3.68))
-    arrow((5.95, 2.47), (8.4, 3.35))
+    arrow((5.95, 2.47), (6.4, 3.48))
     arrow((9.25, 3.35), (9.25, 1.95))
     arrow((8.4, 1.62), (6.1, 1.02))
     arrow((5.25, 1.35), (5.15, 2.15))
@@ -122,7 +122,7 @@ def system_diagram() -> None:
     ax.text(
         0.3,
         4.5,
-        "Dense/BM25 are global recall routes; LinUCB selects cluster-local arms and budget confidence.",
+        "Confidence gates route fusion and fallback; calibration independently sets the final context budget.",
         fontsize=9,
         color="#52606d",
     )

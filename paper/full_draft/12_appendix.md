@@ -28,8 +28,8 @@ observations.
 | 638k | 1525.62 | 1451.49 | 3.83 | [1441.97, 1461.00] | 4.86% | [4.24%, 5.48%] |
 
 The token-saving direction is consistent across scales. The wider 400k token
-interval should be interpreted as route-confidence and context-budget variance,
-not hidden as a uniform result.
+interval should be interpreted as operating-point variance across the routed
+ranking and context policy, not hidden as a uniform result.
 
 ## B. Static Retrieval Baselines
 
@@ -76,10 +76,10 @@ context tokens when the final context remains fixed at top-10.
 | LoTTE 400k | Initial gated routing | 0.7836 | 1547.66 | 1.0441x | 233.22 |
 | LoTTE 638k | Initial gated routing | 0.7343 | 1599.95 | 1.0487x | 236.22 |
 
-This audit motivated the explicit confidence-based final context policy. Its
-token savings come from reducing selected final context size in
-high-confidence cases, not from treating candidate-count savings as prompt
-token savings.
+This audit motivated explicit final-context control. The conservative historical
+policy reduces context size in high-confidence cases, while the stronger main
+result uses an independently calibrated length budget. Neither candidate-count
+savings nor route confidence alone establishes prompt-token savings.
 
 ## D. Secondary Datasets and Boundary Cases
 
@@ -217,6 +217,35 @@ substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
 The 400k row is diagnostic rather than calibration-eligible in the current
 artifact set and is marked for follow-up calibration.
 
+**Appendix Table G2. Independently calibrated 100k quality constraints.**
+
+| Calibration Hit margin | IntentRoute policy | IR test Hit delta | IR saving | Dense policy | Dense test Hit delta | Dense saving |
+|---:|---|---:|---:|---|---:|---:|
+| 0.0pp | `r0.95/m4` | +0.00pp | 6.18% | `r1.00/m4` | +0.00pp | 0.00% |
+| 0.5pp | `r0.93/m4` | -0.32pp | 7.97% | `r1.00/m4` | +0.00pp | 0.00% |
+| 1.0pp | `r0.84/m4` | -1.28pp | 17.13% | `r1.00/m4` | +0.00pp | 0.00% |
+| 2.0pp | `r0.80/m4` | -1.60pp | 20.90% | `r0.82/m4` | -2.40pp | 25.22% |
+
+The zero-margin row preserves equal mean test Hit while selecting nonzero
+IntentRoute saving, but strict seed-level non-inferiority remains 0/3. Held-out
+same-saving interpolation is descriptive only and finds small IntentRoute-minus-
+Dense Hit differences from `+0.47pp` at 5% saving to `-0.01pp` at 20%.
+
+**Appendix Table G3. Calibration-partition sensitivity over 20 overlapping splits.**
+
+| Scale | Eligible splits | Test Hit range | Mean test Hit delta | Saving range | Within 1pp of dense |
+|---|---:|---:|---:|---:|---:|
+| 100k | 12/20 | [-2.00, +0.72]pp | -0.45pp | [6.18%, 17.73%] | 14/20 |
+| 200k | 19/20 | [+0.56, +3.52]pp | +1.53pp | [5.33%, 17.29%] | 20/20 |
+| 400k | 16/20 | [-2.08, +2.80]pp | +0.45pp | [6.57%, 18.27%] | 17/20 |
+| 638k | 19/20 | [-0.88, +2.24]pp | +0.44pp | [7.85%, 17.91%] | 20/20 |
+
+These partitions reuse the same frozen rankings and overlap in their query
+membership. They diagnose policy-selection sensitivity and must not be counted
+as 20 independent experiments. The result supports stronger split stability at
+200k/638k, moderate sensitivity at 100k, and continued diagnostic treatment of
+400k.
+
 ## H. Cross-Domain Validation
 
 LoTTE science/search is used as a second-domain validation, not as a replacement
@@ -342,7 +371,7 @@ controller.
 
 SelectiveContext-lite is a deterministic local proxy, not LLMLingua. Its role
 is to show that prompt pruning can be stacked after either evidence pool and
-does not replace upstream route-confidence-to-budget control.
+does not replace upstream route control or final-budget calibration.
 
 ## K. Route-Control Attribution and Arm Sensitivity
 
@@ -385,6 +414,25 @@ Full multi-route quality is stable across the tested grid, whereas gated
 dense-saving behavior depends on arm granularity. Cross-scale correlations
 between geometry diagnostics and final quality-cost gain are mixed and
 small-sample; final behavior belongs to the complete calibrated controller.
+
+**Appendix Table K4. Frozen-trajectory dynamic route mediation; Save is relative
+to uncompressed dense.**
+
+| Route | Src. Hit | Budget Hit | Save |
+|---|---:|---:|---:|
+| Gated | 0.8793 | 0.8705 | 6.18% |
+| Full | 0.8841 | 0.8745 | 5.27% |
+| Shuffled | 0.8313 | 0.8225 | 6.54% |
+| Cluster | 0.7698 | 0.7626 | 6.93% |
+| Dense | 0.8705 | 0.8561 | 13.83% |
+
+The replay freezes selected arms and feedback state, and exactly reproduces the
+original dynamic ranking before changing route shapes. Dynamic gating exceeds
+the shuffled-tier control by 4.80 percentage points before and after the common
+budget, with 3/3 paired intervals excluding zero. It does not exceed fixed full
+fusion; instead, it exposes a bounded quality-cost trade-off. Route confidence
+has no detected association with oracle safe-token headroom, so the result
+supports route assignment rather than direct compression-safety prediction.
 
 ## L. Reproducibility and Reporting Guardrails
 

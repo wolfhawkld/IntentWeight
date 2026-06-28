@@ -10,12 +10,12 @@ IntentRoute supports a bounded confidence-gated-route plus calibrated-budget cla
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains the primary quality baseline and an important recall floor. IntentRoute's value is the explicit separation of adaptive route control, dense rescue, and calibrated final-context compaction.
 
-\subsection{Role of Confidence-Based Context Compaction}
-\label{sec:07-discussion:role-of-confidence-based-context-compaction}
+\subsection{Role of Calibrated Context Budgeting}
+\label{sec:07-discussion:role-of-calibrated-context-budgeting}
 
 A static combination of dense, BM25, and cluster-local retrieval can improve coverage, but it does not automatically reduce final context tokens. In fact, static dense+BM25 hybrid retrieval can use more context tokens than dense-only retrieval because it surfaces longer or noisier chunks. The token-saving mechanism is therefore not "more routes." It is the calibrated budget applied after confidence-gated route construction.
 
-The confidence-only policy is intentionally conservative. It compresses only high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is why the saving is modest but stable. The calibrated token-budget policies use a frozen calibration/test protocol to expose a stronger operating frontier, while dense-only adaptive truncation shows that saving more tokens by simply reducing dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy should therefore be interpreted as a safe baseline, not the highest-compression configuration.
+The confidence-only policy is intentionally conservative. It compresses only high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is why the saving is modest but stable. The calibrated token-budget policies use a frozen calibration/test protocol to expose a stronger operating frontier, while dense-only adaptive truncation shows that saving more tokens by simply reducing dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy should therefore be interpreted as a stable empirical baseline, not the highest-compression configuration or a per-query safety guarantee.
 
 \subsection{Reranking and Final-Context Control}
 \label{sec:07-discussion:reranking-and-final-context-control}
@@ -33,6 +33,8 @@ Trust weighting improves these policy metrics under controlled simulated feedbac
 
 The hard-case recovery experiment adds a more operational interpretation of feedback. When aggressive compression loses evidence, arm-level feedback can repair a meaningful fraction of affected queries through a safer retry or fallback policy. This should be treated as a controlled recovery mechanism. It does not mean that feedback should blindly boost the same arm for all future queries.
 
+A frozen-trajectory counterfactual clarifies where route confidence acts. Shuffling confidence tiers while preserving their frequency lowers Hit@10 by 4.80 percentage points, whereas the original assignment sends high-confidence queries to a cluster-primary route with mean source Hit@10 of 0.924 and retains full fallback for the low-confidence group, where forced cluster-primary Hit@10 falls to 0.240. Confidence therefore has a supported controlled role in route-shape assignment. This role precedes and is distinct from final-context budgeting.
+
 \subsection{Geometry Is Useful but Not Sufficient}
 \label{sec:07-discussion:geometry-is-useful-but-not-sufficient}
 
@@ -44,6 +46,8 @@ The random-route control is important to this interpretation. Static geometry st
 
 A factorial safe-compression audit holds the dense top-10 ranking, split, budget grid, and seeds fixed while crossing geometry versus a randomized partition with feedback versus no feedback. Geometry with feedback does not outperform random-partition feedback in held-out failure discrimination (mean AUROC $0.434$ versus $0.573$); at an approximately 10\% saving target their Hit@10 difference is only $+0.08$ percentage points and every seed-level paired bootstrap interval includes zero. Safe-action labels are highly imbalanced ($97.8\%$ safe), so this is boundary evidence rather than proof of inverse prediction. It prevents attributing the stronger 6--18\% token frontier directly to per-query confidence precision.
 
+The same frozen replay finds mean Spearman correlation $-0.056$ between route confidence and oracle safe-token headroom, with every seed-level interval including zero. Dynamic routing also contains fewer relevant top-10 chunks than fixed full fusion (2.121 versus 2.315). These results rule out a simple account in which confidence gating improves compression by creating greater evidence redundancy. Its measured benefit is assigning route shapes without the severe quality loss of shuffled or unconditional cluster-primary routing.
+
 \subsection{Evidence Completeness Versus Usable Evidence}
 \label{sec:07-discussion:evidence-completeness-versus-usable-evidence}
 
@@ -54,14 +58,14 @@ This is an expected trade-off. IntentRoute optimizes usable evidence under a sma
 \subsection{Production Interpretation}
 \label{sec:07-discussion:production-interpretation}
 
-The measured 6-18\% calibrated evidence-context token reduction applies to the most expensive recurring component of a retrieval-augmented answer: LLM input tokens. At enterprise query volumes, even the conservative end of this range can compound into meaningful cumulative inference-cost reduction. The older 4.7-5.3\% confidence-only policy is best interpreted as a stable conservative baseline, while calibrated budgets show the stronger operating frontier. In production, repeated query patterns, user-specific feedback, and richer confidence tiers may increase the fraction of queries that can be safely compacted. This is a hypothesis for production evaluation rather than a claim proven by the current experiments.
+The measured 6-18\% calibrated evidence-context token reduction applies to the most expensive recurring component of a retrieval-augmented answer: LLM input tokens. At enterprise query volumes, even the conservative end of this range can compound into meaningful cumulative inference-cost reduction. The older 4.7-5.3\% confidence-only policy is best interpreted as a stable conservative baseline, while calibrated budgets show the stronger operating frontier. In production, repeated query patterns and richer post-fusion features may support a dedicated compression-safety estimator. Route confidence alone is not established as such an estimator by the current experiments. This remains a hypothesis for production evaluation rather than a current claim.
 
 The correct deployment interpretation is therefore:
 
 \begin{itemize}
 \item keep dense retrieval as a recall floor;
 \item optionally add reranking as a late ranking layer before final context selection;
-\item use feedback and confidence to reduce final context when the policy is stable;
+\item use feedback and confidence for route control, and calibrate the final context budget separately;
 \item use negative feedback to trigger safer local fallback for risky regions;
 \item monitor evidence quality and fallback rates;
 \item avoid aggressive compaction for complete-evidence tasks;

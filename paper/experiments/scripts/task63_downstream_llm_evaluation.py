@@ -1445,7 +1445,8 @@ def execute_llm(records: Sequence[Mapping[str, Any]], output_dir: Path, args: ar
                 ):
                     print(f"[judge {completed_judgments}/{total_judgments}]")
 
-    write_formal_summary(output_dir, args)
+    if not args.skip_formal_summary:
+        write_formal_summary(output_dir, args)
 
 
 def run(args: argparse.Namespace) -> int:
@@ -1542,6 +1543,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--resume-llm-only", action="store_true")
+    parser.add_argument(
+        "--skip-formal-summary",
+        action="store_true",
+        help="Append resumable LLM outputs without rewriting single-judge summary files.",
+    )
     parser.add_argument("--provider", choices=("openai", "azure", "compatible", "deepseek"), default="deepseek")
     parser.add_argument("--api-mode", choices=("responses", "chat-completions"), default="chat-completions")
     parser.add_argument("--model", default="deepseek-v4-flash")
