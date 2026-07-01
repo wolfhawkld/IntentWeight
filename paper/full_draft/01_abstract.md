@@ -3,30 +3,27 @@
 Retrieval-augmented systems must select enough evidence to support an answer
 while limiting noise and language-model context cost. We formulate this as a
 two-stage route-control and budget-calibration problem. IntentRoute combines
-dense retrieval, BM25, and geometry-defined cluster-local routes, then uses
-trust-weighted LinUCB feedback to update route confidence. Confidence gates
-route usage and fallback, whereas an independently calibrated policy sets the
-final context budget. Dense retrieval remains a recall floor. A bounded
-piecewise relevance-manifold hypothesis motivates local route construction;
-geometry is evaluated as a diagnostic and control signal rather than a
-standalone retrieval theory.
+dense retrieval, BM25, geometry-defined cluster-local routes, and
+trust-weighted LinUCB feedback. Route confidence controls routing and fallback,
+while an independently calibrated policy sets the final context budget. Dense
+retrieval remains a recall floor. A bounded piecewise relevance-manifold
+hypothesis motivates local route construction; geometry is evaluated as a
+diagnostic signal rather than a standalone retrieval theory.
 
-On LoTTE technology/search from 100k to 638k chunks, eligible frozen
-calibration/test policies reduce evidence-context tokens by 6-18% while
-avoiding the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation;
-the original 400k split fails the calibration gate. A normalized five-fold
-follow-up at 400k yields 14.50% mean saving with no mean Hit change, although
-strict seed-level non-inferiority remains unestablished.
-Matched-backbone BGE-base and E5-base tests retain near-dense
-$\mathrm{Hit@10}$ with about 12% token reduction, while a BGE quality-first
-point reaches +0.88 percentage points with 7.23% saving. Route controls show
-that geometry and feedback affect route-level quality, but a fixed-pool
-factorial audit does not show that either predicts safe per-query compression.
-In a frozen 300-query downstream evaluation, matched variants reduce context
-by about 6-12%. DeepSeek, GLM-5.2, MiniMax-M3, and their shared-key majority
-show no statistically detectable correctness difference, although
-faithfulness effects are method-dependent. Prompt compression and reranking
-remain complementary downstream layers. The
-supported contribution is a geometry-guided, feedback-adaptive route controller
-combined with separate budget calibration, not universal superiority over
-dense retrieval or a proof that geometry determines relevance.
+On LoTTE technology/search from 100k to 638k chunks, eligible frozen policies
+reduce evidence-context tokens by 6-18% while avoiding the larger
+$\mathrm{Hit@10}$ losses of dense-only adaptive truncation; the original 400k
+split remains calibration-ineligible. A normalized five-fold 400k follow-up
+yields 14.50% mean saving with no mean Hit change, although strict seed-level
+non-inferiority remains unestablished. Matched BGE-base and E5-base tests retain
+near-dense $\mathrm{Hit@10}$ with about 12% token reduction. Route controls show
+that geometry and feedback improve route-level quality, but do not establish
+safe per-query compression without calibration and rescue. In a frozen
+300-query downstream evaluation, matched variants reduce context by 6-12%.
+DeepSeek, GLM-5.2, MiniMax-M3, and majority-vote comparisons show no
+statistically detectable correctness difference, while faithfulness remains
+method-dependent and degrades for the tested BGE policy. Prompt compression
+and reranking remain complementary. The supported contribution is a
+geometry-guided, feedback-adaptive route controller with separate budget
+calibration, not universal superiority over dense retrieval or proof that
+geometry determines relevance.

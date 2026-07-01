@@ -25,7 +25,11 @@ IntentRoute policies reduce final evidence-context input tokens by 6-18% at
 100k, 200k, and 638k while avoiding the larger Hit@10 losses observed under
 dense-only adaptive truncation. Additional LoTTE science/search, strong
 post-retrieval baseline, and simulated-feedback recovery experiments bound the
-claim and document when the method should be used conservatively.
+claim and document when the method should be used conservatively. A frozen
+300-query downstream evaluation uses 2,100 generated answers and three
+independent LLM judges; matched methods reduce context by about 6-12% without a
+statistically detectable correctness difference, while method-dependent
+faithfulness results remain explicitly reported.
 
 We believe the manuscript fits IP&M because it addresses adaptive information
 retrieval, evidence selection, and system design at the intersection of

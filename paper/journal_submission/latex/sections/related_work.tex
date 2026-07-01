@@ -1,0 +1,52 @@
+% Generated from paper/full_draft. Edit the Markdown source or migration script.
+
+\section{Related Work}
+\label{sec:03-related-work:related-work}
+
+\subsection{Retrieval-Augmented and Knowledge-Augmented Generation}
+\label{sec:03-related-work:retrieval-augmented-and-knowledge-augmented-generation}
+
+Retrieval-augmented generation connects a parametric language model to an external evidence source. Instead of relying only on model parameters, the system retrieves passages, documents, graph nodes, tree summaries, memory entries, or other evidence units and conditions generation on that selected context. Early RAG work formalized this parametric/non-parametric memory combination for knowledge-intensive NLP tasks \citep{lewis2020rag}. Dense passage retrieval further established neural retrieval as a strong component for open-domain question answering \citep{karpukhin2020dpr}.
+
+This line of work improves factual grounding and domain adaptation, but it also makes evidence selection a central point of failure. If the retrieval layer misses relevant evidence, the generator has limited ability to recover. If it returns excessive or noisy evidence, downstream generation becomes more expensive and may become less faithful. IntentRoute is complementary to retriever-generator architectures: it does not propose a new generator or a new knowledge carrier. It studies a feedback-guided controller for deciding which evidence route to trust and how much selected evidence should enter the final context.
+
+\subsection{Sparse, Dense, and Hybrid Retrieval}
+\label{sec:03-related-work:sparse-dense-and-hybrid-retrieval}
+
+Sparse lexical retrieval remains valuable in domain settings where exact terms, entity names, identifiers, abbreviations, and technical phrases matter. BM25 is a standard probabilistic lexical retrieval function and is still widely used as a strong sparse baseline \citep{robertson2009bm25}. Dense retrieval embeds queries and documents into a shared representation space, enabling semantic matching when surface terms differ \citep{karpukhin2020dpr}. Broad heterogeneous retrieval benchmarks show that retrieval performance varies substantially across tasks and domains, so a single retrieval family should not be assumed to dominate all settings \citep{thakur2021beir}.
+
+Hybrid retrieval combines sparse and dense signals through score interpolation, rank fusion, or reranking. Reciprocal rank fusion is a simple and widely used rank-level fusion method \citep{cormack2009rrf}. Cross-encoder rerankers provide a strong late-ranking layer because they jointly score a query and a candidate passage, but they rerank a retrieved candidate pool rather than searching the full corpus directly. In this paper, dense retrieval is a strong baseline and an explicit recall floor, not a weak component to be replaced. BM25 contributes lexical coverage, cluster-local dense retrieval contributes a structured local search path, and reranking can be added after candidate generation. The contribution is not that any single route is best, but that a controller can learn when and how to combine routes under a final context budget.
+
+\subsection{Adaptive Retrieval and Contextual Bandits}
+\label{sec:03-related-work:adaptive-retrieval-and-contextual-bandits}
+
+Many retrieval-augmented systems are configured with fixed hyperparameters: a fixed top-$k$, a fixed retriever mixture, a fixed reranker, or a fixed fallback policy. Static configurations are easy to deploy but poorly matched to heterogeneous query streams. Some queries require exact lexical anchors, others require semantic expansion, and others can be answered from a smaller local evidence region.
+
+Several systems adapt retrieval behavior without using contextual bandits. FLARE performs active retrieval during generation when predicted continuation tokens have low confidence \citep{jiang2023flare}. Adaptive-RAG routes questions among no-retrieval, single-step, and iterative retrieval strategies using a learned question-complexity classifier \citep{jeong2024adaptiverag}. Self-RAG trains a language model to retrieve and critique evidence on demand through reflection tokens \citep{asai2024selfrag}. CRAG evaluates retrieved evidence and triggers corrective actions when retrieval confidence is low \citep{yan2024crag}. These methods establish that retrieval behavior should respond to query difficulty, generation uncertainty, or evidence quality rather than remain fixed.
+
+Contextual bandits provide a natural abstraction for adaptive route control. A policy observes a context, selects an action, receives feedback, and updates its future decisions. LinUCB is a simple and interpretable contextual bandit algorithm that models each arm's expected reward as a linear function of the context and adds an upper-confidence exploration bonus. It was originally studied for personalized news recommendation \citep{li2010linucb}, and contextual bandits more broadly are a standard framework for sequential decision making under partial feedback \citep{lattimore2020bandits}.
+
+MBA-RAG is the closest bandit-based comparison: it treats retrieval methods as arms, dynamically selects a strategy according to question complexity, and penalizes retrieval steps in its reward \citep{tang2025mbarag}. IntentRoute does not claim to be the first use of bandits in retrieval-augmented generation. Its focus is different: it studies fixed cluster-local routes over a domain corpus, route-level credit assignment, trust-weighted feedback, dense rescue paths, and the measured size of the final context. The LinUCB controller is not a replacement retriever. It is an adaptive local-evidence routing policy that can change route preference as feedback accumulates.
+
+\subsection{Geometry and Manifold-Inspired Retrieval}
+\label{sec:03-related-work:geometry-and-manifold-inspired-retrieval}
+
+Embedding spaces used for retrieval often contain local structure: documents from the same topic, entity neighborhood, task workflow, or domain subfield tend to occupy nearby regions. Classical manifold learning studies how high dimensional observations may concentrate on lower-dimensional nonlinear structures, as in Isomap \citep{tenenbaum2000isomap}, locally linear embedding \citep{roweis2000lle}, and Laplacian Eigenmaps \citep{belkin2003laplacian}. This paper does not use these algorithms directly, but it adopts a bounded diagnostic view: vertical-domain evidence may exhibit local relevance structure that can be probed through PCA spectrum, cluster routing, and context-space retention.
+
+Structured retrieval systems also exploit local or hierarchical organization. Tree-organized retrieval methods such as RAPTOR build recursive summaries over clusters \citep{sarthi2024raptor}, while graph-based RAG methods organize entities and communities to answer broader corpus-level questions \citep{edge2024graphrag}. These methods show that retrieval structure can matter, but structure also introduces routing risk: a wrong branch, cluster, or graph neighborhood can discard relevant evidence early.
+
+IntentRoute therefore treats geometry as one signal in a controller rather than as a complete retrieval model. Dense retrieval and BM25 remain available as rescue paths, and the geometry assumption is evaluated diagnostically through $\mathrm{NearestClusterHit@K}$, $\mathrm{PCAvar@m}$, $\mathrm{PCAdim90}$, and $\mathrm{ContextRetention@K}$.
+
+\subsection{Context Compression and Evidence Refinement}
+\label{sec:03-related-work:context-compression-and-evidence-refinement}
+
+Reducing the context passed to a language model is related to, but distinct from, choosing a retrieval route. Selective Context prunes redundant input content, LLMLingua uses a coarse-to-fine prompt compression pipeline, and LLMLingua-2 learns a task-agnostic token classifier for faithful compression \citep{li2023selectivecontext,jiang2023llmlingua,pan2024llmlingua2}. DSLR refines retrieved passages through sentence-level reranking and reconstruction \citep{hwang2024dslr}. REPLUG shows another complementary direction: a frozen black-box language model can be paired with a tuneable retrieval model \citep{shi2024replug}.
+
+IntentRoute operates earlier in the pipeline. It selects evidence routes and sets final-context budgets before generation rather than compressing tokens inside already selected passages or tuning a retriever against language-model likelihood. Its route-control and final-budget policies are therefore compatible with prompt compression, sentence-level MMR selection, reranking, and black-box generation methods. The strong-baseline experiments in this paper use this decomposition explicitly: SentMMR is treated as a shared final-context compressor, while the cross-encoder is treated as a late reranking layer over a dense candidate pool. The paper measures final context tokens because source-candidate counts, reranker scores, or retrieval depth alone do not establish downstream context savings.
+
+\subsection{User Feedback, RLHF-Inspired Optimization, and Trust Weighting}
+\label{sec:03-related-work:user-feedback-rlhf-inspired-optimization-and-trust-weighting}
+
+User feedback can improve retrieval systems, but real feedback is delayed, biased, sparse, and user-dependent. Earlier work on clickthrough and implicit feedback shows that user behavior can train ranking systems, while also requiring care because clicks and query reformulations are biased signals \citep{joachims2002clickthrough,radlinski2005querychains}. In language-model systems, human-preference learning and RLHF-style optimization show how feedback can shape model behavior \citep{christiano2017preferences,ouyang2022instructgpt}.
+
+IntentRoute is inspired by this feedback-optimization paradigm, but it is not a full RLHF pipeline. The current experiments use controlled simulated feedback to isolate whether a contextual-bandit retrieval controller can improve route selection under noisy and trust-weighted feedback. Trust weighting is used to scale feedback updates by simulated reliability, reflecting the deployment assumption that not all users or implicit signals should be trusted equally. The paper therefore claims mechanism validation under controlled feedback, not that real human-feedback deployment has already been solved.

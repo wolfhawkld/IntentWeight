@@ -7,33 +7,30 @@
 Retrieval-augmented systems must select enough evidence to support an answer
 while limiting noise and language-model context cost. We formulate this as a
 two-stage route-control and budget-calibration problem. IntentRoute combines
-dense retrieval, BM25, and geometry-defined cluster-local routes, then uses
-trust-weighted LinUCB feedback to update route confidence. Confidence gates
-route usage and fallback, whereas an independently calibrated policy sets the
-final context budget. Dense retrieval remains a recall floor. A bounded
-piecewise relevance-manifold hypothesis motivates local route construction;
-geometry is evaluated as a diagnostic and control signal rather than a
-standalone retrieval theory.
+dense retrieval, BM25, geometry-defined cluster-local routes, and
+trust-weighted LinUCB feedback. Route confidence controls routing and fallback,
+while an independently calibrated policy sets the final context budget. Dense
+retrieval remains a recall floor. A bounded piecewise relevance-manifold
+hypothesis motivates local route construction; geometry is evaluated as a
+diagnostic signal rather than a standalone retrieval theory.
 
-On LoTTE technology/search from 100k to 638k chunks, eligible frozen
-calibration/test policies reduce evidence-context tokens by 6-18% while
-avoiding the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation;
-the original 400k split fails the calibration gate. A normalized five-fold
-follow-up at 400k yields 14.50% mean saving with no mean Hit change, although
-strict seed-level non-inferiority remains unestablished.
-Matched-backbone BGE-base and E5-base tests retain near-dense
-$\mathrm{Hit@10}$ with about 12% token reduction, while a BGE quality-first
-point reaches +0.88 percentage points with 7.23% saving. Route controls show
-that geometry and feedback affect route-level quality, but a fixed-pool
-factorial audit does not show that either predicts safe per-query compression.
-In a frozen 300-query downstream evaluation, matched variants reduce context
-by about 6-12%. DeepSeek, GLM-5.2, MiniMax-M3, and their shared-key majority
-show no statistically detectable correctness difference, although
-faithfulness effects are method-dependent. Prompt compression and reranking
-remain complementary downstream layers. The
-supported contribution is a geometry-guided, feedback-adaptive route controller
-combined with separate budget calibration, not universal superiority over
-dense retrieval or a proof that geometry determines relevance.
+On LoTTE technology/search from 100k to 638k chunks, eligible frozen policies
+reduce evidence-context tokens by 6-18% while avoiding the larger
+$\mathrm{Hit@10}$ losses of dense-only adaptive truncation; the original 400k
+split remains calibration-ineligible. A normalized five-fold 400k follow-up
+yields 14.50% mean saving with no mean Hit change, although strict seed-level
+non-inferiority remains unestablished. Matched BGE-base and E5-base tests retain
+near-dense $\mathrm{Hit@10}$ with about 12% token reduction. Route controls show
+that geometry and feedback improve route-level quality, but do not establish
+safe per-query compression without calibration and rescue. In a frozen
+300-query downstream evaluation, matched variants reduce context by 6-12%.
+DeepSeek, GLM-5.2, MiniMax-M3, and majority-vote comparisons show no
+statistically detectable correctness difference, while faithfulness remains
+method-dependent and degrades for the tested BGE policy. Prompt compression
+and reranking remain complementary. The supported contribution is a
+geometry-guided, feedback-adaptive route controller with separate budget
+calibration, not universal superiority over dense retrieval or proof that
+geometry determines relevance.
 
 ---
 
@@ -459,7 +456,7 @@ The feature groups are:
   availability, used to estimate whether global dense retrieval is already
   reliable;
 - lexical confidence: BM25 candidate availability and lexical-match strength,
-  used to protect terminology-heavy and exact-match queries;
+  used to protect queries that depend on exact terminology;
 - route agreement: overlap among dense, BM25, and cluster-local candidates,
   used to detect when independent routes support the same evidence region;
 - local geometry: nearest centroid similarity, selected arm identity, and
@@ -579,9 +576,9 @@ non-fallback route. Hybrid-lite can reduce dense influence in fusion while
 retaining dense candidates as a safety net; it should not be described as
 reducing dense computation unless the global dense route is actually skipped.
 
-The main token-quality result uses frozen calibration/test budget policies that
-select global ratio/minimum-prefix parameters on calibration queries and
-evaluate them unchanged on held-out test queries. The conservative
+The main token-quality result uses frozen calibration/test budget policies.
+They select a global ratio and minimum-prefix size on calibration queries, then
+apply both unchanged to held-out test queries. The conservative
 confidence-based policy remains a
 stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
 100k, 200k, 400k, and 638k while preserving dense-level query hit.
@@ -1007,6 +1004,7 @@ The main cost result uses a calibrated token-budget policy. For each corpus
 scale, the budget is selected on calibration queries and then frozen before
 test evaluation. Cost is measured as final LLM evidence-context input tokens
 relative to dense top-10, not retrieval-side candidate count.
+Table~\ref{tab:1} reports the resulting scale-wise operating points.
 
 **Table 1. Calibrated token-quality frontier on LoTTE technology/search.**
 
@@ -1027,7 +1025,8 @@ compression.
 
 An independently calibrated 100k audit gives Dense and IntentRoute the same
 fine budget grid but lets each select its own action. Under the zero observed
-calibration-drop rule, IntentRoute selects `r0.95/m4` and retains the Table 1
+calibration-drop rule, IntentRoute selects `r0.95/m4` and retains the
+Table~\ref{tab:1}
 result of `6.18%` test saving with `0.00pp` mean Hit delta; Dense selects
 `r1.00/m4`, or no compression. Their mean test Hit is equal, although strict
 IntentRoute non-inferiority is not established in any seed. A descriptive
@@ -1067,6 +1066,7 @@ Figure 2 visualizes the quality-cost frontier.
 Matched-backbone evaluation tests whether the controller pattern is specific
 to MiniLM. Each IntentRoute row is compared with dense retrieval using the same
 encoder and frozen test split.
+Table~\ref{tab:2} summarizes the matched-backbone comparison.
 
 **Table 2. Matched-backbone operating points on LoTTE technology/search 100k.**
 
@@ -1090,6 +1090,7 @@ The route controls isolate geometry, feedback, and dense rescue. The
 geometry-versus-random rows change arm selection under an otherwise matched
 full rescue surface. The learned, static, and no-feedback rows test whether
 LinUCB updates and gating explain route quality and final cost.
+Table~\ref{tab:3} separates route-level effects from rescued final quality.
 
 **Table 3. Geometry, feedback, and rescue-route controls on LoTTE 100k. Each row uses its paired frozen-protocol dense baseline.**
 
@@ -1131,6 +1132,7 @@ route/fallback assignment signal, not as a direct compression-safety score.
 Arm-count sensitivity tests whether the fixed $K=32$ clustering choice is a
 hidden optimum. Full multi-route quality remains stable over a 16-fold range,
 whereas aggressive gated behavior changes substantially with arm granularity.
+Table~\ref{tab:4} reports the tested arm-count grid.
 
 **Table 4. Arm-count sensitivity on LoTTE technology/search 100k.**
 
@@ -1195,6 +1197,7 @@ generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and
 MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all
 three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are
 not imputed.
+Table~\ref{tab:5} reports the matched correctness and context-token results.
 
 **Table 5. Matched downstream answer-quality and context-token comparisons.**
 
@@ -1629,6 +1632,7 @@ the primary cost result; this appendix keeps the earlier confidence-only scale
 table and seed diagnostics. These intervals are engineering stability
 diagnostics, not strong inferential proof: each scale has only three
 observations.
+Tables~\ref{tab:a1} and~\ref{tab:a2} report quality and token stability.
 
 **Appendix Table A1. Multi-seed retrieval-quality stability.**
 
@@ -1658,6 +1662,7 @@ Dense retrieval is the primary quality baseline. BM25 supplies lexical
 coverage, but it is weaker as a standalone retriever on LoTTE. Static
 dense-plus-BM25 reciprocal-rank fusion is competitive at some scales but does
 not consistently dominate dense.
+Table~\ref{tab:b1} reports these static baselines.
 
 **Appendix Table B1. Static LoTTE retrieval baselines across corpus scale.**
 
@@ -1683,6 +1688,7 @@ The experiments separate three efficiency layers:
 The main paper claim uses the third layer. Historical routing experiments
 showed that reducing candidate counts does not automatically reduce final
 context tokens when the final context remains fixed at top-10.
+Table~\ref{tab:c1} records the correction audit that motivated this separation.
 
 **Appendix Table C1. Representative fixed-top-10 correction audit.**
 
@@ -1731,6 +1737,7 @@ main LoTTE evidence claim.
 eManual contains 18,812 corpus chunks but only 1,729 unique text strings.
 Strict chunk-id evaluation can therefore mark semantically equivalent
 retrievals as incorrect.
+Table~\ref{tab:d1} quantifies the strict, text-equivalent, and deduplicated views.
 
 **Appendix Table D1. eManual strict, text-equivalent, and deduplicated
 evaluation.**
@@ -1756,6 +1763,7 @@ robustness check replaces it with
 `sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, a QA-tuned MiniLM-family
 encoder with the same 384-dimensional embedding size and a similar
 CPU-friendly resource class.
+Tables~\ref{tab:e1} and~\ref{tab:e2} report encoder-family and matched-backbone robustness.
 
 **Appendix Table E1. QA-tuned MiniLM-family encoder robustness.**
 
@@ -1793,6 +1801,9 @@ frozen LoTTE technology/search 100k test split. Seven methods produce 2,100
 answers with `deepseek-v4-flash`. The fixed answers receive 2,100 DeepSeek,
 2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge
 statistics use the 2,065 query-method keys shared by all judges.
+Tables~\ref{tab:f1}, \ref{tab:f2}, \ref{tab:f3}, \ref{tab:f4},
+and~\ref{tab:f5} report method results, paired tests, judge coverage,
+agreement, and majority-vote comparisons.
 
 **Appendix Table F1. DeepSeek-judged downstream answer and context results.**
 
@@ -1834,14 +1845,15 @@ calibration differs across judges, so raw ordinal scores are not pooled.
 
 | Field | Judge pair | Raw agreement | Cohen's $\kappa$ |
 |---|---|---:|---:|
-| Correct | DeepSeek / GLM-5.2 | 91.04% | 0.508 |
-| Correct | DeepSeek / MiniMax-M3 | 89.88% | 0.503 |
-| Correct | GLM-5.2 / MiniMax-M3 | 92.15% | 0.653 |
-| Faithful | DeepSeek / GLM-5.2 | 91.72% | 0.364 |
-| Faithful | DeepSeek / MiniMax-M3 | 93.27% | 0.374 |
-| Faithful | GLM-5.2 / MiniMax-M3 | 93.41% | 0.405 |
+| Correct | DS / GLM | 91.04% | 0.508 |
+| Correct | DS / MM | 89.88% | 0.503 |
+| Correct | GLM / MM | 92.15% | 0.653 |
+| Faithful | DS / GLM | 91.72% | 0.364 |
+| Faithful | DS / MM | 93.27% | 0.374 |
+| Faithful | GLM / MM | 93.41% | 0.405 |
 
-Three-judge unanimity is 86.54% for correctness and 89.20% for faithfulness.
+Here DS denotes DeepSeek and MM denotes MiniMax-M3. Three-judge unanimity is
+86.54% for correctness and 89.20% for faithfulness.
 The corresponding majority-positive rates are 88.96% and 95.35%. High raw
 faithfulness agreement coexists with lower $\kappa$ because positive judgments
 are highly prevalent.
@@ -1866,6 +1878,9 @@ excluded from headline analysis.
 
 The calibration/test protocol selects the final-context budget on calibration
 queries and freezes it before evaluation on held-out test queries.
+Tables~\ref{tab:g1}, \ref{tab:g2}, \ref{tab:g3}, and~\ref{tab:g4} report the
+frozen split, independent calibration, partition sensitivity, and normalized
+five-fold audit.
 
 **Appendix Table G1. Frozen context-budget validation on LoTTE technology/search.**
 
@@ -1933,6 +1948,7 @@ cross-fitted behavior.
 
 LoTTE science/search is used as a second-domain validation, not as a replacement
 for the main LoTTE technology/search scale-up.
+Tables~\ref{tab:h1} and~\ref{tab:h2} separate ranking transfer from frozen-budget behavior.
 
 **Appendix Table H1. Science/search fixed top-10 ranking validation.**
 
@@ -1959,6 +1975,7 @@ require domain and scale calibration.
 
 Hard-case recovery focuses on affected queries where dense top-10 retrieves at
 least one GT chunk but the budgeted IntentRoute context misses.
+Tables~\ref{tab:i1} and~\ref{tab:i2} distinguish same-query repair from held-out recovery.
 
 **Appendix Table I1. Same-query feedback recovery on affected queries.**
 
@@ -1991,6 +2008,8 @@ reranking.
 
 These baselines test whether simpler post-retrieval operations explain the
 main final-context result.
+Tables~\ref{tab:j1}, \ref{tab:j2}, \ref{tab:j3}, and~\ref{tab:j4} report
+matched compression, reranking, and prompt-pruning controls.
 
 **Appendix Table J1. Dense+Sentence-MMR same-budget baseline on LoTTE
 technology/search 100k.**
@@ -2057,6 +2076,9 @@ is to show that prompt pruning can be stacked after either evidence pool and
 does not replace upstream route control or final-budget calibration.
 
 ## K. Route-Control Attribution and Arm Sensitivity
+
+Tables~\ref{tab:k1}, \ref{tab:k2}, \ref{tab:k3}, and~\ref{tab:k4} isolate
+geometry, feedback, arm granularity, and frozen-trajectory route mediation.
 
 **Appendix Table K1. Static geometry versus uniform-random route control.**
 

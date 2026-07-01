@@ -113,6 +113,16 @@ def inline(text: str) -> str:
     )
     text = CODE_RE.sub(lambda match: protect(r"\nolinkurl{" + match.group(1) + "}"), text)
     text = BOLD_RE.sub(lambda match: protect(r"\textbf{" + escape_latex(match.group(1)) + "}"), text)
+    text = re.sub(
+        r"~\\ref\{([A-Za-z0-9:._-]+)\}",
+        lambda match: protect(r"~\ref{" + match.group(1) + "}"),
+        text,
+    )
+    text = re.sub(
+        r"\\ref\{([A-Za-z0-9:._-]+)\}",
+        lambda match: protect(r"\ref{" + match.group(1) + "}"),
+        text,
+    )
     for source, replacement in FIGURE_REFS.items():
         text = text.replace(source, protect(replacement))
 

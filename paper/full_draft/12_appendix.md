@@ -8,6 +8,7 @@ the primary cost result; this appendix keeps the earlier confidence-only scale
 table and seed diagnostics. These intervals are engineering stability
 diagnostics, not strong inferential proof: each scale has only three
 observations.
+Tables~\ref{tab:a1} and~\ref{tab:a2} report quality and token stability.
 
 **Appendix Table A1. Multi-seed retrieval-quality stability.**
 
@@ -37,6 +38,7 @@ Dense retrieval is the primary quality baseline. BM25 supplies lexical
 coverage, but it is weaker as a standalone retriever on LoTTE. Static
 dense-plus-BM25 reciprocal-rank fusion is competitive at some scales but does
 not consistently dominate dense.
+Table~\ref{tab:b1} reports these static baselines.
 
 **Appendix Table B1. Static LoTTE retrieval baselines across corpus scale.**
 
@@ -62,6 +64,7 @@ The experiments separate three efficiency layers:
 The main paper claim uses the third layer. Historical routing experiments
 showed that reducing candidate counts does not automatically reduce final
 context tokens when the final context remains fixed at top-10.
+Table~\ref{tab:c1} records the correction audit that motivated this separation.
 
 **Appendix Table C1. Representative fixed-top-10 correction audit.**
 
@@ -110,6 +113,7 @@ main LoTTE evidence claim.
 eManual contains 18,812 corpus chunks but only 1,729 unique text strings.
 Strict chunk-id evaluation can therefore mark semantically equivalent
 retrievals as incorrect.
+Table~\ref{tab:d1} quantifies the strict, text-equivalent, and deduplicated views.
 
 **Appendix Table D1. eManual strict, text-equivalent, and deduplicated
 evaluation.**
@@ -135,6 +139,7 @@ robustness check replaces it with
 `sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, a QA-tuned MiniLM-family
 encoder with the same 384-dimensional embedding size and a similar
 CPU-friendly resource class.
+Tables~\ref{tab:e1} and~\ref{tab:e2} report encoder-family and matched-backbone robustness.
 
 **Appendix Table E1. QA-tuned MiniLM-family encoder robustness.**
 
@@ -172,6 +177,9 @@ frozen LoTTE technology/search 100k test split. Seven methods produce 2,100
 answers with `deepseek-v4-flash`. The fixed answers receive 2,100 DeepSeek,
 2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge
 statistics use the 2,065 query-method keys shared by all judges.
+Tables~\ref{tab:f1}, \ref{tab:f2}, \ref{tab:f3}, \ref{tab:f4},
+and~\ref{tab:f5} report method results, paired tests, judge coverage,
+agreement, and majority-vote comparisons.
 
 **Appendix Table F1. DeepSeek-judged downstream answer and context results.**
 
@@ -246,6 +254,9 @@ excluded from headline analysis.
 
 The calibration/test protocol selects the final-context budget on calibration
 queries and freezes it before evaluation on held-out test queries.
+Tables~\ref{tab:g1}, \ref{tab:g2}, \ref{tab:g3}, and~\ref{tab:g4} report the
+frozen split, independent calibration, partition sensitivity, and normalized
+five-fold audit.
 
 **Appendix Table G1. Frozen context-budget validation on LoTTE technology/search.**
 
@@ -313,6 +324,7 @@ cross-fitted behavior.
 
 LoTTE science/search is used as a second-domain validation, not as a replacement
 for the main LoTTE technology/search scale-up.
+Tables~\ref{tab:h1} and~\ref{tab:h2} separate ranking transfer from frozen-budget behavior.
 
 **Appendix Table H1. Science/search fixed top-10 ranking validation.**
 
@@ -339,6 +351,7 @@ require domain and scale calibration.
 
 Hard-case recovery focuses on affected queries where dense top-10 retrieves at
 least one GT chunk but the budgeted IntentRoute context misses.
+Tables~\ref{tab:i1} and~\ref{tab:i2} distinguish same-query repair from held-out recovery.
 
 **Appendix Table I1. Same-query feedback recovery on affected queries.**
 
@@ -371,6 +384,8 @@ reranking.
 
 These baselines test whether simpler post-retrieval operations explain the
 main final-context result.
+Tables~\ref{tab:j1}, \ref{tab:j2}, \ref{tab:j3}, and~\ref{tab:j4} report
+matched compression, reranking, and prompt-pruning controls.
 
 **Appendix Table J1. Dense+Sentence-MMR same-budget baseline on LoTTE
 technology/search 100k.**
@@ -437,6 +452,9 @@ is to show that prompt pruning can be stacked after either evidence pool and
 does not replace upstream route control or final-budget calibration.
 
 ## K. Route-Control Attribution and Arm Sensitivity
+
+Tables~\ref{tab:k1}, \ref{tab:k2}, \ref{tab:k3}, and~\ref{tab:k4} isolate
+geometry, feedback, arm granularity, and frozen-trajectory route mediation.
 
 **Appendix Table K1. Static geometry versus uniform-random route control.**
 

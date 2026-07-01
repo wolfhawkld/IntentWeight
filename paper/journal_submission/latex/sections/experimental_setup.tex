@@ -1,0 +1,227 @@
+% Generated from paper/full_draft. Edit the Markdown source or migration script.
+
+\section{Experimental Setup}
+\label{sec:05-experimental-setup:experimental-setup}
+
+\subsection{Datasets}
+\label{sec:05-experimental-setup:datasets}
+
+The experiments use several datasets, but they have different evidentiary roles. We do not treat all datasets as equal support for the main claim:
+
+\begin{itemize}
+\item \textbf{LoTTE technology/search} is the main large-scale vertical-domain evidence benchmark. We evaluate nested corpus scales from 100k to 638k chunks with 596 test queries.
+\item \textbf{LoTTE science/search} is the cross-domain validation benchmark. It tests whether ranking and context-budget behavior transfer beyond technology/search at 20k/q200 and 100k scales.
+\item \textbf{PubMedQA and Banking77} are supporting feedback-adaptation checks. PubMedQA is an evidence-retrieval proof-of-concept with abstract-level ground truth, while Banking77 is an intent-routing proxy rather than a strict evidence-retrieval benchmark.
+\item \textbf{eManual and CUAD} are boundary cases. eManual exposes duplicate-text and strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
+\end{itemize}
+
+This role separation keeps the main claim tied to LoTTE while preserving the diagnostic value of the secondary datasets.
+
+\subsection{Baselines and Variants}
+\label{sec:05-experimental-setup:baselines-and-variants}
+
+The baseline family includes:
+
+\begin{itemize}
+\item BM25-only lexical retrieval.
+\item Dense-only retrieval with \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}.
+\item Matched dense and IntentRoute variants with BGE-base and E5-base embeddings.
+\item BM25 + dense hybrid retrieval using reciprocal-rank fusion.
+\item Full multi-route IntentRoute.
+\item Gated cost-aware IntentRoute.
+\item Conservative confidence-conditioned final-context baseline.
+\item Dense+Sentence-MMR final-context compression.
+\item Dense and IntentRoute plus SelectiveContext-lite prompt pruning.
+\item Cross-encoder reranking over dense top-50 candidates.
+\item Static geometry controls such as nearest-cluster routing.
+\item Naive controls such as random or epsilon-greedy arm selection.
+\item No-feedback and uniform-random route controls.
+\item Arm-count sensitivity over $K \in \{8,16,32,64,128\}$.
+\end{itemize}
+
+Dense-only retrieval is the primary quality baseline. The paper should avoid weak baseline framing: dense is strong and remains a required recall floor in the proposed method. Sentence-MMR, SelectiveContext-lite, and cross-encoder reranking are reported as strong post-retrieval baselines. Sentence-MMR and SelectiveContext-lite test whether downstream compression can explain the token saving, while the cross-encoder tests whether a heavier late-ranking layer can select a smaller context more simply. These are not mutually exclusive alternatives to IntentRoute; they occupy different stages in the retrieval-to-context pipeline.
+
+\subsection{Metrics}
+\label{sec:05-experimental-setup:metrics}
+
+Retrieval quality is measured with:
+
+\begin{itemize}
+\item $\mathrm{Hit@K}$: whether any ground-truth chunk appears in the top $K$.
+\item $\mathrm{EvidenceRecall@K}$: fraction of all ground-truth chunks retrieved.
+\item $\mathrm{MRR@K}$: reciprocal rank of the first relevant chunk.
+\item $\mathrm{nDCG@K}$: binary relevance ranking quality.
+\end{itemize}
+
+For query $q_t$, let $G_t$ be the set of ground-truth chunks and let $R_t^K$ be the top-$K$ retrieved chunks. The query-level hit metric is:
+
+\[
+\mathrm{Hit@K}(q_t) =
+\mathbb{1}\left[ R_t^K \cap G_t \neq \varnothing \right].
+\]
+
+The evidence-recall metric is:
+
+\[
+\mathrm{EvidenceRecall@K}(q_t) =
+\frac{\left| R_t^K \cap G_t \right|}{\left|G_t\right|}.
+\]
+
+For mean reciprocal rank, let $\rho_t$ be the rank of the first relevant chunk within the top-$K$ list, or $\infty$ if no relevant chunk is retrieved:
+
+\[
+\mathrm{MRR@K}(q_t) =
+\begin{cases}
+\frac{1}{\rho_t}, & \rho_t \le K, \\
+0, & \rho_t = \infty.
+\end{cases}
+\]
+
+For binary relevance, let $\mathrm{rel}_{t,j} \in \{0,1\}$ denote whether the chunk at rank $j$ for query $q_t$ is relevant. We compute:
+
+\[
+\mathrm{DCG@K}(q_t) =
+\sum_{j=1}^{K} \frac{\mathrm{rel}_{t,j}}{\log_2(j+1)},
+\]
+
+\[
+\mathrm{nDCG@K}(q_t) =
+\frac{\mathrm{DCG@K}(q_t)}{\mathrm{IDCG@K}(q_t)}.
+\]
+
+If $\mathrm{IDCG@K}(q_t)=0$, we set $\mathrm{nDCG@K}(q_t)=0$.
+
+The main headline uses query-level $\mathrm{Hit@10}$. This choice reflects the target use case: retrieving at least one usable evidence chunk for RAG generation under a smaller context budget. It does not imply complete evidence collection. $\mathrm{EvidenceRecall@10}$ is reported separately where multi-evidence coverage is important.
+
+Cost and efficiency are separated into three layers:
+
+\begin{itemize}
+\item Source candidate cost: number of candidates considered before final fusion.
+\item Dense invocation rate: fraction of queries using the global dense path.
+\item Final context tokens: token count of retrieved chunks sent to the generator.
+\end{itemize}
+
+The main cost result uses final context tokens. Source candidate cost and dense invocation rate are retrieval-stage diagnostics.
+
+The downstream evaluation additionally reports LLM-judge correctness and faithfulness, strict chunk-id citation support, insufficient-context rate, and context tokens per judged-correct answer. These metrics are secondary answer-level validation of the route-and-budget claim, not evidence of generator superiority.
+
+Let $C_t$ be the final retrieved context selected for query $q_t$ and let $\mathrm{tok}(d)$ be the token count of chunk $d$. The final context token cost is:
+
+\[
+\mathrm{Tokens}(C_t) =
+\sum_{d \in C_t} \mathrm{tok}(d).
+\]
+
+\subsection{Geometry Diagnostics}
+\label{sec:05-experimental-setup:geometry-diagnostics}
+
+The geometry diagnostics are used to test whether the corpus has usable local structure for route control. They are diagnostic support for the piecewise relevance-manifold assumption, not mathematical proof of a manifold.
+
+Let $E \in \mathbb{R}^{n \times p}$ be a sampled matrix of corpus chunk embeddings after mean-centering. Let $\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_p \ge 0$ be the eigenvalues of the empirical covariance matrix. The explained variance retained by the first $m$ principal components is:
+
+\[
+\mathrm{PCAvar@m} =
+\frac{\sum_{i=1}^{m} \lambda_i}
+     {\sum_{i=1}^{p} \lambda_i}.
+\]
+
+The dimension needed to explain 90\% of the variance is:
+
+\[
+\mathrm{PCAdim90} =
+\min \left\{m:
+\frac{\sum_{i=1}^{m} \lambda_i}
+     {\sum_{i=1}^{p} \lambda_i}
+\ge 0.9
+\right\}.
+\]
+
+For cluster diagnostics, let $y_t$ be the PCA/context representation of query $q_t$, let $\mu_c$ be the centroid of cluster $c$, and let $\ell_i$ be the cluster label of chunk $d_i$. The top-$K$ nearest clusters for query $q_t$ are:
+
+\[
+\mathcal{N}_K(q_t) =
+\operatorname{TopK}_{c}
+\left(\mu_c^\top y_t\right).
+\]
+
+Let $\mathcal{C}_t = \{\ell_i : d_i \in G_t\}$ be the set of clusters that contain ground-truth evidence for query $q_t$. The nearest-cluster hit metric is:
+
+\[
+\begin{aligned}
+\mathrm{NearestClusterHit@K} &=
+\frac{1}{|\mathcal{Q}_{GT}|}
+\sum_{q_t \in \mathcal{Q}_{GT}} \\
+&\quad
+\mathbb{1}
+\left[
+\mathcal{N}_K(q_t) \cap \mathcal{C}_t \neq \varnothing
+\right].
+\end{aligned}
+\]
+
+where $\mathcal{Q}_{GT}$ is the set of queries with at least one ground-truth chunk in the evaluated corpus.
+
+Finally, let $R_{t,\mathrm{ctx}}^K$ be the top-$K$ chunks retrieved by inner product in the PCA/context space, and let $R_{t,\mathrm{dense}}^K$ be the top-$K$ chunks retrieved by dense embedding similarity. We define:
+
+\[
+\begin{aligned}
+\mathrm{ContextHit@K} &=
+\frac{1}{|\mathcal{Q}_{GT}|}
+\sum_{q_t \in \mathcal{Q}_{GT}} \\
+&\quad
+\mathbb{1}
+\left[
+R_{t,\mathrm{ctx}}^K \cap G_t \neq \varnothing
+\right],
+\end{aligned}
+\]
+
+and report context retention relative to dense retrieval:
+
+\[
+\mathrm{ContextRetention@K} =
+\frac{\mathrm{ContextHit@K}}
+     {\mathrm{DenseHit@K}}.
+\]
+
+If $\mathrm{DenseHit@K}=0$, we set $\mathrm{ContextRetention@K}=0$.
+
+\subsection{Prequential Simulated Feedback}
+\label{sec:05-experimental-setup:prequential-simulated-feedback}
+
+LinUCB experiments use a no-leakage prequential simulated-feedback protocol. For each query, the current policy state is frozen before retrieval. The system ranks candidates, constructs the final context, and is evaluated against the ground-truth evidence. Only after this evaluation is the ground-truth label converted into simulated feedback and used to update the LinUCB state for later queries.
+
+The feedback signal is controlled and ground-truth-derived. Oracle feedback is used only as an upper bound. Equal noisy and trust-weighted modes simulate imperfect user feedback with different reliability assumptions. Trust weighting changes how strongly a feedback event updates the route policy, but it does not give the current query access to its answer label before ranking.
+
+This setup validates the route-learning mechanism under controlled feedback quality. It does not claim that real user feedback has already been collected, nor that delayed, biased, or adversarial human feedback would have the same effect without additional deployment safeguards.
+
+Some experiments use multiple prequential epochs over the same query stream to simulate repeated interaction. These runs are useful for route-policy self-evolution analysis. They are not IID held-out generalization results.
+
+\subsection{Implementation Notes}
+\label{sec:05-experimental-setup:implementation-notes}
+
+The main dense baseline uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2} with exact cosine search. Matched-backbone checks use BGE-base and \nolinkurl{intfloat/e5-base-v2}; E5 applies the recommended \nolinkurl{query:} and \nolinkurl{passage:} prefixes. Embeddings and retrieval artifacts are cached to avoid repeating deterministic computation. Metrics are recomputed from saved rankings, not copied from prior summaries. Historical experiment directories and machine-readable method labels retain the legacy \nolinkurl{IntentWeight} identifier so that existing hashes, selectors, and result provenance remain reproducible; paper-facing terminology uses \nolinkurl{IntentRoute}.
+
+KMeans/MiniBatchKMeans uses 32 arms in the main scale experiments. A dedicated 100k sensitivity check evaluates 8, 16, 32, 64, and 128 arms. This supports LinUCB comparability and tests engineering sensitivity, but it is not claimed to identify a theoretically optimal clustering design.
+
+The Sentence-MMR baseline starts from dense or IntentRoute evidence pools, splits selected chunks into sentence-like units, and greedily selects query-relevant but diverse sentences under a target token ratio or per-query budget. SelectiveContext-lite is a deterministic Selective Context-style proxy that scores sentence-like units with query overlap, IDF salience, bigram overlap, source rank, and compactness; it is not presented as LLMLingua. The cross-encoder baseline reranks dense top-50 candidates with \nolinkurl{cross-encoder/ms-marco-MiniLM-L-6-v2}; it is evaluated both as a full reranked top-10 and as a same-budget variant constrained by the calibrated IntentRoute per-query token budgets. Reranker compute cost is not charged in final context tokens, so reranker results should be interpreted as retrieval-quality baselines rather than end-to-end latency measurements.
+
+\subsection{Calibration and Paired Testing Protocol}
+\label{sec:05-experimental-setup:calibration-and-paired-testing-protocol}
+
+The final-context budget experiments use a calibration/test split over queries. For each scale, 30\% of queries are used only to select a budget policy. The selected policy is then frozen and evaluated on the remaining held-out test queries. This avoids choosing a context budget after seeing test labels.
+
+A budget policy name has the form \nolinkurl{token_budget_rX_mY}. Here, \nolinkurl{rX} is the maximum final-context token ratio relative to the original top-10 context, and \nolinkurl{mY} is the minimum safe prefix kept before token-budget filtering. For example, \nolinkurl{token_budget_r0.85_m4} keeps at least four top-ranked chunks and then admits additional chunks only while the final context remains within 85\% of the original top-10 token budget.
+
+Calibration eligibility is defined using the mean calibration $\mathrm{Hit@10}$ delta against dense top-10. The main calibration selection uses a zero observed-hit-drop margin: a policy is eligible only when its mean calibration hit delta is non-negative. Among eligible policies, the selected policy is the one with the largest final-context token saving. If no policy is eligible, the best diagnostic policy is still reported, but it is not treated as a strict calibration-eligible main operating point.
+
+Frozen test results are paired by query against dense top-10. We report bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context token savings where available, and use a 1 percentage-point non-inferiority margin for strict seed-level checks. This separates two claims: whether the method preserves retrieval quality under a conservative paired criterion, and whether it reduces the final evidence-context tokens sent to the generator.
+
+Two additional audits test selection robustness. First, Dense and IntentRoute independently select actions on the same 100k calibration split over a fine ratio grid from 1.00 to 0.80 in 0.01 increments, so the comparison does not force Dense to inherit the routed policy's nominal action. Second, the original calibration grid is repeated over 20 deterministic 30/70 query partitions at each scale. These overlapping partitions diagnose split sensitivity; they are not treated as additional training seeds or independent inferential samples.
+
+\subsection{Downstream Answer-Level Protocol}
+\label{sec:05-experimental-setup:downstream-answer-level-protocol}
+
+The answer-level evaluation draws 300 deterministic queries from the 417-query frozen test split. Seven methods cover MiniLM dense, BGE dense and IntentRoute, E5 dense and IntentRoute, and matched Dense+SentMMR versus IntentRoute+SentMMR. The \nolinkurl{deepseek-v4-flash} configuration generates one answer from each retrieved context. The fixed answers are independently judged by \nolinkurl{deepseek-v4-flash}, \nolinkurl{glm-5.2}, and \nolinkurl{minimax-m3} for correctness, faithfulness, relevance, and citation support against reference evidence.
+
+The run contains 2,100 generated answers and 6,265 schema-valid judgments: 2,100 each from DeepSeek and GLM-5.2 and 2,065 from MiniMax-M3. Thirty-five MiniMax-M3 inputs are rejected by provider-side content filtering and are not imputed. Cross-judge agreement uses the 2,065 query-method keys valid for all three judges. Correctness and faithfulness differences use paired query-level bootstrap intervals and exact McNemar tests within each judge and for the three-judge majority. Raw ordinal scores are not pooled across judges. The under-specified \nolinkurl{insufficient_context_appropriate} field is retained in raw artifacts but excluded from headline and agreement analyses. This protocol supports multi-judge answer-level robustness, not human-rated superiority.

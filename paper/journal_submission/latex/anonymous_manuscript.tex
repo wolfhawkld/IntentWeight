@@ -1,0 +1,82 @@
+\documentclass[a4paper,fleqn,doubleblind]{cas-sc}
+
+\usepackage[authoryear,longnamesfirst]{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{url}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+
+\shorttitle{Geometry-Guided and Feedback-Adaptive Route Confidence}
+\shortauthors{Anonymous submission}
+
+\title[mode=title]{IntentRoute: Geometry-Guided and Feedback-Adaptive Route Confidence for Efficient Evidence Selection}
+
+\begin{abstract}
+% TASK66_ABSTRACT_START
+Retrieval-augmented systems must select enough evidence to support an answer while limiting noise and language-model context cost. We formulate this as a two-stage route-control and budget-calibration problem. IntentRoute combines dense retrieval, BM25, geometry-defined cluster-local routes, and trust-weighted LinUCB feedback. Route confidence controls routing and fallback, while an independently calibrated policy sets the final context budget. Dense retrieval remains a recall floor. A bounded piecewise relevance-manifold hypothesis motivates local route construction; geometry is evaluated as a diagnostic signal rather than a standalone retrieval theory.
+
+On LoTTE technology/search from 100k to 638k chunks, eligible frozen policies reduce evidence-context tokens by 6-18\% while avoiding the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation; the original 400k split remains calibration-ineligible. A normalized five-fold 400k follow-up yields 14.50\% mean saving with no mean Hit change, although strict seed-level non-inferiority remains unestablished. Matched BGE-base and E5-base tests retain near-dense $\mathrm{Hit@10}$ with about 12\% token reduction. Route controls show that geometry and feedback improve route-level quality, but do not establish safe per-query compression without calibration and rescue. In a frozen 300-query downstream evaluation, matched variants reduce context by 6-12\%. DeepSeek, GLM-5.2, MiniMax-M3, and majority-vote comparisons show no statistically detectable correctness difference, while faithfulness remains method-dependent and degrades for the tested BGE policy. Prompt compression and reranking remain complementary. The supported contribution is a geometry-guided, feedback-adaptive route controller with separate budget calibration, not universal superiority over dense retrieval or proof that geometry determines relevance.
+% TASK66_ABSTRACT_END
+\end{abstract}
+
+\begin{keywords}
+Retrieval-augmented generation \sep Evidence selection \sep Information retrieval
+\sep Contextual bandits \sep Dense retrieval \sep Context compression \sep User feedback
+\end{keywords}
+
+\maketitle
+
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/method}
+
+\begin{figure}[pos=htbp]
+\centering
+\includegraphics[width=\textwidth]{figure1_system_diagram.pdf}
+\caption{IntentRoute evidence-selection controller. Dense and BM25 remain
+global recall routes; LinUCB selects cluster-local arms and contributes route
+confidence for route gating, while an independently calibrated policy controls
+the final context budget.}
+\label{fig:system}
+\end{figure}
+
+\input{sections/experimental_setup}
+\input{sections/results}
+
+\begin{figure}[pos=htbp]
+\centering
+\includegraphics[width=\textwidth]{figure2_token_quality_frontier.pdf}
+\caption{Calibrated token-quality frontier by corpus chunk count. IntentRoute
+reduces final LLM evidence-context input tokens while avoiding the query-level
+hit loss of dense-only adaptive truncation across LoTTE technology/search and
+science/search validation points.}
+\label{fig:token-quality}
+\end{figure}
+
+\begin{figure}[pos=htbp]
+\centering
+\includegraphics[width=\textwidth]{figure3_geometry_to_control.pdf}
+\caption{Geometry-to-control diagnostic. Context retention helps identify
+where local routing can preserve quality and save context, but it does not
+deterministically predict either outcome; calibration, fusion, and dense
+rescue remain part of the controller.}
+\label{fig:geometry-control}
+\end{figure}
+
+\input{sections/discussion}
+\input{sections/conclusion}
+\input{sections/limitations}
+
+\bibliographystyle{cas-model2-names}
+\bibliography{references}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

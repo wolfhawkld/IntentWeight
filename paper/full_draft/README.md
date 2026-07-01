@@ -87,26 +87,22 @@ post-feedback retry.
 
 Task65 reduced the main Results display from eight tables and five figures to
 five tables and three figures. Detailed cross-domain, recovery, compressor,
-reranker, and control results remain in the appendix. After adding the
-Task65.3-65.6 reviewer-defense evidence, the regenerated ACL-style working PDF
-is 30 pages with zero critical LaTeX warnings.
+reranker, and control results remain in the appendix. After the Task66 abstract
+and cross-reference synchronization, the regenerated ACL-style working PDF is
+32 pages with zero critical LaTeX warnings.
 
-## Next Editing Pass
+## Journal Submission Pass
 
-The current draft is a complete venue-neutral paper, not a final camera-ready
-submission. Task66 should:
+Task66 is complete as the technical IP&M conversion. The current official
+journal guidance points to Elsevier CAS single-column rather than the older
+`elsarticle` plan. The self-contained package under
+`paper/journal_submission/latex/` includes a CAS `doubleblind` manuscript,
+separate one-page title page, three vector figures, editable tables, references,
+highlights, keywords, and a reproducibility manifest.
 
-- use `paper/journal_submission/` as the journal-first preparation package;
-- treat IP&M as the primary target and ESWA as the fallback target;
-- migrate the current ACL-style LaTeX draft to Elsevier `elsarticle` before
-  formal submission;
-- tighten prose to the selected journal style;
-- refine draft SVG figures to the selected venue's visual style;
-- build separate anonymized manuscript and title-page files for double
-  anonymized review;
-- visually inspect table density, float placement, and page budget;
-- fill real author, affiliation, funding, competing-interest, data/code, and
-  AI-use declarations before submission.
+Task67 remains the final pre-submission review pass. Human authors must still
+fill author identity, affiliations, CRediT roles, funding, competing interests,
+acknowledgements, public data/code URLs, and the final AI-use disclosure.
 
 ## Draft Validation
 

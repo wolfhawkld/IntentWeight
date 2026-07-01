@@ -119,7 +119,7 @@ The feature groups are:
   availability, used to estimate whether global dense retrieval is already
   reliable;
 - lexical confidence: BM25 candidate availability and lexical-match strength,
-  used to protect terminology-heavy and exact-match queries;
+  used to protect queries that depend on exact terminology;
 - route agreement: overlap among dense, BM25, and cluster-local candidates,
   used to detect when independent routes support the same evidence region;
 - local geometry: nearest centroid similarity, selected arm identity, and
@@ -239,9 +239,9 @@ non-fallback route. Hybrid-lite can reduce dense influence in fusion while
 retaining dense candidates as a safety net; it should not be described as
 reducing dense computation unless the global dense route is actually skipped.
 
-The main token-quality result uses frozen calibration/test budget policies that
-select global ratio/minimum-prefix parameters on calibration queries and
-evaluate them unchanged on held-out test queries. The conservative
+The main token-quality result uses frozen calibration/test budget policies.
+They select a global ratio and minimum-prefix size on calibration queries, then
+apply both unchanged to held-out test queries. The conservative
 confidence-based policy remains a
 stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
 100k, 200k, 400k, and 638k while preserving dense-level query hit.

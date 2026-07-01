@@ -1,6 +1,6 @@
 # Journal Submission Prep
 
-Updated: 2026-06-21
+Updated: 2026-07-01
 
 This directory tracks the journal-oriented submission package for the current
 IntentRoute manuscript.
@@ -32,12 +32,15 @@ IR contribution beyond the current engineering frontier.
 
 - The manuscript has a complete venue-neutral full draft under
   `paper/full_draft/`.
-- The current LaTeX build under `paper/latex/` is ACL-style and useful for
-  review, but it is not the final Elsevier submission format.
-- The abstract has been shortened to comply with the 250-word Elsevier abstract
-  limit used by both IP&M and ESWA.
-- The manuscript still needs an Elsevier `elsarticle` migration before formal
-  submission.
+- The venue-neutral LaTeX build under `paper/latex/` remains available for
+  independent review.
+- Task66 provides a self-contained Elsevier CAS single-column package under
+  `paper/journal_submission/latex/`, following the current IP&M template link.
+- The anonymous manuscript uses CAS `doubleblind`, and the non-anonymous title
+  page is a separate file.
+- The abstract is 240 words, within the 250-word IP&M limit.
+- Three cited vector-PDF figures, editable LaTeX tables, bibliography sources,
+  highlights, keywords, and a source-hash manifest are included.
 - Author identity, affiliation, address, acknowledgements, and declarations are
   intentionally left as placeholders in this directory.
 
@@ -52,14 +55,44 @@ IR contribution beyond the current engineering frontier.
 - `submission_checklist.md`: double-anonymous and package readiness checklist.
 - `task50_journal_prep_summary.md`: concise local record of this preparation
   pass.
+- `task66_elsevier_ipm_conversion_summary.md`: CAS conversion and validation
+  record.
+- `latex/anonymous_manuscript.tex`: double-anonymized CAS manuscript source.
+- `latex/title_page.tex`: separate non-anonymous title-page template.
+- `latex/Makefile`: reproducible `sync`, `all`, `validate`, and `audit` targets.
+
+## Reproducible Build
+
+The local build uses TinyTeX with the Elsevier CAS package and its table/float
+dependencies:
+
+```bash
+tlmgr install els-cas-templates makecell xstring footmisc multirow colortbl moreverb wrapfig
+cd paper/journal_submission/latex
+make audit
+```
+
+All project Python entry points invoked by the Makefile use the repository
+`.venv`.
 
 ## Next Required Work
 
-1. Migrate the manuscript from ACL-style LaTeX to Elsevier `elsarticle`.
-2. Produce separate title-page and anonymized-manuscript files.
-3. Fill in real author, affiliation, corresponding-author, and declaration
+1. Fill in real author, affiliation, corresponding-author, and declaration
    details.
-4. Recheck references, figure files, table captions, and supplementary
-   artifacts against the selected journal's upload system.
-5. Decide whether to add a larger answer-level evaluation before first
-   submission.
+2. Replace placeholder data/code availability text with release URLs.
+3. Decide whether to post a preprint before or after journal review.
+4. Recheck the current IP&M upload fields immediately before submission.
+
+## Official Format Basis
+
+Checked on 2026-07-01:
+
+- [IP&M Guide for Authors](https://www.sciencedirect.com/journal/information-processing-and-management/publish/guide-for-authors):
+  double-anonymized review, separate title page and anonymized manuscript,
+  abstract up to 250 words, and 1-7 keywords;
+- [Elsevier LaTeX instructions](https://www.elsevier.com/en-gb/researcher/author/policies-and-guidelines/latex-instructions):
+  journal-specific link to the CAS single-column template;
+- Elsevier CAS class used locally: `cas-sc` 2.4 (2024-05-04).
+
+The old Task50 reference to `elsarticle` has therefore been superseded by the
+current CAS single-column package.

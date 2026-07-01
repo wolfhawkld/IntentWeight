@@ -47,3 +47,12 @@ paper/latex/*.fdb_latexmk
 paper/latex/*.fls
 paper/latex/*.out
 paper/latex/*.pdf
+paper/journal_submission/latex/*.abs
+paper/journal_submission/latex/*.aux
+paper/journal_submission/latex/*.bbl
+paper/journal_submission/latex/*.blg
+paper/journal_submission/latex/*.fdb_latexmk
+paper/journal_submission/latex/*.fls
+paper/journal_submission/latex/*.log
+paper/journal_submission/latex/*.out
+paper/journal_submission/latex/*.pdf

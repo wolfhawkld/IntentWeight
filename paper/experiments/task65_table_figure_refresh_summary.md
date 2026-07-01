@@ -58,5 +58,6 @@ the appendix. No supporting result was deleted from the experiment artifacts.
   float placement;
 - ACL-style working PDF reduced from 30 to 28 pages.
 
-Task66 remains responsible for conversion to the Elsevier/IP&M submission
-template and further venue-specific shortening.
+Task66 subsequently completed conversion to the current Elsevier CAS
+single-column/IP&M submission format. Any further shortening is a
+submission-time editorial decision rather than an incomplete Task65 item.

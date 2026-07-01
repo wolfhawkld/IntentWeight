@@ -8,7 +8,7 @@
 
 The main cost result uses a calibrated token-budget policy. For each corpus scale, the budget is selected on calibration queries and then frozen before test evaluation. Cost is measured as final LLM evidence-context input tokens relative to dense top-10, not retrieval-side candidate count. Table~\ref{tab:1} reports the resulting scale-wise operating points.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Calibrated token-quality frontier on LoTTE technology/search}
@@ -23,7 +23,7 @@ Scale & Frozen policy & Calib. eligible & IntentRoute hit delta & NI seeds & Int
 638k & \nolinkurl{token_budget_r0.85_m4} & True & -0.08 pp & 0/3 & 17.53\% & -3.84 pp & 21.90\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The calibration-eligible 100k, 200k, and 638k operating points save 6-18\% final context tokens. The 400k row is retained as a diagnostic point because no candidate met the zero-observed-hit-drop calibration gate, even though its frozen-test result is positive. Dense-only adaptive truncation saves more tokens but loses $\mathrm{Hit@10}$ at every scale. IntentRoute therefore targets a more quality-preserving bounded frontier rather than maximum compression.
 
@@ -40,7 +40,7 @@ Query-level paired bootstrap intervals and McNemar-style win/loss counts show th
 
 Matched-backbone evaluation tests whether the controller pattern is specific to MiniLM. Each IntentRoute row is compared with dense retrieval using the same encoder and frozen test split. Table~\ref{tab:2} summarizes the matched-backbone comparison.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Matched-backbone operating points on LoTTE technology/search 100k}
@@ -55,7 +55,7 @@ E5 full multi-route & 0.8753 & 0.8689 & -0.64 pp & 12.20\% \\
 BGE quality-first & 0.8993 & 0.9081 & +0.88 pp & 7.23\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 BGE and E5 full multi-route policies remain near their respective dense baselines while saving about 12\% context tokens. The BGE quality-first point moves the same frontier toward higher retrieval hit at lower saving. The E5 scan did not produce an above-dense token-saving point, so positive-hit tunability is BGE-specific rather than a universal claim. Appendix E reports the supporting encoder details.
 
@@ -64,7 +64,7 @@ BGE and E5 full multi-route policies remain near their respective dense baseline
 
 The route controls isolate geometry, feedback, and dense rescue. The geometry-versus-random rows change arm selection under an otherwise matched full rescue surface. The learned, static, and no-feedback rows test whether LinUCB updates and gating explain route quality and final cost. Table~\ref{tab:3} separates route-level effects from rescued final quality.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Geometry, feedback, and rescue-route controls on LoTTE 100k. Each row uses its paired frozen-protocol dense baseline}
@@ -81,7 +81,7 @@ Static-nearest gated & 0.8563 & 0.8870 & 0.9586 & -2.40 pp & 12.01\% \\
 No-feedback gated & 0.1504 & 0.1570 & 1.0000 & -1.60 pp & 16.56\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Static nearest geometry sharply exceeds random routing on route reward and selected-cluster hit, but dense and BM25 rescue keep final fused hit high for both. Feedback-updated LinUCB likewise improves route quality over the no-feedback control, but the tested learned-gated threshold loses 5.20 percentage points of frozen-test hit. These results support geometry and feedback as route-confidence signals; neither alone explains final fused quality or justifies unconditional dense removal.
 
@@ -94,7 +94,7 @@ A frozen-trajectory route replay further isolates the confidence gate. Keeping t
 
 Arm-count sensitivity tests whether the fixed $K=32$ clustering choice is a hidden optimum. Full multi-route quality remains stable over a 16-fold range, whereas aggressive gated behavior changes substantially with arm granularity. Table~\ref{tab:4} reports the tested arm-count grid.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Arm-count sensitivity on LoTTE technology/search 100k}
@@ -110,7 +110,7 @@ $K$ & Static route reward & Full hit delta & Full token saving & Gated dense rat
 128 & 0.8479 & +1.20 pp & 10.23\% & 0.9502 & -3.12 pp \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The full route surface stays above its paired dense baseline throughout the grid, while gated dense use rises from 0.4083 to 0.9502 as $K$ grows. This supports $K$ as an engineering parameter governing feedback sparsity and fallback behavior, not a geometrically privileged constant.
 
@@ -135,7 +135,7 @@ A cross-encoder reranker improves dense full-top-10 support from $\mathrm{Hit@10
 
 The frozen downstream evaluation contains 300 queries, seven methods, 2,100 generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are not imputed. Table~\ref{tab:5} reports the matched correctness and context-token results.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Matched downstream answer-quality and context-token comparisons}
@@ -149,7 +149,7 @@ E5 IntentRoute vs E5 dense & +0.33 pp & -1.33 pp & -2.77 pp & -2.08 pp [-5.88, +
 IntentRoute + MMR vs Dense + MMR & +2.33 pp & +0.33 pp & +1.36 pp & +0.34 pp [-3.39, +4.07] & 6.75\% [4.40\%, 9.11\%] \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 All context-saving intervals are positive. Every individual-judge and majority-vote correctness interval includes zero, and all correctness McNemar tests are non-significant. Absolute judge calibration differs: pairwise raw agreement is 89.88-92.15\% for correctness, with Cohen's $\kappa$ of 0.503-0.653. This supports lower context without a statistically detectable correctness difference, but not strict non-inferiority or significant answer-quality improvement.
 

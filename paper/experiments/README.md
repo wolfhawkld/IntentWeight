@@ -1724,6 +1724,12 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     majority-vote faithfulness 对 BGE 为显著负向、对 SentMMR composition
     为显著正向，因此只支持 bounded correctness robustness，不支持 uniform
     faithfulness preservation 或 strict answer-level non-inferiority。
+39. Elsevier/IP&M submission conversion：Task66 已完成，详见
+    `paper/journal_submission/task66_elsevier_ipm_conversion_summary.md`。当前
+    IP&M 官方指南指向 Elsevier CAS single-column 模板，因此旧 `elsarticle`
+    计划已替换为 `cas-sc` double-blind 投稿包。匿名稿与独立标题页均可编译，
+    摘要 240 词，33 张表和 3 张图全部具有正文交叉引用；作者、机构、CRediT、
+    funding、competing interest 和公开数据/代码链接仍需人类作者提交前填写。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1748,6 +1754,7 @@ attribution、第 33 项 Task65.2 factorial safe-compression attribution 均已�
 Task65.5 calibration-split sensitivity、第 37 项 Task65.6 cross-scale
 cross-fitted calibration、第 38 项 Task65.7 multi-judge downstream
 robustness 也已完成。
+第 39 项 Task66 Elsevier/IP&M submission conversion 也已完成。
 
 ---
 
@@ -1763,4 +1770,4 @@ robustness 也已完成。
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-06-28*
+*更新时间: 2026-07-01*

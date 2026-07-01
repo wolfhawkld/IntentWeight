@@ -35,6 +35,10 @@ See `declarations.md`.
 
 See `declarations.md`.
 
+## CRediT Author Statement
+
+TODO: Assign only the contributor roles actually performed by each author.
+
 ## Data and Code Availability
 
 See `declarations.md`.

@@ -1,7 +1,3 @@
-# Highlights
-
-Each highlight is kept under 85 characters including spaces.
-
 - Geometry and feedback adapt IntentRoute evidence selection.
 - Calibrated policies save 6-18% evidence tokens on LoTTE technology/search.
 - Three judges find no significant matched correctness difference.

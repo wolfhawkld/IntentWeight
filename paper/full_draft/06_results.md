@@ -6,6 +6,7 @@ The main cost result uses a calibrated token-budget policy. For each corpus
 scale, the budget is selected on calibration queries and then frozen before
 test evaluation. Cost is measured as final LLM evidence-context input tokens
 relative to dense top-10, not retrieval-side candidate count.
+Table~\ref{tab:1} reports the resulting scale-wise operating points.
 
 **Table 1. Calibrated token-quality frontier on LoTTE technology/search.**
 
@@ -26,7 +27,8 @@ compression.
 
 An independently calibrated 100k audit gives Dense and IntentRoute the same
 fine budget grid but lets each select its own action. Under the zero observed
-calibration-drop rule, IntentRoute selects `r0.95/m4` and retains the Table 1
+calibration-drop rule, IntentRoute selects `r0.95/m4` and retains the
+Table~\ref{tab:1}
 result of `6.18%` test saving with `0.00pp` mean Hit delta; Dense selects
 `r1.00/m4`, or no compression. Their mean test Hit is equal, although strict
 IntentRoute non-inferiority is not established in any seed. A descriptive
@@ -66,6 +68,7 @@ Figure 2 visualizes the quality-cost frontier.
 Matched-backbone evaluation tests whether the controller pattern is specific
 to MiniLM. Each IntentRoute row is compared with dense retrieval using the same
 encoder and frozen test split.
+Table~\ref{tab:2} summarizes the matched-backbone comparison.
 
 **Table 2. Matched-backbone operating points on LoTTE technology/search 100k.**
 
@@ -89,6 +92,7 @@ The route controls isolate geometry, feedback, and dense rescue. The
 geometry-versus-random rows change arm selection under an otherwise matched
 full rescue surface. The learned, static, and no-feedback rows test whether
 LinUCB updates and gating explain route quality and final cost.
+Table~\ref{tab:3} separates route-level effects from rescued final quality.
 
 **Table 3. Geometry, feedback, and rescue-route controls on LoTTE 100k. Each row uses its paired frozen-protocol dense baseline.**
 
@@ -130,6 +134,7 @@ route/fallback assignment signal, not as a direct compression-safety score.
 Arm-count sensitivity tests whether the fixed $K=32$ clustering choice is a
 hidden optimum. Full multi-route quality remains stable over a 16-fold range,
 whereas aggressive gated behavior changes substantially with arm granularity.
+Table~\ref{tab:4} reports the tested arm-count grid.
 
 **Table 4. Arm-count sensitivity on LoTTE technology/search 100k.**
 
@@ -194,6 +199,7 @@ generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and
 MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all
 three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are
 not imputed.
+Table~\ref{tab:5} reports the matched correctness and context-token results.
 
 **Table 5. Matched downstream answer-quality and context-token comparisons.**
 

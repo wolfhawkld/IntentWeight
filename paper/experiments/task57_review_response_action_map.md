@@ -293,9 +293,12 @@ Likely displays:
 
 Goal: prepare the submission form after the claim/evidence structure stabilizes.
 
-Tasks:
+Completed on 2026-07-01. The current IP&M author guide links to Elsevier's CAS
+single-column template, which supersedes the earlier `elsarticle` plan.
 
-- convert ACL-style LaTeX to `elsarticle`;
+Completed tasks:
+
+- convert the venue-neutral LaTeX to CAS `cas-sc`;
 - anonymize;
 - shorten main results;
 - move detailed ablations to appendix;

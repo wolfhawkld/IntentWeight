@@ -1,0 +1,26 @@
+{
+  "files": {
+    "Makefile": "fba7c91ee2ec947d3fe5bf478879e0f3018b48018442059ac91be65ce7e5db34",
+    "anonymous_manuscript.tex": "4ac14f30a2021a7b485461eba46d2c66b88ab4e7d23077ec0be8aef28614fd2f",
+    "figures/figure1_system_diagram.pdf": "fb17c4556f1379e873d9ccb22874e0b7dc1242051834179001b0192a4dd287b3",
+    "figures/figure2_token_quality_frontier.pdf": "5c9b3fd172f2e68f8ddd7271d664e84e60aefcc7a7260e25dc9d29b2f4c1ca92",
+    "figures/figure3_geometry_to_control.pdf": "21733b9b1c5c7ac53cb901235f4a8a84cb879e04733b05c6a502dac9769ad237",
+    "highlights.txt": "818664edeadca647ce40c24a114064fd120ea40575d7c7c9cb52c861ecc9da5f",
+    "keywords.txt": "6721dbeb600928edb2d2c262d03ff48a2f86a04bc8a18be43a9851f10adbd431",
+    "references.bib": "c56200b426c376a78b24749fb89fb3f77c87dcb8f7bdae3ec57dff5aa843c6f0",
+    "sections/abstract.tex": "c38dee10d3a0d0e787588a5ac8a28b100c5944057d542683461ef5829450b87a",
+    "sections/appendix.tex": "85d149b1a34ab82a3a8b023f91253efd30edb7c7ee28bb5c45941da609e07f53",
+    "sections/conclusion.tex": "13e1d07614725764339684e1f0c60557d0289e2944ee388b78409eb2c7c03ba2",
+    "sections/discussion.tex": "59abcd9da94e9ab28a7834f6b9adc46eaa4be090f79038b60b57f53a91a9e189",
+    "sections/experimental_setup.tex": "23ee06698c7c564cc0562430603fb48554eed228ac4f546262e515cb8cee2f85",
+    "sections/introduction.tex": "83dcff9a6211e3a7a97bba61d461da70f60dc159c661e6a4e1d3ab51b0ad02b7",
+    "sections/limitations.tex": "9ad8806e64ef6efff4909d30bc8c5fdecee0fb658eb02e5dabe7df2f4eb876db",
+    "sections/method.tex": "bedad5f6cd8d142494a6b3d98479a10c4be35439d8382db3d45cda153f50cd99",
+    "sections/related_work.tex": "3280b85b9bb5097c9e75026d5c7f755f5f7bfbd03327f4f97e939280240f448d",
+    "sections/results.tex": "c18d63af71a17d1c4c9c96b15bd48d4b65f44cf4e3e7d44b47290d2bce568d9b",
+    "title_page.tex": "e430d5f3dd5aab0142ce66ac717510aefffa43f8b699772fc1913c88b9962a22"
+  },
+  "format": "Elsevier CAS single-column",
+  "generated_from": "paper/latex",
+  "primary_target": "Information Processing & Management"
+}

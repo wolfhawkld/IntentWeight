@@ -5,7 +5,7 @@
 
 The conservative confidence-only context policy is the stable baseline for context compaction. The main text reports calibrated token-budget policies as the primary cost result; this appendix keeps the earlier confidence-only scale table and seed diagnostics. These intervals are engineering stability diagnostics, not strong inferential proof: each scale has only three observations. Tables~\ref{tab:a1} and~\ref{tab:a2} report quality and token stability.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Multi-seed retrieval-quality stability}
@@ -20,9 +20,9 @@ Scale & Dense $\mathrm{Hit@10}$ & Policy $\mathrm{Hit@10}$ mean & Std & 95\% CI 
 638k & 0.7282 & 0.7466 & 0.0089 & [0.7246, 0.7687] & +0.0185 \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Multi-seed final context-token stability}
@@ -37,7 +37,7 @@ Scale & Dense $\mathrm{Tokens@10}$ & Policy $\mathrm{Tokens@10}$ mean & Std & 95
 638k & 1525.62 & 1451.49 & 3.83 & [1441.97, 1461.00] & 4.86\% & [4.24\%, 5.48\%] \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The token-saving direction is consistent across scales. The wider 400k token interval should be interpreted as operating-point variance across the routed ranking and context policy, not hidden as a uniform result.
 
@@ -46,7 +46,7 @@ The token-saving direction is consistent across scales. The wider 400k token int
 
 Dense retrieval is the primary quality baseline. BM25 supplies lexical coverage, but it is weaker as a standalone retriever on LoTTE. Static dense-plus-BM25 reciprocal-rank fusion is competitive at some scales but does not consistently dominate dense. Table~\ref{tab:b1} reports these static baselines.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Static LoTTE retrieval baselines across corpus scale}
@@ -61,7 +61,7 @@ Scale & Corpus chunks & BM25 $\mathrm{Hit@10}$ & Dense $\mathrm{Hit@10}$ & Stati
 638k & 638509 & 0.5084 & 0.7282 & 0.7181 \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The declining dense score as corpus scale grows motivates adaptive context control, but it does not make dense retrieval obsolete. Dense remains an important recall floor and fallback route in IntentRoute.
 
@@ -78,7 +78,7 @@ The experiments separate three efficiency layers:
 
 The main paper claim uses the third layer. Historical routing experiments showed that reducing candidate counts does not automatically reduce final context tokens when the final context remains fixed at top-10. Table~\ref{tab:c1} records the correction audit that motivated this separation.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Representative fixed-top-10 correction audit}
@@ -97,7 +97,7 @@ LoTTE 400k & Initial gated routing & 0.7836 & 1547.66 & 1.0441x & 233.22 \\
 LoTTE 638k & Initial gated routing & 0.7343 & 1599.95 & 1.0487x & 236.22 \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 This audit motivated explicit final-context control. The conservative historical policy reduces context size in high-confidence cases, while the stronger main result uses an independently calibrated length budget. Neither candidate-count savings nor route confidence alone establishes prompt-token savings.
 
@@ -118,7 +118,7 @@ The secondary datasets have different roles and should not be pooled into the ma
 
 eManual contains 18,812 corpus chunks but only 1,729 unique text strings. Strict chunk-id evaluation can therefore mark semantically equivalent retrievals as incorrect. Table~\ref{tab:d1} quantifies the strict, text-equivalent, and deduplicated views.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{eManual strict, text-equivalent, and deduplicated evaluation}
@@ -136,7 +136,7 @@ Static hybrid & Text-equivalent & 0.5846 & 0.4895 & 0.2263 \\
 Dense & Deduplicated corpus & 0.8615 & 0.5736 & 0.3807 \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The text-equivalent and deduplicated metrics are diagnostics, not replacements for the strict evaluation. They show that eManual's low strict score cannot be interpreted as proof that useful local structure is absent.
 
@@ -145,7 +145,7 @@ The text-equivalent and deduplicated metrics are diagnostics, not replacements f
 
 The main scale-up uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. A LoTTE 100k robustness check replaces it with \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder with the same 384-dimensional embedding size and a similar CPU-friendly resource class. Tables~\ref{tab:e1} and~\ref{tab:e2} report encoder-family and matched-backbone robustness.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{QA-tuned MiniLM-family encoder robustness}
@@ -158,11 +158,11 @@ Dense-only & 0.8809 & 0.7220 & 0.6616 & 0.7163 & 1514.51 & 1.0000x \\
 Conservative policy & 0.8853 & 0.7118 & 0.6291 & 0.6789 & 1463.71 & 0.9665x \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Under the QA-tuned encoder, the dense baseline becomes stronger and the conservative policy still preserves dense-level query hit while reducing final context tokens by 3.35\%. Ranking metrics and evidence recall are lower than dense, so this is a bounded robustness result rather than a universal retrieval-metric improvement.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Matched-backbone context-budget robustness on the frozen LoTTE technology/search 100k split}
@@ -177,7 +177,7 @@ E5-base & full multi-route & 0.8753 & 0.8689 & -0.64 pp & 12.20\% \\
 BGE-base & quality-first & 0.8993 & 0.9081 & +0.88 pp & 7.23\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The full multi-route rows show that the quality-cost pattern is not tied to the MiniLM backbone. More aggressive gated BGE/E5 variants lose more hit and are treated as boundary settings. The BGE quality-first row demonstrates that the frontier is tunable; an equivalent above-dense E5 point was not found on this split.
 
@@ -186,7 +186,7 @@ The full multi-route rows show that the quality-cost pattern is not tied to the 
 
 The formal downstream evaluation uses 300 deterministic queries from the frozen LoTTE technology/search 100k test split. Seven methods produce 2,100 answers with \nolinkurl{deepseek-v4-flash}. The fixed answers receive 2,100 DeepSeek, 2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge statistics use the 2,065 query-method keys shared by all judges. Tables~\ref{tab:f1}, \ref{tab:f2}, \ref{tab:f3}, \ref{tab:f4}, and~\ref{tab:f5} report method results, paired tests, judge coverage, agreement, and majority-vote comparisons.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{DeepSeek-judged downstream answer and context results}
@@ -204,9 +204,9 @@ Dense+MMR & 0.8900 & 0.9100 & 0.0733 & 0.0800 & 1240 & 1393 \\
 IntentRoute + MMR & 0.9133 & 0.9267 & 0.0833 & 0.0900 & 1157 & 1267 \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Original DeepSeek-judged paired downstream comparisons}
@@ -220,11 +220,11 @@ E5 IntentRoute vs dense & +0.33 pp & [-3.00, +3.67] pp & 1.000 & 12.04\% & [9.93
 IntentRoute + MMR vs Dense + MMR & +2.33 pp & [-1.67, +6.33] pp & 0.324 & 6.65\% & [4.28\%, 8.97\%] \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The context-saving intervals are positive while correctness intervals include zero. The multi-judge extension below tests whether this conclusion depends on the original DeepSeek judge.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Multi-judge coverage and calibration}
@@ -238,11 +238,11 @@ GLM-5.2 & 2,100 & 100.00\% & 4.551 & 88.24\% & 4.734 & 92.81\% & 92.14\% \\
 MiniMax-M3 & 2,065 & 98.33\% & 4.293 & 85.71\% & 4.633 & 95.45\% & 94.48\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 MiniMax-M3 rejects 35 query-method inputs spanning 18 queries through provider-side content filtering. These values are not imputed. Absolute score calibration differs across judges, so raw ordinal scores are not pooled.
 
-\begin{table}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Pairwise agreement on 2,065 shared judgments}
@@ -263,7 +263,7 @@ Faithful & GLM / MM & 93.41\% & 0.405 \\
 
 Here DS denotes DeepSeek and MM denotes MiniMax-M3. Three-judge unanimity is 86.54\% for correctness and 89.20\% for faithfulness. The corresponding majority-positive rates are 88.96\% and 95.35\%. High raw faithfulness agreement coexists with lower $\kappa$ because positive judgments are highly prevalent.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Three-judge-majority paired comparisons}
@@ -277,7 +277,7 @@ E5 IntentRoute vs dense & 289 & -2.08 pp [-5.88, +1.73] & 0.3616 & -0.69 pp [-3.
 IntentRoute + MMR vs Dense + MMR & 295 & +0.34 pp [-3.39, +4.07] & 1.0000 & +4.07 pp [+0.68, +7.46] & 0.0290 & 6.75\% [4.40\%, 9.11\%] \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 No individual judge or majority-vote comparison finds a significant correctness difference. This supports a bounded correctness-robustness claim, not strict non-inferiority. Faithfulness is mixed: the BGE majority result is negative, while the SentMMR composition is positive. The evaluation remains LLM-as-judge evidence rather than human evaluation. The under-specified \nolinkurl{insufficient_context_appropriate} field is retained in raw artifacts but excluded from headline analysis.
 
@@ -286,7 +286,7 @@ No individual judge or majority-vote comparison finds a significant correctness 
 
 The calibration/test protocol selects the final-context budget on calibration queries and freezes it before evaluation on held-out test queries. Tables~\ref{tab:g1}, \ref{tab:g2}, \ref{tab:g3}, and~\ref{tab:g4} report the frozen split, independent calibration, partition sensitivity, and normalized five-fold audit.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Frozen context-budget validation on LoTTE technology/search}
@@ -301,11 +301,11 @@ Scale & Selected policy & Calibration eligible & Hit delta vs dense & Token savi
 638k & \nolinkurl{token_budget_r0.85_m4} & True & -0.08 pp & 17.53\% & -3.84 pp & 21.90\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The calibrated policies should be compared against dense-only adaptive truncation because both reduce final context size. IntentRoute preserves substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level. The 400k row is diagnostic rather than calibration-eligible in the original artifact set. Appendix Table G4 reports the completed cross-fitted follow-up.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Independently calibrated 100k quality constraints}
@@ -320,11 +320,11 @@ Calibration Hit margin & IntentRoute policy & IR test Hit delta & IR saving & De
 2.0pp & \nolinkurl{r0.80/m4} & -1.60pp & 20.90\% & \nolinkurl{r0.82/m4} & -2.40pp & 25.22\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The zero-margin row preserves equal mean test Hit while selecting nonzero IntentRoute saving, but strict seed-level non-inferiority remains 0/3. Held-out same-saving interpolation is descriptive only and finds small IntentRoute-minus- Dense Hit differences from \nolinkurl{+0.47pp} at 5\% saving to \nolinkurl{-0.01pp} at 20\%.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Calibration-partition sensitivity over 20 overlapping splits}
@@ -339,11 +339,11 @@ Scale & Eligible splits & Test Hit range & Mean test Hit delta & Saving range & 
 638k & 19/20 & [-0.88, +2.24]pp & +0.44pp & [7.85\%, 17.91\%] & 20/20 \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 These partitions reuse the same frozen rankings and overlap in their query membership. They diagnose policy-selection sensitivity and must not be counted as 20 independent experiments. The result supports stronger split stability at 200k/638k, moderate sensitivity at 100k, and continued diagnostic treatment of 400k.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Normalized five-fold out-of-fold calibration using identical canonical query folds and policy rules across scales}
@@ -358,7 +358,7 @@ Scale & Eligible folds & Mean Hit delta & Mean token saving & Strict NI seeds & 
 638k & 5/5 & +0.28pp & 15.23\% & 0/3 & 3 & 0/5 \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Each canonical LoTTE query is held out exactly once and remains in the same fold at every corpus scale. Dense and IntentRoute independently select from the predefined budget grid; when no policy satisfies the zero-drop gate, the method uses Dense top-10 fallback. The 400k result closes the missing normalized calibration check, but its five distinct policies and 0/3 strict non-inferiority result retain the partition-sensitivity boundary. The 100k row similarly shows that positive original-split behavior does not imply uniform cross-fitted behavior.
 
@@ -367,7 +367,7 @@ Each canonical LoTTE query is held out exactly once and remains in the same fold
 
 LoTTE science/search is used as a second-domain validation, not as a replacement for the main LoTTE technology/search scale-up. Tables~\ref{tab:h1} and~\ref{tab:h2} separate ranking transfer from frozen-budget behavior.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Science/search fixed top-10 ranking validation}
@@ -380,9 +380,9 @@ science/search 20k/q200 & 20,490 & 200 & 0.8950 & 0.9267 & +3.17 pp \\
 science/search 100k & 101,187 & 596 & 0.8926 & 0.9077 & +1.51 pp \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Science/search frozen context-budget validation}
@@ -399,7 +399,7 @@ Domain/scale & Budget policy & Seed & Frozen test hit delta vs dense & Token sav
 100k & \nolinkurl{token_budget_r0.85_m4} & 19 & -0.96 pp & 20.53\% & False \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The fixed top-10 ranking gains transfer, while aggressive final-context budgets require domain and scale calibration.
 
@@ -408,7 +408,7 @@ The fixed top-10 ranking gains transfer, while aggressive final-context budgets 
 
 Hard-case recovery focuses on affected queries where dense top-10 retrieves at least one GT chunk but the budgeted IntentRoute context misses. Tables~\ref{tab:i1} and~\ref{tab:i2} distinguish same-query repair from held-out recovery.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Same-query feedback recovery on affected queries}
@@ -425,11 +425,11 @@ technology 100k & arm boost + conservative budget & 42 & 9 & 21.43\% & 11.75\% \
 technology 100k & full-context fallback & 42 & 12 & 28.57\% & 0.96\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Same-query retry is post-feedback repair evidence. It is not a first-pass generalization result.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Calibration-to-test recovery generalization}
@@ -444,7 +444,7 @@ technology 100k & conservative budget on learned risky arms after calibration & 
 technology 100k & full-context fallback on learned risky arms after calibration & +0.16 pp & 4.25\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The held-out effect is small and domain-dependent. Feedback should therefore be used as a controlled fallback trigger rather than as unconditional global reranking.
 
@@ -453,7 +453,7 @@ The held-out effect is small and domain-dependent. Feedback should therefore be 
 
 These baselines test whether simpler post-retrieval operations explain the main final-context result. Tables~\ref{tab:j1}, \ref{tab:j2}, \ref{tab:j3}, and~\ref{tab:j4} report matched compression, reranking, and prompt-pruning controls.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Dense+Sentence-MMR same-budget baseline on LoTTE technology/search 100k}
@@ -468,11 +468,11 @@ SentMMR seed17 budget & 0.8705 & 0.0000 & 0.7075 & 1278.0 & 13.07\% \\
 SentMMR seed19 budget & 0.8705 & 0.0000 & 0.7081 & 1302.1 & 11.43\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Dense+Sentence-MMR preserves dense chunk-support on this split while reducing selected sentence tokens. It is therefore a strong final-context compression baseline, not a weak control.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Compressor-normalized comparison on LoTTE technology/search 100k}
@@ -491,11 +491,11 @@ IntentRoute & SentMMR & 0.90 & 0.8657-0.8777 & 14.72-16.68\% \\
 IntentRoute & SentMMR & 0.85 & 0.8657-0.8777 & 19.41-21.24\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Applying the same compressor to dense and IntentRoute evidence pools supports the route-and-budget controller framing. The compressor is shared; the evidence pool and budget controller determine the starting point.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Cross-encoder reranker baseline on LoTTE technology/search 100k}
@@ -510,11 +510,11 @@ IntentRoute target & 0.8657-0.8777 & 0.6766-0.6871 & 1365-1397 & 4.98-7.14\% \\
 Cross-encoder same budget & 0.8633-0.8729 & 0.6975-0.7044 & 1360-1390 & 5.43-7.49\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 The cross-encoder reranker improves full top-10 support metrics, but that full reranked context is longer on average. Under the same per-query token budgets as IntentRoute, reranking does not uniformly dominate the calibrated controller.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{SelectiveContext-lite prompt-pruning baseline}
@@ -533,7 +533,7 @@ IntentRoute & 0.85 & 0.8657-0.8777 & 19.53-21.40\% & 15.31-15.35\% \\
 IntentRoute & 0.75 & 0.8657-0.8777 & 28.95-30.57\% & 25.20-25.23\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 SelectiveContext-lite is a deterministic local proxy, not LLMLingua. Its role is to show that prompt pruning can be stacked after either evidence pool and does not replace upstream route control or final-budget calibration.
 
@@ -542,7 +542,7 @@ SelectiveContext-lite is a deterministic local proxy, not LLMLingua. Its role is
 
 Tables~\ref{tab:k1}, \ref{tab:k2}, \ref{tab:k3}, and~\ref{tab:k4} isolate geometry, feedback, arm granularity, and frozen-trajectory route mediation.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Static geometry versus uniform-random route control}
@@ -555,11 +555,11 @@ Static nearest geometry & 0.8764 & 0.8563 & 0.8870 & +1.44 pp & 5.03\% \\
 Uniform random control & 0.8842 & 0.1499 & 0.1577 & +1.04 pp & 11.92\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Dense/BM25 rescue keeps final fused hit high in both rows, while route reward and selected-cluster hit separate meaningful local routing from random arm selection. Geometry is therefore supported as a route-control signal, not a standalone explanation of final fused quality.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Feedback and static route controls}
@@ -574,11 +574,11 @@ Static nearest gated & 0.8563 & 0.8870 & 0.9586 & -2.40 pp & 12.01\% \\
 No-feedback gated & 0.1504 & 0.1570 & 1.0000 & -1.60 pp & 16.56\% \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Feedback-updated LinUCB improves route quality over no-feedback/random controls, but the learned gated threshold is a cost-aggressive boundary. Static geometry remains a strong prior, while dense fallback explains part of the fused result.
 
-\begin{table*}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Arm-count sensitivity}
@@ -594,11 +594,11 @@ $K$ & Static route reward & Full test hit delta & Full token saving & Gated dens
 128 & 0.8479 & +1.20 pp & 10.23\% & 0.9502 & -3.12 pp \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{table}
 
 Full multi-route quality is stable across the tested grid, whereas gated dense-saving behavior depends on arm granularity. Cross-scale correlations between geometry diagnostics and final quality-cost gain are mixed and small-sample; final behavior belongs to the complete calibrated controller.
 
-\begin{table}[tbp]
+\begin{table}[pos=tbp]
 \centering
 \small
 \caption{Frozen-trajectory dynamic route mediation; Save is relative to uncompressed dense}
