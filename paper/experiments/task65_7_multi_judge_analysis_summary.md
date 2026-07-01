@@ -1,0 +1,112 @@
+# Task65.7 Multi-Judge Answer Evaluation Summary
+
+Task65.7 is complete as an offline robustness analysis of the fixed Task63
+answer set.
+
+## Protocol
+
+The analysis reuses the 2,100 answers generated for 300 frozen LoTTE
+technology/search queries and seven retrieval/context methods. Answers are not
+regenerated. Three independent LLM judges evaluate the same answer artifacts:
+
+- DeepSeek `deepseek-v4-flash`;
+- `glm-5.2` through Volcengine Agent Plan;
+- `minimax-m3` through Volcengine Agent Plan.
+
+Model-specific distributions use every valid judgment from that model.
+Cross-judge agreement and three-judge majority analyses use only the 2,065
+query-method keys valid for all judges. Raw ordinal scores are not pooled across
+judges. Within-judge method comparisons use query-paired bootstrap intervals
+with 10,000 deterministic resamples and exact McNemar tests for binary
+correctness.
+
+## Coverage
+
+| Judge | Valid judgments | Coverage | Missing |
+| --- | ---: | ---: | ---: |
+| DeepSeek | 2,100 | 100.00% | 0 |
+| GLM-5.2 | 2,100 | 100.00% | 0 |
+| MiniMax-M3 | 2,065 | 98.33% | 35 |
+
+The 35 MiniMax-M3 omissions span 18 queries and were rejected by provider-side
+content filtering. No values are imputed. Repeated failed attempts remain in
+the failure log, while the paper-facing missingness count uses unique
+query-method-judge keys.
+
+## Judge Calibration And Agreement
+
+| Judge | Correctness mean | Correct | Faithfulness mean | Faithful | Citations supported |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| DeepSeek | 4.672 | 91.33% | 4.782 | 93.10% | 89.57% |
+| GLM-5.2 | 4.551 | 88.24% | 4.734 | 92.81% | 92.14% |
+| MiniMax-M3 | 4.293 | 85.71% | 4.633 | 95.45% | 94.48% |
+
+The models differ in absolute calibration: DeepSeek assigns more top-end
+correctness scores, while MiniMax-M3 uses score 4 more often. On the common
+2,065 keys, pairwise raw agreement is 89.88--92.15% for `is_correct` and
+91.72--93.41% for `is_faithful`. Pairwise Cohen's kappa is 0.503--0.653 for
+correctness and 0.364--0.405 for faithfulness. The lower faithfulness kappa
+coexists with high raw agreement because positive faithfulness judgments are
+very prevalent.
+
+Three-judge unanimity is 86.54% for correctness and 89.20% for faithfulness.
+Majority-positive rates are 88.96% and 95.35%, respectively. These results
+support answer-level robustness across judge choices, but they do not turn
+LLM-as-judge evaluation into human evaluation.
+
+## Matched Method Comparisons
+
+All individual-judge and majority-vote correctness intervals include zero, and
+all correctness McNemar p-values exceed 0.05.
+
+| Evaluator | BGE delta | E5 delta | SentMMR delta |
+| --- | ---: | ---: | ---: |
+| DeepSeek | +0.00 pp | +0.33 pp | +2.33 pp |
+| GLM-5.2 | -3.00 pp | -1.33 pp | +0.33 pp |
+| MiniMax-M3 | -2.42 pp | -2.77 pp | +1.36 pp |
+| Three-judge majority | -3.46 pp | -2.08 pp | +0.34 pp |
+
+The corresponding context-token savings remain approximately 6.0% for BGE,
+12.0% for E5, and 6.6--6.7% for the SentMMR composition. The three-judge
+majority BGE interval is `[-6.92, 0.00] pp` with McNemar `p=0.0755`; this is not
+a statistically significant difference, but it is close enough to require an
+explicit non-inferiority caveat. The E5 majority interval is
+`[-5.88, +1.73] pp`, and the SentMMR majority interval is
+`[-3.39, +4.07] pp`.
+
+Faithfulness is mixed rather than uniformly preserved. The three-judge
+majority estimates a `-4.15pp` BGE faithfulness delta
+(`95% CI [-6.92, -1.73]pp`, exact McNemar `p=0.0018`) and a `+4.07pp`
+SentMMR-composition delta (`95% CI [+0.68, +7.46]pp`, `p=0.0290`).
+MiniMax-M3 independently reports a positive SentMMR faithfulness delta
+(`+3.73pp`, `p=0.0347`), while no other individual-judge faithfulness
+comparison reaches `p<0.05`. The paper must therefore separate correctness
+from faithfulness and retain the BGE boundary result.
+
+## Claim Boundary
+
+Task65.7 supports the bounded statement that no matched comparison shows a
+statistically detectable correctness difference under any individual judge or
+the three-judge majority, while every matched method uses fewer final-context
+tokens. It does not establish strict answer-level non-inferiority, uniform
+faithfulness preservation, significant answer-quality improvement, or
+judge-independent absolute scores. Negative BGE/E5 correctness point estimates
+from the stricter judges and the BGE majority-vote faithfulness decrease must
+remain visible.
+
+The field `insufficient_context_appropriate` is excluded from headline and
+agreement evidence. Its true rate varies from 16.51% to 78.24% because the
+judge prompt did not operationally define how to score sufficient-context
+answers. The field is retained in raw artifacts for auditability.
+
+## Artifacts
+
+- `paper/experiments/scripts/task65_7_multi_judge_analysis.py`
+- `paper/experiments/results/task65_7_multi_judge_analysis.json`
+- `paper/experiments/results/task65_7_multi_judge_analysis.md`
+- `paper/experiments/results/task65_7_multi_judge_analysis.judges.csv`
+- `paper/experiments/results/task65_7_multi_judge_analysis.agreement.csv`
+- `paper/experiments/results/task65_7_multi_judge_analysis.consensus.csv`
+- `paper/experiments/results/task65_7_multi_judge_analysis.majority.csv`
+- `paper/experiments/results/task65_7_multi_judge_analysis.paired.csv`
+- `paper/experiments/results/task65_7_multi_judge_analysis.missingness.csv`

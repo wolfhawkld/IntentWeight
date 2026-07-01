@@ -891,6 +891,25 @@ def sanitize_judgments(path: Path, failure_path: Path) -> None:
         write_jsonl(failure_path, [*read_jsonl(failure_path), *failures])
 
 
+def llm_exception_record(
+    exc: BaseException,
+    *,
+    stage: str,
+    query_id: Any,
+    method_label: Any,
+    model: Any,
+) -> Dict[str, Any]:
+    """Serialize one failed request without exposing prompts or credentials."""
+    return {
+        "failure_stage": stage,
+        "query_id": str(query_id),
+        "method_label": str(method_label),
+        "judge_model": str(model) if stage == "judgment" else None,
+        "error_type": type(exc).__name__,
+        "error_message": str(exc)[:2000],
+    }
+
+
 def method_preflight_rows(records: Sequence[Mapping[str, Any]], args: argparse.Namespace) -> List[Dict[str, Any]]:
     by_method: Dict[str, List[Mapping[str, Any]]] = {}
     for record in flatten_method_records(records):
@@ -1393,16 +1412,35 @@ def execute_llm(records: Sequence[Mapping[str, Any]], output_dir: Path, args: ar
     completed_answers = total_answers - len(pending_answers)
     if pending_answers:
         with ThreadPoolExecutor(max_workers=max(1, args.concurrency)) as executor:
-            futures = [executor.submit(generate_answer_output, record, args) for record in pending_answers]
+            futures = {
+                executor.submit(generate_answer_output, record, args): record
+                for record in pending_answers
+            }
+            processed_answers = completed_answers
             for future in as_completed(futures):
-                output = future.result()
+                record = futures[future]
+                processed_answers += 1
+                try:
+                    output = future.result()
+                except Exception as exc:
+                    append_jsonl(
+                        output_dir / "answer_failures.jsonl",
+                        llm_exception_record(
+                            exc,
+                            stage="answer",
+                            query_id=record["query_id"],
+                            method_label=record["method_label"],
+                            model=args.model,
+                        ),
+                    )
+                    continue
                 append_jsonl(answer_path, output)
                 answer_keys.add((str(output["query_id"]), str(output["method_label"])))
                 completed_answers += 1
                 if args.progress_every > 0 and (
-                    completed_answers % args.progress_every == 0 or completed_answers == total_answers
+                    processed_answers % args.progress_every == 0 or processed_answers == total_answers
                 ):
-                    print(f"[answer {completed_answers}/{total_answers}]")
+                    print(f"[answer processed={processed_answers}/{total_answers} valid={completed_answers}]")
 
     answers = read_jsonl(answer_path)
     records_by_key = {
@@ -1431,22 +1469,55 @@ def execute_llm(records: Sequence[Mapping[str, Any]], output_dir: Path, args: ar
     completed_judgments = total_judgments - len(pending_judgments)
     if pending_judgments:
         with ThreadPoolExecutor(max_workers=max(1, args.concurrency)) as executor:
-            futures = [
-                executor.submit(generate_judgment_output, answer, source_record, judge_model, args)
+            futures = {
+                executor.submit(generate_judgment_output, answer, source_record, judge_model, args): (
+                    answer,
+                    judge_model,
+                )
                 for answer, source_record, judge_model in pending_judgments
-            ]
+            }
+            processed_judgments = completed_judgments
             for future in as_completed(futures):
-                output = future.result()
-                append_jsonl(judgment_path, output)
-                judgment_keys.add((str(output["query_id"]), str(output["method_label"]), str(output["judge_model"])))
-                completed_judgments += 1
+                answer, judge_model = futures[future]
+                processed_judgments += 1
+                try:
+                    output = future.result()
+                except Exception as exc:
+                    append_jsonl(
+                        output_dir / "judgment_failures.jsonl",
+                        llm_exception_record(
+                            exc,
+                            stage="judgment",
+                            query_id=answer["query_id"],
+                            method_label=answer["method_label"],
+                            model=judge_model,
+                        ),
+                    )
+                    continue
+                if valid_judgment(output):
+                    append_jsonl(judgment_path, output)
+                    judgment_keys.add((str(output["query_id"]), str(output["method_label"]), str(output["judge_model"])))
+                    completed_judgments += 1
+                else:
+                    append_jsonl(output_dir / "judgment_failures.jsonl", output)
                 if args.progress_every > 0 and (
-                    completed_judgments % args.progress_every == 0 or completed_judgments == total_judgments
+                    processed_judgments % args.progress_every == 0 or processed_judgments == total_judgments
                 ):
-                    print(f"[judge {completed_judgments}/{total_judgments}]")
+                    print(
+                        f"[judge processed={processed_judgments}/{total_judgments} "
+                        f"valid={completed_judgments}]"
+                    )
 
     if not args.skip_formal_summary:
-        write_formal_summary(output_dir, args)
+        valid_rows = [row for row in read_jsonl(judgment_path) if valid_judgment(row)]
+        judge_models_present = sorted({str(row.get("judge_model")) for row in valid_rows})
+        if len(judge_models_present) > 1:
+            print(
+                "Legacy Task63 summary generation skipped because multiple judge models are present. "
+                "Run task65_7_multi_judge_analysis.py instead."
+            )
+        else:
+            write_formal_summary(output_dir, args)
 
 
 def run(args: argparse.Namespace) -> int:

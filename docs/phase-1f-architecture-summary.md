@@ -1,5 +1,10 @@
 # Phase 1F 架构总结与验证结果
 
+> **Historical validation note / 历史验证说明**: 本文档记录 Phase 1F 早期
+> IntentWeight/HDBSCAN 工程验证结果，保留用于 provenance。当前论文主方法已经
+> 迁移为 IntentRoute，并使用 KMeans/MiniBatchKMeans fixed route arms 作为
+> LinUCB 动作空间。请勿将本文档中的 HDBSCAN 架构图当作当前论文方法。
+
 **创建时间**: 2026-04-13
 **项目**: IntentWeight
 **类型**: 验证总结

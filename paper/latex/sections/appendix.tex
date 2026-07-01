@@ -184,12 +184,12 @@ The full multi-route rows show that the quality-cost pattern is not tied to the 
 \section{Downstream Answer-Level Evaluation}
 \label{sec:12-appendix:downstream-answer-level-evaluation}
 
-The formal downstream evaluation uses 300 deterministic queries from the frozen LoTTE technology/search 100k test split. Seven methods produce 2,100 answers and 2,100 schema-valid judgments under the same \nolinkurl{deepseek-v4-flash} generator/judge configuration.
+The formal downstream evaluation uses 300 deterministic queries from the frozen LoTTE technology/search 100k test split. Seven methods produce 2,100 answers with \nolinkurl{deepseek-v4-flash}. The fixed answers receive 2,100 DeepSeek, 2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge statistics use the 2,065 query-method keys shared by all judges.
 
 \begin{table*}[tbp]
 \centering
 \small
-\caption{Downstream answer and context results}
+\caption{DeepSeek-judged downstream answer and context results}
 \label{tab:f1}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
@@ -209,7 +209,7 @@ IntentRoute + MMR & 0.9133 & 0.9267 & 0.0833 & 0.0900 & 1157 & 1267 \\
 \begin{table*}[tbp]
 \centering
 \small
-\caption{Paired downstream comparisons}
+\caption{Original DeepSeek-judged paired downstream comparisons}
 \label{tab:f2}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
@@ -222,7 +222,64 @@ IntentRoute + MMR vs Dense + MMR & +2.33 pp & [-1.67, +6.33] pp & 0.324 & 6.65\%
 \end{tabularx}
 \end{table*}
 
-The context-saving intervals are positive while correctness intervals include zero. This supports answer-level correctness preservation with lower context, not significant answer-quality improvement. The study still uses one generator/judge model and is not a human evaluation.
+The context-saving intervals are positive while correctness intervals include zero. The multi-judge extension below tests whether this conclusion depends on the original DeepSeek judge.
+
+\begin{table*}[tbp]
+\centering
+\small
+\caption{Multi-judge coverage and calibration}
+\label{tab:f3}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\toprule
+Judge & Valid & Coverage & Correctness mean & Correct & Faithfulness mean & Faithful & Citations supported \\
+\midrule
+DeepSeek & 2,100 & 100.00\% & 4.672 & 91.33\% & 4.782 & 93.10\% & 89.57\% \\
+GLM-5.2 & 2,100 & 100.00\% & 4.551 & 88.24\% & 4.734 & 92.81\% & 92.14\% \\
+MiniMax-M3 & 2,065 & 98.33\% & 4.293 & 85.71\% & 4.633 & 95.45\% & 94.48\% \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+MiniMax-M3 rejects 35 query-method inputs spanning 18 queries through provider-side content filtering. These values are not imputed. Absolute score calibration differs across judges, so raw ordinal scores are not pooled.
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{Pairwise agreement on 2,065 shared judgments}
+\label{tab:f4}
+\begin{tabular}{llrr}
+\toprule
+Field & Judge pair & Raw agreement & Cohen's $\kappa$ \\
+\midrule
+Correct & DS / GLM & 91.04\% & 0.508 \\
+Correct & DS / MM & 89.88\% & 0.503 \\
+Correct & GLM / MM & 92.15\% & 0.653 \\
+Faithful & DS / GLM & 91.72\% & 0.364 \\
+Faithful & DS / MM & 93.27\% & 0.374 \\
+Faithful & GLM / MM & 93.41\% & 0.405 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Here DS denotes DeepSeek and MM denotes MiniMax-M3. Three-judge unanimity is 86.54\% for correctness and 89.20\% for faithfulness. The corresponding majority-positive rates are 88.96\% and 95.35\%. High raw faithfulness agreement coexists with lower $\kappa$ because positive judgments are highly prevalent.
+
+\begin{table*}[tbp]
+\centering
+\small
+\caption{Three-judge-majority paired comparisons}
+\label{tab:f5}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
+\toprule
+Comparison & $n$ & Correct delta (95\% CI) & McNemar $p$ & Faithful delta (95\% CI) & McNemar $p$ & Context saving (95\% CI) \\
+\midrule
+BGE IntentRoute vs dense & 289 & -3.46 pp [-6.92, 0.00] & 0.0755 & -4.15 pp [-6.92, -1.73] & 0.0018 & 6.27\% [4.22\%, 8.26\%] \\
+E5 IntentRoute vs dense & 289 & -2.08 pp [-5.88, +1.73] & 0.3616 & -0.69 pp [-3.81, +2.42] & 0.8238 & 11.97\% [9.78\%, 14.17\%] \\
+IntentRoute + MMR vs Dense + MMR & 295 & +0.34 pp [-3.39, +4.07] & 1.0000 & +4.07 pp [+0.68, +7.46] & 0.0290 & 6.75\% [4.40\%, 9.11\%] \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+No individual judge or majority-vote comparison finds a significant correctness difference. This supports a bounded correctness-robustness claim, not strict non-inferiority. Faithfulness is mixed: the BGE majority result is negative, while the SentMMR composition is positive. The evaluation remains LLM-as-judge evidence rather than human evaluation. The under-specified \nolinkurl{insufficient_context_appropriate} field is retained in raw artifacts but excluded from headline analysis.
 
 \section{Calibration/Test Context-Budget Validation}
 \label{sec:12-appendix:calibration-test-context-budget-validation}
@@ -240,13 +297,13 @@ Scale & Selected policy & Calibration eligible & Hit delta vs dense & Token savi
 \midrule
 100k & \nolinkurl{token_budget_r0.95_m4} & True & +0.00 pp & 6.18\% & -1.44 pp & 13.83\% \\
 200k & \nolinkurl{token_budget_r0.85_m4} & True & +1.20 pp & 16.00\% & -2.40 pp & 21.95\% \\
-400k & \nolinkurl{token_budget_r0.98_m4} & False / pending follow-up & +2.32 pp & 6.57\% & -0.24 pp & 11.44\% \\
+400k & \nolinkurl{token_budget_r0.98_m4} & False / original split & +2.32 pp & 6.57\% & -0.24 pp & 11.44\% \\
 638k & \nolinkurl{token_budget_r0.85_m4} & True & -0.08 pp & 17.53\% & -3.84 pp & 21.90\% \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-The calibrated policies should be compared against dense-only adaptive truncation because both reduce final context size. IntentRoute preserves substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level. The 400k row is diagnostic rather than calibration-eligible in the current artifact set and is marked for follow-up calibration.
+The calibrated policies should be compared against dense-only adaptive truncation because both reduce final context size. IntentRoute preserves substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level. The 400k row is diagnostic rather than calibration-eligible in the original artifact set. Appendix Table G4 reports the completed cross-fitted follow-up.
 
 \begin{table*}[tbp]
 \centering
@@ -285,6 +342,25 @@ Scale & Eligible splits & Test Hit range & Mean test Hit delta & Saving range & 
 \end{table*}
 
 These partitions reuse the same frozen rankings and overlap in their query membership. They diagnose policy-selection sensitivity and must not be counted as 20 independent experiments. The result supports stronger split stability at 200k/638k, moderate sensitivity at 100k, and continued diagnostic treatment of 400k.
+
+\begin{table*}[tbp]
+\centering
+\small
+\caption{Normalized five-fold out-of-fold calibration using identical canonical query folds and policy rules across scales}
+\label{tab:g4}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Scale & Eligible folds & Mean Hit delta & Mean token saving & Strict NI seeds & Selected-policy count & Dense compressed folds \\
+\midrule
+100k & 2/5 & -1.06pp & 4.16\% & 0/3 & 2 & 0/5 \\
+200k & 5/5 & +1.40pp & 16.07\% & 2/3 & 1 & 0/5 \\
+400k & 5/5 & +0.00pp & 14.50\% & 0/3 & 5 & 0/5 \\
+638k & 5/5 & +0.28pp & 15.23\% & 0/3 & 3 & 0/5 \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Each canonical LoTTE query is held out exactly once and remains in the same fold at every corpus scale. Dense and IntentRoute independently select from the predefined budget grid; when no policy satisfies the zero-drop gate, the method uses Dense top-10 fallback. The 400k result closes the missing normalized calibration check, but its five distinct policies and 0/3 strict non-inferiority result retain the partition-sensitivity boundary. The 100k row similarly shows that positive original-split behavior does not imply uniform cross-fitted behavior.
 
 \section{Cross-Domain Validation}
 \label{sec:12-appendix:cross-domain-validation}

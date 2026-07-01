@@ -14,15 +14,19 @@ standalone retrieval theory.
 On LoTTE technology/search from 100k to 638k chunks, eligible frozen
 calibration/test policies reduce evidence-context tokens by 6-18% while
 avoiding the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation;
-a 400k point remains diagnostic because it fails the calibration gate.
+the original 400k split fails the calibration gate. A normalized five-fold
+follow-up at 400k yields 14.50% mean saving with no mean Hit change, although
+strict seed-level non-inferiority remains unestablished.
 Matched-backbone BGE-base and E5-base tests retain near-dense
 $\mathrm{Hit@10}$ with about 12% token reduction, while a BGE quality-first
 point reaches +0.88 percentage points with 7.23% saving. Route controls show
 that geometry and feedback affect route-level quality, but a fixed-pool
 factorial audit does not show that either predicts safe per-query compression.
 In a frozen 300-query downstream evaluation, matched variants reduce context
-by 6.00-12.04% without a statistically detectable correctness change. Prompt
-compression and reranking remain complementary downstream layers. The
+by about 6-12%. DeepSeek, GLM-5.2, MiniMax-M3, and their shared-key majority
+show no statistically detectable correctness difference, although
+faithfulness effects are method-dependent. Prompt compression and reranking
+remain complementary downstream layers. The
 supported contribution is a geometry-guided, feedback-adaptive route controller
 combined with separate budget calibration, not universal superiority over
 dense retrieval or a proof that geometry determines relevance.

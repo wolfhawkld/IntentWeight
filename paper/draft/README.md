@@ -1,5 +1,12 @@
 # IntentWeight Paper Draft
 
+> **Superseded draft / 已归档草稿**: 本目录是 Task31-40 阶段的早期
+> IntentWeight 草稿。当前论文主源已经迁移到 `paper/full_draft/`，LaTeX 源在
+> `paper/latex/`。当前人类可读名称为 **IntentRoute**；历史 `IntentWeight`
+> 仅保留为 legacy package、artifact label 和旧任务记录。后续写作与投稿不应从
+> 本目录复制标题、方法名或结论，除非先按
+> `docs/intentweight-paper-core-narrative.md` 重新校准。
+
 Updated: 2026-06-11
 
 This directory starts the paper-writing phase after Task31 consolidated the

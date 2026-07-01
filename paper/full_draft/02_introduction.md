@@ -82,7 +82,9 @@ final-context policy is selected on calibration queries and frozen before test
 evaluation. Under this protocol, calibration-eligible operating points at
 100k, 200k, and 638k save 6-18% final evidence-context tokens, while a 400k
 diagnostic point shows positive frozen-test behavior but does not satisfy the
-calibration eligibility gate. Across these scales, IntentRoute avoids the
+calibration eligibility gate. A normalized five-fold follow-up yields 14.50%
+mean saving with no mean Hit change at 400k, but retains substantial
+policy-selection variance. Across these scales, IntentRoute avoids the
 larger $\mathrm{Hit@10}$ losses observed under dense-only adaptive truncation,
 although strict seed-level non-inferiority remains scale-dependent. A
 conservative confidence-only policy provides a stable baseline, reducing final
@@ -102,8 +104,9 @@ Sentence-MMR and a Selective Context-style prompt-pruning baseline show that
 compression is a strong shared downstream layer; a cross-encoder reranker
 improves full-context support but can select longer contexts. A 300-query
 answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
-and finds positive context-token savings without a statistically detectable
-correctness change. LoTTE science/search and feedback-driven hard-case recovery
+under three LLM judges. No judge or shared-key majority finds a statistically
+significant correctness difference, while faithfulness effects remain
+method-dependent. LoTTE science/search and feedback-driven hard-case recovery
 provide cross-domain and adaptive-recovery evidence, with domain calibration
 and simulated-feedback caveats.
 
@@ -125,9 +128,9 @@ The contributions of this paper are:
 4. We compare against shared sentence and prompt compression plus
    cross-encoder reranking, showing that IntentRoute is an upstream controller
    that composes with rather than replaces these downstream layers.
-5. We add a 300-query answer-level evaluation, cross-domain LoTTE replication,
-   controlled feedback recovery, and explicit limitation cases to bound the
-   supported quality-cost claim.
+5. We add a 300-query, three-judge answer-level evaluation, cross-domain LoTTE
+   replication, controlled feedback recovery, and explicit limitation cases to
+   bound the supported quality-cost claim.
 
 The resulting claim is intentionally bounded. IntentRoute is not presented as
 a universal replacement for dense retrieval, a proof of a relevance manifold,

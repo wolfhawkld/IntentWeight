@@ -2,6 +2,11 @@
 
 Task63 is complete as a formal answer-level RAG evaluation.
 
+Task65.7 subsequently extends the fixed 2,100-answer artifact with GLM-5.2 and
+MiniMax-M3 judges. Use
+`task65_7_multi_judge_analysis_summary.md` for current paper-facing
+cross-judge claims; retain this file as the original DeepSeek-judge result.
+
 ## Scope
 
 - Dataset: LoTTE technology search 100k.

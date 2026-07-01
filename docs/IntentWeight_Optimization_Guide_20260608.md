@@ -1,5 +1,11 @@
 # IntentWeight 论文优化指导文档
 
+> **Naming and scope note / 命名与范围说明**: 本文档写于 Task64 改名之前，
+> 因此大量使用 `IntentWeight`。当前论文-facing 名称为 **IntentRoute**。
+> 本文档中关于 claim boundary、dense fallback、simulated feedback 和 context
+> token 口径的建议仍可参考；具体方法事实以当前 `paper/full_draft/` 和
+> `docs/intentweight-paper-core-narrative.md` 为准。
+
 > 目的：把当前初稿从“有潜力的系统研究论文”推进到“更有说服力的投稿版本”。
 >
 > 核心原则：不要把论文改成另一个方向。应当保留 **Hit@10 sufficient evidence 目标** 和 **piecewise relevance-manifold 研究来源**，同时补强 reviewer 最可能质疑的三个环节：**算法必要性、统计可信度、反馈真实性**。

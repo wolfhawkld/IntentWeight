@@ -18,15 +18,19 @@ standalone retrieval theory.
 On LoTTE technology/search from 100k to 638k chunks, eligible frozen
 calibration/test policies reduce evidence-context tokens by 6-18% while
 avoiding the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation;
-a 400k point remains diagnostic because it fails the calibration gate.
+the original 400k split fails the calibration gate. A normalized five-fold
+follow-up at 400k yields 14.50% mean saving with no mean Hit change, although
+strict seed-level non-inferiority remains unestablished.
 Matched-backbone BGE-base and E5-base tests retain near-dense
 $\mathrm{Hit@10}$ with about 12% token reduction, while a BGE quality-first
 point reaches +0.88 percentage points with 7.23% saving. Route controls show
 that geometry and feedback affect route-level quality, but a fixed-pool
 factorial audit does not show that either predicts safe per-query compression.
 In a frozen 300-query downstream evaluation, matched variants reduce context
-by 6.00-12.04% without a statistically detectable correctness change. Prompt
-compression and reranking remain complementary downstream layers. The
+by about 6-12%. DeepSeek, GLM-5.2, MiniMax-M3, and their shared-key majority
+show no statistically detectable correctness difference, although
+faithfulness effects are method-dependent. Prompt compression and reranking
+remain complementary downstream layers. The
 supported contribution is a geometry-guided, feedback-adaptive route controller
 combined with separate budget calibration, not universal superiority over
 dense retrieval or a proof that geometry determines relevance.
@@ -117,7 +121,9 @@ final-context policy is selected on calibration queries and frozen before test
 evaluation. Under this protocol, calibration-eligible operating points at
 100k, 200k, and 638k save 6-18% final evidence-context tokens, while a 400k
 diagnostic point shows positive frozen-test behavior but does not satisfy the
-calibration eligibility gate. Across these scales, IntentRoute avoids the
+calibration eligibility gate. A normalized five-fold follow-up yields 14.50%
+mean saving with no mean Hit change at 400k, but retains substantial
+policy-selection variance. Across these scales, IntentRoute avoids the
 larger $\mathrm{Hit@10}$ losses observed under dense-only adaptive truncation,
 although strict seed-level non-inferiority remains scale-dependent. A
 conservative confidence-only policy provides a stable baseline, reducing final
@@ -137,8 +143,9 @@ Sentence-MMR and a Selective Context-style prompt-pruning baseline show that
 compression is a strong shared downstream layer; a cross-encoder reranker
 improves full-context support but can select longer contexts. A 300-query
 answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
-and finds positive context-token savings without a statistically detectable
-correctness change. LoTTE science/search and feedback-driven hard-case recovery
+under three LLM judges. No judge or shared-key majority finds a statistically
+significant correctness difference, while faithfulness effects remain
+method-dependent. LoTTE science/search and feedback-driven hard-case recovery
 provide cross-domain and adaptive-recovery evidence, with domain calibration
 and simulated-feedback caveats.
 
@@ -160,9 +167,9 @@ The contributions of this paper are:
 4. We compare against shared sentence and prompt compression plus
    cross-encoder reranking, showing that IntentRoute is an upstream controller
    that composes with rather than replaces these downstream layers.
-5. We add a 300-query answer-level evaluation, cross-domain LoTTE replication,
-   controlled feedback recovery, and explicit limitation cases to bound the
-   supported quality-cost claim.
+5. We add a 300-query, three-judge answer-level evaluation, cross-domain LoTTE
+   replication, controlled feedback recovery, and explicit limitation cases to
+   bound the supported quality-cost claim.
 
 The resulting claim is intentionally bounded. IntentRoute is not presented as
 a universal replacement for dense retrieval, a proof of a relevance manifold,
@@ -974,16 +981,21 @@ treated as additional training seeds or independent inferential samples.
 The answer-level evaluation draws 300 deterministic queries from the 417-query
 frozen test split. Seven methods cover MiniLM dense, BGE dense and IntentRoute,
 E5 dense and IntentRoute, and matched Dense+SentMMR versus
-IntentRoute+SentMMR. The same `deepseek-v4-flash` configuration generates one
-answer from each retrieved context and judges correctness, faithfulness,
-relevance, citation support, and insufficient-context behavior against
-reference evidence.
+IntentRoute+SentMMR. The `deepseek-v4-flash` configuration generates one answer
+from each retrieved context. The fixed answers are independently judged by
+`deepseek-v4-flash`, `glm-5.2`, and `minimax-m3` for correctness,
+faithfulness, relevance, and citation support against reference evidence.
 
-The run contains 2,100 generated answers and 2,100 schema-valid judgments.
-Correctness differences use paired query-level bootstrap intervals and exact
-McNemar tests. The experiment uses one generator/judge model, so it supports
-answer-level cost-quality preservation rather than cross-model or human-rated
-superiority.
+The run contains 2,100 generated answers and 6,265 schema-valid judgments:
+2,100 each from DeepSeek and GLM-5.2 and 2,065 from MiniMax-M3. Thirty-five
+MiniMax-M3 inputs are rejected by provider-side content filtering and are not
+imputed. Cross-judge agreement uses the 2,065 query-method keys valid for all
+three judges. Correctness and faithfulness differences use paired query-level
+bootstrap intervals and exact McNemar tests within each judge and for the
+three-judge majority. Raw ordinal scores are not pooled across judges. The
+under-specified `insufficient_context_appropriate` field is retained in raw
+artifacts but excluded from headline and agreement analyses. This protocol
+supports multi-judge answer-level robustness, not human-rated superiority.
 
 ---
 
@@ -1031,6 +1043,18 @@ The 100k mean range is `-2.00pp` to `+0.72pp`; 400k varies from `-2.08pp` to
 `+2.80pp`. The original pre-specified split remains the primary result, while
 the repeated partitions strengthen 200k/638k and keep 100k/400k interpretation
 more cautious.
+
+A normalized five-fold follow-up uses the same canonical query folds,
+predefined budget grid, zero-drop gate, three route seeds, Dense fallback, and paired
+statistics at every scale. Its out-of-fold IntentRoute Hit deltas and token
+savings are respectively `-1.06pp/4.16%`, `+1.40pp/16.07%`,
+`+0.00pp/14.50%`, and `+0.28pp/15.23%` from 100k through 638k. Independently
+calibrated Dense finds no eligible compressed action in any fold and therefore
+uses top-10 fallback. At 400k, all five IntentRoute folds are eligible, closing
+the missing normalized follow-up, but they select five different policies and
+strict non-inferiority remains `0/3` seeds. Appendix G4 reports the fold-level
+results. This supports the average 400k trade-off without erasing the original
+split failure or claiming stable policy selection.
 
 Query-level paired bootstrap intervals and McNemar-style win/loss counts show
 that token savings are more consistent than strict quality non-inferiority.
@@ -1167,24 +1191,32 @@ reranker tables.
 ## 5.7 Downstream Answer-Level Evaluation
 
 The frozen downstream evaluation contains 300 queries, seven methods, 2,100
-generated answers, and 2,100 valid judgments. Comparisons use the same query
-set and paired uncertainty.
+generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and
+MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all
+three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are
+not imputed.
 
 **Table 5. Matched downstream answer-quality and context-token comparisons.**
 
-| Comparison | Baseline correct | IntentRoute correct | Correct delta (95% CI) | Token saving (95% CI) |
-|---|---:|---:|---:|---:|
-| BGE IntentRoute vs BGE dense | 0.9167 | 0.9167 | +0.00 pp [-2.67, +2.67] | 6.00% [4.01%, 7.97%] |
-| E5 IntentRoute vs E5 dense | 0.9167 | 0.9200 | +0.33 pp [-3.00, +3.67] | 12.04% [9.93%, 14.16%] |
-| IntentRoute+MMR vs Dense+MMR | 0.8900 | 0.9133 | +2.33 pp [-1.67, +6.33] | 6.65% [4.28%, 8.97%] |
+| Comparison | DeepSeek $\Delta$ | GLM $\Delta$ | MiniMax $\Delta$ | Majority $\Delta$ (95% CI) | Context saving (95% CI) |
+|---|---:|---:|---:|---:|---:|
+| BGE IntentRoute vs BGE dense | +0.00 pp | -3.00 pp | -2.42 pp | -3.46 pp [-6.92, 0.00] | 6.27% [4.22%, 8.26%] |
+| E5 IntentRoute vs E5 dense | +0.33 pp | -1.33 pp | -2.77 pp | -2.08 pp [-5.88, +1.73] | 11.97% [9.78%, 14.17%] |
+| IntentRoute+MMR vs Dense+MMR | +2.33 pp | +0.33 pp | +1.36 pp | +0.34 pp [-3.39, +4.07] | 6.75% [4.40%, 9.11%] |
 
-All token-saving intervals are positive. Every correctness interval includes
-zero and exact McNemar tests are non-significant. The result supports lower
-context without a statistically detectable correctness change, not significant
-answer-quality improvement. Faithfulness differences are also non-significant;
-the BGE point estimate is -2.33 percentage points and remains disclosed in
-Appendix F. Because one generator/judge model is used, this is downstream
-support rather than human-evaluation or cross-model superiority evidence.
+All context-saving intervals are positive. Every individual-judge and
+majority-vote correctness interval includes zero, and all correctness McNemar
+tests are non-significant. Absolute judge calibration differs: pairwise raw
+agreement is 89.88-92.15% for correctness, with Cohen's $\kappa$ of
+0.503-0.653. This supports lower context without a statistically detectable
+correctness difference, but not strict non-inferiority or significant
+answer-quality improvement.
+
+Faithfulness is not uniformly preserved. The three-judge majority estimates a
+-4.15 pp BGE faithfulness change (95% CI [-6.92, -1.73], $p=0.0018$) and a
++4.07 pp change for the SentMMR composition (95% CI [+0.68, +7.46],
+$p=0.0290$); E5 remains non-significant. Appendix F reports judge coverage,
+agreement, full method-level results, and the mixed faithfulness boundary.
 
 ---
 
@@ -1199,14 +1231,20 @@ applies a separately frozen final-context policy. On LoTTE technology/search,
 calibration/test validation shows that calibration-eligible operating points at
 100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
 the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
-result is positive on frozen test but remains a diagnostic follow-up point
-because it did not pass the calibration eligibility gate. A conservative
+result is positive on frozen test but does not pass the original calibration
+eligibility gate. A subsequent normalized five-fold audit selects compressed
+IntentRoute policies in all 400k folds and yields 14.50% mean saving with no
+mean Hit change, but fold-specific policies vary and strict seed-level
+non-inferiority remains unestablished. A conservative
 confidence-only policy provides a stable baseline, reducing final retrieved
 context tokens by about 4.7-5.3% from 100k to 638k corpus chunks while
 preserving dense-level query hit. Matched BGE/E5 experiments extend the
-quality-cost pattern beyond MiniLM, and the 300-query downstream evaluation
-finds positive context savings without a statistically detectable correctness
-change. LoTTE science/search further supports ranking-side generalization, but
+quality-cost pattern beyond MiniLM, and the 300-query, three-judge downstream
+evaluation finds positive context savings without a statistically detectable
+correctness change. The stricter judges produce negative BGE/E5 correctness
+point estimates, and the three-judge majority detects a BGE faithfulness
+decrease, so the result does not establish uniform answer-quality
+non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
@@ -1231,6 +1269,13 @@ dense-only adaptive truncation shows that saving more tokens by simply reducing
 dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy
 should therefore be interpreted as a stable empirical baseline, not the
 highest-compression configuration or a per-query safety guarantee.
+
+The cross-fitted comparison also clarifies why route quality matters to budget
+control. Under the same zero-drop gate, prefix-only Dense truncation cannot
+select a compressed action in any fold at any tested scale, whereas
+IntentRoute selects one in every 200k, 400k, and 638k fold. This is evidence of
+calibration headroom created by the routed evidence ranking, not evidence that
+all route policies or partitions are safe.
 
 ## 6.3 Reranking and Final-Context Control
 
@@ -1390,12 +1435,17 @@ does not imply universal recovery.
 ## 7.2 Limited Generation Evaluation
 
 The downstream evaluation expands to 300 frozen-test queries, seven methods,
-2,100 generated answers, and 2,100 valid LLM judgments. It finds positive
-context-token savings for matched BGE, E5, and SentMMR comparisons without a
-statistically detectable correctness change. However, one model serves as both
-generator and judge, no human ratings are collected, and the benchmark covers
-one LoTTE domain. The result supports answer-level quality preservation under
-this protocol, not generated-answer superiority or user satisfaction.
+2,100 generated answers, and 6,265 valid judgments from three LLM judges. It
+finds positive context-token savings for matched BGE, E5, and SentMMR
+comparisons without a statistically detectable correctness change. However,
+all answers are generated by one model, DeepSeek also serves as one of the
+judges, no human ratings are collected, and the benchmark covers one LoTTE
+domain. MiniMax-M3 rejects 35 judgments through provider-side content
+filtering; cross-judge analyses exclude rather than impute them. Judge
+calibration differs, and majority-vote faithfulness decreases for BGE while
+increasing for the SentMMR composition. The result therefore supports bounded
+answer-level correctness robustness, not strict non-inferiority, uniform
+faithfulness preservation, generated-answer superiority, or user satisfaction.
 
 ## 7.3 Dense Remains Strong
 
@@ -1431,6 +1481,13 @@ partitions overlap and therefore measure sensitivity rather than independent
 replication. The pre-specified frozen split remains valid, but production use
 should prefer repeated or nested calibration and should not infer a universal
 no-loss policy from one partition.
+
+The five-fold cross-fitted follow-up uses disjoint test folds and identical
+canonical query assignments across scales. It improves the 400k average result
+to 14.50% saving at effectively zero mean Hit delta, but fold-level deltas
+remain heterogeneous and the selected policy changes in every 400k fold. It
+therefore reduces the missing-calibration concern without establishing
+split-invariant deployment behavior.
 
 ## 7.6 Geometry Is Diagnostic, Not a Proof
 
@@ -1471,11 +1528,13 @@ claim that a large seed population has been sampled. Query-level paired tests
 provide the main inferential evidence. The LoTTE 400k
 token-saving interval is notably wider than the other scales and should be
 interpreted as seed-level operating-point variance across routed rankings and
-context-budget control. In the calibrated-budget experiment, the 400k frozen-test result is
-positive but the selected policy is not calibration-eligible under the
-zero-observed-hit-drop gate; this scale is therefore marked as a follow-up
-calibration gap rather than pooled into the strongest eligible operating-point
-claim.
+context-budget control. In the original calibrated-budget experiment, the 400k
+frozen-test result is positive but the selected policy is not
+calibration-eligible under the zero-observed-hit-drop gate. The completed
+cross-fitted follow-up is positive on average, but uses five distinct fold
+policies and establishes strict non-inferiority in 0/3 seeds. The original
+failure and the follow-up instability both remain part of the reported
+boundary.
 
 ## 7.10 Future Work
 
@@ -1515,8 +1574,10 @@ policy separately controls the final evidence-context budget.
 The main evidence comes from LoTTE technology/search at 100k to 638k corpus
 chunks. Under calibration/test budget selection, calibration-eligible operating
 points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
-by 6-18%; the 400k point remains a positive diagnostic result pending
-follow-up calibration. Across these scales, IntentRoute avoids the larger
+by 6-18%; the original 400k point remains calibration-ineligible. A normalized
+five-fold follow-up at 400k yields 14.50% mean saving with no mean Hit change,
+while retaining policy instability and no strict seed-level non-inferiority.
+Across these scales, IntentRoute avoids the larger
 $\mathrm{Hit@10}$ losses of dense-only adaptive truncation, while strict
 seed-level non-inferiority remains scale-dependent. A conservative
 confidence-only policy remains a stable 4.7-5.3% saving baseline. Split
@@ -1527,8 +1588,10 @@ over random routing and trust-weighted feedback improves route confidence over
 no-feedback controls, without implying that either alone explains fused
 quality. Matched BGE/E5 comparisons retain near-dense retrieval quality with
 about 12% context saving, while a BGE quality-first point demonstrates frontier
-tunability. A 300-query downstream evaluation finds 6.00-12.04% matched context
-savings without a statistically detectable correctness change.
+tunability. A 300-query evaluation with three LLM judges finds approximately
+6-12% matched context savings without a statistically detectable correctness
+change, while exposing method-dependent faithfulness effects and retaining the
+lack of strict answer-level non-inferiority.
 LoTTE science/search provides cross-domain ranking support with a clear
 compression-calibration boundary. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
@@ -1727,10 +1790,11 @@ split.
 
 The formal downstream evaluation uses 300 deterministic queries from the
 frozen LoTTE technology/search 100k test split. Seven methods produce 2,100
-answers and 2,100 schema-valid judgments under the same
-`deepseek-v4-flash` generator/judge configuration.
+answers with `deepseek-v4-flash`. The fixed answers receive 2,100 DeepSeek,
+2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge
+statistics use the 2,065 query-method keys shared by all judges.
 
-**Appendix Table F1. Downstream answer and context results.**
+**Appendix Table F1. DeepSeek-judged downstream answer and context results.**
 
 | Method | Correct | Faithful | Strict citation support | Insufficient context | Avg context tokens | Tokens / correct |
 |---|---:|---:|---:|---:|---:|---:|
@@ -1742,7 +1806,7 @@ answers and 2,100 schema-valid judgments under the same
 | Dense+MMR | 0.8900 | 0.9100 | 0.0733 | 0.0800 | 1240 | 1393 |
 | IntentRoute+MMR | 0.9133 | 0.9267 | 0.0833 | 0.0900 | 1157 | 1267 |
 
-**Appendix Table F2. Paired downstream comparisons.**
+**Appendix Table F2. Original DeepSeek-judged paired downstream comparisons.**
 
 | Comparison | Correct delta | 95% CI | McNemar $p$ | Token saving | 95% CI |
 |---|---:|---:|---:|---:|---:|
@@ -1751,9 +1815,52 @@ answers and 2,100 schema-valid judgments under the same
 | IntentRoute+MMR vs Dense+MMR | +2.33 pp | [-1.67, +6.33] pp | 0.324 | 6.65% | [4.28%, 8.97%] |
 
 The context-saving intervals are positive while correctness intervals include
-zero. This supports answer-level correctness preservation with lower context,
-not significant answer-quality improvement. The study still uses one
-generator/judge model and is not a human evaluation.
+zero. The multi-judge extension below tests whether this conclusion depends on
+the original DeepSeek judge.
+
+**Appendix Table F3. Multi-judge coverage and calibration.**
+
+| Judge | Valid | Coverage | Correctness mean | Correct | Faithfulness mean | Faithful | Citations supported |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| DeepSeek | 2,100 | 100.00% | 4.672 | 91.33% | 4.782 | 93.10% | 89.57% |
+| GLM-5.2 | 2,100 | 100.00% | 4.551 | 88.24% | 4.734 | 92.81% | 92.14% |
+| MiniMax-M3 | 2,065 | 98.33% | 4.293 | 85.71% | 4.633 | 95.45% | 94.48% |
+
+MiniMax-M3 rejects 35 query-method inputs spanning 18 queries through
+provider-side content filtering. These values are not imputed. Absolute score
+calibration differs across judges, so raw ordinal scores are not pooled.
+
+**Appendix Table F4. Pairwise agreement on 2,065 shared judgments.**
+
+| Field | Judge pair | Raw agreement | Cohen's $\kappa$ |
+|---|---|---:|---:|
+| Correct | DeepSeek / GLM-5.2 | 91.04% | 0.508 |
+| Correct | DeepSeek / MiniMax-M3 | 89.88% | 0.503 |
+| Correct | GLM-5.2 / MiniMax-M3 | 92.15% | 0.653 |
+| Faithful | DeepSeek / GLM-5.2 | 91.72% | 0.364 |
+| Faithful | DeepSeek / MiniMax-M3 | 93.27% | 0.374 |
+| Faithful | GLM-5.2 / MiniMax-M3 | 93.41% | 0.405 |
+
+Three-judge unanimity is 86.54% for correctness and 89.20% for faithfulness.
+The corresponding majority-positive rates are 88.96% and 95.35%. High raw
+faithfulness agreement coexists with lower $\kappa$ because positive judgments
+are highly prevalent.
+
+**Appendix Table F5. Three-judge-majority paired comparisons.**
+
+| Comparison | $n$ | Correct delta (95% CI) | McNemar $p$ | Faithful delta (95% CI) | McNemar $p$ | Context saving (95% CI) |
+|---|---:|---:|---:|---:|---:|---:|
+| BGE IntentRoute vs dense | 289 | -3.46 pp [-6.92, 0.00] | 0.0755 | -4.15 pp [-6.92, -1.73] | 0.0018 | 6.27% [4.22%, 8.26%] |
+| E5 IntentRoute vs dense | 289 | -2.08 pp [-5.88, +1.73] | 0.3616 | -0.69 pp [-3.81, +2.42] | 0.8238 | 11.97% [9.78%, 14.17%] |
+| IntentRoute+MMR vs Dense+MMR | 295 | +0.34 pp [-3.39, +4.07] | 1.0000 | +4.07 pp [+0.68, +7.46] | 0.0290 | 6.75% [4.40%, 9.11%] |
+
+No individual judge or majority-vote comparison finds a significant
+correctness difference. This supports a bounded correctness-robustness claim,
+not strict non-inferiority. Faithfulness is mixed: the BGE majority result is
+negative, while the SentMMR composition is positive. The evaluation remains
+LLM-as-judge evidence rather than human evaluation. The under-specified
+`insufficient_context_appropriate` field is retained in raw artifacts but
+excluded from headline analysis.
 
 ## G. Calibration/Test Context-Budget Validation
 
@@ -1766,14 +1873,14 @@ queries and freezes it before evaluation on held-out test queries.
 |---|---|---:|---:|---:|---:|---:|
 | 100k | `token_budget_r0.95_m4` | True | +0.00 pp | 6.18% | -1.44 pp | 13.83% |
 | 200k | `token_budget_r0.85_m4` | True | +1.20 pp | 16.00% | -2.40 pp | 21.95% |
-| 400k | `token_budget_r0.98_m4` | False / pending follow-up | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
+| 400k | `token_budget_r0.98_m4` | False / original split | +2.32 pp | 6.57% | -0.24 pp | 11.44% |
 | 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 17.53% | -3.84 pp | 21.90% |
 
 The calibrated policies should be compared against dense-only adaptive
 truncation because both reduce final context size. IntentRoute preserves
 substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level.
-The 400k row is diagnostic rather than calibration-eligible in the current
-artifact set and is marked for follow-up calibration.
+The 400k row is diagnostic rather than calibration-eligible in the original
+artifact set. Appendix Table G4 reports the completed cross-fitted follow-up.
 
 **Appendix Table G2. Independently calibrated 100k quality constraints.**
 
@@ -1803,6 +1910,24 @@ membership. They diagnose policy-selection sensitivity and must not be counted
 as 20 independent experiments. The result supports stronger split stability at
 200k/638k, moderate sensitivity at 100k, and continued diagnostic treatment of
 400k.
+
+**Appendix Table G4. Normalized five-fold out-of-fold calibration using identical canonical query folds and policy rules across scales.**
+
+| Scale | Eligible folds | Mean Hit delta | Mean token saving | Strict NI seeds | Selected-policy count | Dense compressed folds |
+|---|---:|---:|---:|---:|---:|---:|
+| 100k | 2/5 | -1.06pp | 4.16% | 0/3 | 2 | 0/5 |
+| 200k | 5/5 | +1.40pp | 16.07% | 2/3 | 1 | 0/5 |
+| 400k | 5/5 | +0.00pp | 14.50% | 0/3 | 5 | 0/5 |
+| 638k | 5/5 | +0.28pp | 15.23% | 0/3 | 3 | 0/5 |
+
+Each canonical LoTTE query is held out exactly once and remains in the same
+fold at every corpus scale. Dense and IntentRoute independently select from
+the predefined budget grid; when no policy satisfies the zero-drop gate,
+the method uses Dense top-10 fallback. The 400k result closes the missing
+normalized calibration check, but its five distinct policies and 0/3 strict
+non-inferiority result retain the partition-sensitivity boundary. The 100k row
+similarly shows that positive original-split behavior does not imply uniform
+cross-fitted behavior.
 
 ## H. Cross-Domain Validation
 

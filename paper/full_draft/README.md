@@ -42,7 +42,7 @@ draft. The most important internal evidence groups are:
 - geometry/random, feedback/no-feedback, and arm-count controls;
 - strong post-retrieval baselines: Dense+Sentence-MMR, compressor-normalized
   SentMMR, SelectiveContext-lite, and cross-encoder reranking;
-- 300-query downstream answer-level evaluation.
+- 300-query, three-judge downstream answer-level evaluation.
 - fixed-dense-pool factorial safe-compression attribution separating route
   confidence from the calibrated length budget.
 - frozen-trajectory route mediation testing query-specific confidence-tier
@@ -59,16 +59,19 @@ The paper should keep the bounded claim:
 > route structure, trust-weighted LinUCB feedback adapts route confidence, and
 > dense retrieval remains a recall floor. Under calibration/test budget selection, calibration-eligible
 > operating points at 100k, 200k, and 638k reduce final LLM evidence-context
-> input tokens by 6-18%; the 400k point is positive on frozen test but remains
-> diagnostic pending follow-up calibration. The method avoids the larger
+> input tokens by 6-18%; the original 400k point is positive on frozen test but
+> calibration-ineligible. A normalized five-fold follow-up yields 14.50% mean
+> saving with no mean Hit change at 400k, while retaining policy instability
+> and no strict seed-level non-inferiority. The method avoids the larger
 > $\mathrm{Hit@10}$ losses of dense-only adaptive truncation under these bounded
 > operating points. A conservative confidence-only policy remains as a stable
 > 4.7-5.3% saving baseline. The paper should not claim universal or
 > statistically significant dominance, nor should it imply that the current
 > experiments cover every possible knowledge-carrier format beyond the tested
-> retrieval setting. BGE/E5 and the 300-query downstream run support
-> backbone- and answer-level robustness without establishing significant answer
-> improvement. Geometry is motivation and diagnostic support, not theorem-level
+> retrieval setting. BGE/E5 and the 300-query, three-judge downstream run
+> support bounded backbone and correctness robustness without establishing
+> strict non-inferiority, uniform faithfulness preservation, or significant
+> answer improvement. Geometry is motivation and diagnostic support, not theorem-level
 > proof. SentMMR and SelectiveContext-lite are downstream compressors,
 > cross-encoder reranking is a late ranking layer, and IntentRoute can be
 > composed with all three. Broader agent-memory, graph, tree,
@@ -85,7 +88,7 @@ post-feedback retry.
 Task65 reduced the main Results display from eight tables and five figures to
 five tables and three figures. Detailed cross-domain, recovery, compressor,
 reranker, and control results remain in the appendix. After adding the
-Task65.3-65.5 reviewer-defense evidence, the regenerated ACL-style working PDF
+Task65.3-65.6 reviewer-defense evidence, the regenerated ACL-style working PDF
 is 30 pages with zero critical LaTeX warnings.
 
 ## Next Editing Pass

@@ -1,6 +1,11 @@
 # 系统扩展性分析
 # System Scalability Analysis
 
+> **Historical engineering note / 历史工程说明**: 本文分析的是早期
+> HDBSCAN-based 企业原型扩展性。当前论文主实验已改为 KMeans/MiniBatchKMeans
+> fixed route arms，并通过 arm-count sensitivity 检查可复现工程参数。本文中的
+> HDBSCAN 扩展性结论不代表当前 IntentRoute 论文主方法。
+
 **日期 / Date**: 2026-04-20
 **当前规模 / Current Scale**: 110 文档, 2623 chunks, ~20 条对话
 **分析目标 / Target**: 评估数据量增长 10x~100x 时各组件的承受能力

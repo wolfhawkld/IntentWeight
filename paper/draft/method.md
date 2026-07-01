@@ -209,3 +209,5 @@ Output: final retrieved context C_t and updated policy state
 - `evidence_recall@K` should be reported separately when multi-evidence recall
   is needed. Context compaction can preserve query-level Hit@K while lowering
   evidence completeness when multiple GT chunks are expected.
+> **Superseded draft / 已归档草稿**: 当前论文主源为 `paper/full_draft/`，
+> 论文-facing 名称为 IntentRoute。本文件仅保留早期 IntentWeight 草稿记录。

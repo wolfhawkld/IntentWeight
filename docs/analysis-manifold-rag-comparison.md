@@ -1,6 +1,13 @@
 # 流形-RAG 研究对比与融合分析
 # Manifold-RAG Research Comparison & Fusion Analysis
 
+> **Historical note / 历史说明**: 本文档是早期调研融合记录，保留了
+> HDBSCAN/PCA 原型口径和较强的“增强流形”叙事。当前论文主方法不是
+> HDBSCAN route-arm 系统，而是使用 KMeans/MiniBatchKMeans fixed arms 的
+> IntentRoute controller。引用本文档时只能作为历史研究背景，当前论文事实以
+> `docs/intentweight-paper-core-narrative.md`、`paper/full_draft/` 和
+> `paper/experiments/` 为准。
+
 **日期 / Date**: 2026-04-20
 **来源 / Sources**:
 - 本项目 (jq_kg_base): LinUCB + ReAct Agent + 流形导航实践

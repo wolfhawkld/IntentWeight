@@ -10,8 +10,10 @@ policy separately controls the final evidence-context budget.
 The main evidence comes from LoTTE technology/search at 100k to 638k corpus
 chunks. Under calibration/test budget selection, calibration-eligible operating
 points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
-by 6-18%; the 400k point remains a positive diagnostic result pending
-follow-up calibration. Across these scales, IntentRoute avoids the larger
+by 6-18%; the original 400k point remains calibration-ineligible. A normalized
+five-fold follow-up at 400k yields 14.50% mean saving with no mean Hit change,
+while retaining policy instability and no strict seed-level non-inferiority.
+Across these scales, IntentRoute avoids the larger
 $\mathrm{Hit@10}$ losses of dense-only adaptive truncation, while strict
 seed-level non-inferiority remains scale-dependent. A conservative
 confidence-only policy remains a stable 4.7-5.3% saving baseline. Split
@@ -22,8 +24,10 @@ over random routing and trust-weighted feedback improves route confidence over
 no-feedback controls, without implying that either alone explains fused
 quality. Matched BGE/E5 comparisons retain near-dense retrieval quality with
 about 12% context saving, while a BGE quality-first point demonstrates frontier
-tunability. A 300-query downstream evaluation finds 6.00-12.04% matched context
-savings without a statistically detectable correctness change.
+tunability. A 300-query evaluation with three LLM judges finds approximately
+6-12% matched context savings without a statistically detectable correctness
+change, while exposing method-dependent faithfulness effects and retaining the
+lack of strict answer-level non-inferiority.
 LoTTE science/search provides cross-domain ranking support with a clear
 compression-calibration boundary. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by

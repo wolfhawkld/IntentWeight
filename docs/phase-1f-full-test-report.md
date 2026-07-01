@@ -1,5 +1,10 @@
 # Phase 1F 完整验证测试报告
 
+> **Historical validation note / 历史验证说明**: 本报告对应 Phase 1F 早期
+> HDBSCAN 原型验证，不是当前论文主实验。当前论文以 IntentRoute、
+> KMeans/MiniBatchKMeans fixed route arms、dense/BM25 fallback 和 calibrated
+> final-context budgeting 为准。
+
 **创建时间**: 2026-04-13
 **项目**: IntentWeight
 **类型**: 完整验证测试

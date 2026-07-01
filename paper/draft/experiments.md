@@ -366,3 +366,5 @@ Recommended ordering in the results section:
   `paper/experiments/task39_lotte_cross_domain_validation.md`
 - Feedback-driven hard-case recovery:
   `paper/experiments/task40_feedback_recovery_summary.md`
+> **Superseded draft / 已归档草稿**: 当前论文主源为 `paper/full_draft/`，
+> 论文-facing 名称为 IntentRoute。本文件仅保留早期 IntentWeight 草稿记录。

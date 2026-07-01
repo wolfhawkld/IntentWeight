@@ -43,6 +43,18 @@ The 100k mean range is `-2.00pp` to `+0.72pp`; 400k varies from `-2.08pp` to
 the repeated partitions strengthen 200k/638k and keep 100k/400k interpretation
 more cautious.
 
+A normalized five-fold follow-up uses the same canonical query folds,
+predefined budget grid, zero-drop gate, three route seeds, Dense fallback, and paired
+statistics at every scale. Its out-of-fold IntentRoute Hit deltas and token
+savings are respectively `-1.06pp/4.16%`, `+1.40pp/16.07%`,
+`+0.00pp/14.50%`, and `+0.28pp/15.23%` from 100k through 638k. Independently
+calibrated Dense finds no eligible compressed action in any fold and therefore
+uses top-10 fallback. At 400k, all five IntentRoute folds are eligible, closing
+the missing normalized follow-up, but they select five different policies and
+strict non-inferiority remains `0/3` seeds. Appendix G4 reports the fold-level
+results. This supports the average 400k trade-off without erasing the original
+split failure or claiming stable policy selection.
+
 Query-level paired bootstrap intervals and McNemar-style win/loss counts show
 that token savings are more consistent than strict quality non-inferiority.
 The conservative confidence-only policy remains a stable 4.7-5.3% saving
@@ -178,21 +190,29 @@ reranker tables.
 ## 5.7 Downstream Answer-Level Evaluation
 
 The frozen downstream evaluation contains 300 queries, seven methods, 2,100
-generated answers, and 2,100 valid judgments. Comparisons use the same query
-set and paired uncertainty.
+generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and
+MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all
+three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are
+not imputed.
 
 **Table 5. Matched downstream answer-quality and context-token comparisons.**
 
-| Comparison | Baseline correct | IntentRoute correct | Correct delta (95% CI) | Token saving (95% CI) |
-|---|---:|---:|---:|---:|
-| BGE IntentRoute vs BGE dense | 0.9167 | 0.9167 | +0.00 pp [-2.67, +2.67] | 6.00% [4.01%, 7.97%] |
-| E5 IntentRoute vs E5 dense | 0.9167 | 0.9200 | +0.33 pp [-3.00, +3.67] | 12.04% [9.93%, 14.16%] |
-| IntentRoute+MMR vs Dense+MMR | 0.8900 | 0.9133 | +2.33 pp [-1.67, +6.33] | 6.65% [4.28%, 8.97%] |
+| Comparison | DeepSeek $\Delta$ | GLM $\Delta$ | MiniMax $\Delta$ | Majority $\Delta$ (95% CI) | Context saving (95% CI) |
+|---|---:|---:|---:|---:|---:|
+| BGE IntentRoute vs BGE dense | +0.00 pp | -3.00 pp | -2.42 pp | -3.46 pp [-6.92, 0.00] | 6.27% [4.22%, 8.26%] |
+| E5 IntentRoute vs E5 dense | +0.33 pp | -1.33 pp | -2.77 pp | -2.08 pp [-5.88, +1.73] | 11.97% [9.78%, 14.17%] |
+| IntentRoute+MMR vs Dense+MMR | +2.33 pp | +0.33 pp | +1.36 pp | +0.34 pp [-3.39, +4.07] | 6.75% [4.40%, 9.11%] |
 
-All token-saving intervals are positive. Every correctness interval includes
-zero and exact McNemar tests are non-significant. The result supports lower
-context without a statistically detectable correctness change, not significant
-answer-quality improvement. Faithfulness differences are also non-significant;
-the BGE point estimate is -2.33 percentage points and remains disclosed in
-Appendix F. Because one generator/judge model is used, this is downstream
-support rather than human-evaluation or cross-model superiority evidence.
+All context-saving intervals are positive. Every individual-judge and
+majority-vote correctness interval includes zero, and all correctness McNemar
+tests are non-significant. Absolute judge calibration differs: pairwise raw
+agreement is 89.88-92.15% for correctness, with Cohen's $\kappa$ of
+0.503-0.653. This supports lower context without a statistically detectable
+correctness difference, but not strict non-inferiority or significant
+answer-quality improvement.
+
+Faithfulness is not uniformly preserved. The three-judge majority estimates a
+-4.15 pp BGE faithfulness change (95% CI [-6.92, -1.73], $p=0.0018$) and a
++4.07 pp change for the SentMMR composition (95% CI [+0.68, +7.46],
+$p=0.0290$); E5 remains non-significant. Appendix F reports judge coverage,
+agreement, full method-level results, and the mixed faithfulness boundary.

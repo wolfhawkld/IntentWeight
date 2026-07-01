@@ -1,6 +1,11 @@
 # LinUCB 系统技术规格说明
 # LinUCB System Technical Specification
 
+> **Historical system spec / 历史系统规格**: 本规格对应早期企业工程原型，
+> 包含 HDBSCAN 自动簇数和 `IntentWeight` 命名。当前论文-facing 方法为
+> IntentRoute，使用 KMeans/MiniBatchKMeans fixed route arms 以满足 LinUCB
+> 固定动作空间、可复现和大规模实验需求。本文档不应作为当前论文方法事实来源。
+
 **版本 / Version**: v0.9.2-dev
 **分支 / Branch**: LinUCB
 **最后更新 / Last Updated**: 2026-04-17

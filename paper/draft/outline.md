@@ -205,3 +205,5 @@ Avoid:
 - "candidate cost reduction equals LLM token saving"
 - "end-to-end answer quality is improved"
 - "LinUCB alone explains all gains"
+> **Superseded draft / 已归档草稿**: 当前论文主源为 `paper/full_draft/`，
+> 论文-facing 名称为 IntentRoute。本文件仅保留早期 IntentWeight 草稿记录。

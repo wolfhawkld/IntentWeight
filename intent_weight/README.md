@@ -25,12 +25,24 @@ Derived from jq_kg_base project's engineering validation, with enterprise-privat
 
 ---
 
+## Current Methodology Boundary
+
+The current paper-facing IntentRoute experiments use KMeans/MiniBatchKMeans
+to construct a fixed cluster-local arm space for LinUCB. The main LoTTE runs
+use 32 arms, with an explicit sensitivity audit over 8, 16, 32, 64, and 128
+arms. This fixed-arm design is an experimental and reproducibility choice, not
+a claim that KMeans is universally optimal.
+
+Some legacy utilities and early validation notes in this repository still use
+HDBSCAN. Those files are retained for compatibility and provenance, but they
+are not the current paper-facing route-arm construction.
+
 ## 三层架构
 ## Three-Layer Architecture
 
 ```
 流形发现层 (Manifold Discovery)
-├── clustering.py         # HDBSCAN + PCA：发现流形密度结构
+├── clustering.py         # legacy HDBSCAN utility; not the current paper route arms
 └── keyword_prior.py      # TF-IDF 关键词：冷启动先验
 
 流形导航层 (Manifold Navigation)
@@ -51,6 +63,7 @@ Derived from jq_kg_base project's engineering validation, with enterprise-privat
 - `pre_validation/` = 研究实验代码（Phase 1A-1F 验证用）
 - `intent_route/` = canonical public API
 - `intent_weight/` = legacy-compatible implementation package
+- `paper/experiments/` = 当前论文主实验，使用固定 KMeans/MiniBatchKMeans route arms
 
 研究实验使用 `pre_validation/` 和 `paper/experiments/` 中的脚本；新代码和
 论文展示统一使用 IntentRoute 名称。

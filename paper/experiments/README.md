@@ -1707,6 +1707,23 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     均保持 dense `-1pp` 以内；100k 为 14/20，400k 为 17/20。该结果强化
     200k/638k，要求 100k 标注 split sensitivity，并继续把 400k 保留为
     diagnostic。overlapping splits 不作为新增 training seeds 或独立重复。
+37. cross-scale cross-fitted calibration：Task65.6 已完成，详见
+    `paper/experiments/task65_6_cross_scale_cross_fitted_calibration_summary.md`。
+    四档规模使用相同 canonical query folds、Task38 budget grid、zero-drop gate、
+    seeds 和 Dense fallback。400k 在 5/5 folds 均选择合格压缩策略，OOF mean
+    Hit delta 约 `0.00pp`、saving `14.50%`；但五折选择五种策略且 strict NI
+    仍为 `0/3`。该结果完成 400k follow-up，但不覆盖原始 split failure，也不
+    支持 split-invariant guarantee。
+38. multi-judge downstream robustness：Task65.7 已完成，详见
+    `paper/experiments/task65_7_multi_judge_analysis_summary.md`。该项复用
+    Task63 固定的 2,100 个 answers，不重新生成答案；DeepSeek/GLM-5.2
+    各完成 2,100 条判断，MiniMax-M3 完成 2,065 条，35 条因 provider-side
+    content filtering 缺失且不插补。三 judge 共同 2,065 条上的 correctness
+    raw agreement 为 89.88%-92.15%，Cohen's kappa 为 0.503-0.653。所有
+    individual-judge 和 majority correctness comparisons 均不显著，但
+    majority-vote faithfulness 对 BGE 为显著负向、对 SentMMR composition
+    为显著正向，因此只支持 bounded correctness robustness，不支持 uniform
+    faithfulness preservation 或 strict answer-level non-inferiority。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1728,7 +1745,9 @@ Task65 table and figure refresh、第 32 项 Task65.1 safe-compression
 attribution、第 33 项 Task65.2 factorial safe-compression attribution 均已完成。
 第 34 项 Task65.3 dynamic-route mediation 也已完成。
 第 35 项 Task65.4 independently calibrated matched frontier 和第 36 项
-Task65.5 calibration-split sensitivity 也已完成。
+Task65.5 calibration-split sensitivity、第 37 项 Task65.6 cross-scale
+cross-fitted calibration、第 38 项 Task65.7 multi-judge downstream
+robustness 也已完成。
 
 ---
 

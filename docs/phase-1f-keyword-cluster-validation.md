@@ -1,5 +1,10 @@
 # Phase 1F: 关键词聚类标签验证
 
+> **Historical validation note / 历史验证说明**: 本文档记录 Phase 1F 的
+> HDBSCAN + keyword-cluster 原型验证。当前论文主实验不使用 HDBSCAN 作为
+> LinUCB route arms，而使用 KMeans/MiniBatchKMeans fixed arms。本文档仅作
+> 早期验证资料保留。
+
 **创建时间**: 2026-04-13
 **项目**: IntentWeight
 **类型**: 验证阶段设计

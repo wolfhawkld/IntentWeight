@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-文件级语义聚类
-File-level Semantic Clustering
+Legacy file-level semantic clustering utility.
 
-对文档（而非 chunk）进行 HDBSCAN 聚类，每个文档取其 chunk embedding 的均值作为代表向量。
-Cluster documents (not chunks) using HDBSCAN. Each document is represented by the mean of its chunk embeddings.
+This module clusters documents, not chunks, with HDBSCAN after optional PCA.
+It is retained for backward compatibility with early engineering prototypes.
+
+Current paper-facing IntentRoute experiments use KMeans/MiniBatchKMeans over
+chunk-level embeddings to construct fixed LinUCB route arms. Do not cite this
+legacy HDBSCAN utility as the route-arm construction used in the manuscript.
 """
 import numpy as np
 import pickle

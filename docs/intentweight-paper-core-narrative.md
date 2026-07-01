@@ -1,8 +1,18 @@
 # IntentRoute Paper Core Narrative
 
-Updated: 2026-06-28
+Updated: 2026-07-01
 
 本文档用于后续写作纠偏：当论文继续扩写、改标题、调图表或回应审稿意见时，优先对照这里的核心叙事，避免重新滑回“工程 task 汇报”或“泛化过度”的表达。
+
+## Terminology And Fact Guardrail
+
+- 当前论文、人类可读叙事和新代码统一使用 **IntentRoute**。
+- **IntentWeight** 仅保留为历史项目名、legacy import path、历史实验目录或
+  machine-readable artifact label。
+- 当前论文主实验中的 route arms 由 **KMeans/MiniBatchKMeans fixed arms**
+  构造；主设置为 `K=32`，并用 `K={8,16,32,64,128}` 做敏感性检查。
+- 历史文档、早期原型和 `pre_validation/` 中出现的 HDBSCAN 方案不代表当前论文
+  主方法。若引用这些材料，必须明确其历史/原型定位。
 
 ## One-Sentence Thesis
 
@@ -57,11 +67,11 @@ IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adap
 论文主证据应按以下顺序组织：
 
 1. **Main calibrated token-quality frontier**:
-   在 calibration/test 协议下，100k、200k、638k 的 calibration-eligible operating points 可节省 6-18% evidence-context tokens，并避免 dense-only adaptive truncation 的明显 Hit@10 损失。400k 当前 frozen-test 结果为正，但 calibration eligibility 未通过，应标记为 diagnostic / pending follow-up，不能混入最强主张。
+   在 calibration/test 协议下，100k、200k、638k 的 calibration-eligible operating points 可节省 6-18% evidence-context tokens，并避免 dense-only adaptive truncation 的明显 Hit@10 损失。400k 原始 frozen split 的 calibration eligibility 未通过，必须继续保留该事实。统一 five-fold follow-up 在 400k 得到 14.50% mean saving 和约 0.00pp mean Hit delta，但五折选择五种策略且 strict NI 为 0/3，因此只能作为正向但仍有 partition sensitivity 的补强证据。
    独立 Dense calibration 在原 100k split 上选择 0% saving，而 IntentRoute
    选择 6.18% saving 且 mean Hit delta 为 0；但 strict NI 仍未建立。20-split
-   sensitivity 强化 200k/638k，显示 100k 中等敏感、400k 混合，因此不能写成
-   split-invariant guarantee。
+   sensitivity 强化 200k/638k，显示 100k 中等敏感、400k 混合；统一
+   cross-fitted audit 进一步确认该结论，因此不能写成 split-invariant guarantee。
 
 2. **Conservative confidence-only baseline**:
    在 100k-638k corpus chunks 上，保守 context policy 减少约 4.7-5.3% final retrieved context tokens，并保持 dense-level Hit@10。该结果作为稳定 baseline 和 seed-diagnostic 支撑，主结果应以前一项 calibrated policy 为核心。
@@ -87,6 +97,14 @@ IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adap
 
 8. **Boundary cases**
    eManual、CUAD、secondary datasets 用于限制主张边界，避免把结果写成所有 dataset、所有任务、所有指标上的全面胜利。
+
+9. **Multi-judge downstream robustness**
+   固定 2,100 个 generated answers 由 DeepSeek、GLM-5.2 和 MiniMax-M3
+   独立评估。共同 2,065 条上 correctness agreement 较高，所有 matched
+   correctness differences 均未达到显著，但 stricter judges 给出负向 BGE/E5
+   point estimates，且 majority-vote BGE faithfulness 显著下降。因此正文可写
+   bounded correctness robustness，不能写 uniform faithfulness preservation、
+   strict non-inferiority 或 human-rated validation。
 
 ## Section-Level Intent
 

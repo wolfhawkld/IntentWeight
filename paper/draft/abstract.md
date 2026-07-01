@@ -59,3 +59,5 @@ and tail-query recovery, but dense retrieval remains a necessary recall floor.
 - Avoids statistically significant improvement claims where CI does not support
   them.
 - Avoids end-to-end LLM answer-quality claims.
+> **Superseded draft / 已归档草稿**: 当前论文主源为 `paper/full_draft/`，
+> 论文-facing 名称为 IntentRoute。本文件仅保留早期 IntentWeight 草稿记录。

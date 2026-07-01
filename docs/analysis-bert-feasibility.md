@@ -1,6 +1,10 @@
 # BERT 微调可行性分析
 # BERT Fine-tuning Feasibility Analysis
 
+> **Historical engineering note / 历史工程说明**: 本文面向早期企业原型的
+> BERT/HDBSCAN 方案可行性分析。当前论文主方法和实验口径以 IntentRoute、
+> KMeans/MiniBatchKMeans fixed route arms 和 `paper/experiments/` 为准。
+
 **日期 / Date**: 2026-04-16
 **背景 / Background**: 评估使用 0.5 块 L20 显卡 (24GB VRAM) 微调 BERT 模型优化 RAG 系统的可行性
 

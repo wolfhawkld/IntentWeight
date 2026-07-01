@@ -1,6 +1,14 @@
 # 流形假说视角下的 RAG Agent 优化
 # RAG Agent Optimization under the Manifold Hypothesis
 
+> **Historical note / 历史说明**: 本文档是 2026-04 早期理论 framing 记录，
+> 包含 HDBSCAN、企业原型和 Dynamic Value Manifold 等当时的探索性表述。
+> 当前论文主线已收敛为 **IntentRoute**：使用 KMeans/MiniBatchKMeans fixed
+> route arms、trust-weighted LinUCB route confidence、dense/BM25 fallback 和
+> independently calibrated final-context budgeting。本文档不应作为当前论文主方法
+> 或主张边界的事实来源；当前口径以
+> `docs/intentweight-paper-core-narrative.md` 和 `paper/full_draft/` 为准。
+
 **日期 / Date**: 2026-04-20
 **分支 / Branch**: RLHF
 **定位 / Positioning**: 项目理论基础与学术 framing

@@ -1,6 +1,6 @@
 # Table and Figure Placement Plan
 
-Updated: 2026-06-28 (Task65.5)
+Updated: 2026-07-01 (Task65.7)
 
 This plan aligns the displays with the revised route-control and calibrated-budget
 claim. It introduces no new experiment or claim. The journal-facing main text
@@ -36,8 +36,9 @@ granularity.
 ### Table 5: Downstream Answer-Level Evaluation
 
 Paired BGE, E5, and shared-MMR comparisons over 300 frozen queries. The display
-reports correctness uncertainty and context-token saving uncertainty. Full
-faithfulness and citation-support metrics remain in Appendix F.
+reports per-judge correctness deltas, shared-key majority uncertainty, and
+context-token saving uncertainty. Full judge calibration, agreement,
+faithfulness, citation-support, and missingness details remain in Appendix F.
 
 ## Main-Paper Figures
 
@@ -60,7 +61,8 @@ theorem-level manifold proof.
 ## Appendix Placement
 
 - Appendix A/G: seed stability, independent Dense calibration, complete
-  frozen-policy validation, and calibration-split sensitivity;
+  frozen-policy validation, overlapping-split sensitivity, and normalized
+  cross-fitted calibration;
 - Appendix D/E: boundary datasets and encoder details;
 - Appendix F: complete downstream answer, faithfulness, and citation results;
 - Appendix H/I: cross-domain and feedback-recovery details;

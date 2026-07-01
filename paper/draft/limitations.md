@@ -138,3 +138,5 @@ Future work should evaluate:
   demonstrably stable.
 - recovery policies evaluated with real delayed feedback rather than
   GT-derived same-query retry.
+> **Superseded draft / 已归档草稿**: 当前论文主源为 `paper/full_draft/`，
+> 论文-facing 名称为 IntentRoute。本文件仅保留早期 IntentWeight 草稿记录。

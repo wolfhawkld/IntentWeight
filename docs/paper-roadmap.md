@@ -1,6 +1,14 @@
 # 论文发表规划（更新版）
 # Paper Publication Roadmap (Updated)
 
+> **Superseded planning note / 已被后续方案取代**: 本路线图记录 2026-04
+> 的早期论文规划，包含 IntentWeight 命名、DVM 理论主张、HDBSCAN 语义聚类和
+> 企业场景设想。当前论文已经重构为 **IntentRoute**，主方法使用
+> KMeans/MiniBatchKMeans fixed route arms、dense/BM25 fallback、trust-weighted
+> LinUCB route confidence 和 calibrated final-context budgeting。请勿将本文档的
+> HDBSCAN/DVM/企业部署表述作为当前论文事实；当前口径以
+> `docs/intentweight-paper-core-narrative.md` 和 `paper/full_draft/` 为准。
+
 **创建时间 / Created**: 2026-03-29
 **更新时间 / Updated**: 2026-04-20
 **项目 / Project**: IntentWeight

@@ -9,14 +9,20 @@ applies a separately frozen final-context policy. On LoTTE technology/search,
 calibration/test validation shows that calibration-eligible operating points at
 100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
 the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
-result is positive on frozen test but remains a diagnostic follow-up point
-because it did not pass the calibration eligibility gate. A conservative
+result is positive on frozen test but does not pass the original calibration
+eligibility gate. A subsequent normalized five-fold audit selects compressed
+IntentRoute policies in all 400k folds and yields 14.50% mean saving with no
+mean Hit change, but fold-specific policies vary and strict seed-level
+non-inferiority remains unestablished. A conservative
 confidence-only policy provides a stable baseline, reducing final retrieved
 context tokens by about 4.7-5.3% from 100k to 638k corpus chunks while
 preserving dense-level query hit. Matched BGE/E5 experiments extend the
-quality-cost pattern beyond MiniLM, and the 300-query downstream evaluation
-finds positive context savings without a statistically detectable correctness
-change. LoTTE science/search further supports ranking-side generalization, but
+quality-cost pattern beyond MiniLM, and the 300-query, three-judge downstream
+evaluation finds positive context savings without a statistically detectable
+correctness change. The stricter judges produce negative BGE/E5 correctness
+point estimates, and the three-judge majority detects a BGE faithfulness
+decrease, so the result does not establish uniform answer-quality
+non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
@@ -41,6 +47,13 @@ dense-only adaptive truncation shows that saving more tokens by simply reducing
 dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy
 should therefore be interpreted as a stable empirical baseline, not the
 highest-compression configuration or a per-query safety guarantee.
+
+The cross-fitted comparison also clarifies why route quality matters to budget
+control. Under the same zero-drop gate, prefix-only Dense truncation cannot
+select a compressed action in any fold at any tested scale, whereas
+IntentRoute selects one in every 200k, 400k, and 638k fold. This is evidence of
+calibration headroom created by the routed evidence ranking, not evidence that
+all route policies or partitions are safe.
 
 ## 6.3 Reranking and Final-Context Control
 

@@ -14,6 +14,18 @@ IntentRoute 在 dense、BM25 和 cluster-local 多路召回表面上进行自适
 送入生成模型的 evidence context。当前论文实验聚焦检索质量与 context-token
 trade-off，并保留 dense 作为质量基线和 fallback。
 
+## 当前实验口径
+
+- 论文与 `paper/experiments/` 主实验使用 KMeans/MiniBatchKMeans 构造固定数量
+  的 cluster-local route arms；主设置为 `K=32`，并通过 `K={8,16,32,64,128}`
+  做敏感性检查。
+- 选择固定 arm 是为了满足 LinUCB 固定动作空间、跨 seed/scale 可复现和大规模
+  LoTTE 实验效率；这不是声称 KMeans 是最优聚类算法。
+- 早期 `pre_validation/` 和部分历史设计文档中仍保留 HDBSCAN 方案，它们是旧阶段
+  或企业工程原型记录，不代表当前论文主方法。
+- 论文、人类可读文档和新代码统一使用 `IntentRoute`；`IntentWeight` 只作为历史
+  包名、artifact 标签和兼容 API 保留。
+
 ## 核心创新点
 
 | 创新点 | 描述 |

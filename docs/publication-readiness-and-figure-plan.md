@@ -2,6 +2,11 @@
 
 Date: 2026-06-16
 
+> **Naming note**: This checkpoint predates the paper-facing rename from
+> IntentWeight to IntentRoute. Its figure/table and reviewer-risk guidance is
+> useful, but current manuscript wording should use IntentRoute and the updated
+> claim boundary in `docs/intentweight-paper-core-narrative.md`.
+
 This note records the current assessment before further manuscript polishing. It is intended as a writing and figure/table alignment checkpoint, not as a new experimental result.
 
 ## Current Judgment

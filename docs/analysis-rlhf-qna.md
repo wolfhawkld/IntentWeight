@@ -1,6 +1,12 @@
 # RLHF 方案技术答疑
 # RLHF Technical Q&A
 
+> **Historical note / 历史说明**: 本文档记录 2026-04 RLHF 分支早期设计问答，
+> 其中的 HDBSCAN 聚类和 ReAct 工程表述属于旧原型口径。当前论文主线为
+> IntentRoute，使用 KMeans/MiniBatchKMeans fixed route arms、dense/BM25
+> fallback 和 calibrated final-context budgeting。请勿将本文档中的 HDBSCAN
+> 表述作为当前论文主方法事实。
+
 **日期 / Date**: 2026-04-20
 **分支 / Branch**: RLHF
 **背景 / Background**: 梳理 RLHF 分支三个优化方向的技术细节和常见疑问
