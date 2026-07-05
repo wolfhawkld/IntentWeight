@@ -17,7 +17,9 @@ TITLE_RE = re.compile(r"## Recommended Title\s*\n+\s*(.+)")
 CITATION_RE = re.compile(r"\[((?:@[A-Za-z0-9_:-]+(?:;\s*)?)+)\]")
 CODE_RE = re.compile(r"`([^`]+)`")
 BOLD_RE = re.compile(r"\*\*([^*]+)\*\*")
-TABLE_CAPTION_RE = re.compile(r"\*\*(?:Appendix )?Table ([A-Z]?\d+)\.\s*(.+)\*\*")
+TABLE_CAPTION_RE = re.compile(
+    r"\*\*(?:(?:Appendix|Supplementary) )?Table ([A-Z]?\d+)\.\s*(.+)\*\*"
+)
 LIST_RE = re.compile(r"^(\s*)([-*]|\d+\.)\s+(.+)$")
 HEADING_RE = re.compile(r"^(#{1,3})\s+(.+)$")
 PLACEHOLDER_RE = re.compile(r"@@LATEX(\d+)@@")
@@ -138,13 +140,15 @@ def table_display_cell(cell: str) -> str:
 
 
 def slug(value: str) -> str:
-    value = re.sub(r"^(?:\d+(?:\.\d+)*|[A-Z](?:\.\d+)?)\.?\s+", "", value)
+    value = re.sub(r"^(?:\d+(?:\.\d+)*|[A-Z]\d*(?:\.\d+)?)\.?\s+", "", value)
     value = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
     return value or "section"
 
 
 def heading_title(value: str) -> str:
-    return re.sub(r"^(?:\d+(?:\.\d+)*|[A-Z](?:\.\d+)?)\.?\s+", "", value).strip()
+    return re.sub(
+        r"^(?:\d+(?:\.\d+)*|[A-Z]\d*(?:\.\d+)?)\.?\s+", "", value
+    ).strip()
 
 
 def table_label(identifier: str) -> str:

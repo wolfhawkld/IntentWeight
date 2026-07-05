@@ -34,13 +34,12 @@ Calibration is also sensitive to the query partition. Across 20 deterministic pa
 
 The five-fold cross-fitted follow-up uses disjoint test folds and identical canonical query assignments across scales. It improves the 400k average result to 14.50\% saving at effectively zero mean Hit delta, but fold-level deltas remain heterogeneous and the selected policy changes in every 400k fold. It therefore reduces the missing-calibration concern without establishing split-invariant deployment behavior.
 
-\subsection{Geometry Is Diagnostic, Not a Proof}
-\label{sec:08-limitations:geometry-is-diagnostic-not-a-proof}
+The route stability checks use the fixed seeds 13, 17, and 19 as engineering replicates; query-level paired tests provide the main inferential evidence. The 400k seed-level saving interval remains wider than at other scales, and the cross-fitted follow-up establishes strict non-inferiority in 0/3 seeds.
+
+\subsection{Geometry and Fixed-Arm Scope}
+\label{sec:08-limitations:geometry-and-fixed-arm-scope}
 
 The piecewise relevance-manifold framing is supported by diagnostics such as $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These diagnostics do not prove a mathematical manifold theorem. They show that local geometry is informative for routing on LoTTE, while dense retrieval remains necessary.
-
-\subsection{Fixed Routing Arms Are an Experimental Design}
-\label{sec:08-limitations:fixed-routing-arms-are-an-experimental-design}
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and the experiments need reproducible, scalable arms. This is not a claim that KMeans is the best clustering method for all RAG systems. HDBSCAN or graph-based clusters may perform better in some deployments, but dynamic arm counts complicate the current LinUCB setup. The tested $K=8$-$128$ grid shows stable full multi-route quality but sensitive gated routing, so $K=32$ remains an engineering operating point rather than an optimum.
 
@@ -51,15 +50,10 @@ The paper evaluates matched MiniLM, BGE-base, and E5-base dense/IntentRoute back
 
 LoTTE technology/search is the main positive large-scale domain. LoTTE science/search strengthens external validity but does not replace evaluation on additional vertical corpora.
 
-\subsection{Seed Count and 400k Variance}
-\label{sec:08-limitations:seed-count-and-400k-variance}
-
-The stability analysis uses the fixed seeds 13, 17, and 19 across the main LoTTE route experiments. These are engineering stability diagnostics, not a claim that a large seed population has been sampled. Query-level paired tests provide the main inferential evidence. The LoTTE 400k token-saving interval is notably wider than the other scales and should be interpreted as seed-level operating-point variance across routed rankings and context-budget control. In the original calibrated-budget experiment, the 400k frozen-test result is positive but the selected policy is not calibration-eligible under the zero-observed-hit-drop gate. The completed cross-fitted follow-up is positive on average, but uses five distinct fold policies and establishes strict non-inferiority in 0/3 seeds. The original failure and the follow-up instability both remain part of the reported boundary.
-
 \subsection{Future Work}
 \label{sec:08-limitations:future-work}
 
-The factorial safe-compression attribution audit finds no held-out discrimination advantage for geometry-feedback confidence over a matched random-partition feedback control under a fixed dense candidate pool and compression action. Only about $2.2\%$ of dense-hit test queries are unsafe for the diagnostic action, so AUROC intervals are wide and AUPRC, Brier, and ECE are strongly affected by class imbalance. The current evidence supports confidence-gated routing and a separately calibrated budget, not a learned per-query confidence-to-token-ratio mapping.
+The safe-compression attribution boundary and class imbalance are analyzed in Section 6.5. They motivate, but do not currently validate, a learned per-query confidence-to-token-ratio predictor.
 
 Future work should evaluate:
 

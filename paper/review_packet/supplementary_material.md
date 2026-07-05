@@ -1,3 +1,5 @@
+<!-- Generated review packet. Edit paper/full_draft/12_appendix.md. -->
+
 # Supplementary Material
 
 ## S1. Conservative Baseline and Seed Stability Diagnostics

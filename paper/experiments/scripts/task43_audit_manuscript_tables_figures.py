@@ -153,17 +153,17 @@ def audit_table_1_and_g1(audit: Audit, manuscript: str) -> None:
         dense_saving = float(dense_row["token_saving_percent"])
         policies[scale] = bool(meta["selected_policy"]["eligible"])
         eligibility_label = str(policies[scale])
-        if scale == "400k" and not policies[scale]:
-            eligibility_label = "False / pending follow-up"
+        main_eligibility_label = "False / diagnostic" if scale == "400k" else eligibility_label
+        supplement_eligibility_label = "False / original split" if scale == "400k" else eligibility_label
         ni_seeds = sum(1 for row in policy_rows if row.get("noninferior_by_ci") == "True")
         row = (
-            f"| {scale} | `{policy}` | {eligibility_label} | "
+            f"| {scale} | `{policy}` | {main_eligibility_label} | "
             f"{pp_from_fraction(policy_delta)} | {ni_seeds}/{len(policy_rows)} | "
             f"{pct(policy_saving)} | {pp_from_fraction(dense_delta)} | {pct(dense_saving)} |"
         )
         audit.contains(f"Table 1 row {scale}", rel, row, manuscript)
         g1_row = (
-            f"| {scale} | `{policy}` | {eligibility_label} | "
+            f"| {scale} | `{policy}` | {supplement_eligibility_label} | "
             f"{pp_from_fraction(policy_delta)} | {pct(policy_saving)} | "
             f"{pp_from_fraction(dense_delta)} | {pct(dense_saving)} |"
         )
@@ -182,16 +182,6 @@ def audit_table_2_and_h(audit: Audit, manuscript: str) -> None:
         ),
     }
     for scale_label, row in geometry.items():
-        main_row = (
-            f"| science/search {scale_label} | {f4(row['dense_hit@10'])} | "
-            f"{f4(row['task29_hit@10'])} | {pp_from_points(row['task29_hit_delta_pp'])} |"
-        )
-        audit.contains(
-            f"Table 2 fixed top-10 row science {scale_label}",
-            "paper/experiments/results/task43_lotte_science_geometry_diagnostics.csv",
-            main_row,
-            manuscript,
-        )
         h1_row = (
             f"| science/search {scale_label} | {int_comma(row['num_corpus_chunks'])} | "
             f"{int(row['num_queries'])} | {f4(row['dense_hit@10'])} | "
@@ -207,20 +197,6 @@ def audit_table_2_and_h(audit: Audit, manuscript: str) -> None:
     for scale_key, label in [("20k_q200", "20k/q200"), ("100k", "100k")]:
         rel = f"paper/experiments/results/task39_lotte_science_{scale_key}_calibrated_context_budget.test_paired.csv"
         policy, policy_rows, _ = selected_policy_rows(rel)
-        savings = [float(row["token_saving_percent"]) for row in policy_rows]
-        main_range = f"{f2(min(savings))}-{f2(max(savings))}%"
-        audit.contains(
-            f"Table 2 budget range science {label}",
-            rel,
-            f"| science/search {label} |",
-            manuscript,
-        )
-        audit.contains(
-            f"Table 2 budget saving range science {label}",
-            rel,
-            main_range,
-            manuscript,
-        )
         for row in policy_rows:
             h2_row = (
                 f"| {label} | `{policy}` | {int(row['seed'])} | "
@@ -287,11 +263,6 @@ def audit_recovery_tables(audit: Audit, manuscript: str) -> None:
         saving = mean_float(conservative, "token_saving_percent_vs_dense")
         pooled_affected += affected
         pooled_recovered += recovered
-        main_row = (
-            f"| {main_domain} | {affected} | {recovered} | "
-            f"{pct(recovered / affected * 100)} | {pct(saving)} |"
-        )
-        audit.contains(f"Table 5 row {main_domain}", rel, main_row, manuscript)
 
         for method, label in [
             ("same_arm_boost", "arm boost"),
@@ -320,11 +291,6 @@ def audit_recovery_tables(audit: Audit, manuscript: str) -> None:
             )
             audit.contains(f"Appendix I2 row {appendix_domain} {label}", rel, appendix_row, manuscript)
 
-    pooled_row = (
-        f"| pooled | {pooled_affected} | {pooled_recovered} | "
-        f"{pct(pooled_recovered / pooled_affected * 100)} | - |"
-    )
-    audit.contains("Table 5 pooled row", "task40 pooled same-query recovery", pooled_row, manuscript)
 
 
 def audit_geometry_table_and_figure(audit: Audit, manuscript: str) -> None:
@@ -333,18 +299,6 @@ def audit_geometry_table_and_figure(audit: Audit, manuscript: str) -> None:
     for domain, rows in [("technology/search", tech), ("science/search", science)]:
         for row in rows:
             scale = row["scale"].replace("20k_q200", "20k/q200")
-            table_row = (
-                f"| {domain} {scale} | {int(row['pca_sample_dim_for_90pct'])} | "
-                f"{f4(row['pca_sample_var@64'])} | {f4(row['nearest_cluster_hit@3_mean'])} | "
-                f"{f4(row['context_recall_retention@10'])} | {pp_from_points(row['task29_hit_delta_pp'])} |"
-            )
-            audit.contains(
-                f"Table 6 geometry row {domain} {scale}",
-                "task30/task43 geometry diagnostics",
-                table_row,
-                manuscript,
-            )
-
     fig3_rows = read_csv("paper/full_draft/figures/figure3_geometry_diagnostics_data.csv")
     for row in tech + science:
         domain = "technology/search" if "technology" in row["dataset"] else "science/search"
@@ -462,16 +416,6 @@ def audit_appendix_a(audit: Audit, manuscript: str) -> None:
         )
         audit.contains(f"Appendix A2 row {scale}", "paper/experiments/results/task29_3_seed_variance_ci.csv", a2, manuscript)
 
-    rows_5 = read_csv("paper/experiments/results/task33_6_100k_5seed_context_tokens.csv")
-    dense = find_one(rows_5, run_id="dense")
-    policies = [row for row in rows_5 if row["run_id"] != "dense"]
-    hit_mean = mean_float(policies, "hit@10")
-    token_mean = mean_float(policies, "avg_context_tokens@10")
-    ratio_mean = mean_float(policies, "context_token_ratio_vs_baseline@10")
-    a3_dense = f"| Dense-only | 1 | {f4(dense['hit@10'])} | {float(dense['avg_context_tokens@10']):.2f} | {ratio(dense['context_token_ratio_vs_baseline@10'])} | 0.00% |"
-    a3_policy = f"| Conservative policy | 5 | {f4(hit_mean)} | {token_mean:.2f} | {ratio(ratio_mean)} | {pct((1 - ratio_mean) * 100)} |"
-    audit.contains("Appendix A3 dense row", "paper/experiments/results/task33_6_100k_5seed_context_tokens.csv", a3_dense, manuscript)
-    audit.contains("Appendix A3 policy row", "paper/experiments/results/task33_6_100k_5seed_context_tokens.csv", a3_policy, manuscript)
 
 
 def audit_appendix_b_c(audit: Audit, manuscript: str) -> None:
@@ -595,23 +539,6 @@ def audit_secondary_and_robustness(audit: Audit, manuscript: str) -> None:
     audit.contains("Appendix E1 dense row", "paper/experiments/results/task33_1a_multiqa_100k_context_tokens.csv", e_dense, manuscript)
     audit.contains("Appendix E1 conservative row", "paper/experiments/results/task33_1a_multiqa_100k_context_tokens.csv", e_policy, manuscript)
 
-    summary = read_json("paper/experiments/results/task33_5_llm_generation_smoke/summary.json")
-    f_dense = (
-        f"| Dense top-10 | {float(summary['dense_score_mean']):.4f} | "
-        f"{float(summary['dense_faithfulness_mean']):.4f} | "
-        f"{float(summary['dense_answer_relevance_mean']):.4f} | "
-        f"{summary['winner_counts']['dense']} | 1.0000x |"
-    )
-    f_policy = (
-        f"| Conservative policy | {float(summary['treatment_score_mean']):.4f} | "
-        f"{float(summary['treatment_faithfulness_mean']):.4f} | "
-        f"{float(summary['treatment_answer_relevance_mean']):.4f} | "
-        f"{summary['winner_counts']['treatment']} | 0.9321x |"
-    )
-    f_tie = f"| Tie | - | - | - | {summary['winner_counts']['tie']} | - |"
-    audit.contains("Appendix F1 dense row", "paper/experiments/results/task33_5_llm_generation_smoke/summary.json", f_dense, manuscript)
-    audit.contains("Appendix F1 conservative row", "paper/experiments/results/task33_5_llm_generation_smoke/summary.json", f_policy, manuscript)
-    audit.contains("Appendix F1 tie row", "paper/experiments/results/task33_5_llm_generation_smoke/summary.json", f_tie, manuscript)
 
 
 def audit_assets(audit: Audit) -> None:
@@ -684,12 +611,9 @@ def main() -> int:
     audit_assets(audit)
     audit_table_1_and_g1(audit, manuscript)
     audit_table_2_and_h(audit, manuscript)
-    audit_ablation_tables(audit, manuscript)
     audit_recovery_tables(audit, manuscript)
     audit_geometry_table_and_figure(audit, manuscript)
     audit_figure_2(audit)
-    audit_figure_4(audit)
-    audit_figure_5(audit)
     audit_appendix_a(audit, manuscript)
     audit_appendix_b_c(audit, manuscript)
     audit_secondary_and_robustness(audit, manuscript)

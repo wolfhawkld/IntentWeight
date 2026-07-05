@@ -19,8 +19,8 @@ revision.
 - `08_limitations.md`: limitations and future work.
 - `09_conclusion.md`: conclusion.
 - `10_reference_seed.md`: provisional citation keys and source links.
-- `11_table_figure_plan.md`: main-paper versus appendix placement plan.
-- `12_appendix.md`: paper-facing appendix draft with supporting diagnostics.
+- `11_table_figure_plan.md`: main-paper versus supplementary placement plan.
+- `12_appendix.md`: canonical supplementary-material source with supporting diagnostics.
 - `references.bib`: provisional BibTeX bibliography for the current draft.
 - `figures/`: regenerable draft SVG figures and figure source data.
 - `../latex/`: generated ACL-style LaTeX migration with PDF figure assets.
@@ -87,7 +87,7 @@ post-feedback retry.
 
 Task65 reduced the main Results display from eight tables and five figures to
 five tables and three figures. Detailed cross-domain, recovery, compressor,
-reranker, and control results remain in the appendix. After the Task66 abstract
+reranker, and control results remain in the separately compiled supplement. After the Task66 abstract
 and cross-reference synchronization, the regenerated ACL-style working PDF is
 32 pages with zero critical LaTeX warnings.
 

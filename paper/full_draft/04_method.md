@@ -296,29 +296,14 @@ Output: final retrieved context $C_t$ and updated policy state.
 
 ## 3.12 Reproducibility Parameters
 
-The following summary lists the main implementation parameters used in the
-reported cost-aware LinUCB experiments. Scale-specific cache paths and dataset
-sizes are reported in the experiment artifacts; these parameters define the
-controller behavior.
-
-The main controller parameters are:
-
-- KMeans/MiniBatchKMeans arms: 32 fixed LinUCB arms;
-- candidate arms per query: 3 cluster-local routes;
-- context projection dimension: 64;
-- LinUCB exploration: $\alpha=1.0$, decay 0.01, minimum 0.3;
-- prequential epochs: 3 unless otherwise stated;
-- feedback trust: default $\tau=0.75$ for noisy feedback updates;
-- full-route candidate depths: dense/BM25/cluster = 100/100/100;
-- lite-route depths: dense/BM25 = 20/20;
-- dense safety floor: 5 full-route chunks and 2 lite-route chunks;
-- route fusion: weighted reciprocal-rank fusion with $k=60$;
-- full-route weights: dense 2.0, BM25 0.8, cluster 0.8;
-- lite-route weights: dense 0.8, BM25 0.5, cluster 2.0;
-- confidence thresholds: high 0.65 and mid 0.35;
-- drift threshold: 1.0;
-- token-budget grid: $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
-  $m \in \{4,\ldots,8\}$.
+The main configuration uses 32 fixed KMeans/MiniBatchKMeans arms, three
+candidate arms per query, a 64-dimensional context projection,
+$\alpha=1.0$, and three prequential epochs unless otherwise stated. The
+calibration grid covers $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
+$m \in \{4,\ldots,8\}$. Supplementary Section S12 reports the complete route
+depths, safety floors, fusion weights, confidence thresholds, decay, and trust
+parameters; scale-specific cache paths and dataset sizes remain in the tracked
+experiment artifacts.
 
 The notation `token_budget_r0.85_m4` means that each query keeps a safe prefix
 of at least four chunks and then admits additional chunks only while the final

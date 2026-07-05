@@ -1,6 +1,6 @@
 # Submission Review Checklist
 
-Updated: 2026-06-27
+Updated: 2026-07-05
 
 ## Claim Boundary
 
@@ -36,14 +36,16 @@ Updated: 2026-06-27
 - [ ] Report the matched MiniLM, BGE-base, and E5-base comparisons against
   their own dense baselines.
 - [ ] Keep the 300-query downstream evaluation framed as single-generator,
-  single-judge support rather than human evaluation.
+  three-model judge support rather than human evaluation.
 - [ ] Keep PubMedQA and Banking77 as supporting evidence; keep eManual and CUAD
   as boundary cases.
 
 ## Venue Migration
 
-- [ ] Select the target venue and page budget.
+- [x] Use Information Processing & Management as the primary target.
 - [ ] Convert selected Markdown tables into LaTeX.
-- [ ] Convert appendix tables into the venue appendix format.
+- [x] Separate complete supporting evidence into a standalone supplement.
 - [ ] Normalize `references.bib` to the target bibliography style.
-- [ ] Review draft SVG figures and restyle them for the venue.
+- [x] Size deterministic data figures at the 190 mm Elsevier full-width target.
+- [ ] Replace Figure 1 with author-produced vector artwork that follows the
+  sizing and typography specification.

@@ -16,7 +16,7 @@ DRAFT = ROOT / "paper" / "full_draft"
 PACKET = ROOT / "paper" / "review_packet"
 VALIDATOR = ROOT / "paper" / "experiments" / "scripts" / "task36_9_validate_full_draft.py"
 
-CHAPTERS = [
+MAIN_CHAPTERS = [
     DRAFT / "01_abstract.md",
     DRAFT / "02_introduction.md",
     DRAFT / "03_related_work.md",
@@ -26,15 +26,15 @@ CHAPTERS = [
     DRAFT / "07_discussion.md",
     DRAFT / "08_limitations.md",
     DRAFT / "09_conclusion.md",
-    DRAFT / "12_appendix.md",
 ]
+SUPPLEMENT = DRAFT / "12_appendix.md"
 
 FIGURES = [
     (
         "Figure 1",
         "IntentRoute system diagram",
         DRAFT / "figures" / "figure1_system_diagram.svg",
-        DRAFT / "figures" / "figure1_system_diagram.mmd",
+        DRAFT / "figures" / "figure1_author_spec.md",
     ),
     (
         "Figure 2",
@@ -70,20 +70,28 @@ def read_title() -> str:
 
 def assemble_manuscript() -> str:
     parts = [f"# {read_title()}", "", "<!-- Generated review packet. Edit source chapters under paper/full_draft/. -->", ""]
-    for path in CHAPTERS:
+    for path in MAIN_CHAPTERS:
         parts.append(path.read_text(encoding="utf-8").rstrip())
         parts.extend(["", "---", ""])
     return "\n".join(parts[:-3]).rstrip() + "\n"
+
+
+def assemble_supplement() -> str:
+    return (
+        "<!-- Generated review packet. Edit paper/full_draft/12_appendix.md. -->\n\n"
+        + SUPPLEMENT.read_text(encoding="utf-8").rstrip()
+        + "\n"
+    )
 
 
 def figure_index() -> str:
     rows = [
         "# Figure Index",
         "",
-        "Updated: 2026-06-27",
+        "Updated: 2026-07-05",
         "",
-        "Draft figure assets are generated from existing experiment artifacts.",
-        "They are review assets, not final camera-ready artwork.",
+        "Data figures are generated deterministically from experiment artifacts.",
+        "Figure 1 remains an author-owned placeholder and must be replaced from its specification.",
         "",
         "| Figure | Purpose | Review asset | Regeneration source |",
         "|---|---|---|---|",
@@ -95,7 +103,7 @@ def figure_index() -> str:
     rows.extend(
         [
             "",
-            "Regenerate the draft SVG assets from the repository root:",
+            "Regenerate deterministic data-figure review assets from the repository root:",
             "",
             "```bash",
             ".venv/bin/python paper/experiments/scripts/task36_6_generate_main_figures.py",
@@ -109,7 +117,7 @@ def figure_index() -> str:
 def submission_checklist() -> str:
     return """# Submission Review Checklist
 
-Updated: 2026-06-27
+Updated: 2026-07-05
 
 ## Claim Boundary
 
@@ -145,24 +153,26 @@ Updated: 2026-06-27
 - [ ] Report the matched MiniLM, BGE-base, and E5-base comparisons against
   their own dense baselines.
 - [ ] Keep the 300-query downstream evaluation framed as single-generator,
-  single-judge support rather than human evaluation.
+  three-model judge support rather than human evaluation.
 - [ ] Keep PubMedQA and Banking77 as supporting evidence; keep eManual and CUAD
   as boundary cases.
 
 ## Venue Migration
 
-- [ ] Select the target venue and page budget.
+- [x] Use Information Processing & Management as the primary target.
 - [ ] Convert selected Markdown tables into LaTeX.
-- [ ] Convert appendix tables into the venue appendix format.
+- [x] Separate complete supporting evidence into a standalone supplement.
 - [ ] Normalize `references.bib` to the target bibliography style.
-- [ ] Review draft SVG figures and restyle them for the venue.
+- [x] Size deterministic data figures at the 190 mm Elsevier full-width target.
+- [ ] Replace Figure 1 with author-produced vector artwork that follows the
+  sizing and typography specification.
 """
 
 
 def packet_readme() -> str:
     return """# IntentRoute Review Packet
 
-Updated: 2026-06-27
+Updated: 2026-07-05
 
 This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent
@@ -170,7 +180,9 @@ academic review before LaTeX venue migration.
 
 ## Review Entry Points
 
-- `manuscript.md`: assembled paper-facing manuscript and appendix.
+- `manuscript.md`: assembled paper-facing main manuscript.
+- `supplementary_material.md`: complete supporting evidence separated under
+  approved Task67 scheme A.
 - `references.bib`: provisional BibTeX bibliography.
 - `figure_index.md`: draft figure assets and regeneration sources.
 - `submission_checklist.md`: claim-boundary and migration checklist.
@@ -245,8 +257,9 @@ def main() -> None:
     )
 
     manuscript = assemble_manuscript()
+    supplement = assemble_supplement()
     bibliography = (DRAFT / "references.bib").read_text(encoding="utf-8")
-    errors = validate_packet(manuscript, bibliography)
+    errors = validate_packet(manuscript + "\n" + supplement, bibliography)
     if errors:
         print("packet_validation=failed")
         for error in errors:
@@ -255,6 +268,7 @@ def main() -> None:
 
     (PACKET / "README.md").write_text(packet_readme(), encoding="utf-8")
     (PACKET / "manuscript.md").write_text(manuscript, encoding="utf-8")
+    (PACKET / "supplementary_material.md").write_text(supplement, encoding="utf-8")
     shutil.copyfile(DRAFT / "references.bib", PACKET / "references.bib")
     (PACKET / "figure_index.md").write_text(figure_index(), encoding="utf-8")
     (PACKET / "submission_checklist.md").write_text(submission_checklist(), encoding="utf-8")
@@ -262,9 +276,10 @@ def main() -> None:
     cited_keys = set(CITATION_RE.findall(manuscript))
     bib_entries = BIB_KEY_RE.findall(bibliography)
     word_count = len(re.findall(r"\b[\w-]+\b", manuscript))
+    supplement_word_count = len(re.findall(r"\b[\w-]+\b", supplement))
     report = f"""# Review Packet Validation Report
 
-Updated: 2026-06-27
+Updated: 2026-07-05
 
 ## Source Draft Audit
 
@@ -276,8 +291,9 @@ Updated: 2026-06-27
 
 ```text
 packet_validation=passed
-chapters={len(CHAPTERS)}
+main_chapters={len(MAIN_CHAPTERS)}
 manuscript_words={word_count}
+supplement_words={supplement_word_count}
 citation_keys={len(cited_keys)}
 bib_entries={len(bib_entries)}
 figure_assets={len(FIGURES)}
@@ -294,6 +310,7 @@ or final bibliography verification.
     packet_files = [
         PACKET / "README.md",
         PACKET / "manuscript.md",
+        PACKET / "supplementary_material.md",
         PACKET / "references.bib",
         PACKET / "figure_index.md",
         PACKET / "submission_checklist.md",
@@ -302,7 +319,7 @@ or final bibliography verification.
     write_manifest(packet_files)
 
     print("packet_validation=passed")
-    print(f"chapters={len(CHAPTERS)}")
+    print(f"main_chapters={len(MAIN_CHAPTERS)}")
     print(f"manuscript_words={word_count}")
     print(f"citation_keys={len(cited_keys)}")
     print(f"bib_entries={len(bib_entries)}")

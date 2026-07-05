@@ -91,11 +91,8 @@ Trust weighting improves these policy metrics under controlled simulated
 feedback. Dedicated controls place the learned route reward at $0.6790$, above
 the no-feedback/random level of about $0.15$ but below the $0.8563$ static
 nearest-geometry prior. This supports feedback as adaptive route-confidence
-estimation, not as the sole source of final fused quality. However, the current
-feedback is simulated and
-ground-truth-derived. Production systems still need real feedback collection,
-trust scoring, delayed-feedback handling, and safeguards against unreliable or
-adversarial signals.
+estimation, not as the sole source of final fused quality. The
+simulated-feedback and deployment boundaries are consolidated in Section 7.1.
 
 The hard-case recovery experiment adds a more operational interpretation of
 feedback. When aggressive compression loses evidence, arm-level feedback can

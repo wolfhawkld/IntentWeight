@@ -1,7 +1,7 @@
 {
-  "version": 1,
-  "updated": "2026-06-25",
-  "description": "Default Task51 audit manifest for paper-critical and recent strong-baseline experiment artifacts.",
+  "version": 2,
+  "updated": "2026-07-05",
+  "description": "Task67-complete audit manifest for paper-critical retrieval, downstream LLM, attribution, calibration, and multi-judge artifacts.",
   "defaults": {
     "top_k": 10,
     "paired_tolerance": 1e-6
@@ -885,6 +885,262 @@
       "markdown_reports": [
         "paper/experiments/results/task62_100k_prompt_compression_baseline.md"
       ]
+    },
+    {
+      "id": "task63_downstream_llm_evaluation",
+      "role": "downstream_semantic_validation",
+      "dataset": {
+        "name": "lotte_technology_search_100k_evaluation_subset",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": [
+        "paper/experiments/results/task63_downstream_llm_evaluation/summary.json",
+        "paper/experiments/results/task63_downstream_llm_evaluation/paired_comparisons.json"
+      ],
+      "jsonl_artifacts": [
+        {
+          "path": "paper/experiments/results/task63_downstream_llm_evaluation/answers.jsonl",
+          "exact_records": 2100,
+          "required_fields": ["query_id", "method_label", "answer_json", "context_chunk_ids", "context_tokens"],
+          "non_null_fields": ["query_id", "method_label", "answer_json", "context_chunk_ids", "context_tokens"],
+          "key_fields": ["query_id", "method_label"],
+          "exact_unique_keys": 2100
+        },
+        {
+          "path": "paper/experiments/results/task63_downstream_llm_evaluation/judgments.jsonl",
+          "exact_records": 6265,
+          "required_fields": ["query_id", "method_label", "judge_model", "judge_json"],
+          "non_null_fields": ["query_id", "method_label", "judge_model", "judge_json"],
+          "key_fields": ["query_id", "method_label", "judge_model"],
+          "exact_unique_keys": 6265
+        },
+        {
+          "path": "paper/experiments/results/task63_downstream_llm_evaluation/judgment_failures.jsonl",
+          "exact_records": 373,
+          "required_fields": ["query_id", "method_label", "judge_model"],
+          "non_null_fields": ["query_id", "method_label", "judge_model"],
+          "key_fields": ["query_id", "method_label", "judge_model"],
+          "unique_keys": false,
+          "exact_unique_keys": 362
+        }
+      ],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task63_downstream_llm_evaluation/summary.csv",
+          "exact_rows": 7,
+          "required_columns": ["method_label", "answer_count", "judgment_count", "correct_rate", "faithful_rate", "avg_context_tokens"],
+          "numeric_columns": ["answer_count", "judgment_count", "correct_rate", "faithful_rate", "avg_context_tokens"],
+          "unit_interval_columns": ["correct_rate", "faithful_rate"]
+        },
+        {
+          "path": "paper/experiments/results/task63_downstream_llm_evaluation/paired_comparisons.csv",
+          "exact_rows": 3,
+          "required_columns": ["comparison", "paired_queries", "correct_delta_pp", "mcnemar_exact_p", "context_token_saving_percent"],
+          "numeric_columns": ["paired_queries", "correct_delta_pp", "mcnemar_exact_p", "context_token_saving_percent"],
+          "unit_interval_columns": ["mcnemar_exact_p"]
+        }
+      ],
+      "markdown_reports": [
+        "paper/experiments/results/task63_downstream_llm_evaluation/summary.md"
+      ]
+    },
+    {
+      "id": "task65_1_safe_compression_attribution",
+      "role": "safe_compression_attribution",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": ["paper/experiments/results/task65_1_safe_compression_attribution.json"],
+      "paired_csvs": ["paper/experiments/results/task65_1_safe_compression_attribution.paired.csv"],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task65_1_safe_compression_attribution.discrimination.csv",
+          "exact_rows": 15,
+          "required_columns": ["selector", "seed", "action", "auroc", "average_precision", "isotonic_brier", "isotonic_ece"],
+          "numeric_columns": ["seed", "auroc", "average_precision", "isotonic_brier", "isotonic_ece"],
+          "unit_interval_columns": ["auroc", "average_precision", "isotonic_brier", "isotonic_ece"]
+        },
+        {
+          "path": "paper/experiments/results/task65_1_safe_compression_attribution.selected.csv",
+          "exact_rows": 20,
+          "required_columns": ["selector", "margin_pp", "split", "final_hit@10", "token_saving_vs_dense_pct", "num_seeds"],
+          "numeric_columns": ["margin_pp", "final_hit@10", "token_saving_vs_dense_pct", "num_seeds"],
+          "unit_interval_columns": ["final_hit@10"]
+        }
+      ],
+      "markdown_reports": ["paper/experiments/results/task65_1_safe_compression_attribution.md"]
+    },
+    {
+      "id": "task65_2_factorial_safe_compression",
+      "role": "factorial_safe_compression",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": ["paper/experiments/results/task65_2_factorial_safe_compression.json"],
+      "paired_csvs": [
+        "paper/experiments/results/task65_2_factorial_safe_compression.paired_quality.csv",
+        "paper/experiments/results/task65_2_factorial_safe_compression.paired_saving.csv",
+        "paper/experiments/results/task65_2_factorial_safe_compression.pairwise_saving.csv"
+      ],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task65_2_factorial_safe_compression.risk_coverage.csv",
+          "exact_rows": 150,
+          "required_columns": ["selector", "seed", "target_coverage", "selective_risk", "selective_risk_ci_low", "selective_risk_ci_high"],
+          "numeric_columns": ["seed", "target_coverage", "selective_risk", "selective_risk_ci_low", "selective_risk_ci_high"],
+          "unit_interval_columns": ["target_coverage", "selective_risk", "selective_risk_ci_low", "selective_risk_ci_high"]
+        }
+      ],
+      "markdown_reports": ["paper/experiments/results/task65_2_factorial_safe_compression.md"]
+    },
+    {
+      "id": "task65_3_dynamic_route_mediation",
+      "role": "route_mediation_boundary",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": ["paper/experiments/results/task65_3_dynamic_route_mediation.json"],
+      "paired_csvs": ["paper/experiments/results/task65_3_dynamic_route_mediation.paired.csv"],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task65_3_dynamic_route_mediation.feature_metrics.csv",
+          "exact_rows": 165,
+          "required_columns": ["seed", "action", "feature", "variant", "auroc", "average_precision", "spearman"],
+          "numeric_columns": ["seed", "auroc", "average_precision", "spearman"],
+          "allow_empty_numeric": ["auroc", "average_precision", "spearman"],
+          "unit_interval_columns": ["auroc", "average_precision"]
+        },
+        {
+          "path": "paper/experiments/results/task65_3_dynamic_route_mediation.survival_summary.csv",
+          "exact_rows": 15,
+          "required_columns": ["seed", "variant", "first_relevant_prefix_ratio_on_hits", "maximum_safe_token_saving_on_hits", "source_hit"],
+          "numeric_columns": ["seed", "first_relevant_prefix_ratio_on_hits", "maximum_safe_token_saving_on_hits", "source_hit"],
+          "unit_interval_columns": ["first_relevant_prefix_ratio_on_hits", "maximum_safe_token_saving_on_hits", "source_hit"]
+        }
+      ],
+      "markdown_reports": ["paper/experiments/results/task65_3_dynamic_route_mediation.md"]
+    },
+    {
+      "id": "task65_4_matched_frontier",
+      "role": "matched_frontier_comparison",
+      "expected_num_queries": 417,
+      "dataset": {
+        "name": "lotte_technology_search_100k",
+        "corpus": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+        "queries": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+        "expected_queries": 596,
+        "check_corpus_refs": true
+      },
+      "result_jsons": ["paper/experiments/results/task65_4_matched_frontier.json"],
+      "paired_csvs": ["paper/experiments/results/task65_4_matched_frontier.paired.csv"],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task65_4_matched_frontier.quality_matched.csv",
+          "exact_rows": 4,
+          "required_columns": ["quality_margin_pp", "dense_test_hit_delta_pp", "dense_test_saving_pct", "intentroute_test_hit_delta_pp", "intentroute_test_saving_pct"],
+          "numeric_columns": ["quality_margin_pp", "dense_test_hit_delta_pp", "dense_test_saving_pct", "intentroute_test_hit_delta_pp", "intentroute_test_saving_pct"]
+        },
+        {
+          "path": "paper/experiments/results/task65_4_matched_frontier.saving_matched.csv",
+          "exact_rows": 4,
+          "required_columns": ["target_calibration_saving_pct", "dense_test_hit_delta_pp", "intentroute_test_hit_delta_pp", "test_saving_gap_pp"],
+          "numeric_columns": ["target_calibration_saving_pct", "dense_test_hit_delta_pp", "intentroute_test_hit_delta_pp", "test_saving_gap_pp"]
+        }
+      ],
+      "markdown_reports": ["paper/experiments/results/task65_4_matched_frontier.md"]
+    },
+    {
+      "id": "task65_5_calibration_split_sensitivity",
+      "role": "split_sensitivity",
+      "dataset_scope": "LoTTE technology search at 100k, 200k, 400k, and 638k corpus scales",
+      "result_jsons": ["paper/experiments/results/task65_5_calibration_split_sensitivity.json"],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task65_5_calibration_split_sensitivity.splits.csv",
+          "exact_rows": 80,
+          "required_columns": ["scale", "split_index", "calibration_queries", "test_queries", "selected_policy", "test_hit_delta_mean_pp", "test_saving_mean_pct"],
+          "numeric_columns": ["split_index", "calibration_queries", "test_queries", "test_hit_delta_mean_pp", "test_saving_mean_pct"]
+        },
+        {
+          "path": "paper/experiments/results/task65_5_calibration_split_sensitivity.summary.csv",
+          "exact_rows": 4,
+          "required_columns": ["scale", "eligible_rate", "test_hit_delta_mean_pp", "test_saving_mean_pct", "test_within_1pp_rate"],
+          "numeric_columns": ["eligible_rate", "test_hit_delta_mean_pp", "test_saving_mean_pct", "test_within_1pp_rate"],
+          "unit_interval_columns": ["eligible_rate", "test_within_1pp_rate"]
+        }
+      ],
+      "markdown_reports": ["paper/experiments/results/task65_5_calibration_split_sensitivity.md"]
+    },
+    {
+      "id": "task65_6_cross_scale_cross_fitted_calibration",
+      "role": "cross_scale_calibration",
+      "dataset_scope": "Four-scale LoTTE technology cross-fitted calibration with scale-dependent query counts",
+      "result_jsons": ["paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.json"],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.folds.csv",
+          "exact_rows": 80,
+          "required_columns": ["scale", "fold", "seed", "method", "calibration_queries", "test_queries", "hit_delta_pp", "saving_pct"],
+          "numeric_columns": ["fold", "seed", "calibration_queries", "test_queries", "hit_delta_pp", "saving_pct"],
+          "allow_empty_numeric": ["seed"]
+        },
+        {
+          "path": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.paired.csv",
+          "exact_rows": 16,
+          "required_columns": ["scale", "seed", "num_queries", "method_hit@10", "baseline_hit@10", "hit_delta_mean", "token_saving_percent", "mcnemar_p_two_sided"],
+          "numeric_columns": ["seed", "num_queries", "method_hit@10", "baseline_hit@10", "hit_delta_mean", "token_saving_percent", "mcnemar_p_two_sided"],
+          "allow_empty_numeric": ["seed"],
+          "unit_interval_columns": ["method_hit@10", "baseline_hit@10", "mcnemar_p_two_sided"]
+        }
+      ],
+      "markdown_reports": ["paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.md"]
+    },
+    {
+      "id": "task65_7_multi_judge_analysis",
+      "role": "multi_judge_robustness",
+      "dataset_scope": "Task63 fixed 300-query LoTTE technology subset with seven retrieval/compression methods and three judges",
+      "result_jsons": ["paper/experiments/results/task65_7_multi_judge_analysis.json"],
+      "artifact_csvs": [
+        {
+          "path": "paper/experiments/results/task65_7_multi_judge_analysis.agreement.csv",
+          "exact_rows": 6,
+          "required_columns": ["field", "judge_left", "judge_right", "n", "raw_agreement", "cohen_kappa"],
+          "numeric_columns": ["n", "raw_agreement", "cohen_kappa"],
+          "unit_interval_columns": ["raw_agreement"]
+        },
+        {
+          "path": "paper/experiments/results/task65_7_multi_judge_analysis.missingness.csv",
+          "exact_rows": 35,
+          "required_columns": ["query_id", "method_label", "judge_model", "failure_attempts", "failure_codes"],
+          "numeric_columns": ["failure_attempts"]
+        },
+        {
+          "path": "paper/experiments/results/task65_7_multi_judge_analysis.paired.csv",
+          "exact_rows": 12,
+          "required_columns": ["judge_model", "comparison", "paired_queries", "correct_delta_pp", "mcnemar_exact_p", "context_token_saving_percent"],
+          "numeric_columns": ["paired_queries", "correct_delta_pp", "mcnemar_exact_p", "context_token_saving_percent"],
+          "unit_interval_columns": ["mcnemar_exact_p"]
+        }
+      ],
+      "markdown_reports": ["paper/experiments/results/task65_7_multi_judge_analysis.md"]
     }
   ]
 }

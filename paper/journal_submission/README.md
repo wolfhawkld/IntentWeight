@@ -1,6 +1,6 @@
 # Journal Submission Prep
 
-Updated: 2026-07-01
+Updated: 2026-07-05
 
 This directory tracks the journal-oriented submission package for the current
 IntentRoute manuscript.
@@ -39,8 +39,11 @@ IR contribution beyond the current engineering frontier.
 - The anonymous manuscript uses CAS `doubleblind`, and the non-anonymous title
   page is a separate file.
 - The abstract is 240 words, within the 250-word IP&M limit.
-- Three cited vector-PDF figures, editable LaTeX tables, bibliography sources,
+- Two final-size deterministic vector data figures, one non-final author-owned
+  Figure 1 placeholder, editable LaTeX tables, bibliography sources,
   highlights, keywords, and a source-hash manifest are included.
+- The 24-page main manuscript and 12-page supplementary-material document are
+  compiled and validated separately.
 - Author identity, affiliation, address, acknowledgements, and declarations are
   intentionally left as placeholders in this directory.
 
@@ -57,7 +60,10 @@ IR contribution beyond the current engineering frontier.
   pass.
 - `task66_elsevier_ipm_conversion_summary.md`: CAS conversion and validation
   record.
+- `task67_submission_readiness_report.md`: final evidence, layout, artwork,
+  and remaining-human-field audit.
 - `latex/anonymous_manuscript.tex`: double-anonymized CAS manuscript source.
+- `latex/supplementary_material.tex`: separate double-anonymized evidence supplement.
 - `latex/title_page.tex`: separate non-anonymous title-page template.
 - `latex/Makefile`: reproducible `sync`, `all`, `validate`, and `audit` targets.
 
@@ -73,15 +79,18 @@ make audit
 ```
 
 All project Python entry points invoked by the Makefile use the repository
-`.venv`.
+`.venv`. The `audit` target also verifies 921 experiment-artifact checks and
+recomputes all values in the five main tables from tracked result files.
 
 ## Next Required Work
 
-1. Fill in real author, affiliation, corresponding-author, and declaration
+1. Replace the non-final Figure 1 placeholder with the author-produced 190 mm
+   vector PDF specified in `paper/full_draft/figures/figure1_author_spec.md`.
+2. Fill in real author, affiliation, corresponding-author, and declaration
    details.
-2. Replace placeholder data/code availability text with release URLs.
-3. Decide whether to post a preprint before or after journal review.
-4. Recheck the current IP&M upload fields immediately before submission.
+3. Replace placeholder data/code availability text with release URLs.
+4. Decide whether to post a preprint before or after journal review.
+5. Recheck the current IP&M upload fields immediately before submission.
 
 ## Official Format Basis
 

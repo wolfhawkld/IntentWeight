@@ -1,6 +1,6 @@
 # Review Packet Validation Report
 
-Updated: 2026-06-27
+Updated: 2026-07-05
 
 ## Source Draft Audit
 
@@ -16,8 +16,9 @@ validation=passed
 
 ```text
 packet_validation=passed
-chapters=10
-manuscript_words=16255
+main_chapters=9
+manuscript_words=11855
+supplement_words=4392
 citation_keys=26
 bib_entries=26
 figure_assets=3

@@ -1,0 +1,42 @@
+{
+  "checks": [
+    {
+      "item": "main_table_1",
+      "rows": 4,
+      "status": "PASS"
+    },
+    {
+      "item": "main_table_2",
+      "rows": 4,
+      "status": "PASS"
+    },
+    {
+      "item": "main_table_3",
+      "rows": 6,
+      "status": "PASS"
+    },
+    {
+      "item": "main_table_4",
+      "rows": 5,
+      "status": "PASS"
+    },
+    {
+      "item": "main_table_5",
+      "rows": 3,
+      "status": "PASS"
+    },
+    {
+      "files": 2,
+      "item": "figure_data",
+      "status": "PASS"
+    },
+    {
+      "item": "supplementary_numeric_provenance",
+      "numeric_values": 446,
+      "status": "PASS",
+      "tables": 17
+    }
+  ],
+  "errors": [],
+  "status": "PASS"
+}

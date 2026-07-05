@@ -515,6 +515,232 @@ def validate_summary_csv(
     )
 
 
+def validate_artifact_csv(
+    audit: Audit,
+    *,
+    experiment: str,
+    role: str,
+    spec: Mapping[str, Any],
+) -> None:
+    """Validate heterogeneous analysis tables without weakening their schema checks."""
+    path = resolve_path(spec["path"])
+    source = display_path(path)
+    if not path.exists():
+        audit.error(experiment, role, "dimension", "artifact_csv", source, "missing file")
+        return
+    try:
+        rows = load_csv_rows(path)
+    except Exception as exc:
+        audit.error(experiment, role, "dimension", "artifact_csv", source, str(exc))
+        return
+    if not rows:
+        audit.error(experiment, role, "dimension", "artifact_csv", source, "no rows")
+        return
+
+    actual_rows = len(rows)
+    exact_rows = spec.get("exact_rows")
+    min_rows = int(spec.get("min_rows", 1))
+    if exact_rows is not None and actual_rows != int(exact_rows):
+        audit.error(
+            experiment,
+            role,
+            "dimension",
+            "artifact_csv_rows",
+            source,
+            f"expected={exact_rows}, actual={actual_rows}",
+        )
+    elif actual_rows < min_rows:
+        audit.error(
+            experiment,
+            role,
+            "dimension",
+            "artifact_csv_rows",
+            source,
+            f"minimum={min_rows}, actual={actual_rows}",
+        )
+    else:
+        audit.pass_(experiment, role, "dimension", "artifact_csv_rows", source, f"rows={actual_rows}")
+
+    columns = set(rows[0])
+    required_columns = [str(column) for column in spec.get("required_columns", [])]
+    missing = [column for column in required_columns if column not in columns]
+    if missing:
+        audit.error(experiment, role, "dimension", "artifact_csv_columns", source, f"missing={missing}")
+    else:
+        audit.pass_(
+            experiment,
+            role,
+            "dimension",
+            "artifact_csv_columns",
+            source,
+            f"required={len(required_columns)}, columns={len(columns)}",
+        )
+
+    numeric_columns = [str(column) for column in spec.get("numeric_columns", [])]
+    allow_empty_numeric = {str(column) for column in spec.get("allow_empty_numeric", [])}
+    numeric_errors = 0
+    missing_numeric_columns = [column for column in numeric_columns if column not in columns]
+    for row in rows:
+        for column in numeric_columns:
+            if column in row and str(row[column]).strip() == "" and column in allow_empty_numeric:
+                continue
+            if column in row and finite_float(row[column]) is None:
+                numeric_errors += 1
+    if missing_numeric_columns or numeric_errors:
+        audit.error(
+            experiment,
+            role,
+            "statistics",
+            "artifact_csv_numeric",
+            source,
+            f"missing_columns={missing_numeric_columns}, invalid_values={numeric_errors}",
+        )
+    else:
+        audit.pass_(
+            experiment,
+            role,
+            "statistics",
+            "artifact_csv_numeric",
+            source,
+            f"columns={len(numeric_columns)}, rows={actual_rows}",
+        )
+
+    unit_interval_columns = [str(column) for column in spec.get("unit_interval_columns", [])]
+    range_errors = 0
+    missing_range_columns = [column for column in unit_interval_columns if column not in columns]
+    for row in rows:
+        for column in unit_interval_columns:
+            if str(row.get(column, "")).strip() == "" and column in allow_empty_numeric:
+                continue
+            value = finite_float(row.get(column))
+            if value is None or not (0.0 <= value <= 1.0):
+                range_errors += 1
+    if missing_range_columns or range_errors:
+        audit.error(
+            experiment,
+            role,
+            "statistics",
+            "artifact_csv_ranges",
+            source,
+            f"missing_columns={missing_range_columns}, errors={range_errors}",
+        )
+    else:
+        audit.pass_(
+            experiment,
+            role,
+            "statistics",
+            "artifact_csv_ranges",
+            source,
+            f"unit_interval_columns={len(unit_interval_columns)}",
+        )
+
+
+def validate_jsonl_artifact(
+    audit: Audit,
+    *,
+    experiment: str,
+    role: str,
+    spec: Mapping[str, Any],
+) -> None:
+    """Stream and validate large answer/judgment artifacts."""
+    path = resolve_path(spec["path"])
+    source = display_path(path)
+    if not path.exists():
+        audit.error(experiment, role, "dimension", "jsonl_artifact", source, "missing file")
+        return
+
+    required_fields = [str(field) for field in spec.get("required_fields", [])]
+    non_null_fields = [str(field) for field in spec.get("non_null_fields", [])]
+    key_fields = [str(field) for field in spec.get("key_fields", [])]
+    unique_keys = bool(spec.get("unique_keys", True))
+    records = 0
+    malformed = 0
+    missing_fields = 0
+    null_fields = 0
+    duplicate_keys = 0
+    seen: set[tuple[str, ...]] = set()
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if not line.strip():
+                    continue
+                records += 1
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    malformed += 1
+                    continue
+                if not isinstance(row, Mapping):
+                    malformed += 1
+                    continue
+                missing_fields += sum(field not in row for field in required_fields)
+                null_fields += sum(row.get(field) is None for field in non_null_fields)
+                if key_fields:
+                    key = tuple(str(row.get(field)) for field in key_fields)
+                    if key in seen:
+                        duplicate_keys += 1
+                    seen.add(key)
+    except Exception as exc:
+        audit.error(experiment, role, "dimension", "jsonl_artifact", source, str(exc))
+        return
+
+    expected = spec.get("exact_records")
+    if expected is not None and records != int(expected):
+        audit.error(
+            experiment,
+            role,
+            "dimension",
+            "jsonl_records",
+            source,
+            f"expected={expected}, actual={records}",
+        )
+    elif records < int(spec.get("min_records", 1)):
+        audit.error(experiment, role, "dimension", "jsonl_records", source, f"actual={records}")
+    else:
+        audit.pass_(experiment, role, "dimension", "jsonl_records", source, f"records={records}")
+
+    if malformed or missing_fields or null_fields:
+        audit.error(
+            experiment,
+            role,
+            "dimension",
+            "jsonl_schema",
+            source,
+            f"malformed={malformed}, missing_fields={missing_fields}, null_fields={null_fields}",
+        )
+    else:
+        audit.pass_(
+            experiment,
+            role,
+            "dimension",
+            "jsonl_schema",
+            source,
+            f"required_fields={len(required_fields)}, non_null_fields={len(non_null_fields)}",
+        )
+
+    expected_unique = spec.get("exact_unique_keys")
+    if expected_unique is not None and len(seen) != int(expected_unique):
+        audit.error(
+            experiment,
+            role,
+            "dimension",
+            "jsonl_keys",
+            source,
+            f"expected_unique={expected_unique}, actual_unique={len(seen)}",
+        )
+    elif unique_keys and duplicate_keys:
+        audit.error(experiment, role, "dimension", "jsonl_keys", source, f"duplicate_keys={duplicate_keys}")
+    else:
+        audit.pass_(
+            experiment,
+            role,
+            "dimension",
+            "jsonl_keys",
+            source,
+            f"unique_keys={len(seen)}, duplicate_records={duplicate_keys}",
+        )
+
+
 def count_numeric_errors(rows: Sequence[Mapping[str, Any]]) -> int:
     errors = 0
     for row in rows:
@@ -848,6 +1074,15 @@ def validate_experiment(
             dataset=dataset,
             cache=cache,
         )
+    elif experiment.get("dataset_scope"):
+        audit.pass_(
+            experiment_id,
+            role,
+            "dimension",
+            "dataset_scope",
+            experiment_id,
+            str(experiment["dataset_scope"]),
+        )
     else:
         audit.warn(experiment_id, role, "dimension", "dataset", experiment_id, "no dataset block configured")
 
@@ -867,6 +1102,28 @@ def validate_experiment(
             role=role,
             path=resolve_path(raw_path),
             expected_num_queries=expected_num_queries,
+        )
+
+    for artifact_spec in experiment.get("artifact_csvs", []):
+        if not isinstance(artifact_spec, Mapping) or not artifact_spec.get("path"):
+            audit.error(experiment_id, role, "dimension", "artifact_csv", experiment_id, "invalid CSV spec")
+            continue
+        validate_artifact_csv(
+            audit,
+            experiment=experiment_id,
+            role=role,
+            spec=artifact_spec,
+        )
+
+    for jsonl_spec in experiment.get("jsonl_artifacts", []):
+        if not isinstance(jsonl_spec, Mapping) or not jsonl_spec.get("path"):
+            audit.error(experiment_id, role, "dimension", "jsonl_artifact", experiment_id, "invalid JSONL spec")
+            continue
+        validate_jsonl_artifact(
+            audit,
+            experiment=experiment_id,
+            role=role,
+            spec=jsonl_spec,
         )
 
     for ranking_spec in experiment.get("ranking_artifacts", []):
@@ -1021,7 +1278,8 @@ def write_markdown_report(path: Path, manifest_path: Path, checks: Sequence[Chec
         "## Interpretation",
         "",
         "- Dimension checks cover dataset/query shape, ranking variants, query coverage, and chunk-reference resolution where configured.",
-        "- Statistics checks cover paired-result arithmetic, confidence interval ordering, p-value ranges, and token-ratio consistency.",
+        "- JSONL checks stream answer and judgment records while enforcing counts, schemas, and configured key cardinalities.",
+        "- Statistics checks cover paired-result arithmetic, confidence interval ordering, p-value ranges, token-ratio consistency, and configured heterogeneous analysis tables.",
         "- Display checks cover paper-facing Markdown reports; they do not judge visual aesthetics.",
         "- Large corpus checks can skip full corpus-reference scans by manifest to keep this audit lightweight.",
     ])

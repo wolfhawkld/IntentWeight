@@ -1,6 +1,6 @@
 # IntentRoute Review Packet
 
-Updated: 2026-06-27
+Updated: 2026-07-05
 
 This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent
@@ -8,7 +8,9 @@ academic review before LaTeX venue migration.
 
 ## Review Entry Points
 
-- `manuscript.md`: assembled paper-facing manuscript and appendix.
+- `manuscript.md`: assembled paper-facing main manuscript.
+- `supplementary_material.md`: complete supporting evidence separated under
+  approved Task67 scheme A.
 - `references.bib`: provisional BibTeX bibliography.
 - `figure_index.md`: draft figure assets and regeneration sources.
 - `submission_checklist.md`: claim-boundary and migration checklist.

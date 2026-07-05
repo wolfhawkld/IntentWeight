@@ -72,6 +72,12 @@ Their source proceedings metadata do not provide conventional page ranges.
 The validator allows only these two entry-specific notices and fails on any
 other BibTeX warning or error.
 
+Task67 subsequently separated the 12-section evidence appendix into a
+12-page supplementary-material PDF. The main manuscript is now 24 CAS pages,
+including references. Task67 also regenerated Figures 2 and 3 at a final
+190 x 76 mm vector size with embedded Type 42 fonts. Figure 1 remains an
+explicitly non-final author-owned placeholder.
+
 ## Claim Boundary
 
 Task66 changes submission format and traceability, not experimental claims. The

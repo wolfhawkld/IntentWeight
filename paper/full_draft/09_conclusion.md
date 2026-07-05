@@ -34,7 +34,7 @@ that simulated feedback can repair part of the tail failures caused by
 aggressive context compression.
 
 Strong post-retrieval baselines refine rather than weaken the conclusion.
-Sentence-level MMR and SelectiveContext-lite are effective shared downstream
+Sentence-level MMR and Selective Context-lite are effective shared downstream
 compressors, and cross-encoder reranking can improve top-ranked evidence
 support. However,
 reranking alone can increase final context tokens, and same-budget reranking

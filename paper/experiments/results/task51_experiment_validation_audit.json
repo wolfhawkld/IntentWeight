@@ -6866,19 +6866,1441 @@
       "role": "strong_baseline",
       "source": "paper/experiments/results/task62_100k_prompt_compression_baseline.md",
       "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=5",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "result_json",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=2",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "result_json",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/paired_comparisons.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "queries",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "corpus",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "ground_truth_refs",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=7",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_rows",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=6, columns=17",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_columns",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=5, rows=7",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_numeric",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=2",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_ranges",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=3",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_rows",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/paired_comparisons.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=5, columns=20",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_columns",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/paired_comparisons.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=4, rows=3",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_numeric",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/paired_comparisons.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=1",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "artifact_csv_ranges",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/paired_comparisons.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "records=2100",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_records",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/answers.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required_fields=5, non_null_fields=5",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_schema",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/answers.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "unique_keys=2100, duplicate_records=0",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_keys",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/answers.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "records=6265",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_records",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/judgments.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required_fields=4, non_null_fields=4",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_schema",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/judgments.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "unique_keys=6265, duplicate_records=0",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_keys",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/judgments.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "records=373",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_records",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/judgment_failures.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required_fields=3, non_null_fields=3",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_schema",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/judgment_failures.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "unique_keys=362, duplicate_records=11",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "jsonl_keys",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/judgment_failures.jsonl",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "markdown_heading",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "markdown_table",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task63_downstream_llm_evaluation",
+      "item": "token_language",
+      "role": "downstream_semantic_validation",
+      "source": "paper/experiments/results/task63_downstream_llm_evaluation/summary.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=4",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "result_json",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=30",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "json_paired_rows",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=30",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_numeric_values",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_arithmetic",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_ranges",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.json:paired_rows",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "queries",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "corpus",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "ground_truth_refs",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=45",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_columns",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=30",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_numeric_values",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_num_queries",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_arithmetic",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "paired_ranges",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=15",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_rows",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.discrimination.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=7, columns=24",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_columns",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.discrimination.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=5, rows=15",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_numeric",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.discrimination.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=4",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_ranges",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.discrimination.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=20",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_rows",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.selected.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=6, columns=16",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_columns",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.selected.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=4, rows=20",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_numeric",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.selected.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=1",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "artifact_csv_ranges",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.selected.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "markdown_heading",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "markdown_table",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task65_1_safe_compression_attribution",
+      "item": "token_language",
+      "role": "safe_compression_attribution",
+      "source": "paper/experiments/results/task65_1_safe_compression_attribution.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=8",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "result_json",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "queries",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "corpus",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "ground_truth_refs",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=46",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_columns",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_quality.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=30",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_numeric_values",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_quality.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_num_queries",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_quality.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_arithmetic",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_quality.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_ranges",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_quality.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=46",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_columns",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=60",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_numeric_values",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_num_queries",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_arithmetic",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_ranges",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.paired_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=47",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_columns",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.pairwise_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=60",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_numeric_values",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.pairwise_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_num_queries",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.pairwise_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_arithmetic",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.pairwise_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "paired_ranges",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.pairwise_saving.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=150",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "artifact_csv_rows",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.risk_coverage.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=6, columns=11",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "artifact_csv_columns",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.risk_coverage.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=5, rows=150",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "artifact_csv_numeric",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.risk_coverage.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=4",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "artifact_csv_ranges",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.risk_coverage.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "markdown_heading",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "markdown_table",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task65_2_factorial_safe_compression",
+      "item": "token_language",
+      "role": "factorial_safe_compression",
+      "source": "paper/experiments/results/task65_2_factorial_safe_compression.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=7",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "result_json",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "queries",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "corpus",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "ground_truth_refs",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=43",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "paired_columns",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=18",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "paired_numeric_values",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "paired_num_queries",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "paired_arithmetic",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "paired_ranges",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=165",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_rows",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.feature_metrics.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=7, columns=15",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_columns",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.feature_metrics.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=4, rows=165",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_numeric",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.feature_metrics.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=2",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_ranges",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.feature_metrics.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=15",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_rows",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.survival_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=5, columns=12",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_columns",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.survival_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=4, rows=15",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_numeric",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.survival_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=3",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "artifact_csv_ranges",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.survival_summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "markdown_heading",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "markdown_table",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task65_3_dynamic_route_mediation",
+      "item": "token_language",
+      "role": "route_mediation_boundary",
+      "source": "paper/experiments/results/task65_3_dynamic_route_mediation.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=6",
+      "experiment": "task65_4_matched_frontier",
+      "item": "result_json",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "queries=596, queries_with_gt=596",
+      "experiment": "task65_4_matched_frontier",
+      "item": "queries",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "chunks=101311",
+      "experiment": "task65_4_matched_frontier",
+      "item": "corpus",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "all configured GT refs resolve",
+      "experiment": "task65_4_matched_frontier",
+      "item": "ground_truth_refs",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/data/processed/lotte_technology_search_100k_queries.json -> paper/experiments/data/processed/lotte_technology_search_100k_corpus.json",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=42",
+      "experiment": "task65_4_matched_frontier",
+      "item": "paired_columns",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "rows=12",
+      "experiment": "task65_4_matched_frontier",
+      "item": "paired_numeric_values",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "num_queries=417",
+      "experiment": "task65_4_matched_frontier",
+      "item": "paired_num_queries",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "hit deltas and token ratios consistent",
+      "experiment": "task65_4_matched_frontier",
+      "item": "paired_arithmetic",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "CI and probability ranges consistent",
+      "experiment": "task65_4_matched_frontier",
+      "item": "paired_ranges",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=4",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_rows",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.quality_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=5, columns=11",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_columns",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.quality_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=5, rows=4",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_numeric",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.quality_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=0",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_ranges",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.quality_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=4",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_rows",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.saving_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=4, columns=11",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_columns",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.saving_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=4, rows=4",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_numeric",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.saving_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=0",
+      "experiment": "task65_4_matched_frontier",
+      "item": "artifact_csv_ranges",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.saving_matched.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task65_4_matched_frontier",
+      "item": "markdown_heading",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task65_4_matched_frontier",
+      "item": "markdown_table",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task65_4_matched_frontier",
+      "item": "token_language",
+      "role": "matched_frontier_comparison",
+      "source": "paper/experiments/results/task65_4_matched_frontier.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=3",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "result_json",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "LoTTE technology search at 100k, 200k, 400k, and 638k corpus scales",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "dataset_scope",
+      "role": "split_sensitivity",
+      "source": "task65_5_calibration_split_sensitivity",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=80",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_rows",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.splits.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=7, columns=19",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_columns",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.splits.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=5, rows=80",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_numeric",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.splits.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=0",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_ranges",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.splits.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=4",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_rows",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=5, columns=21",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_columns",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=4, rows=4",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_numeric",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=2",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "artifact_csv_ranges",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.summary.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "markdown_heading",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "markdown_table",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task65_5_calibration_split_sensitivity",
+      "item": "token_language",
+      "role": "split_sensitivity",
+      "source": "paper/experiments/results/task65_5_calibration_split_sensitivity.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=5",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "result_json",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "Four-scale LoTTE technology cross-fitted calibration with scale-dependent query counts",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "dataset_scope",
+      "role": "cross_scale_calibration",
+      "source": "task65_6_cross_scale_cross_fitted_calibration",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=80",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_rows",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.folds.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=8, columns=13",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_columns",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.folds.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=6, rows=80",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_numeric",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.folds.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=0",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_ranges",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.folds.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=16",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_rows",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=8, columns=39",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_columns",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=7, rows=16",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_numeric",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=3",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "artifact_csv_ranges",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "markdown_heading",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "markdown_table",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task65_6_cross_scale_cross_fitted_calibration",
+      "item": "token_language",
+      "role": "cross_scale_calibration",
+      "source": "paper/experiments/results/task65_6_cross_scale_cross_fitted_calibration.md",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "object_keys=17",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "result_json",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.json",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "Task63 fixed 300-query LoTTE technology subset with seven retrieval/compression methods and three judges",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "dataset_scope",
+      "role": "multi_judge_robustness",
+      "source": "task65_7_multi_judge_analysis",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=6",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_rows",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.agreement.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=6, columns=8",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_columns",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.agreement.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=3, rows=6",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_numeric",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.agreement.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=1",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_ranges",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.agreement.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=35",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_rows",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.missingness.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=5, columns=5",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_columns",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.missingness.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=1, rows=35",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_numeric",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.missingness.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=0",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_ranges",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.missingness.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "rows=12",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_rows",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "dimension",
+      "detail": "required=6, columns=22",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_columns",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "columns=4, rows=12",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_numeric",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "statistics",
+      "detail": "unit_interval_columns=1",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "artifact_csv_ranges",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.paired.csv",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "top-level heading present",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "markdown_heading",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "table detected",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "markdown_table",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.md",
+      "status": "PASS"
+    },
+    {
+      "category": "display",
+      "detail": "token language present",
+      "experiment": "task65_7_multi_judge_analysis",
+      "item": "token_language",
+      "role": "multi_judge_robustness",
+      "source": "paper/experiments/results/task65_7_multi_judge_analysis.md",
+      "status": "PASS"
     }
   ],
   "manifest": "paper/experiments/task51_experiment_manifest.json",
   "summary": {
     "by_category": {
       "dimension": {
-        "PASS": 401
+        "PASS": 469
       },
       "display": {
-        "PASS": 135
+        "PASS": 159
       },
       "statistics": {
-        "PASS": 227
+        "PASS": 293
       }
     },
     "by_experiment": {
@@ -6953,10 +8375,34 @@
       },
       "task62_prompt_compression_baseline": {
         "PASS": 25
+      },
+      "task63_downstream_llm_evaluation": {
+        "PASS": 25
+      },
+      "task65_1_safe_compression_attribution": {
+        "PASS": 24
+      },
+      "task65_2_factorial_safe_compression": {
+        "PASS": 26
+      },
+      "task65_3_dynamic_route_mediation": {
+        "PASS": 20
+      },
+      "task65_4_matched_frontier": {
+        "PASS": 20
+      },
+      "task65_5_calibration_split_sensitivity": {
+        "PASS": 13
+      },
+      "task65_6_cross_scale_cross_fitted_calibration": {
+        "PASS": 13
+      },
+      "task65_7_multi_judge_analysis": {
+        "PASS": 17
       }
     },
     "status_counts": {
-      "PASS": 763
+      "PASS": 921
     }
   }
 }

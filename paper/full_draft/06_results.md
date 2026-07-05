@@ -53,14 +53,14 @@ savings are respectively `-1.06pp/4.16%`, `+1.40pp/16.07%`,
 calibrated Dense finds no eligible compressed action in any fold and therefore
 uses top-10 fallback. At 400k, all five IntentRoute folds are eligible, closing
 the missing normalized follow-up, but they select five different policies and
-strict non-inferiority remains `0/3` seeds. Appendix G4 reports the fold-level
+strict non-inferiority remains `0/3` seeds. Supplementary Table S16 reports the fold-level
 results. This supports the average 400k trade-off without erasing the original
 split failure or claiming stable policy selection.
 
 Query-level paired bootstrap intervals and McNemar-style win/loss counts show
 that token savings are more consistent than strict quality non-inferiority.
 The conservative confidence-only policy remains a stable 4.7-5.3% saving
-baseline; complete seed and policy details are reported in Appendix A and G.
+baseline; complete seed and policy details are reported in Supplementary Sections S1 and S7.
 Figure 2 visualizes the quality-cost frontier.
 
 ## 5.2 Matched-Backbone Robustness
@@ -83,7 +83,7 @@ BGE and E5 full multi-route policies remain near their respective dense
 baselines while saving about 12% context tokens. The BGE quality-first point
 moves the same frontier toward higher retrieval hit at lower saving. The E5
 scan did not produce an above-dense token-saving point, so positive-hit
-tunability is BGE-specific rather than a universal claim. Appendix E reports
+tunability is BGE-specific rather than a universal claim. Supplementary Section S5 reports
 the supporting encoder details.
 
 ## 5.3 Route-Control Attribution
@@ -116,7 +116,7 @@ quality or justifies unconditional dense removal.
 Feedback remains useful as a recovery trigger. Conservative same-query retry
 recovers 23 of 76 budget-induced misses across the two LoTTE 100k domains, but
 the stricter calibration-to-test effect is small and domain-dependent.
-Appendix I and K contain the full recovery and control tables.
+Supplementary Sections S9 and S11 contain the full recovery and control tables.
 
 A frozen-trajectory route replay further isolates the confidence gate. Keeping
 the selected arms and feedback state fixed, the original query-to-tier
@@ -156,7 +156,7 @@ and PCA concentration vary. Figure 3 relates context retention to observed hit
 delta and token saving. The small cross-scale sample does not show a
 deterministic geometry-to-gain law: geometry identifies plausible local route
 structure, while calibration, fusion, and dense rescue determine the final
-operating point. Full diagnostics are retained in Appendix K.
+operating point. Full diagnostics are retained in Supplementary Section S11.
 
 ## 5.5 Cross-Domain And Boundary Evidence
 
@@ -165,7 +165,7 @@ $\mathrm{Hit@10}=0.9267$ versus 0.8950 for dense at 20k/q200 and 0.9077 versus
 0.8926 at 100k. Frozen budget policies save 13-14% tokens at 20k/q200 while
 remaining above dense. At 100k, the more aggressive policy saves 17-21% but
 can introduce small hit losses. The ranking signal transfers, but compression
-strength requires domain- and scale-specific calibration. Appendix H reports
+strength requires domain- and scale-specific calibration. Supplementary Section S8 reports
 the complete seed-level table.
 
 PubMedQA and Banking77 provide supporting feedback-adaptation checks near
@@ -189,7 +189,7 @@ A cross-encoder reranker improves dense full-top-10 support from
 $\mathrm{Hit@10}=0.8705$ to 0.8777 and evidence recall from 0.7081 to 0.7332,
 but increases context tokens by 21.9%. Under matched context budgets, its
 $\mathrm{Hit@10}$ range of 0.8633-0.8729 does not uniformly dominate the
-IntentRoute range of 0.8657-0.8777. Appendix J contains all compressor and
+IntentRoute range of 0.8657-0.8777. Supplementary Section S10 contains all compressor and
 reranker tables.
 
 ## 5.7 Downstream Answer-Level Evaluation
@@ -220,5 +220,5 @@ answer-quality improvement.
 Faithfulness is not uniformly preserved. The three-judge majority estimates a
 -4.15 pp BGE faithfulness change (95% CI [-6.92, -1.73], $p=0.0018$) and a
 +4.07 pp change for the SentMMR composition (95% CI [+0.68, +7.46],
-$p=0.0290$); E5 remains non-significant. Appendix F reports judge coverage,
+$p=0.0290$); E5 remains non-significant. Supplementary Section S6 reports judge coverage,
 agreement, full method-level results, and the mixed faithfulness boundary.

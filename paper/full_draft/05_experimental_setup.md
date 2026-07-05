@@ -74,31 +74,10 @@ $$
 \frac{\left| R_t^K \cap G_t \right|}{\left|G_t\right|}.
 $$
 
-For mean reciprocal rank, let $\rho_t$ be the rank of the first relevant chunk
-within the top-$K$ list, or $\infty$ if no relevant chunk is retrieved:
-
-$$
-\mathrm{MRR@K}(q_t) =
-\begin{cases}
-\frac{1}{\rho_t}, & \rho_t \le K, \\
-0, & \rho_t = \infty.
-\end{cases}
-$$
-
-For binary relevance, let $\mathrm{rel}_{t,j} \in \{0,1\}$ denote whether the
-chunk at rank $j$ for query $q_t$ is relevant. We compute:
-
-$$
-\mathrm{DCG@K}(q_t) =
-\sum_{j=1}^{K} \frac{\mathrm{rel}_{t,j}}{\log_2(j+1)},
-$$
-
-$$
-\mathrm{nDCG@K}(q_t) =
-\frac{\mathrm{DCG@K}(q_t)}{\mathrm{IDCG@K}(q_t)}.
-$$
-
-If $\mathrm{IDCG@K}(q_t)=0$, we set $\mathrm{nDCG@K}(q_t)=0$.
+MRR@K uses the reciprocal rank of the first relevant chunk, and nDCG@K uses
+binary relevance with logarithmic rank discount and the standard ideal-DCG
+normalization. Supplementary Section S12 gives the explicit formulas and the
+zero-relevance convention.
 
 The main headline uses query-level $\mathrm{Hit@10}$. This choice reflects the
 target use case: retrieving at least one usable evidence chunk for RAG
@@ -242,7 +221,7 @@ self-evolution analysis. They are not IID held-out generalization results.
 
 ## 4.6 Implementation Notes
 
-The main dense baseline uses `sentence-transformers/all-MiniLM-L6-v2` with exact
+The main dense baseline uses Sentence Transformers `all-MiniLM-L6-v2` with exact
 cosine search. Matched-backbone checks use BGE-base and `intfloat/e5-base-v2`;
 E5 applies the recommended `query:` and `passage:` prefixes. Embeddings and
 retrieval artifacts are cached to avoid repeating deterministic computation.

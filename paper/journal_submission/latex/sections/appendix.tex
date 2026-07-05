@@ -3,13 +3,13 @@
 \section{Conservative Baseline and Seed Stability Diagnostics}
 \label{sec:12-appendix:conservative-baseline-and-seed-stability-diagnostics}
 
-The conservative confidence-only context policy is the stable baseline for context compaction. The main text reports calibrated token-budget policies as the primary cost result; this appendix keeps the earlier confidence-only scale table and seed diagnostics. These intervals are engineering stability diagnostics, not strong inferential proof: each scale has only three observations. Tables~\ref{tab:a1} and~\ref{tab:a2} report quality and token stability.
+The conservative confidence-only context policy is the stable baseline for context compaction. The main text reports calibrated token-budget policies as the primary cost result; this supplement keeps the earlier confidence-only scale table and seed diagnostics. These intervals are engineering stability diagnostics, not strong inferential proof: each scale has only three observations. Tables~\ref{tab:s1} and~\ref{tab:s2} report quality and token stability.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Multi-seed retrieval-quality stability}
-\label{tab:a1}
+\label{tab:s1}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Scale & Dense $\mathrm{Hit@10}$ & Policy $\mathrm{Hit@10}$ mean & Std & 95\% CI & Mean hit delta \\
@@ -26,7 +26,7 @@ Scale & Dense $\mathrm{Hit@10}$ & Policy $\mathrm{Hit@10}$ mean & Std & 95\% CI 
 \centering
 \small
 \caption{Multi-seed final context-token stability}
-\label{tab:a2}
+\label{tab:s2}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Scale & Dense $\mathrm{Tokens@10}$ & Policy $\mathrm{Tokens@10}$ mean & Std & 95\% CI & Mean token saving & Saving 95\% CI \\
@@ -44,13 +44,13 @@ The token-saving direction is consistent across scales. The wider 400k token int
 \section{Static Retrieval Baselines}
 \label{sec:12-appendix:static-retrieval-baselines}
 
-Dense retrieval is the primary quality baseline. BM25 supplies lexical coverage, but it is weaker as a standalone retriever on LoTTE. Static dense-plus-BM25 reciprocal-rank fusion is competitive at some scales but does not consistently dominate dense. Table~\ref{tab:b1} reports these static baselines.
+Dense retrieval is the primary quality baseline. BM25 supplies lexical coverage, but it is weaker as a standalone retriever on LoTTE. Static dense-plus-BM25 reciprocal-rank fusion is competitive at some scales but does not consistently dominate dense. Table~\ref{tab:s3} reports these static baselines.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Static LoTTE retrieval baselines across corpus scale}
-\label{tab:b1}
+\label{tab:s3}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Scale & Corpus chunks & BM25 $\mathrm{Hit@10}$ & Dense $\mathrm{Hit@10}$ & Static hybrid $\mathrm{Hit@10}$ \\
@@ -76,13 +76,13 @@ The experiments separate three efficiency layers:
 \item final context tokens: retrieved chunk tokens sent to the generator.
 \end{enumerate}
 
-The main paper claim uses the third layer. Historical routing experiments showed that reducing candidate counts does not automatically reduce final context tokens when the final context remains fixed at top-10. Table~\ref{tab:c1} records the correction audit that motivated this separation.
+The main paper claim uses the third layer. Historical routing experiments showed that reducing candidate counts does not automatically reduce final context tokens when the final context remains fixed at top-10. Table~\ref{tab:s4} records the correction audit that motivated this separation.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Representative fixed-top-10 correction audit}
-\label{tab:c1}
+\label{tab:s4}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Dataset / scale & Routing setting & $\mathrm{Hit@10}$ & Avg tokens@10 & Ratio vs dense & Source candidate cost \\
@@ -116,13 +116,13 @@ The secondary datasets have different roles and should not be pooled into the ma
 \subsection{eManual Duplicate-Text Diagnostic}
 \label{sec:12-appendix:emanual-duplicate-text-diagnostic}
 
-eManual contains 18,812 corpus chunks but only 1,729 unique text strings. Strict chunk-id evaluation can therefore mark semantically equivalent retrievals as incorrect. Table~\ref{tab:d1} quantifies the strict, text-equivalent, and deduplicated views.
+eManual contains 18,812 corpus chunks but only 1,729 unique text strings. Strict chunk-id evaluation can therefore mark semantically equivalent retrievals as incorrect. Table~\ref{tab:s5} quantifies the strict, text-equivalent, and deduplicated views.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{eManual strict, text-equivalent, and deduplicated evaluation}
-\label{tab:d1}
+\label{tab:s5}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Method & Evaluation mode & $\mathrm{Hit@10}$ & $\mathrm{MRR@10}$ & $\mathrm{nDCG@10}$ \\
@@ -143,13 +143,13 @@ The text-equivalent and deduplicated metrics are diagnostics, not replacements f
 \section{Encoder Robustness}
 \label{sec:12-appendix:encoder-robustness}
 
-The main scale-up uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. A LoTTE 100k robustness check replaces it with \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder with the same 384-dimensional embedding size and a similar CPU-friendly resource class. Tables~\ref{tab:e1} and~\ref{tab:e2} report encoder-family and matched-backbone robustness.
+The main scale-up uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2}. A LoTTE 100k robustness check replaces it with \nolinkurl{sentence-transformers/multi-qa-MiniLM-L6-cos-v1}, a QA-tuned MiniLM-family encoder with the same 384-dimensional embedding size and a similar CPU-friendly resource class. Tables~\ref{tab:s6} and~\ref{tab:s7} report encoder-family and matched-backbone robustness.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{QA-tuned MiniLM-family encoder robustness}
-\label{tab:e1}
+\label{tab:s6}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Method & $\mathrm{Hit@10}$ & $\mathrm{MRR@10}$ & $\mathrm{nDCG@10}$ & Evid. recall@10 & Avg tokens@10 & Token ratio \\
@@ -166,7 +166,7 @@ Under the QA-tuned encoder, the dense baseline becomes stronger and the conserva
 \centering
 \small
 \caption{Matched-backbone context-budget robustness on the frozen LoTTE technology/search 100k split}
-\label{tab:e2}
+\label{tab:s7}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Backbone & Route mode & Dense $\mathrm{Hit@10}$ & Method $\mathrm{Hit@10}$ & Hit delta & Token saving \\
@@ -184,13 +184,13 @@ The full multi-route rows show that the quality-cost pattern is not tied to the 
 \section{Downstream Answer-Level Evaluation}
 \label{sec:12-appendix:downstream-answer-level-evaluation}
 
-The formal downstream evaluation uses 300 deterministic queries from the frozen LoTTE technology/search 100k test split. Seven methods produce 2,100 answers with \nolinkurl{deepseek-v4-flash}. The fixed answers receive 2,100 DeepSeek, 2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge statistics use the 2,065 query-method keys shared by all judges. Tables~\ref{tab:f1}, \ref{tab:f2}, \ref{tab:f3}, \ref{tab:f4}, and~\ref{tab:f5} report method results, paired tests, judge coverage, agreement, and majority-vote comparisons.
+The formal downstream evaluation uses 300 deterministic queries from the frozen LoTTE technology/search 100k test split. Seven methods produce 2,100 answers with \nolinkurl{deepseek-v4-flash}. The fixed answers receive 2,100 DeepSeek, 2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge statistics use the 2,065 query-method keys shared by all judges. Tables~\ref{tab:s8}, \ref{tab:s9}, \ref{tab:s10}, \ref{tab:s11}, and~\ref{tab:s12} report method results, paired tests, judge coverage, agreement, and majority-vote comparisons.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{DeepSeek-judged downstream answer and context results}
-\label{tab:f1}
+\label{tab:s8}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Method & Correct & Faithful & Strict citation support & Insufficient context & Avg context tokens & Tokens / correct \\
@@ -210,7 +210,7 @@ IntentRoute + MMR & 0.9133 & 0.9267 & 0.0833 & 0.0900 & 1157 & 1267 \\
 \centering
 \small
 \caption{Original DeepSeek-judged paired downstream comparisons}
-\label{tab:f2}
+\label{tab:s9}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Comparison & Correct delta & 95\% CI & McNemar $p$ & Token saving & 95\% CI \\
@@ -228,13 +228,13 @@ The context-saving intervals are positive while correctness intervals include ze
 \centering
 \small
 \caption{Multi-judge coverage and calibration}
-\label{tab:f3}
+\label{tab:s10}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Judge & Valid & Coverage & Correctness mean & Correct & Faithfulness mean & Faithful & Citations supported \\
 \midrule
 DeepSeek & 2,100 & 100.00\% & 4.672 & 91.33\% & 4.782 & 93.10\% & 89.57\% \\
-GLM-5.2 & 2,100 & 100.00\% & 4.551 & 88.24\% & 4.734 & 92.81\% & 92.14\% \\
+GLM-5.2 & 2,100 & 100.00\% & 4.550 & 88.24\% & 4.734 & 92.81\% & 92.14\% \\
 MiniMax-M3 & 2,065 & 98.33\% & 4.293 & 85.71\% & 4.633 & 95.45\% & 94.48\% \\
 \bottomrule
 \end{tabularx}
@@ -246,7 +246,7 @@ MiniMax-M3 rejects 35 query-method inputs spanning 18 queries through provider-s
 \centering
 \small
 \caption{Pairwise agreement on 2,065 shared judgments}
-\label{tab:f4}
+\label{tab:s11}
 \begin{tabular}{llrr}
 \toprule
 Field & Judge pair & Raw agreement & Cohen's $\kappa$ \\
@@ -267,7 +267,7 @@ Here DS denotes DeepSeek and MM denotes MiniMax-M3. Three-judge unanimity is 86.
 \centering
 \small
 \caption{Three-judge-majority paired comparisons}
-\label{tab:f5}
+\label{tab:s12}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Comparison & $n$ & Correct delta (95\% CI) & McNemar $p$ & Faithful delta (95\% CI) & McNemar $p$ & Context saving (95\% CI) \\
@@ -284,13 +284,13 @@ No individual judge or majority-vote comparison finds a significant correctness 
 \section{Calibration/Test Context-Budget Validation}
 \label{sec:12-appendix:calibration-test-context-budget-validation}
 
-The calibration/test protocol selects the final-context budget on calibration queries and freezes it before evaluation on held-out test queries. Tables~\ref{tab:g1}, \ref{tab:g2}, \ref{tab:g3}, and~\ref{tab:g4} report the frozen split, independent calibration, partition sensitivity, and normalized five-fold audit.
+The calibration/test protocol selects the final-context budget on calibration queries and freezes it before evaluation on held-out test queries. Tables~\ref{tab:s13}, \ref{tab:s14}, \ref{tab:s15}, and~\ref{tab:s16} report the frozen split, independent calibration, partition sensitivity, and normalized five-fold audit.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Frozen context-budget validation on LoTTE technology/search}
-\label{tab:g1}
+\label{tab:s13}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Scale & Selected policy & Calibration eligible & Hit delta vs dense & Token saving & Dense trunc. hit delta & Dense trunc. token saving \\
@@ -303,13 +303,13 @@ Scale & Selected policy & Calibration eligible & Hit delta vs dense & Token savi
 \end{tabularx}
 \end{table}
 
-The calibrated policies should be compared against dense-only adaptive truncation because both reduce final context size. IntentRoute preserves substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level. The 400k row is diagnostic rather than calibration-eligible in the original artifact set. Appendix Table G4 reports the completed cross-fitted follow-up.
+The calibrated policies should be compared against dense-only adaptive truncation because both reduce final context size. IntentRoute preserves substantially more $\mathrm{Hit@10}$ at a still meaningful token saving level. The 400k row is diagnostic rather than calibration-eligible in the original artifact set. Supplementary Table S16 reports the completed cross-fitted follow-up.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Independently calibrated 100k quality constraints}
-\label{tab:g2}
+\label{tab:s14}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Calibration Hit margin & IntentRoute policy & IR test Hit delta & IR saving & Dense policy & Dense test Hit delta & Dense saving \\
@@ -328,7 +328,7 @@ The zero-margin row preserves equal mean test Hit while selecting nonzero Intent
 \centering
 \small
 \caption{Calibration-partition sensitivity over 20 overlapping splits}
-\label{tab:g3}
+\label{tab:s15}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
 Scale & Eligible splits & Test Hit range & Mean test Hit delta & Saving range & Within 1pp of dense \\
@@ -347,7 +347,7 @@ These partitions reuse the same frozen rankings and overlap in their query membe
 \centering
 \small
 \caption{Normalized five-fold out-of-fold calibration using identical canonical query folds and policy rules across scales}
-\label{tab:g4}
+\label{tab:s16}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
 Scale & Eligible folds & Mean Hit delta & Mean token saving & Strict NI seeds & Selected-policy count & Dense compressed folds \\
@@ -365,13 +365,13 @@ Each canonical LoTTE query is held out exactly once and remains in the same fold
 \section{Cross-Domain Validation}
 \label{sec:12-appendix:cross-domain-validation}
 
-LoTTE science/search is used as a second-domain validation, not as a replacement for the main LoTTE technology/search scale-up. Tables~\ref{tab:h1} and~\ref{tab:h2} separate ranking transfer from frozen-budget behavior.
+LoTTE science/search is used as a second-domain validation, not as a replacement for the main LoTTE technology/search scale-up. Tables~\ref{tab:s17} and~\ref{tab:s18} separate ranking transfer from frozen-budget behavior.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Science/search fixed top-10 ranking validation}
-\label{tab:h1}
+\label{tab:s17}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
 Domain/scale & Corpus chunks & Queries & Dense $\mathrm{Hit@10}$ & IntentRoute $\mathrm{Hit@10}$ & Hit delta \\
@@ -386,7 +386,7 @@ science/search 100k & 101,187 & 596 & 0.8926 & 0.9077 & +1.51 pp \\
 \centering
 \small
 \caption{Science/search frozen context-budget validation}
-\label{tab:h2}
+\label{tab:s18}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
 Domain/scale & Budget policy & Seed & Frozen test hit delta vs dense & Token saving & Strict NI by CI \\
@@ -406,13 +406,13 @@ The fixed top-10 ranking gains transfer, while aggressive final-context budgets 
 \section{Feedback-Driven Hard-Case Recovery}
 \label{sec:12-appendix:feedback-driven-hard-case-recovery}
 
-Hard-case recovery focuses on affected queries where dense top-10 retrieves at least one GT chunk but the budgeted IntentRoute context misses. Tables~\ref{tab:i1} and~\ref{tab:i2} distinguish same-query repair from held-out recovery.
+Hard-case recovery focuses on affected queries where dense top-10 retrieves at least one GT chunk but the budgeted IntentRoute context misses. Tables~\ref{tab:s19} and~\ref{tab:s20} distinguish same-query repair from held-out recovery.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Same-query feedback recovery on affected queries}
-\label{tab:i1}
+\label{tab:s19}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Domain & Retry method & Affected queries & Recovered & Recovery rate & Avg token saving \\
@@ -433,7 +433,7 @@ Same-query retry is post-feedback repair evidence. It is not a first-pass genera
 \centering
 \small
 \caption{Calibration-to-test recovery generalization}
-\label{tab:i2}
+\label{tab:s20}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Domain & Recovery policy & Mean hit delta & Avg token saving \\
@@ -451,13 +451,13 @@ The held-out effect is small and domain-dependent. Feedback should therefore be 
 \section{Strong Post-Retrieval Baselines}
 \label{sec:12-appendix:strong-post-retrieval-baselines}
 
-These baselines test whether simpler post-retrieval operations explain the main final-context result. Tables~\ref{tab:j1}, \ref{tab:j2}, \ref{tab:j3}, and~\ref{tab:j4} report matched compression, reranking, and prompt-pruning controls.
+These baselines test whether simpler post-retrieval operations explain the main final-context result. Tables~\ref{tab:s21}, \ref{tab:s22}, \ref{tab:s23}, and~\ref{tab:s24} report matched compression, reranking, and prompt-pruning controls.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Dense+Sentence-MMR same-budget baseline on LoTTE technology/search 100k}
-\label{tab:j1}
+\label{tab:s21}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Budget target & $\mathrm{Hit@10}$ & Hit delta vs dense & Evid. recall@10 & Avg context tokens & Token saving vs dense \\
@@ -476,7 +476,7 @@ Dense+Sentence-MMR preserves dense chunk-support on this split while reducing se
 \centering
 \small
 \caption{Compressor-normalized comparison on LoTTE technology/search 100k}
-\label{tab:j2}
+\label{tab:s22}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Source pool & Method & Ratio & $\mathrm{Hit@10}$ range & Saving vs dense \\
@@ -499,7 +499,7 @@ Applying the same compressor to dense and IntentRoute evidence pools supports th
 \centering
 \small
 \caption{Cross-encoder reranker baseline on LoTTE technology/search 100k}
-\label{tab:j3}
+\label{tab:s23}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Method & $\mathrm{Hit@10}$ & Evid. recall@10 & Avg context tokens & Token saving vs dense \\
@@ -518,7 +518,7 @@ The cross-encoder reranker improves full top-10 support metrics, but that full r
 \centering
 \small
 \caption{SelectiveContext-lite prompt-pruning baseline}
-\label{tab:j4}
+\label{tab:s24}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Source pool & Ratio & $\mathrm{Hit@10}$ & Token saving vs dense & Extra saving vs source \\
@@ -540,13 +540,13 @@ SelectiveContext-lite is a deterministic local proxy, not LLMLingua. Its role is
 \section{Route-Control Attribution and Arm Sensitivity}
 \label{sec:12-appendix:route-control-attribution-and-arm-sensitivity}
 
-Tables~\ref{tab:k1}, \ref{tab:k2}, \ref{tab:k3}, and~\ref{tab:k4} isolate geometry, feedback, arm granularity, and frozen-trajectory route mediation.
+Tables~\ref{tab:s25}, \ref{tab:s26}, \ref{tab:s27}, and~\ref{tab:s28} isolate geometry, feedback, arm granularity, and frozen-trajectory route mediation.
 
 \begin{table}[pos=tbp]
 \centering
 \small
 \caption{Static geometry versus uniform-random route control}
-\label{tab:k1}
+\label{tab:s25}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Setting & Full top-10 hit & Route reward & Selected-cluster hit & Test hit delta & Token saving \\
@@ -563,7 +563,7 @@ Dense/BM25 rescue keeps final fused hit high in both rows, while route reward an
 \centering
 \small
 \caption{Feedback and static route controls}
-\label{tab:k2}
+\label{tab:s26}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
 Setting & Route reward & Selected-cluster hit & Dense rate & Test hit delta & Token saving \\
@@ -582,7 +582,7 @@ Feedback-updated LinUCB improves route quality over no-feedback/random controls,
 \centering
 \small
 \caption{Arm-count sensitivity}
-\label{tab:k3}
+\label{tab:s27}
 \begin{tabularx}{\textwidth}{>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X}
 \toprule
 $K$ & Static route reward & Full test hit delta & Full token saving & Gated dense rate & Gated hit delta \\
@@ -602,7 +602,7 @@ Full multi-route quality is stable across the tested grid, whereas gated dense-s
 \centering
 \small
 \caption{Frozen-trajectory dynamic route mediation; Save is relative to uncompressed dense}
-\label{tab:k4}
+\label{tab:s28}
 \begin{tabular}{lrrr}
 \toprule
 Route & Src. Hit & Budget Hit & Save \\
@@ -620,6 +620,61 @@ The replay freezes selected arms and feedback state, and exactly reproduces the 
 
 \section{Reproducibility and Reporting Guardrails}
 \label{sec:12-appendix:reproducibility-and-reporting-guardrails}
+
+\subsection{Standard Ranking Metrics}
+\label{sec:12-appendix:standard-ranking-metrics}
+
+For mean reciprocal rank, let $\rho_t$ be the rank of the first relevant chunk within the top-$K$ list, or $\infty$ if no relevant chunk is retrieved:
+
+\[
+\mathrm{MRR@K}(q_t) =
+\begin{cases}
+\frac{1}{\rho_t}, & \rho_t \le K, \\
+0, & \rho_t = \infty.
+\end{cases}
+\]
+
+For binary relevance $\mathrm{rel}_{t,j} \in \{0,1\}$, we compute:
+
+\[
+\mathrm{DCG@K}(q_t) =
+\sum_{j=1}^{K} \frac{\mathrm{rel}_{t,j}}{\log_2(j+1)},
+\]
+
+\[
+\mathrm{nDCG@K}(q_t) =
+\frac{\mathrm{DCG@K}(q_t)}{\mathrm{IDCG@K}(q_t)}.
+\]
+
+If $\mathrm{IDCG@K}(q_t)=0$, we set $\mathrm{nDCG@K}(q_t)=0$.
+
+\subsection{Controller Parameters}
+\label{sec:12-appendix:controller-parameters}
+
+The complete shared controller configuration is:
+
+\begin{itemize}
+\item KMeans/MiniBatchKMeans arms: 32 fixed LinUCB arms;
+\item candidate arms per query: 3 cluster-local routes;
+\item context projection dimension: 64;
+\item LinUCB exploration: $\alpha=1.0$, decay 0.01, minimum 0.3;
+\item prequential epochs: 3 unless otherwise stated;
+\item feedback trust: default $\tau=0.75$ for noisy feedback updates;
+\item full-route candidate depths: dense/BM25/cluster = 100/100/100;
+\item lite-route depths: dense/BM25 = 20/20;
+\item dense safety floor: 5 full-route chunks and 2 lite-route chunks;
+\item route fusion: weighted reciprocal-rank fusion with $k=60$;
+\item full-route weights: dense 2.0, BM25 0.8, cluster 0.8;
+\item lite-route weights: dense 0.8, BM25 0.5, cluster 2.0;
+\item confidence thresholds: high 0.65 and mid 0.35;
+\item drift threshold: 1.0;
+\item token-budget grid: $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and $m \in \{4,\ldots,8\}$.
+\end{itemize}
+
+The notation \nolinkurl{token_budget_r0.85_m4} means that each query keeps a safe prefix of at least four chunks and admits additional chunks only while the final context remains within 85\% of the original dense top-10 token budget. The policy is selected on calibration queries and frozen before held-out test evaluation.
+
+\subsection{Reporting Guardrails}
+\label{sec:12-appendix:reporting-guardrails}
 
 The following rules apply when migrating the draft into a submission template:
 

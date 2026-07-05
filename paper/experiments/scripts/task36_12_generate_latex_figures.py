@@ -16,6 +16,22 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = ROOT / "paper" / "full_draft" / "figures"
 TARGET = ROOT / "paper" / "latex" / "figures"
+MM_TO_INCH = 1.0 / 25.4
+FULL_WIDTH_INCH = 190.0 * MM_TO_INCH
+
+plt.rcParams.update(
+    {
+        "font.family": "DejaVu Sans",
+        "font.size": 7.0,
+        "axes.labelsize": 7.5,
+        "axes.titlesize": 8.0,
+        "xtick.labelsize": 7.0,
+        "ytick.labelsize": 7.0,
+        "legend.fontsize": 7.0,
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
+    }
+)
 
 
 def read_csv(name: str) -> list[dict[str, str]]:
@@ -27,7 +43,6 @@ def save(fig: plt.Figure, name: str) -> None:
     TARGET.mkdir(parents=True, exist_ok=True)
     fig.savefig(
         TARGET / name,
-        bbox_inches="tight",
         metadata={"CreationDate": None, "ModDate": None},
     )
     plt.close(fig)
@@ -137,7 +152,7 @@ def token_quality() -> None:
     policy_saving = [float(row["policy_saving_pct"]) for row in rows]
     dense_saving = [float(row["dense_adaptive_saving_pct"]) for row in rows]
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.2, 3.8))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_WIDTH_INCH, 76.0 * MM_TO_INCH))
     for domain, indices in domain_groups(rows).items():
         linestyle = "-" if domain == "technology/search" else "--"
         xs = [x_values[idx] for idx in indices]
@@ -147,7 +162,6 @@ def token_quality() -> None:
     axes[0].set_ylabel("Hit@10 delta vs dense (pp)")
     set_chunk_axis(axes[0])
     axes[0].grid(alpha=0.3)
-    axes[0].legend(fontsize=8)
 
     for domain, indices in domain_groups(rows).items():
         linestyle = "-" if domain == "technology/search" else "--"
@@ -157,8 +171,16 @@ def token_quality() -> None:
     axes[1].set_ylabel("Final context token saving (%)")
     set_chunk_axis(axes[1])
     axes[1].grid(alpha=0.3)
-    axes[1].legend(fontsize=8)
-    fig.tight_layout()
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(
+        handles,
+        labels,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.995),
+        ncol=4,
+        frameon=False,
+    )
+    fig.subplots_adjust(left=0.075, right=0.985, bottom=0.18, top=0.80, wspace=0.28)
     save(fig, "figure2_token_quality_frontier.pdf")
 
 
@@ -169,7 +191,7 @@ def geometry() -> None:
     retention = [float(row["context_retention_at_10"]) for row in rows]
     variance = [float(row["pca_var64"]) for row in rows]
 
-    fig, ax = plt.subplots(figsize=(7.4, 3.8))
+    fig, ax = plt.subplots(figsize=(FULL_WIDTH_INCH, 76.0 * MM_TO_INCH))
     for domain, indices in domain_groups(rows).items():
         linestyle = "-" if domain == "technology/search" else "--"
         xs = [x_values[idx] for idx in indices]
@@ -181,7 +203,7 @@ def geometry() -> None:
     set_chunk_axis(ax)
     ax.grid(alpha=0.3)
     ax.legend(fontsize=7, ncol=2)
-    fig.tight_layout()
+    fig.subplots_adjust(left=0.075, right=0.985, bottom=0.18, top=0.96)
     save(fig, "figure3_geometry_diagnostics.pdf")
 
 
@@ -192,13 +214,14 @@ def geometry_to_control() -> None:
     saving = [float(row["policy_saving_pct"]) for row in rows]
     colors = ["#2f855a" if row["domain"] == "technology/search" else "#1f5f8b" for row in rows]
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.2, 3.8))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_WIDTH_INCH, 76.0 * MM_TO_INCH))
     axes[0].axhline(0.0, color="#52606d", linestyle="--", linewidth=1)
     axes[0].scatter(retention, hit_delta, c=colors, s=42, edgecolors="white", linewidths=0.8)
     for row, x, y in zip(rows, retention, hit_delta):
         axes[0].annotate(row["scale"], (x, y), textcoords="offset points", xytext=(0, 6), ha="center", fontsize=7)
     axes[0].set_xlabel("ContextRetention@10")
     axes[0].set_ylabel("IntentRoute Hit@10 delta vs dense (pp)")
+    axes[0].margins(x=0.08, y=0.18)
     axes[0].grid(alpha=0.3)
 
     axes[1].scatter(retention, saving, c=colors, s=42, edgecolors="white", linewidths=0.8)
@@ -206,14 +229,21 @@ def geometry_to_control() -> None:
         axes[1].annotate(row["scale"], (x, y), textcoords="offset points", xytext=(0, 6), ha="center", fontsize=7)
     axes[1].set_xlabel("ContextRetention@10")
     axes[1].set_ylabel("Final context token saving (%)")
+    axes[1].margins(x=0.08, y=0.16)
     axes[1].grid(alpha=0.3)
 
     handles = [
         plt.Line2D([0], [0], marker="o", color="w", label="technology/search", markerfacecolor="#2f855a", markersize=7),
         plt.Line2D([0], [0], marker="o", color="w", label="science/search", markerfacecolor="#1f5f8b", markersize=7),
     ]
-    axes[1].legend(handles=handles, fontsize=8, loc="lower right")
-    fig.tight_layout()
+    fig.legend(
+        handles=handles,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.995),
+        ncol=2,
+        frameon=False,
+    )
+    fig.subplots_adjust(left=0.075, right=0.985, bottom=0.18, top=0.82, wspace=0.28)
     save(fig, "figure3_geometry_to_control.pdf")
 
 
@@ -227,7 +257,7 @@ def feedback_adaptation() -> None:
     linucb_rate = [float(row["linucb_rate"]) for row in rows]
     token_ratio = [float(row["token_ratio_vs_dense"]) for row in rows]
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.2, 3.8))
+    fig, axes = plt.subplots(1, 2, figsize=(FULL_WIDTH_INCH, 76.0 * MM_TO_INCH))
     axes[0].plot(x_values, selected_cluster, marker="o", label="Selected-cluster hit", color="#2f855a")
     axes[0].plot(x_values, last_reward, marker="s", label="Last true reward", color="#9a6b14")
     axes[0].set_ylim(0.0, 1.0)
@@ -244,17 +274,23 @@ def feedback_adaptation() -> None:
     axes[1].set_xticks(x_values, labels, rotation=20, ha="right")
     axes[1].grid(alpha=0.3)
     axes[1].legend(fontsize=8)
-    fig.tight_layout()
+    fig.subplots_adjust(left=0.075, right=0.985, bottom=0.24, top=0.96, wspace=0.28)
     save(fig, "figure5_feedback_adaptation.pdf")
 
 
 def main() -> None:
-    system_diagram()
+    figure1 = TARGET / "figure1_system_diagram.pdf"
+    if not figure1.exists():
+        raise SystemExit(
+            "missing author-supplied Figure 1 placeholder/final asset: "
+            f"{figure1.relative_to(ROOT)}"
+        )
     token_quality()
     geometry()
     geometry_to_control()
     feedback_adaptation()
-    print("figure_assets=5")
+    print("author_figure_assets=1")
+    print("generated_data_figure_assets=4")
     print("latex_figures=passed")
 
 

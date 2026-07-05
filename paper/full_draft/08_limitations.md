@@ -72,15 +72,18 @@ remain heterogeneous and the selected policy changes in every 400k fold. It
 therefore reduces the missing-calibration concern without establishing
 split-invariant deployment behavior.
 
-## 7.6 Geometry Is Diagnostic, Not a Proof
+The route stability checks use the fixed seeds 13, 17, and 19 as engineering
+replicates; query-level paired tests provide the main inferential evidence. The
+400k seed-level saving interval remains wider than at other scales, and the
+cross-fitted follow-up establishes strict non-inferiority in 0/3 seeds.
+
+## 7.6 Geometry and Fixed-Arm Scope
 
 The piecewise relevance-manifold framing is supported by diagnostics such as
 $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These
 diagnostics do not prove a mathematical manifold theorem. They show that local
 geometry is informative for routing on LoTTE, while dense retrieval remains
 necessary.
-
-## 7.7 Fixed Routing Arms Are an Experimental Design
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and
 the experiments need reproducible, scalable arms. This is not a claim that
@@ -90,7 +93,7 @@ counts complicate the current LinUCB setup. The tested $K=8$-$128$ grid shows
 stable full multi-route quality but sensitive gated routing, so $K=32$ remains
 an engineering operating point rather than an optimum.
 
-## 7.8 Limited Encoder and Domain Coverage
+## 7.7 Limited Encoder and Domain Coverage
 
 The paper evaluates matched MiniLM, BGE-base, and E5-base dense/IntentRoute
 backbones, plus a QA-tuned MiniLM-family check and a cross-encoder reranker.
@@ -103,32 +106,11 @@ LoTTE technology/search is the main positive large-scale domain. LoTTE
 science/search strengthens external validity but does not replace evaluation on
 additional vertical corpora.
 
-## 7.9 Seed Count and 400k Variance
+## 7.8 Future Work
 
-The stability analysis uses the fixed seeds 13, 17, and 19 across the main
-LoTTE route experiments. These are engineering stability diagnostics, not a
-claim that a large seed population has been sampled. Query-level paired tests
-provide the main inferential evidence. The LoTTE 400k
-token-saving interval is notably wider than the other scales and should be
-interpreted as seed-level operating-point variance across routed rankings and
-context-budget control. In the original calibrated-budget experiment, the 400k
-frozen-test result is positive but the selected policy is not
-calibration-eligible under the zero-observed-hit-drop gate. The completed
-cross-fitted follow-up is positive on average, but uses five distinct fold
-policies and establishes strict non-inferiority in 0/3 seeds. The original
-failure and the follow-up instability both remain part of the reported
-boundary.
-
-## 7.10 Future Work
-
-The factorial safe-compression attribution audit finds no held-out
-discrimination advantage for geometry-feedback confidence over a matched
-random-partition feedback control under a fixed dense candidate pool and
-compression action. Only about $2.2\%$ of dense-hit test queries are unsafe for
-the diagnostic action, so AUROC intervals are wide and AUPRC, Brier, and ECE are
-strongly affected by class imbalance. The current evidence supports
-confidence-gated routing and a separately calibrated budget, not a learned
-per-query confidence-to-token-ratio mapping.
+The safe-compression attribution boundary and class imbalance are analyzed in
+Section 6.5. They motivate, but do not currently validate, a learned per-query
+confidence-to-token-ratio predictor.
 
 Future work should evaluate:
 

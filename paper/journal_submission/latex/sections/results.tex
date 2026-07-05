@@ -31,9 +31,9 @@ An independently calibrated 100k audit gives Dense and IntentRoute the same fine
 
 A 20-partition sensitivity audit further separates stable scales from split sensitivity. Frozen selected policies retain mean Hit within \nolinkurl{1pp} of dense on all 20 test partitions at 200k and 638k, versus 14/20 at 100k and 17/20 at 400k. The 100k mean range is \nolinkurl{-2.00pp} to \nolinkurl{+0.72pp}; 400k varies from \nolinkurl{-2.08pp} to \nolinkurl{+2.80pp}. The original pre-specified split remains the primary result, while the repeated partitions strengthen 200k/638k and keep 100k/400k interpretation more cautious.
 
-A normalized five-fold follow-up uses the same canonical query folds, predefined budget grid, zero-drop gate, three route seeds, Dense fallback, and paired statistics at every scale. Its out-of-fold IntentRoute Hit deltas and token savings are respectively \nolinkurl{-1.06pp/4.16%}, \nolinkurl{+1.40pp/16.07%}, \nolinkurl{+0.00pp/14.50%}, and \nolinkurl{+0.28pp/15.23%} from 100k through 638k. Independently calibrated Dense finds no eligible compressed action in any fold and therefore uses top-10 fallback. At 400k, all five IntentRoute folds are eligible, closing the missing normalized follow-up, but they select five different policies and strict non-inferiority remains \nolinkurl{0/3} seeds. Appendix G4 reports the fold-level results. This supports the average 400k trade-off without erasing the original split failure or claiming stable policy selection.
+A normalized five-fold follow-up uses the same canonical query folds, predefined budget grid, zero-drop gate, three route seeds, Dense fallback, and paired statistics at every scale. Its out-of-fold IntentRoute Hit deltas and token savings are respectively \nolinkurl{-1.06pp/4.16%}, \nolinkurl{+1.40pp/16.07%}, \nolinkurl{+0.00pp/14.50%}, and \nolinkurl{+0.28pp/15.23%} from 100k through 638k. Independently calibrated Dense finds no eligible compressed action in any fold and therefore uses top-10 fallback. At 400k, all five IntentRoute folds are eligible, closing the missing normalized follow-up, but they select five different policies and strict non-inferiority remains \nolinkurl{0/3} seeds. Supplementary Table S16 reports the fold-level results. This supports the average 400k trade-off without erasing the original split failure or claiming stable policy selection.
 
-Query-level paired bootstrap intervals and McNemar-style win/loss counts show that token savings are more consistent than strict quality non-inferiority. The conservative confidence-only policy remains a stable 4.7-5.3\% saving baseline; complete seed and policy details are reported in Appendix A and G. Figure~\ref{fig:token-quality} visualizes the quality-cost frontier.
+Query-level paired bootstrap intervals and McNemar-style win/loss counts show that token savings are more consistent than strict quality non-inferiority. The conservative confidence-only policy remains a stable 4.7-5.3\% saving baseline; complete seed and policy details are reported in Supplementary Sections S1 and S7. Figure~\ref{fig:token-quality} visualizes the quality-cost frontier.
 
 \subsection{Matched-Backbone Robustness}
 \label{sec:06-results:matched-backbone-robustness}
@@ -57,7 +57,7 @@ BGE quality-first & 0.8993 & 0.9081 & +0.88 pp & 7.23\% \\
 \end{tabularx}
 \end{table}
 
-BGE and E5 full multi-route policies remain near their respective dense baselines while saving about 12\% context tokens. The BGE quality-first point moves the same frontier toward higher retrieval hit at lower saving. The E5 scan did not produce an above-dense token-saving point, so positive-hit tunability is BGE-specific rather than a universal claim. Appendix E reports the supporting encoder details.
+BGE and E5 full multi-route policies remain near their respective dense baselines while saving about 12\% context tokens. The BGE quality-first point moves the same frontier toward higher retrieval hit at lower saving. The E5 scan did not produce an above-dense token-saving point, so positive-hit tunability is BGE-specific rather than a universal claim. Supplementary Section S5 reports the supporting encoder details.
 
 \subsection{Route-Control Attribution}
 \label{sec:06-results:route-control-attribution}
@@ -85,7 +85,7 @@ No-feedback gated & 0.1504 & 0.1570 & 1.0000 & -1.60 pp & 16.56\% \\
 
 Static nearest geometry sharply exceeds random routing on route reward and selected-cluster hit, but dense and BM25 rescue keep final fused hit high for both. Feedback-updated LinUCB likewise improves route quality over the no-feedback control, but the tested learned-gated threshold loses 5.20 percentage points of frozen-test hit. These results support geometry and feedback as route-confidence signals; neither alone explains final fused quality or justifies unconditional dense removal.
 
-Feedback remains useful as a recovery trigger. Conservative same-query retry recovers 23 of 76 budget-induced misses across the two LoTTE 100k domains, but the stricter calibration-to-test effect is small and domain-dependent. Appendix I and K contain the full recovery and control tables.
+Feedback remains useful as a recovery trigger. Conservative same-query retry recovers 23 of 76 budget-induced misses across the two LoTTE 100k domains, but the stricter calibration-to-test effect is small and domain-dependent. Supplementary Sections S9 and S11 contain the full recovery and control tables.
 
 A frozen-trajectory route replay further isolates the confidence gate. Keeping the selected arms and feedback state fixed, the original query-to-tier assignment exceeds a shuffled-tier control with identical tier frequencies by 4.80 percentage points of Hit@10, both before and after the common \nolinkurl{r0.95/m4} budget; all three seed-level paired intervals exclude zero. It also exceeds an always-cluster-primary route by 10.79 percentage points after budgeting. Fixed full fusion remains 0.40 percentage points above dynamic gating while saving 0.91 percentage points fewer tokens, and that hit difference is not statistically detected. The result supports confidence as a route/fallback assignment signal, not as a direct compression-safety score.
 
@@ -114,12 +114,12 @@ $K$ & Static route reward & Full hit delta & Full token saving & Gated dense rat
 
 The full route surface stays above its paired dense baseline throughout the grid, while gated dense use rises from 0.4083 to 0.9502 as $K$ grows. This supports $K$ as an engineering parameter governing feedback sparsity and fallback behavior, not a geometrically privileged constant.
 
-Across LoTTE scales, nearest-cluster hit remains high while context retention and PCA concentration vary. Figure~\ref{fig:geometry-control} relates context retention to observed hit delta and token saving. The small cross-scale sample does not show a deterministic geometry-to-gain law: geometry identifies plausible local route structure, while calibration, fusion, and dense rescue determine the final operating point. Full diagnostics are retained in Appendix K.
+Across LoTTE scales, nearest-cluster hit remains high while context retention and PCA concentration vary. Figure~\ref{fig:geometry-control} relates context retention to observed hit delta and token saving. The small cross-scale sample does not show a deterministic geometry-to-gain law: geometry identifies plausible local route structure, while calibration, fusion, and dense rescue determine the final operating point. Full diagnostics are retained in Supplementary Section S11.
 
 \subsection{Cross-Domain And Boundary Evidence}
 \label{sec:06-results:cross-domain-and-boundary-evidence}
 
-On LoTTE science/search, fixed top-10 IntentRoute reaches $\mathrm{Hit@10}=0.9267$ versus 0.8950 for dense at 20k/q200 and 0.9077 versus 0.8926 at 100k. Frozen budget policies save 13-14\% tokens at 20k/q200 while remaining above dense. At 100k, the more aggressive policy saves 17-21\% but can introduce small hit losses. The ranking signal transfers, but compression strength requires domain- and scale-specific calibration. Appendix H reports the complete seed-level table.
+On LoTTE science/search, fixed top-10 IntentRoute reaches $\mathrm{Hit@10}=0.9267$ versus 0.8950 for dense at 20k/q200 and 0.9077 versus 0.8926 at 100k. Frozen budget policies save 13-14\% tokens at 20k/q200 while remaining above dense. At 100k, the more aggressive policy saves 17-21\% but can introduce small hit losses. The ranking signal transfers, but compression strength requires domain- and scale-specific calibration. Supplementary Section S8 reports the complete seed-level table.
 
 PubMedQA and Banking77 provide supporting feedback-adaptation checks near quality ceilings. eManual and CUAD remain boundary cases because duplicated evidence text and sparse ground-truth anchors complicate strict chunk-level evaluation. These datasets bound the claim rather than establish universal dense-retrieval dominance.
 
@@ -128,7 +128,7 @@ PubMedQA and Banking77 provide supporting feedback-adaptation checks near qualit
 
 Dense+Sentence-MMR preserves dense chunk-support $\mathrm{Hit@10}=0.8705$ while saving 11.4-13.1\% selected-sentence tokens. When the same compressor is applied to both source pools, IntentRoute+Sentence-MMR reaches 10.1-21.2\% total saving because it starts from a smaller evidence pool. SelectiveContext-lite similarly adds prompt pruning after either source pool and reaches up to 30.57\% total saving over dense for the tested IntentRoute variants. These controls show that downstream compression is complementary, not unique to IntentRoute.
 
-A cross-encoder reranker improves dense full-top-10 support from $\mathrm{Hit@10}=0.8705$ to 0.8777 and evidence recall from 0.7081 to 0.7332, but increases context tokens by 21.9\%. Under matched context budgets, its $\mathrm{Hit@10}$ range of 0.8633-0.8729 does not uniformly dominate the IntentRoute range of 0.8657-0.8777. Appendix J contains all compressor and reranker tables.
+A cross-encoder reranker improves dense full-top-10 support from $\mathrm{Hit@10}=0.8705$ to 0.8777 and evidence recall from 0.7081 to 0.7332, but increases context tokens by 21.9\%. Under matched context budgets, its $\mathrm{Hit@10}$ range of 0.8633-0.8729 does not uniformly dominate the IntentRoute range of 0.8657-0.8777. Supplementary Section S10 contains all compressor and reranker tables.
 
 \subsection{Downstream Answer-Level Evaluation}
 \label{sec:06-results:downstream-answer-level-evaluation}
@@ -153,4 +153,4 @@ IntentRoute + MMR vs Dense + MMR & +2.33 pp & +0.33 pp & +1.36 pp & +0.34 pp [-3
 
 All context-saving intervals are positive. Every individual-judge and majority-vote correctness interval includes zero, and all correctness McNemar tests are non-significant. Absolute judge calibration differs: pairwise raw agreement is 89.88-92.15\% for correctness, with Cohen's $\kappa$ of 0.503-0.653. This supports lower context without a statistically detectable correctness difference, but not strict non-inferiority or significant answer-quality improvement.
 
-Faithfulness is not uniformly preserved. The three-judge majority estimates a -4.15 pp BGE faithfulness change (95\% CI [-6.92, -1.73], $p=0.0018$) and a +4.07 pp change for the SentMMR composition (95\% CI [+0.68, +7.46], $p=0.0290$); E5 remains non-significant. Appendix F reports judge coverage, agreement, full method-level results, and the mixed faithfulness boundary.
+Faithfulness is not uniformly preserved. The three-judge majority estimates a -4.15 pp BGE faithfulness change (95\% CI [-6.92, -1.73], $p=0.0018$) and a +4.07 pp change for the SentMMR composition (95\% CI [+0.68, +7.46], $p=0.0290$); E5 remains non-significant. Supplementary Section S6 reports judge coverage, agreement, full method-level results, and the mixed faithfulness boundary.

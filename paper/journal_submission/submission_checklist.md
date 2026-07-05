@@ -1,6 +1,6 @@
 # Journal Submission Checklist
 
-Updated: 2026-07-01
+Updated: 2026-07-05
 
 ## Venue Decision
 
@@ -20,9 +20,14 @@ Updated: 2026-07-01
 - [x] Convert the manuscript to the current Elsevier CAS single-column format.
 - [x] Build a clean CAS `doubleblind` anonymized manuscript file.
 - [x] Build a separate one-page title-page file.
-- [x] Export the three cited figures as separate vector PDF files.
+- [x] Export all three cited figures as separate vector PDF files.
+- [x] Regenerate Figures 2 and 3 at 190 mm with embedded Type 42 fonts and at
+  least 7 pt finished lettering.
+- [ ] Replace the non-final Figure 1 placeholder with the author-produced
+  190 mm vector PDF and pass the strict artwork audit.
 - [x] Verify every table is editable LaTeX text, not an image.
-- [x] Verify all 33 tables and three figures are cited in the manuscript.
+- [x] Verify all five main tables, 28 supplementary tables, and three figures
+  are cited in their respective documents.
 
 ## Double-Anonymized Review
 
@@ -62,5 +67,7 @@ Updated: 2026-07-01
   repository artifact.
 - [ ] Prepare public artifact release with machine-specific paths removed.
 - [x] Re-run manuscript and submission-package validation after CAS migration.
-- [x] Rebuild and visually inspect the 36-page anonymous PDF and one-page title
-  page.
+- [x] Rebuild and visually inspect the 24-page main PDF, 12-page supplement,
+  and one-page title page.
+- [x] Pass 921 experiment-artifact checks with zero warnings and errors.
+- [x] Recompute and verify all five main tables and both plotted-data files.

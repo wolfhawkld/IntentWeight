@@ -25,7 +25,9 @@ The main paper now uses three figures:
 
 Cross-domain validation, feedback recovery, full downstream metrics, strong
 compressor/reranker baselines, and detailed control tables remain available in
-the appendix. No supporting result was deleted from the experiment artifacts.
+the supporting evidence source. Task67 subsequently packages that source as a
+separate double-blind supplement. No supporting result was deleted from the
+experiment artifacts.
 
 ## Claim Alignment
 

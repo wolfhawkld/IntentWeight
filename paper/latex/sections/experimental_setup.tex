@@ -67,29 +67,7 @@ The evidence-recall metric is:
 \frac{\left| R_t^K \cap G_t \right|}{\left|G_t\right|}.
 \]
 
-For mean reciprocal rank, let $\rho_t$ be the rank of the first relevant chunk within the top-$K$ list, or $\infty$ if no relevant chunk is retrieved:
-
-\[
-\mathrm{MRR@K}(q_t) =
-\begin{cases}
-\frac{1}{\rho_t}, & \rho_t \le K, \\
-0, & \rho_t = \infty.
-\end{cases}
-\]
-
-For binary relevance, let $\mathrm{rel}_{t,j} \in \{0,1\}$ denote whether the chunk at rank $j$ for query $q_t$ is relevant. We compute:
-
-\[
-\mathrm{DCG@K}(q_t) =
-\sum_{j=1}^{K} \frac{\mathrm{rel}_{t,j}}{\log_2(j+1)},
-\]
-
-\[
-\mathrm{nDCG@K}(q_t) =
-\frac{\mathrm{DCG@K}(q_t)}{\mathrm{IDCG@K}(q_t)}.
-\]
-
-If $\mathrm{IDCG@K}(q_t)=0$, we set $\mathrm{nDCG@K}(q_t)=0$.
+MRR@K uses the reciprocal rank of the first relevant chunk, and nDCG@K uses binary relevance with logarithmic rank discount and the standard ideal-DCG normalization. Supplementary Section S12 gives the explicit formulas and the zero-relevance convention.
 
 The main headline uses query-level $\mathrm{Hit@10}$. This choice reflects the target use case: retrieving at least one usable evidence chunk for RAG generation under a smaller context budget. It does not imply complete evidence collection. $\mathrm{EvidenceRecall@10}$ is reported separately where multi-evidence coverage is important.
 
@@ -200,7 +178,7 @@ Some experiments use multiple prequential epochs over the same query stream to s
 \subsection{Implementation Notes}
 \label{sec:05-experimental-setup:implementation-notes}
 
-The main dense baseline uses \nolinkurl{sentence-transformers/all-MiniLM-L6-v2} with exact cosine search. Matched-backbone checks use BGE-base and \nolinkurl{intfloat/e5-base-v2}; E5 applies the recommended \nolinkurl{query:} and \nolinkurl{passage:} prefixes. Embeddings and retrieval artifacts are cached to avoid repeating deterministic computation. Metrics are recomputed from saved rankings, not copied from prior summaries. Historical experiment directories and machine-readable method labels retain the legacy \nolinkurl{IntentWeight} identifier so that existing hashes, selectors, and result provenance remain reproducible; paper-facing terminology uses \nolinkurl{IntentRoute}.
+The main dense baseline uses Sentence Transformers \nolinkurl{all-MiniLM-L6-v2} with exact cosine search. Matched-backbone checks use BGE-base and \nolinkurl{intfloat/e5-base-v2}; E5 applies the recommended \nolinkurl{query:} and \nolinkurl{passage:} prefixes. Embeddings and retrieval artifacts are cached to avoid repeating deterministic computation. Metrics are recomputed from saved rankings, not copied from prior summaries. Historical experiment directories and machine-readable method labels retain the legacy \nolinkurl{IntentWeight} identifier so that existing hashes, selectors, and result provenance remain reproducible; paper-facing terminology uses \nolinkurl{IntentRoute}.
 
 KMeans/MiniBatchKMeans uses 32 arms in the main scale experiments. A dedicated 100k sensitivity check evaluates 8, 16, 32, 64, and 128 arms. This supports LinUCB comparability and tests engineering sensitivity, but it is not claimed to identify a theoretically optimal clustering design.
 

@@ -101,6 +101,7 @@ def main() -> None:
     synced.extend(
         (
             manuscript_path,
+            TARGET / "supplementary_material.tex",
             TARGET / "title_page.tex",
             TARGET / "Makefile",
             TARGET / "highlights.txt",

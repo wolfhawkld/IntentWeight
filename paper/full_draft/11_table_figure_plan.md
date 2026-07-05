@@ -5,7 +5,12 @@ Updated: 2026-07-01 (Task65.7)
 This plan aligns the displays with the revised route-control and calibrated-budget
 claim. It introduces no new experiment or claim. The journal-facing main text
 uses five tables and three figures; detailed seed, recovery, compressor, and
-boundary-case results remain in the appendix.
+boundary-case results remain in the separately submitted supplement.
+
+See `figures/figure_enrichment_and_3d_plan.md` for the Task67 proposal to enrich
+Figures 2/3 and add optional supplementary geometry, calibration, risk, and
+multi-judge visualizations. That proposal is not yet an approved display-set
+change.
 
 ## Main-Paper Tables
 
@@ -38,7 +43,7 @@ granularity.
 Paired BGE, E5, and shared-MMR comparisons over 300 frozen queries. The display
 reports per-judge correctness deltas, shared-key majority uncertainty, and
 context-token saving uncertainty. Full judge calibration, agreement,
-faithfulness, citation-support, and missingness details remain in Appendix F.
+faithfulness, citation-support, and missingness details remain in Supplementary Section S6.
 
 ## Main-Paper Figures
 
@@ -58,18 +63,18 @@ Relates context retention to observed hit delta and token saving. It supports
 geometry as a diagnostic route-control signal, not a deterministic gain law or
 theorem-level manifold proof.
 
-## Appendix Placement
+## Supplementary Placement
 
-- Appendix A/G: seed stability, independent Dense calibration, complete
+- Supplementary Sections S1/S7: seed stability, independent Dense calibration, complete
   frozen-policy validation, overlapping-split sensitivity, and normalized
   cross-fitted calibration;
-- Appendix D/E: boundary datasets and encoder details;
-- Appendix F: complete downstream answer, faithfulness, and citation results;
-- Appendix H/I: cross-domain and feedback-recovery details;
-- Appendix J: Sentence-MMR, SelectiveContext-lite, and cross-encoder controls;
-- Appendix K: full geometry/random, feedback, and arm-count control tables.
+- Supplementary Sections S4/S5: boundary datasets and encoder details;
+- Supplementary Section S6: complete downstream answer, faithfulness, and citation results;
+- Supplementary Sections S8/S9: cross-domain and feedback-recovery details;
+- Supplementary Section S10: Sentence-MMR, Selective Context-lite, and cross-encoder controls;
+- Supplementary Section S11: full geometry/random, feedback, and arm-count control tables.
 
 The older clean component table, geometry scale table, cross-domain table, and
 feedback-recovery table are represented in the main text as bounded prose and
-retained in their experiment summaries or appendix tables. They no longer
+retained in their experiment summaries or supplementary tables. They no longer
 compete with the evidence that directly supports the revised central claim.
