@@ -1,5 +1,11 @@
 # Experiments Draft
 
+> **Superseded / archived:** This file is retained only for experiment-history
+> provenance. The current manuscript source is `paper/full_draft/`, the
+> paper-facing method name is **IntentRoute**, and current numerical claims must
+> be traced through `paper/experiments/task_paper_use_status.md`. Do not use this
+> draft as a source for paper tables or headline values.
+
 Updated: 2026-06-11
 
 ## Experimental Goals
@@ -366,5 +372,3 @@ Recommended ordering in the results section:
   `paper/experiments/task39_lotte_cross_domain_validation.md`
 - Feedback-driven hard-case recovery:
   `paper/experiments/task40_feedback_recovery_summary.md`
-> **Superseded draft / 已归档草稿**: 当前论文主源为 `paper/full_draft/`，
-> 论文-facing 名称为 IntentRoute。本文件仅保留早期 IntentWeight 草稿记录。

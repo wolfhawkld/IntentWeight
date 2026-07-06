@@ -1,6 +1,6 @@
 # IntentRoute Full Draft
 
-Updated: 2026-06-28
+Updated: 2026-07-06
 
 This directory contains the first complete paper draft assembled after the
 paper evidence package, pre-writing validation work, and review-defense
@@ -37,6 +37,8 @@ draft. The most important internal evidence groups are:
 - LoTTE geometry scale validation;
 - calibration/test context-budget validation;
 - LoTTE science/search cross-domain validation;
+- PubMedQA and Banking77 feedback-adaptation evidence;
+- eManual duplicate-text analysis and CUAD sparse-GT boundary evidence;
 - feedback-driven hard-case recovery;
 - matched BGE/E5 backbone validation and BGE quality-first tunability;
 - geometry/random, feedback/no-feedback, and arm-count controls;
@@ -83,6 +85,12 @@ while exposing domain-specific compression calibration, and simulated feedback
 can recover a meaningful fraction of budget-induced tail failures in
 post-feedback retry.
 
+The complete evaluation spans six domain-specific settings. LoTTE
+technology/search provides the full 100k-638k multi-scale quality-efficiency
+evidence; science/search tests domain transfer at 20k and 100k; PubMedQA and Banking77 test mechanism
+transfer; and eManual and CUAD expose data and evaluation boundaries. These
+roles must remain visible but must not be pooled as equivalent replications.
+
 ## Current Display Pass
 
 Task65 reduced the main Results display from eight tables and five figures to
@@ -100,9 +108,11 @@ journal guidance points to Elsevier CAS single-column rather than the older
 separate one-page title page, three vector figures, editable tables, references,
 highlights, keywords, and a reproducibility manifest.
 
-Task67 remains the final pre-submission review pass. Human authors must still
-fill author identity, affiliations, CRediT roles, funding, competing interests,
-acknowledgements, public data/code URLs, and the final AI-use disclosure.
+Task67 completed the repository-controlled submission-readiness pass. Task68
+aligns the abstract and main narrative with the six-setting evidence hierarchy.
+Human authors must still fill author identity, affiliations, CRediT roles,
+funding, competing interests, acknowledgements, public data/code URLs, and the
+final AI-use disclosure.
 
 ## Draft Validation
 

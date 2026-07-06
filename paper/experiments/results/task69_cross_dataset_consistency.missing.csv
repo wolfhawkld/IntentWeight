@@ -1,0 +1,6 @@
+dataset,scale,missing,priority,action
+LoTTE lifestyle/search,100k,"bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",P1,run common protocol
+LoTTE recreation/search,100k,"bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",P1,run common protocol
+LoTTE writing/search,100k,"bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",P1,run common protocol
+PubMedQA,native full,"cross_fitted_budget, final_context_tokens, paired_statistics, feedback_recovery",P1,complete missing common-protocol stages
+eManual deduplicated,native full,"intentroute_top10, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",P1,complete missing common-protocol stages

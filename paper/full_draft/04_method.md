@@ -64,7 +64,7 @@ Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a
 deliberate experimental choice. LinUCB requires a fixed number of arms, fixed
 arms improve reproducibility across seeds and scales, and KMeans is fast enough
 for large-scale LoTTE experiments. The same arm count is used across LoTTE
-scales to keep the LinUCB state space comparable, even though larger corpora
+technology/search scales to keep the LinUCB state space comparable, even though larger corpora
 therefore contain more chunks per arm.
 We use 32 routing arms as the main reproducible operating point. A sensitivity
 study over $K \in \{8,16,32,64,128\}$ shows that full multi-route fused quality
@@ -244,7 +244,8 @@ They select a global ratio and minimum-prefix size on calibration queries, then
 apply both unchanged to held-out test queries. The conservative
 confidence-based policy remains a
 stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
-100k, 200k, 400k, and 638k while preserving dense-level query hit.
+technology/search at 100k, 200k, 400k, and 638k while preserving dense-level
+query hit.
 
 For the conservative `confidence_topk` baseline only, semantic drift rarely
 exceeds the configured fallback threshold, so context-size decisions are

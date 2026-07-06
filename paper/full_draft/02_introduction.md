@@ -73,9 +73,21 @@ generator as input tokens, each percentage point of evidence-context reduction
 translates directly into a proportional per-query inference-cost reduction, a
 recurring saving that scales with deployment query volume.
 
-We evaluate IntentRoute on multiple datasets and use LoTTE technology/search
-as the main large-scale vertical-domain evidence benchmark. On LoTTE, we scale
-from 100k to 638k corpus chunks and compare against dense-only retrieval using
+We evaluate IntentRoute across six domain-specific settings with deliberately
+tiered evidentiary roles. LoTTE technology/search supplies the full-stack,
+large-scale quality-efficiency evaluation from 100k to 638k chunks. A separate
+LoTTE science/search study tests cross-domain transfer at 20k and 100k corpus
+scales. PubMedQA and Banking77 test feedback adaptation in
+biomedical evidence retrieval and banking-intent routing. eManual and CUAD
+expose duplicate-text, strict chunk-identity, and sparse-ground-truth
+boundaries in manual and legal retrieval. We do not pool these settings as if
+their tasks, labels, and evidence strength were interchangeable. Instead,
+LoTTE technology/search anchors the complete retrieval-and-budget claim,
+science/search tests cross-domain transfer, and the other datasets test
+mechanism transfer and failure boundaries.
+
+On LoTTE technology/search, we scale from 100k to 638k corpus chunks and
+compare against dense-only retrieval using
 `sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Our main
 cost-quality evidence uses a calibration/test context-budget protocol: the
 final-context policy is selected on calibration queries and frozen before test
@@ -106,9 +118,12 @@ improves full-context support but can select longer contexts. A 300-query
 answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
 under three LLM judges. No judge or shared-key majority finds a statistically
 significant correctness difference, while faithfulness effects remain
-method-dependent. LoTTE science/search and feedback-driven hard-case recovery
-provide cross-domain and adaptive-recovery evidence, with domain calibration
-and simulated-feedback caveats.
+method-dependent. LoTTE science/search provides cross-domain evidence;
+PubMedQA and Banking77 provide supporting feedback-adaptation checks; and
+eManual and CUAD expose evaluation and data-quality boundaries. Together with
+feedback-driven hard-case recovery, these settings broaden the mechanism and
+boundary evidence without extending the LoTTE token-saving headline to
+incomparable tasks.
 
 The contributions of this paper are:
 
@@ -121,16 +136,18 @@ The contributions of this paper are:
    diagnostics, random/static controls, no-feedback ablations, and arm-count
    sensitivity identify what these components explain and what dense/BM25
    rescue masks.
-3. We provide frozen calibration/test evidence from 100k to 638k LoTTE chunks,
+3. We provide frozen calibration/test evidence from 100k to 638k LoTTE
+   technology/search chunks, cross-domain LoTTE science/search replication,
    matched BGE/E5 backbones, and a tunable BGE quality-first point, separating
    token reduction from retrieval-quality non-inferiority with paired
    query-level statistics.
 4. We compare against shared sentence and prompt compression plus
    cross-encoder reranking, showing that IntentRoute is an upstream controller
    that composes with rather than replaces these downstream layers.
-5. We add a 300-query, three-judge answer-level evaluation, cross-domain LoTTE
-   replication, controlled feedback recovery, and explicit limitation cases to
-   bound the supported quality-cost claim.
+5. We add a 300-query, three-judge answer-level evaluation, controlled
+   feedback recovery, PubMedQA and Banking77 mechanism checks, and eManual and
+   CUAD boundary analyses to evaluate the controller across six
+   domain-specific settings without conflating their evidentiary roles.
 
 The resulting claim is intentionally bounded. IntentRoute is not presented as
 a universal replacement for dense retrieval, a proof of a relevance manifold,

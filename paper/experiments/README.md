@@ -1728,8 +1728,34 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `paper/journal_submission/task66_elsevier_ipm_conversion_summary.md`。当前
     IP&M 官方指南指向 Elsevier CAS single-column 模板，因此旧 `elsarticle`
     计划已替换为 `cas-sc` double-blind 投稿包。匿名稿与独立标题页均可编译，
-    摘要 240 词，33 张表和 3 张图全部具有正文交叉引用；作者、机构、CRediT、
+    摘要现为 218 词，33 张表和 3 张图全部具有正文交叉引用；作者、机构、CRediT、
     funding、competing interest 和公开数据/代码链接仍需人类作者提交前填写。
+40. final submission validation：Task67 已完成，详见
+    `paper/journal_submission/task67_submission_readiness_report.md`。主稿与
+    supplementary material 已拆分，921 项 artifact checks、139 项
+    source/display checks、5 张主表、2 份绘图数据以及补充材料 446 个数值均通过
+    provenance 校验；Figure 1 和本地字体环境仍是 artwork 阶段事项。
+41. multi-dataset narrative alignment：Task68 已完成，详见
+    `paper/experiments/task68_multi_dataset_narrative_alignment_summary.md`。
+    Abstract、Introduction、Experimental Setup、Results、Discussion、
+    Limitations 和 Conclusion 现在显式覆盖六个垂类评估场景，并区分 LoTTE
+    full-stack/cross-domain、PubMedQA/Banking77 mechanism-transfer 与
+    eManual/CUAD boundary evidence，避免把不同任务的指标合并为一个结果。
+42. cross-dataset experimental consistency：Task69.1-69.2 已完成，详见
+    `paper/experiments/task69_cross_dataset_consistency_plan.md`。该任务冻结了
+    evidence-retrieval 最小公共协议，并生成 dataset/protocol inventory、
+    evidence coverage matrix、current-result snapshot 与 missing-batch 清单。
+    当前 LoTTE technology/search 是可直接复用、无需重跑的完整 full-stack
+    anchor；science/search、
+    PubMedQA 与去重 eManual 仍需补齐统一协议，Banking77 与 CUAD 分别保持
+    mechanism-only 和 boundary-only，不参与跨数据集 pooled conclusion。
+43. LoTTE science/search 100k common-protocol checkpoint：Task69.3 已完成首个
+    checkpoint，详见
+    `paper/experiments/task69_3_science_100k_checkpoint_summary.md`。BM25、
+    Hybrid、matched no-feedback control 与五折 OOF budget 均已补齐；OOF
+    Hit@10 delta 为 `-0.11pp`、final-context saving 为 `16.88%`，但 strict NI
+    为 `0/3` 且 EvidenceRecall@10 平均下降约 `2.86pp`，因此结论限定为
+    sufficient-evidence trade-off。更大 science scales 与新增 domains 尚未启动。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1755,6 +1781,9 @@ Task65.5 calibration-split sensitivity、第 37 项 Task65.6 cross-scale
 cross-fitted calibration、第 38 项 Task65.7 multi-judge downstream
 robustness 也已完成。
 第 39 项 Task66 Elsevier/IP&M submission conversion 也已完成。
+第 40 项 Task67 final submission validation 与第 41 项 Task68 multi-dataset
+narrative alignment 也已完成。第 42 项 Task69 已完成 69.1-69.2 的审计与
+协议冻结，69.3-69.6 的补充实验和论文整合待继续。
 
 ---
 
@@ -1770,4 +1799,4 @@ robustness 也已完成。
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-07-01*
+*更新时间: 2026-07-06*

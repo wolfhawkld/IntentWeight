@@ -68,6 +68,10 @@ showed that reducing candidate counts does not automatically reduce final
 context tokens when the final context remains fixed at top-10.
 Table~\ref{tab:s4} records the correction audit that motivated this separation.
 
+In Supplementary Table S4, every row labeled `LoTTE` refers specifically to
+the technology/search domain; science/search is reported separately in
+Supplementary Section S8.
+
 **Supplementary Table S4. Representative fixed-top-10 correction audit.**
 
 | Dataset / scale | Routing setting | $\mathrm{Hit@10}$ | Avg $\mathrm{Tokens@10}$ | Ratio vs dense | Source candidate cost |
@@ -136,7 +140,8 @@ interpreted as proof that useful local structure is absent.
 
 ## S5. Encoder Robustness
 
-The main scale-up uses `sentence-transformers/all-MiniLM-L6-v2`. A LoTTE 100k
+The main scale-up uses `sentence-transformers/all-MiniLM-L6-v2`. A LoTTE
+technology/search 100k
 robustness check replaces it with
 `sentence-transformers/multi-qa-MiniLM-L6-cos-v1`, a QA-tuned MiniLM-family
 encoder with the same 384-dimensional embedding size and a similar

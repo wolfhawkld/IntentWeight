@@ -38,7 +38,7 @@ IR contribution beyond the current engineering frontier.
   `paper/journal_submission/latex/`, following the current IP&M template link.
 - The anonymous manuscript uses CAS `doubleblind`, and the non-anonymous title
   page is a separate file.
-- The abstract is 240 words, within the 250-word IP&M limit.
+- The abstract is 218 words, within the 250-word IP&M limit.
 - Two final-size deterministic vector data figures, one non-final author-owned
   Figure 1 placeholder, editable LaTeX tables, bibliography sources,
   highlights, keywords, and a source-hash manifest are included.

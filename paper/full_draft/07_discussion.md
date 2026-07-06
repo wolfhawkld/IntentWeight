@@ -25,6 +25,15 @@ decrease, so the result does not establish uniform answer-quality
 non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
 
+The broader six-setting evaluation adds two distinct forms of external
+evidence. PubMedQA and Banking77 show that trust-weighted route adaptation is
+observable in biomedical evidence retrieval and intent routing, although both
+operate near quality ceilings. eManual and CUAD expose how duplicated evidence,
+strict chunk identifiers, and sparse ground-truth anchors can dominate measured
+retrieval quality. These results do not form a pooled cross-dataset score.
+Instead, they separate the controller's full-stack LoTTE evidence from
+mechanism-transfer and benchmark-boundary evidence.
+
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. IntentRoute's value
 is the explicit separation of adaptive route control, dense rescue, and
@@ -113,7 +122,7 @@ budgeting.
 ## 6.5 Geometry Is Useful but Not Sufficient
 
 The geometry diagnostics support a piecewise relevance-manifold framing.
-$\mathrm{NearestClusterHit@3}$ remains high across LoTTE scales, and local
+$\mathrm{NearestClusterHit@3}$ remains high across LoTTE technology/search scales, and local
 geometry provides useful routing information. However, context retention
 declines with scale, and geometry alone is not a complete retrieval model. If a
 cluster route prunes too early, correct evidence can be lost.

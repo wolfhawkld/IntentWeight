@@ -22,7 +22,7 @@ IP&M uses double-anonymized review. The package separates:
 
 ## Completed Work
 
-- shortened the current abstract to 240 words while retaining the main claim,
+- initially shortened the abstract to 240 words while retaining the main claim,
   multi-scale result, multi-judge result, and BGE faithfulness boundary;
 - created a reproducible builder that synchronizes canonical LaTeX sections,
   the three cited vector figures, bibliography, highlights, and keywords;
@@ -47,7 +47,7 @@ IP&M uses double-anonymized review. The package separates:
 - reproducible `Makefile` targets for synchronization, compilation,
   validation, and full audit.
 
-## Validation Result
+## Task66 Conversion-Time Validation Result
 
 - anonymous manuscript: 36 pages;
 - title page: 1 page;
@@ -59,6 +59,10 @@ IP&M uses double-anonymized review. The package separates:
 - visible clipping, overlap, or abnormal float placement: none in the full
   contact-sheet review;
 - automated submission validation: passed.
+
+Task68 subsequently revised the abstract to 218 words and expanded the main
+manuscript's multi-dataset narrative. Current page counts and readiness status
+are recorded in `task67_submission_readiness_report.md`.
 
 CAS 2.4 emits one fixed internal `117.0831pt` overfull notice while constructing
 the empty-author double-blind frontmatter box. The first page was inspected at

@@ -1,0 +1,10 @@
+dataset,protocol_group,bm25,dense,hybrid_rrf,intentroute_top10,geometry,cross_fitted_budget,final_context_tokens,paired_statistics,feedback_control,feedback_recovery,coverage,status
+LoTTE technology/search,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_reusable_anchor
+LoTTE science/search,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_reusable_anchor
+LoTTE lifestyle/search,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
+LoTTE recreation/search,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
+LoTTE writing/search,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
+PubMedQA,common_evidence,yes,yes,yes,yes,yes,no,no,no,yes,no,6/10,partial_common_protocol
+eManual deduplicated,common_evidence,yes,yes,yes,no,yes,no,no,no,no,no,4/10,partial_common_protocol
+CUAD GT-anchored sample,boundary_only,yes,yes,yes,yes,yes,no,no,no,yes,no,6/10,boundary_not_poolable
+Banking77,mechanism_only,yes,yes,yes,yes,yes,no,no,no,yes,no,6/10,mechanism_not_poolable

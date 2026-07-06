@@ -4,20 +4,23 @@ Updated: 2026-07-05
 
 ## Status
 
-The repository-controlled Task67 work is complete. The IP&M package is
-scientifically and structurally validated, with one explicit artwork blocker:
-the author must replace the non-final Figure 1 placeholder.
+The repository-controlled Task67 work and Task68 multi-dataset narrative
+alignment are complete. The IP&M package is scientifically and structurally
+validated. Final artwork still requires replacement of the non-final Figure 1
+placeholder and installation of vector text fonts in the current WSL build
+environment.
 
 ## Package
 
-- anonymous CAS main manuscript: 24 pages, including references;
-- double-blind supplementary material: 12 pages and 28 tables;
+- anonymous CAS main manuscript: 25 pages, including references;
+- double-blind supplementary material: 13 pages and 28 tables in the current
+  WSL font-fallback build;
 - separate title page: 1 page;
-- abstract: 240 words; keywords: 7; highlights: 5;
+- abstract: 218 words; keywords: 7; highlights: 5;
 - main displays: five editable tables and three vector PDF figures.
 
 Moving the complete evidence appendix to a separate supplement reduces the
-review manuscript from 36 to 24 pages without deleting experimental evidence.
+review manuscript from 36 to 25 pages without deleting experimental evidence.
 The central geometry-guided, feedback-adaptive route-control thesis and all
 negative/boundary results remain present.
 
@@ -41,14 +44,18 @@ tracked source value, not `4.551`.
 Figures 2 and 3 are deterministic vector plots at 190 x 76 mm, contain no
 raster objects or Type 3 fonts, and use 7 pt minimum finished lettering.
 
-The strict validator currently reports exactly three Figure 1-derived errors:
+The strict validator currently reports four artwork/font errors:
 
-1. Figure 1 contains Type 3 fonts;
-2. those fonts propagate into the anonymous manuscript PDF;
-3. Figure 1 is 221.62 mm wide instead of 190 mm.
+1. the current WSL main PDF contains Type 3 fonts from Figure 1 and the local
+   CMR fallback;
+2. the supplementary PDF contains Type 3 fonts from the same missing vector
+   text-font environment;
+3. Figure 1 contains Type 3 fonts;
+4. Figure 1 is 221.62 mm wide instead of 190 mm.
 
 Replace `paper/latex/figures/figure1_system_diagram.pdf` according to
-`paper/full_draft/figures/figure1_author_spec.md`, then run `make audit` from
+`paper/full_draft/figures/figure1_author_spec.md`, install the CAS-compatible
+vector text fonts, then run `make audit` from
 `paper/journal_submission/latex/`.
 
 ## Human Submission Fields

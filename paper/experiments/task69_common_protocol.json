@@ -1,0 +1,264 @@
+{
+  "version": 1,
+  "updated": "2026-07-06",
+  "paper_method_name": "IntentRoute",
+  "implementation_identifier": "IntentWeight",
+  "common_evidence_protocol": {
+    "task_type": "evidence_retrieval",
+    "top_k": 10,
+    "backbone": "sentence-transformers/all-MiniLM-L6-v2",
+    "baselines": [
+      "bm25",
+      "dense",
+      "hybrid_rrf"
+    ],
+    "route_seeds": [13, 17, 19],
+    "n_clusters": 32,
+    "adaptation_epochs": 8,
+    "route_evaluation": "eight_epoch_no_leakage_prequential_trajectory",
+    "reporting_boundary": "repeated-query adaptation analysis; not IID held-out generalization",
+    "feedback_modes": [
+      "none",
+      "trust_weighted"
+    ],
+    "budget_protocol": "five_fold_cross_fitted",
+    "budget_grid": "task38_locked_grid",
+    "budget_selection": "zero_observed_hit_drop_then_max_token_saving",
+    "noninferiority_margin": 0.01,
+    "metrics": [
+      "hit@10",
+      "evidence_recall@10",
+      "mrr@10",
+      "ndcg@10",
+      "final_context_tokens",
+      "dense_invocation_rate",
+      "feedback_recovery_rate"
+    ],
+    "paired_statistics": [
+      "paired_bootstrap_95ci",
+      "exact_mcnemar",
+      "query_level_win_loss_tie"
+    ],
+    "notes": [
+      "Each query label updates only later interactions within the no-leakage prequential trajectory.",
+      "Repeated eight-epoch trajectories are adaptation analyses and are not IID held-out generalization results.",
+      "Hit@10 means at least one usable evidence chunk, not complete evidence collection.",
+      "Final-context tokens are measured after evidence selection and before generation."
+    ]
+  },
+  "datasets": [
+    {
+      "id": "lotte_technology_search_100k",
+      "display_name": "LoTTE technology/search",
+      "scale": "100k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "full_stack_anchor",
+      "corpus_chunks": 101311,
+      "total_queries": 596,
+      "current_eval_queries": 417,
+      "gt_semantics": "passage_qrels",
+      "sampling": "gt_anchored_nested_corpus; five-fold OOF available",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": true,
+        "final_context_tokens": true,
+        "paired_statistics": true,
+        "feedback_control": true,
+        "feedback_recovery": true
+      },
+      "status": "complete_reusable_anchor"
+    },
+    {
+      "id": "lotte_science_search_100k",
+      "display_name": "LoTTE science/search",
+      "scale": "100k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "cross_domain",
+      "corpus_chunks": 101187,
+      "total_queries": 596,
+      "current_eval_queries": 596,
+      "gt_semantics": "passage_qrels",
+      "sampling": "gt_anchored corpus; five-fold out-of-fold evaluation",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": true,
+        "final_context_tokens": true,
+        "paired_statistics": true,
+        "feedback_control": true,
+        "feedback_recovery": true
+      },
+      "status": "complete_reusable_anchor"
+    },
+    {
+      "id": "lotte_lifestyle_search_100k",
+      "display_name": "LoTTE lifestyle/search",
+      "scale": "100k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "planned_cross_domain",
+      "corpus_chunks": null,
+      "total_queries": null,
+      "current_eval_queries": null,
+      "gt_semantics": "passage_qrels",
+      "sampling": "planned nested GT-anchored 100k",
+      "current_coverage": {},
+      "status": "planned"
+    },
+    {
+      "id": "lotte_recreation_search_100k",
+      "display_name": "LoTTE recreation/search",
+      "scale": "100k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "planned_cross_domain",
+      "corpus_chunks": null,
+      "total_queries": null,
+      "current_eval_queries": null,
+      "gt_semantics": "passage_qrels",
+      "sampling": "planned nested GT-anchored 100k",
+      "current_coverage": {},
+      "status": "planned"
+    },
+    {
+      "id": "lotte_writing_search_100k",
+      "display_name": "LoTTE writing/search",
+      "scale": "100k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "planned_cross_domain",
+      "corpus_chunks": null,
+      "total_queries": null,
+      "current_eval_queries": null,
+      "gt_semantics": "passage_qrels",
+      "sampling": "planned nested GT-anchored 100k",
+      "current_coverage": {},
+      "status": "planned"
+    },
+    {
+      "id": "pubmedqa",
+      "display_name": "PubMedQA",
+      "scale": "native full",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "mechanism_transfer",
+      "corpus_chunks": 4348,
+      "total_queries": 1000,
+      "current_eval_queries": 1000,
+      "gt_semantics": "abstract_context_section",
+      "sampling": "labeled train split; no frozen calibration/test budget protocol yet",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": false,
+        "final_context_tokens": false,
+        "paired_statistics": false,
+        "feedback_control": true,
+        "feedback_recovery": false
+      },
+      "status": "partial_common_protocol"
+    },
+    {
+      "id": "emanual_deduplicated",
+      "display_name": "eManual deduplicated",
+      "scale": "native full",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "corrected_boundary",
+      "corpus_chunks": 1729,
+      "total_queries": 132,
+      "current_eval_queries": 130,
+      "gt_semantics": "text_equivalent_after_deduplication",
+      "sampling": "native test split; two queries have no usable GT",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": false,
+        "geometry": true,
+        "cross_fitted_budget": false,
+        "final_context_tokens": false,
+        "paired_statistics": false,
+        "feedback_control": false,
+        "feedback_recovery": false
+      },
+      "status": "partial_common_protocol"
+    },
+    {
+      "id": "cuad_gt_anchored",
+      "display_name": "CUAD GT-anchored sample",
+      "scale": "10k sample",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "boundary_only",
+      "paper_role": "sparse_gt_boundary",
+      "corpus_chunks": 10000,
+      "total_queries": 2550,
+      "current_eval_queries": 79,
+      "gt_semantics": "sparse_contract_evidence_anchors",
+      "sampling": "first 100 test queries; 79 with GT; GT-anchored distractor sample",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": false,
+        "final_context_tokens": false,
+        "paired_statistics": false,
+        "feedback_control": true,
+        "feedback_recovery": false
+      },
+      "status": "boundary_not_poolable"
+    },
+    {
+      "id": "banking77",
+      "display_name": "Banking77",
+      "scale": "native full",
+      "task_type": "intent_retrieval_proxy",
+      "protocol_group": "mechanism_only",
+      "paper_role": "feedback_route_learning",
+      "corpus_chunks": 10003,
+      "total_queries": 3080,
+      "current_eval_queries": 3080,
+      "gt_semantics": "same_intent_exemplar",
+      "sampling": "official train corpus and test queries",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": false,
+        "final_context_tokens": false,
+        "paired_statistics": false,
+        "feedback_control": true,
+        "feedback_recovery": false
+      },
+      "status": "mechanism_not_poolable"
+    }
+  ],
+  "scale_extensions": [
+    {
+      "dataset_family": "LoTTE technology/search",
+      "target_scales": ["100k", "200k", "400k", "638k full"],
+      "status": "complete"
+    },
+    {
+      "dataset_family": "LoTTE science/search",
+      "target_scales": ["100k", "200k", "400k", "native full"],
+      "status": "100k complete; 200k/400k/full pending"
+    }
+  ]
+}

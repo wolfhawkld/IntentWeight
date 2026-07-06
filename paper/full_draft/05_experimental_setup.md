@@ -2,8 +2,10 @@
 
 ## 4.1 Datasets
 
-The experiments use several datasets, but they have different evidentiary
-roles. We do not treat all datasets as equal support for the main claim:
+The experiments cover six domain-specific settings spanning technology,
+science, biomedical QA, banking intents, product manuals, and legal contracts.
+They have different tasks, ground-truth semantics, and evidentiary roles, so we
+do not treat them as equal support for the main claim:
 
 - **LoTTE technology/search** is the main large-scale vertical-domain evidence
   benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
@@ -18,8 +20,11 @@ roles. We do not treat all datasets as equal support for the main claim:
 - **eManual and CUAD** are boundary cases. eManual exposes duplicate-text and
   strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
 
-This role separation keeps the main claim tied to LoTTE while preserving the
-diagnostic value of the secondary datasets.
+This hierarchy separates full-stack evidence, cross-domain transfer, mechanism
+transfer, and boundary analysis. The complete quality-efficiency claim is
+anchored in LoTTE technology/search, science/search tests domain transfer, and
+the secondary datasets test whether feedback behavior transfers or identify
+where corpus duplication and sparse labels limit inference.
 
 ## 4.2 Baselines and Variants
 

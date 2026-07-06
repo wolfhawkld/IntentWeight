@@ -4,33 +4,32 @@
 
 # Abstract
 
-Retrieval-augmented systems must select enough evidence to support an answer
-while limiting noise and language-model context cost. We formulate this as a
-two-stage route-control and budget-calibration problem. IntentRoute combines
-dense retrieval, BM25, geometry-defined cluster-local routes, and
-trust-weighted LinUCB feedback. Route confidence controls routing and fallback,
-while an independently calibrated policy sets the final context budget. Dense
-retrieval remains a recall floor. A bounded piecewise relevance-manifold
-hypothesis motivates local route construction; geometry is evaluated as a
-diagnostic signal rather than a standalone retrieval theory.
+Retrieval-augmented systems must balance evidence coverage, noise, and
+language-model context cost. IntentRoute separates this problem into
+feedback-adaptive route control and calibrated context budgeting. Dense, BM25,
+and geometry-defined cluster-local routes generate complementary evidence;
+trust-weighted LinUCB estimates route confidence; and an independently
+calibrated policy sets the final context size. Dense retrieval remains a recall
+floor. A bounded piecewise relevance-manifold hypothesis motivates local route
+construction, with geometry evaluated diagnostically rather than treated as
+proof of relevance.
 
-On LoTTE technology/search from 100k to 638k chunks, eligible frozen policies
-reduce evidence-context tokens by 6-18% while avoiding the larger
-$\mathrm{Hit@10}$ losses of dense-only adaptive truncation; the original 400k
-split remains calibration-ineligible. A normalized five-fold 400k follow-up
-yields 14.50% mean saving with no mean Hit change, although strict seed-level
-non-inferiority remains unestablished. Matched BGE-base and E5-base tests retain
-near-dense $\mathrm{Hit@10}$ with about 12% token reduction. Route controls show
-that geometry and feedback improve route-level quality, but do not establish
-safe per-query compression without calibration and rescue. In a frozen
-300-query downstream evaluation, matched variants reduce context by 6-12%.
-DeepSeek, GLM-5.2, MiniMax-M3, and majority-vote comparisons show no
-statistically detectable correctness difference, while faithfulness remains
-method-dependent and degrades for the tested BGE policy. Prompt compression
-and reranking remain complementary. The supported contribution is a
-geometry-guided, feedback-adaptive route controller with separate budget
-calibration, not universal superiority over dense retrieval or proof that
-geometry determines relevance.
+We evaluate IntentRoute across six domain-specific settings. The primary scale
+study uses LoTTE technology/search from 100k to 638k chunks. A separate LoTTE
+science/search study tests cross-domain transfer at 20k and 100k corpus scales;
+PubMedQA and Banking77 examine feedback adaptation, while eManual and CUAD
+expose duplicate-text and sparse-ground-truth boundaries. At
+calibration-eligible technology/search operating
+points, IntentRoute reduces final evidence-context tokens by 6-18% while
+preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger
+quality losses of dense-only adaptive truncation. Simulated feedback improves
+or recovers route decisions for a meaningful subset of affected queries. In a
+frozen 300-query technology/search evaluation, matched variants reduce language-model input
+context by 6-12% with no statistically detectable correctness difference
+across three judges, although faithfulness preservation is not uniform across
+embedding backbones. These results support geometry-guided,
+feedback-adaptive route control as a bounded quality-efficiency mechanism, not
+a universal replacement for dense retrieval.
 
 ---
 
@@ -109,9 +108,21 @@ generator as input tokens, each percentage point of evidence-context reduction
 translates directly into a proportional per-query inference-cost reduction, a
 recurring saving that scales with deployment query volume.
 
-We evaluate IntentRoute on multiple datasets and use LoTTE technology/search
-as the main large-scale vertical-domain evidence benchmark. On LoTTE, we scale
-from 100k to 638k corpus chunks and compare against dense-only retrieval using
+We evaluate IntentRoute across six domain-specific settings with deliberately
+tiered evidentiary roles. LoTTE technology/search supplies the full-stack,
+large-scale quality-efficiency evaluation from 100k to 638k chunks. A separate
+LoTTE science/search study tests cross-domain transfer at 20k and 100k corpus
+scales. PubMedQA and Banking77 test feedback adaptation in
+biomedical evidence retrieval and banking-intent routing. eManual and CUAD
+expose duplicate-text, strict chunk-identity, and sparse-ground-truth
+boundaries in manual and legal retrieval. We do not pool these settings as if
+their tasks, labels, and evidence strength were interchangeable. Instead,
+LoTTE technology/search anchors the complete retrieval-and-budget claim,
+science/search tests cross-domain transfer, and the other datasets test
+mechanism transfer and failure boundaries.
+
+On LoTTE technology/search, we scale from 100k to 638k corpus chunks and
+compare against dense-only retrieval using
 `sentence-transformers/all-MiniLM-L6-v2` with exact cosine search. Our main
 cost-quality evidence uses a calibration/test context-budget protocol: the
 final-context policy is selected on calibration queries and frozen before test
@@ -142,9 +153,12 @@ improves full-context support but can select longer contexts. A 300-query
 answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
 under three LLM judges. No judge or shared-key majority finds a statistically
 significant correctness difference, while faithfulness effects remain
-method-dependent. LoTTE science/search and feedback-driven hard-case recovery
-provide cross-domain and adaptive-recovery evidence, with domain calibration
-and simulated-feedback caveats.
+method-dependent. LoTTE science/search provides cross-domain evidence;
+PubMedQA and Banking77 provide supporting feedback-adaptation checks; and
+eManual and CUAD expose evaluation and data-quality boundaries. Together with
+feedback-driven hard-case recovery, these settings broaden the mechanism and
+boundary evidence without extending the LoTTE token-saving headline to
+incomparable tasks.
 
 The contributions of this paper are:
 
@@ -157,16 +171,18 @@ The contributions of this paper are:
    diagnostics, random/static controls, no-feedback ablations, and arm-count
    sensitivity identify what these components explain and what dense/BM25
    rescue masks.
-3. We provide frozen calibration/test evidence from 100k to 638k LoTTE chunks,
+3. We provide frozen calibration/test evidence from 100k to 638k LoTTE
+   technology/search chunks, cross-domain LoTTE science/search replication,
    matched BGE/E5 backbones, and a tunable BGE quality-first point, separating
    token reduction from retrieval-quality non-inferiority with paired
    query-level statistics.
 4. We compare against shared sentence and prompt compression plus
    cross-encoder reranking, showing that IntentRoute is an upstream controller
    that composes with rather than replaces these downstream layers.
-5. We add a 300-query, three-judge answer-level evaluation, cross-domain LoTTE
-   replication, controlled feedback recovery, and explicit limitation cases to
-   bound the supported quality-cost claim.
+5. We add a 300-query, three-judge answer-level evaluation, controlled
+   feedback recovery, PubMedQA and Banking77 mechanism checks, and eManual and
+   CUAD boundary analyses to evaluate the controller across six
+   domain-specific settings without conflating their evidentiary roles.
 
 The resulting claim is intentionally bounded. IntentRoute is not presented as
 a universal replacement for dense retrieval, a proof of a relevance manifold,
@@ -401,7 +417,7 @@ Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a
 deliberate experimental choice. LinUCB requires a fixed number of arms, fixed
 arms improve reproducibility across seeds and scales, and KMeans is fast enough
 for large-scale LoTTE experiments. The same arm count is used across LoTTE
-scales to keep the LinUCB state space comparable, even though larger corpora
+technology/search scales to keep the LinUCB state space comparable, even though larger corpora
 therefore contain more chunks per arm.
 We use 32 routing arms as the main reproducible operating point. A sensitivity
 study over $K \in \{8,16,32,64,128\}$ shows that full multi-route fused quality
@@ -581,7 +597,8 @@ They select a global ratio and minimum-prefix size on calibration queries, then
 apply both unchanged to held-out test queries. The conservative
 confidence-based policy remains a
 stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
-100k, 200k, 400k, and 638k while preserving dense-level query hit.
+technology/search at 100k, 200k, 400k, and 638k while preserving dense-level
+query hit.
 
 For the conservative `confidence_topk` baseline only, semantic drift rarely
 exceeds the configured fallback threshold, so context-size decisions are
@@ -654,8 +671,10 @@ evaluation.
 
 ## 4.1 Datasets
 
-The experiments use several datasets, but they have different evidentiary
-roles. We do not treat all datasets as equal support for the main claim:
+The experiments cover six domain-specific settings spanning technology,
+science, biomedical QA, banking intents, product manuals, and legal contracts.
+They have different tasks, ground-truth semantics, and evidentiary roles, so we
+do not treat them as equal support for the main claim:
 
 - **LoTTE technology/search** is the main large-scale vertical-domain evidence
   benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
@@ -670,8 +689,11 @@ roles. We do not treat all datasets as equal support for the main claim:
 - **eManual and CUAD** are boundary cases. eManual exposes duplicate-text and
   strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
 
-This role separation keeps the main claim tied to LoTTE while preserving the
-diagnostic value of the secondary datasets.
+This hierarchy separates full-stack evidence, cross-domain transfer, mechanism
+transfer, and boundary analysis. The complete quality-efficiency claim is
+anchored in LoTTE technology/search, science/search tests domain transfer, and
+the secondary datasets test whether feedback behavior transfers or identify
+where corpus duplication and sparse labels limit inference.
 
 ## 4.2 Baselines and Variants
 
@@ -1056,7 +1078,7 @@ full rescue surface. The learned, static, and no-feedback rows test whether
 LinUCB updates and gating explain route quality and final cost.
 Table~\ref{tab:3} separates route-level effects from rescued final quality.
 
-**Table 3. Geometry, feedback, and rescue-route controls on LoTTE 100k. Each row uses its paired frozen-protocol dense baseline.**
+**Table 3. Geometry, feedback, and rescue-route controls on LoTTE technology/search 100k. Each row uses its paired frozen-protocol dense baseline.**
 
 | Control | Route reward | Cluster hit | Dense rate | Test hit delta | Token saving |
 |---|---:|---:|---:|---:|---:|
@@ -1076,7 +1098,8 @@ feedback as route-confidence signals; neither alone explains final fused
 quality or justifies unconditional dense removal.
 
 Feedback remains useful as a recovery trigger. Conservative same-query retry
-recovers 23 of 76 budget-induced misses across the two LoTTE 100k domains, but
+recovers 23 of 76 budget-induced misses across the technology/search and
+science/search 100k settings, but
 the stricter calibration-to-test effect is small and domain-dependent.
 Supplementary Sections S9 and S11 contain the full recovery and control tables.
 
@@ -1113,14 +1136,14 @@ grid, while gated dense use rises from 0.4083 to 0.9502 as $K$ grows. This
 supports $K$ as an engineering parameter governing feedback sparsity and
 fallback behavior, not a geometrically privileged constant.
 
-Across LoTTE scales, nearest-cluster hit remains high while context retention
+Across LoTTE technology/search scales, nearest-cluster hit remains high while context retention
 and PCA concentration vary. Figure 3 relates context retention to observed hit
 delta and token saving. The small cross-scale sample does not show a
 deterministic geometry-to-gain law: geometry identifies plausible local route
 structure, while calibration, fusion, and dense rescue determine the final
 operating point. Full diagnostics are retained in Supplementary Section S11.
 
-## 5.5 Cross-Domain And Boundary Evidence
+## 5.5 Cross-Domain, Mechanism, And Boundary Evidence
 
 On LoTTE science/search, fixed top-10 IntentRoute reaches
 $\mathrm{Hit@10}=0.9267$ versus 0.8950 for dense at 20k/q200 and 0.9077 versus
@@ -1130,11 +1153,24 @@ can introduce small hit losses. The ranking signal transfers, but compression
 strength requires domain- and scale-specific calibration. Supplementary Section S8 reports
 the complete seed-level table.
 
-PubMedQA and Banking77 provide supporting feedback-adaptation checks near
-quality ceilings. eManual and CUAD remain boundary cases because duplicated
-evidence text and sparse ground-truth anchors complicate strict chunk-level
-evaluation. These datasets bound the claim rather than establish universal
-dense-retrieval dominance.
+The supporting feedback checks cover two different retrieval abstractions. On
+PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while the
+trust-weighted policy reaches $0.9940$ with selected-cluster hit $0.8860$. On
+the Banking77 intent-routing proxy, the corresponding dense and trust-weighted
+scores are $0.9805$ and $0.9844$, and selected-cluster hit reaches $0.9983$.
+The near-ceiling final scores limit claims about aggregate improvement, but the
+route diagnostics support feedback adaptation beyond the LoTTE task format.
+
+The two boundary datasets explain why benchmark construction matters. eManual
+contains 18,812 chunks but only 1,729 unique text strings: dense
+$\mathrm{Hit@10}$ increases from $0.3231$ under strict chunk identity to
+$0.5615$ under text-equivalent matching and $0.8615$ after corpus
+deduplication. On the GT-anchored CUAD sample, dense reaches $0.0759$ and the
+trust-weighted smoke run reaches $0.0886$; sparse evidence anchors prevent this
+sample from serving as full-corpus positive evidence. Supplementary Sections
+S4 and S8 retain the complete tables. These datasets support mechanism and
+boundary analysis rather than extending the LoTTE token-saving headline or
+establishing universal dense-retrieval dominance.
 
 ## 5.6 Strong Post-Retrieval Baselines
 
@@ -1213,6 +1249,15 @@ point estimates, and the three-judge majority detects a BGE faithfulness
 decrease, so the result does not establish uniform answer-quality
 non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
+
+The broader six-setting evaluation adds two distinct forms of external
+evidence. PubMedQA and Banking77 show that trust-weighted route adaptation is
+observable in biomedical evidence retrieval and intent routing, although both
+operate near quality ceilings. eManual and CUAD expose how duplicated evidence,
+strict chunk identifiers, and sparse ground-truth anchors can dominate measured
+retrieval quality. These results do not form a pooled cross-dataset score.
+Instead, they separate the controller's full-stack LoTTE evidence from
+mechanism-transfer and benchmark-boundary evidence.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. IntentRoute's value
@@ -1302,7 +1347,7 @@ budgeting.
 ## 6.5 Geometry Is Useful but Not Sufficient
 
 The geometry diagnostics support a piecewise relevance-manifold framing.
-$\mathrm{NearestClusterHit@3}$ remains high across LoTTE scales, and local
+$\mathrm{NearestClusterHit@3}$ remains high across LoTTE technology/search scales, and local
 geometry provides useful routing information. However, context retention
 declines with scale, and geometry alone is not a complete retrieval model. If a
 cluster route prunes too early, correct evidence can be lost.
@@ -1483,9 +1528,13 @@ but it does not cover domain-specific encoders, late-interaction models, or
 proprietary embedding systems. The above-dense quality-first point is currently
 demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
-LoTTE technology/search is the main positive large-scale domain. LoTTE
-science/search strengthens external validity but does not replace evaluation on
-additional vertical corpora.
+The study spans six domain-specific settings, but only LoTTE
+technology/search receives the complete multi-scale, matched-baseline,
+calibration/test, and downstream-generation protocol. LoTTE science/search
+strengthens cross-domain validity; PubMedQA and Banking77 test feedback
+adaptation; and eManual and CUAD expose benchmark boundaries. This breadth
+should not be interpreted as six independent full-stack replications. More
+complete repeated evaluations on additional vertical corpora remain necessary.
 
 ## 7.8 Future Work
 
@@ -1517,8 +1566,9 @@ geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
 policy separately controls the final evidence-context budget.
 
-The main evidence comes from LoTTE technology/search at 100k to 638k corpus
-chunks. Under calibration/test budget selection, calibration-eligible operating
+The evaluation spans six domain-specific settings with different evidentiary
+roles. The main full-stack evidence comes from LoTTE technology/search at 100k
+to 638k corpus chunks. Under calibration/test budget selection, calibration-eligible operating
 points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
 by 6-18%; the original 400k point remains calibration-ineligible. A normalized
 five-fold follow-up at 400k yields 14.50% mean saving with no mean Hit change,
@@ -1542,6 +1592,11 @@ LoTTE science/search provides cross-domain ranking support with a clear
 compression-calibration boundary. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
 aggressive context compression.
+PubMedQA and Banking77 extend the feedback-adaptation checks to biomedical
+evidence retrieval and banking-intent routing, while eManual and CUAD expose
+duplicate-text and sparse-ground-truth limits. These supporting settings broaden
+the mechanism and boundary evidence without being treated as equivalent
+replications of the LoTTE quality-efficiency frontier.
 
 Strong post-retrieval baselines refine rather than weaken the conclusion.
 Sentence-level MMR and Selective Context-lite are effective shared downstream

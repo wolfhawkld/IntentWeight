@@ -67,7 +67,7 @@ The route controls isolate geometry, feedback, and dense rescue. The geometry-ve
 \begin{table*}[tbp]
 \centering
 \small
-\caption{Geometry, feedback, and rescue-route controls on LoTTE 100k. Each row uses its paired frozen-protocol dense baseline}
+\caption{Geometry, feedback, and rescue-route controls on LoTTE technology/search 100k. Each row uses its paired frozen-protocol dense baseline}
 \label{tab:3}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedleft\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedleft\arraybackslash}X}
 \toprule
@@ -85,7 +85,7 @@ No-feedback gated & 0.1504 & 0.1570 & 1.0000 & -1.60 pp & 16.56\% \\
 
 Static nearest geometry sharply exceeds random routing on route reward and selected-cluster hit, but dense and BM25 rescue keep final fused hit high for both. Feedback-updated LinUCB likewise improves route quality over the no-feedback control, but the tested learned-gated threshold loses 5.20 percentage points of frozen-test hit. These results support geometry and feedback as route-confidence signals; neither alone explains final fused quality or justifies unconditional dense removal.
 
-Feedback remains useful as a recovery trigger. Conservative same-query retry recovers 23 of 76 budget-induced misses across the two LoTTE 100k domains, but the stricter calibration-to-test effect is small and domain-dependent. Supplementary Sections S9 and S11 contain the full recovery and control tables.
+Feedback remains useful as a recovery trigger. Conservative same-query retry recovers 23 of 76 budget-induced misses across the technology/search and science/search 100k settings, but the stricter calibration-to-test effect is small and domain-dependent. Supplementary Sections S9 and S11 contain the full recovery and control tables.
 
 A frozen-trajectory route replay further isolates the confidence gate. Keeping the selected arms and feedback state fixed, the original query-to-tier assignment exceeds a shuffled-tier control with identical tier frequencies by 4.80 percentage points of Hit@10, both before and after the common \nolinkurl{r0.95/m4} budget; all three seed-level paired intervals exclude zero. It also exceeds an always-cluster-primary route by 10.79 percentage points after budgeting. Fixed full fusion remains 0.40 percentage points above dynamic gating while saving 0.91 percentage points fewer tokens, and that hit difference is not statistically detected. The result supports confidence as a route/fallback assignment signal, not as a direct compression-safety score.
 
@@ -114,14 +114,16 @@ $K$ & Static route reward & Full hit delta & Full token saving & Gated dense rat
 
 The full route surface stays above its paired dense baseline throughout the grid, while gated dense use rises from 0.4083 to 0.9502 as $K$ grows. This supports $K$ as an engineering parameter governing feedback sparsity and fallback behavior, not a geometrically privileged constant.
 
-Across LoTTE scales, nearest-cluster hit remains high while context retention and PCA concentration vary. Figure~\ref{fig:geometry-control} relates context retention to observed hit delta and token saving. The small cross-scale sample does not show a deterministic geometry-to-gain law: geometry identifies plausible local route structure, while calibration, fusion, and dense rescue determine the final operating point. Full diagnostics are retained in Supplementary Section S11.
+Across LoTTE technology/search scales, nearest-cluster hit remains high while context retention and PCA concentration vary. Figure~\ref{fig:geometry-control} relates context retention to observed hit delta and token saving. The small cross-scale sample does not show a deterministic geometry-to-gain law: geometry identifies plausible local route structure, while calibration, fusion, and dense rescue determine the final operating point. Full diagnostics are retained in Supplementary Section S11.
 
-\subsection{Cross-Domain And Boundary Evidence}
-\label{sec:06-results:cross-domain-and-boundary-evidence}
+\subsection{Cross-Domain, Mechanism, And Boundary Evidence}
+\label{sec:06-results:cross-domain-mechanism-and-boundary-evidence}
 
 On LoTTE science/search, fixed top-10 IntentRoute reaches $\mathrm{Hit@10}=0.9267$ versus 0.8950 for dense at 20k/q200 and 0.9077 versus 0.8926 at 100k. Frozen budget policies save 13-14\% tokens at 20k/q200 while remaining above dense. At 100k, the more aggressive policy saves 17-21\% but can introduce small hit losses. The ranking signal transfers, but compression strength requires domain- and scale-specific calibration. Supplementary Section S8 reports the complete seed-level table.
 
-PubMedQA and Banking77 provide supporting feedback-adaptation checks near quality ceilings. eManual and CUAD remain boundary cases because duplicated evidence text and sparse ground-truth anchors complicate strict chunk-level evaluation. These datasets bound the claim rather than establish universal dense-retrieval dominance.
+The supporting feedback checks cover two different retrieval abstractions. On PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while the trust-weighted policy reaches $0.9940$ with selected-cluster hit $0.8860$. On the Banking77 intent-routing proxy, the corresponding dense and trust-weighted scores are $0.9805$ and $0.9844$, and selected-cluster hit reaches $0.9983$. The near-ceiling final scores limit claims about aggregate improvement, but the route diagnostics support feedback adaptation beyond the LoTTE task format.
+
+The two boundary datasets explain why benchmark construction matters. eManual contains 18,812 chunks but only 1,729 unique text strings: dense $\mathrm{Hit@10}$ increases from $0.3231$ under strict chunk identity to $0.5615$ under text-equivalent matching and $0.8615$ after corpus deduplication. On the GT-anchored CUAD sample, dense reaches $0.0759$ and the trust-weighted smoke run reaches $0.0886$; sparse evidence anchors prevent this sample from serving as full-corpus positive evidence. Supplementary Sections S4 and S8 retain the complete tables. These datasets support mechanism and boundary analysis rather than extending the LoTTE token-saving headline or establishing universal dense-retrieval dominance.
 
 \subsection{Strong Post-Retrieval Baselines}
 \label{sec:06-results:strong-post-retrieval-baselines}

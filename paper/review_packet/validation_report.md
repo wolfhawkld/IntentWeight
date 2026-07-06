@@ -17,8 +17,8 @@ validation=passed
 ```text
 packet_validation=passed
 main_chapters=9
-manuscript_words=11855
-supplement_words=4392
+manuscript_words=12332
+supplement_words=4418
 citation_keys=26
 bib_entries=26
 figure_assets=3

@@ -30,6 +30,7 @@ accidentally promoted into paper-facing claims.
 | `task31_paper_evidence_package.md` | Main evidence package | Aggregated evidence source; use together with the later consistency audit and full draft. |
 | `task33_3_clean_ablation_table.md` | Main/supporting evidence | Clean LoTTE 100k ablation table for dense floor, feedback, trust weighting, and final policy. |
 | `task33_6_additional_seeds_summary.md` | Supporting evidence | Five-seed stability check for LoTTE 100k; do not claim statistical superiority. |
+| `task69_3_science_100k_checkpoint_summary.md` | Main/supporting cross-domain evidence | Common-protocol LoTTE science/search 100k baselines, matched feedback control, and five-fold context-budget result; report the `-0.11pp` Hit delta and `16.88%` saving together with `0/3` strict NI and the EvidenceRecall boundary. |
 
 ## Supporting Evidence
 
@@ -79,6 +80,7 @@ accidentally promoted into paper-facing claims.
 | `task36_9_full_draft_consistency_audit.md` | Supporting writing revision | Adds an automated manuscript/BibTeX audit and tightens the broad evidence-selection framing to avoid manifold and RAG overclaiming; no new experiment. |
 | `task36_10_review_packet.md` | Supporting writing revision | Adds a regenerable venue-neutral independent-review packet with manuscript, references, figure index, checklist, validation report, and file manifest; no new experiment. |
 | `task36_11_literature_gap_expansion.md` | Supporting writing revision | Adds direct adaptive-retrieval, bandit-routing, and context-compression prior art; explicitly distinguishes IntentRoute from MBA-RAG and avoids first-use overclaiming; no new experiment. |
+| `task69_cross_dataset_consistency_plan.md` | Supporting protocol guardrail | Defines the cross-dataset common endpoint set, separates evidence retrieval from intent-routing and sparse-GT boundary evidence, and records pending experiment batches. |
 | `task36_12_acl_latex_migration.md` | Supporting writing revision | Adds a modular ACL-style LaTeX migration, official ACL style files, PDF figure assets, and static validation; the subsequent PDF compile audit is recorded in `task36_13_pdf_compile_audit.md`. |
 | `task36_13_pdf_compile_audit.md` | Supporting writing revision | Installs lightweight TinyTeX, resolves real ACL compile issues, adds PDF rendering audit, and records the 19-page complete-draft layout; the next pass must produce a shorter submission cut. |
 | `task49_strong_baseline_reframing_summary.md` | Supporting writing revision | Integrates Task46/47/48 strong baselines into the manuscript framing; use for the route-and-budget controller plus shared compressor/reranker decomposition. |
