@@ -6,6 +6,7 @@ LoTTE lifestyle/search,100k,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,p
 LoTTE recreation/search,100k,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
 LoTTE writing/search,100k,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
 PubMedQA,native full,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_native_full
+CovidQA-RAG,native full,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_native_full
 eManual deduplicated,native full,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_corrected_boundary
 CUAD GT-anchored sample,10k sample,boundary_only,yes,yes,yes,yes,yes,no,no,no,yes,no,6/10,boundary_not_poolable
 Banking77,native full,mechanism_only,yes,yes,yes,yes,yes,no,no,no,yes,no,6/10,mechanism_not_poolable

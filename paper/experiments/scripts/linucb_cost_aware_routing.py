@@ -1006,6 +1006,57 @@ def aggregate_seed_metrics(seed_metrics: Sequence[Mapping]) -> Dict[str, object]
     return global_linucb.aggregate_seed_metrics(seed_metrics)
 
 
+def write_json_atomic(path: Path, payload: object) -> None:
+    """Write JSON through a temp file so interrupted runs do not corrupt outputs."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    tmp_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    tmp_path.replace(path)
+
+
+def seed_checkpoint_path(output_dir: Path, artifact_slug: str, routing_mode: str, seed: int) -> Path:
+    return output_dir / "checkpoints" / f"linucb_cost_{artifact_slug}__{routing_mode}__seed{seed}.json"
+
+
+def load_seed_checkpoint(path: Path, signature: Mapping[str, object]) -> Dict[str, object] | None:
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    if data.get("signature") != dict(signature):
+        return None
+    metrics = data.get("metrics")
+    rankings = data.get("rankings")
+    if not isinstance(metrics, dict) or not isinstance(rankings, dict):
+        return None
+    query_traces = data.get("query_traces", {})
+    if not isinstance(query_traces, dict):
+        query_traces = {}
+    return {"metrics": metrics, "rankings": rankings, "query_traces": query_traces}
+
+
+def save_seed_checkpoint(
+    path: Path,
+    *,
+    signature: Mapping[str, object],
+    result: Mapping[str, object],
+    write_query_traces: bool,
+) -> None:
+    payload = {
+        "signature": dict(signature),
+        "metrics": result["metrics"],
+        "rankings": result["rankings"],
+    }
+    if write_query_traces:
+        payload["query_traces"] = result.get("query_traces", {})
+    write_json_atomic(path, payload)
+
+
 def run_dataset(
     dataset: str,
     data_dir: Path,
@@ -1080,6 +1131,7 @@ def run_dataset(
     query_prefix: str = "",
     corpus_prefix: str = "",
     write_query_traces: bool = False,
+    resume_checkpoints: bool = True,
 ) -> List[Dict[str, object]]:
     if reward_attribution not in REWARD_ATTRIBUTIONS:
         raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
@@ -1213,13 +1265,87 @@ def run_dataset(
             context_artifacts_by_seed[int(seed)] = artifacts
             context_cache_by_seed[int(seed)] = context_cache
 
+    output_dir.mkdir(parents=True, exist_ok=True)
+    metrics_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_metrics.json"
+    rankings_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_rankings.json"
+    traces_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_traces.json"
+    checkpoint_signature_base: Dict[str, object] = {
+        "dataset": dataset,
+        "artifact_slug": artifact_slug,
+        "model": model_name,
+        "query_prefix": query_prefix,
+        "corpus_prefix": corpus_prefix,
+        "feedback_mode": feedback_mode,
+        "reward_attribution": reward_attribution,
+        "confidence_mode": confidence_mode,
+        "final_context_policy": final_context_policy,
+        "top_k": top_k,
+        "ks": list(ks),
+        "epochs": epochs,
+        "n_clusters": n_clusters,
+        "context_dim": context_dim,
+        "candidate_arms": candidate_arms,
+        "alpha": alpha,
+        "alpha_decay": alpha_decay,
+        "alpha_min": alpha_min,
+        "arm_neighbor_k": arm_neighbor_k,
+        "arm_decay_sigma": arm_decay_sigma,
+        "propagation_strength": propagation_strength,
+        "feedback_k": feedback_k,
+        "feedback_tau": feedback_tau,
+        "feedback_weight": feedback_weight,
+        "dense_depth": dense_depth,
+        "bm25_depth": bm25_depth,
+        "cluster_depth": cluster_depth,
+        "dense_weight": dense_weight,
+        "bm25_weight": bm25_weight,
+        "cluster_weight": cluster_weight,
+        "rrf_k": rrf_k,
+        "dense_floor_k": dense_floor_k,
+        "dense_lite_depth": dense_lite_depth,
+        "bm25_lite_depth": bm25_lite_depth,
+        "dense_lite_weight": dense_lite_weight,
+        "bm25_lite_weight": bm25_lite_weight,
+        "cluster_primary_weight": cluster_primary_weight,
+        "dense_lite_floor_k": dense_lite_floor_k,
+        "high_confidence_threshold": high_confidence_threshold,
+        "mid_confidence_threshold": mid_confidence_threshold,
+        "drift_threshold": drift_threshold,
+        "reward_drop_threshold": reward_drop_threshold,
+        "confidence_feedback_floor": confidence_feedback_floor,
+        "final_context_high_k": final_context_high_k,
+        "final_context_mid_k": final_context_mid_k,
+        "high_trust_prob": high_trust_prob,
+        "high_trust": high_trust,
+        "low_trust": low_trust,
+        "high_accuracy": high_accuracy,
+        "low_accuracy": low_accuracy,
+        "window_size": window_size,
+        "epsilon_greedy_rate": epsilon_greedy_rate,
+        "run_metadata": run_metadata,
+        "gt_coverage": gt_coverage,
+        "write_query_traces": write_query_traces,
+    }
+
     rows: List[Dict[str, object]] = []
     all_rankings: Dict[str, Dict[str, Dict[str, List[str]]]] = {}
     all_query_traces: Dict[str, Dict[str, Dict[str, Dict[str, object]]]] = {}
     for routing_mode in routing_modes:
         seed_results = []
         for seed in seeds:
-            seed_results.append(run_prequential_seed(
+            signature = {
+                **checkpoint_signature_base,
+                "routing_mode": routing_mode,
+                "seed": int(seed),
+            }
+            checkpoint_path = seed_checkpoint_path(output_dir, artifact_slug, routing_mode, int(seed))
+            checkpoint_result = load_seed_checkpoint(checkpoint_path, signature) if resume_checkpoints else None
+            if checkpoint_result is not None:
+                print(f"  checkpoint hit: mode={routing_mode} seed={seed}")
+                seed_results.append(checkpoint_result)
+                continue
+
+            result = run_prequential_seed(
                 corpus,
                 queries,
                 corpus_embeddings,
@@ -1276,7 +1402,15 @@ def run_dataset(
                 shared_context_artifacts=context_artifacts_by_seed.get(int(seed)),
                 dense_rankings_by_qid=dense_rankings_by_qid,
                 bm25_rankings_by_qid=bm25_rankings_by_qid,
-            ))
+            )
+            save_seed_checkpoint(
+                checkpoint_path,
+                signature=signature,
+                result=result,
+                write_query_traces=write_query_traces,
+            )
+            print(f"  checkpoint wrote: mode={routing_mode} seed={seed} -> {checkpoint_path}")
+            seed_results.append(result)
         elapsed_sec = time.perf_counter() - start
         per_seed_metrics = [result["metrics"] for result in seed_results]
         representative = per_seed_metrics[0]
@@ -1415,18 +1549,15 @@ def run_dataset(
                 str(result["metrics"]["seed"]): result["query_traces"]
                 for result in seed_results
             }
+        write_json_atomic(metrics_path, rows)
+        write_json_atomic(rankings_path, all_rankings)
+        if write_query_traces:
+            write_json_atomic(traces_path, all_query_traces)
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    metrics_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_metrics.json"
-    rankings_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_rankings.json"
-    metrics_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    rankings_path.write_text(json.dumps(all_rankings, ensure_ascii=False), encoding="utf-8")
+    write_json_atomic(metrics_path, rows)
+    write_json_atomic(rankings_path, all_rankings)
     if write_query_traces:
-        traces_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_traces.json"
-        traces_path.write_text(
-            json.dumps(all_query_traces, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
+        write_json_atomic(traces_path, all_query_traces)
     return rows
 
 
@@ -1723,6 +1854,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="store_true",
         help="Write final-epoch per-query confidence and route traces for attribution audits.",
     )
+    parser.add_argument(
+        "--no-resume-checkpoints",
+        action="store_true",
+        help="Disable per-routing-mode/per-seed checkpoint reuse.",
+    )
     args = parser.parse_args(argv)
 
     datasets = parse_datasets(args.dataset)
@@ -1807,6 +1943,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             query_prefix=args.query_prefix,
             corpus_prefix=args.corpus_prefix,
             write_query_traces=args.write_query_traces,
+            resume_checkpoints=not args.no_resume_checkpoints,
         )
         all_rows.extend(rows)
         for row in rows:

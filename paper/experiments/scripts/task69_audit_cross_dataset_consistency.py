@@ -269,6 +269,19 @@ def current_result_snapshot() -> list[dict[str, Any]]:
         )
     )
     rows.append(
+        paired_snapshot(
+            dataset="CovidQA-RAG",
+            scale="native full",
+            path=RESULTS / "task69_5_covidqa_cross_fitted_calibration.paired.csv",
+            role="biomedical discriminative transfer",
+            source="paper/experiments/results/task69_5_covidqa_cross_fitted_calibration.paired.csv",
+            method_label="intentroute_crossfit",
+            scale_filter="covidqa",
+            protocol="five-fold cross-fitted calibration",
+            artifact_status="complete native-full discriminative transfer row",
+        )
+    )
+    rows.append(
         feedback_snapshot(
             dataset="Banking77",
             scale="native full",
@@ -421,7 +434,7 @@ def build_markdown(
         "",
         "## Interpretation Guardrail",
         "",
-        "LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
+        "LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
         "",
     ]
     return "\n".join(lines)

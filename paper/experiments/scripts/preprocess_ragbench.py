@@ -38,6 +38,21 @@ DATASET_FILES = {
         "validation": "cuad_ragbench_validation.parquet",
         "test": "cuad_ragbench_test.parquet",
     },
+    "covidqa": {
+        "train": "covidqa_train.parquet",
+        "validation": "covidqa_validation.parquet",
+        "test": "covidqa_test.parquet",
+    },
+    "finqa": {
+        "train": "finqa_train.parquet",
+        "validation": "finqa_validation.parquet",
+        "test": "finqa_test.parquet",
+    },
+    "techqa": {
+        "train": "techqa_train.parquet",
+        "validation": "techqa_validation.parquet",
+        "test": "techqa_test.parquet",
+    },
 }
 
 

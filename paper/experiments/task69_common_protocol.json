@@ -197,6 +197,32 @@
       "status": "complete_native_full"
     },
     {
+      "id": "covidqa",
+      "display_name": "CovidQA-RAG",
+      "scale": "native full",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "biomedical_discriminative_transfer",
+      "corpus_chunks": 32392,
+      "total_queries": 1765,
+      "current_eval_queries": 1726,
+      "gt_semantics": "ragbench_relevant_sentence_keys",
+      "sampling": "RAGBench native train/validation/test union; 39 queries have no usable GT",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": true,
+        "final_context_tokens": true,
+        "paired_statistics": true,
+        "feedback_control": true,
+        "feedback_recovery": true
+      },
+      "status": "complete_native_full"
+    },
+    {
       "id": "emanual_deduplicated",
       "display_name": "eManual deduplicated",
       "scale": "native full",

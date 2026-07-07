@@ -38,6 +38,8 @@ They should be run on the GPU machine unless intentionally deferred.
 | P1 | LoTTE lifestyle/search 100k | New domain, new processed corpus and embeddings | 100k domain-generalization row |
 | P1 | LoTTE recreation/search 100k | New domain, new processed corpus and embeddings | 100k domain-generalization row |
 | P1 | LoTTE writing/search 100k | New domain, new processed corpus and embeddings | 100k domain-generalization row |
+| P1.5 | TechQA / technical-support evidence retrieval | Candidate RAGBench/TechQA corpus construction still needs validation; embeddings are new, and the original TechQA corpus may be much larger than the RAGBench row count | optional technical-support vertical row |
+| P1.5 | LegalBench-RAG | New legal corpus and span-to-chunk preprocessing; license/download and chunking must be checked before use | optional legal evidence-retrieval row or CUAD replacement |
 | P2 | Additional embedding-backbone robustness | BGE or other GPU-friendly encoder requires full reranking under a second backbone | robustness appendix or reviewer-response evidence |
 
 ## Current CPU / Non-Large-Embedding Queue
@@ -48,9 +50,45 @@ metrics.
 
 | Priority | Task | Missing endpoint | Dataset role |
 |---|---|---|---|
+| P2 | FinQA or FiQA | Optional finance-domain preprocessing and common-protocol run | finance-domain breadth |
 | P2 | CUAD GT-anchored sample | optional token-budget and paired statistics only if kept as a boundary appendix row | sparse-GT boundary only |
 | P2 | Banking77 native full | optional route-learning summary table cleanup; not pooled with evidence retrieval | mechanism-only row |
 | P2 | Task69 audit integration | update protocol coverage after each CPU/GPU batch | reproducibility and reviewer readability |
+
+## Merged Dataset-Expansion Decision
+
+The Nemesis expansion review and the current Task69 plan agree on the main
+direction:
+
+- **Strong accept:** add more LoTTE search domains. LoTTE is the cleanest
+  cross-domain extension because the corpus/query/qrels schema is identical to
+  the current technology/search and science/search runs. This strengthens
+  domain generalization without changing the protocol.
+- **Accept with validation:** add TechQA and LegalBench-RAG only after checking
+  corpus construction, license, and chunk-to-evidence mapping. They are useful
+  because they add technical-support and legal retrieval evidence, but they
+  should not be silently pooled with LoTTE until they pass the same endpoint
+  coverage audit.
+- **Accept as a biomedical discriminative supplement:** add CovidQA-RAG if we
+  need a non-ceiling biomedical row. PubMedQA is now useful as a safety fallback
+  row, but Dense is nearly saturated there, so it is weak evidence for feedback
+  improvement.
+- **Optional:** add exactly one finance dataset, preferably FinQA if we want
+  RAGBench-format convenience or FiQA if we want a more conventional BEIR
+  retrieval benchmark.
+- **Do not remove existing boundary evidence prematurely:** CUAD should remain
+  a sparse-GT boundary appendix row unless LegalBench-RAG is successfully
+  preprocessed and evaluated. Banking77 remains a mechanism-only route-learning
+  proxy.
+
+The resulting paper-facing structure should be:
+
+1. **LoTTE scale/domain matrix:** technology/search full scale, science/search
+   partial scale, and lifestyle/recreation/writing 100k.
+2. **External vertical evidence rows:** eManual deduplicated, PubMedQA, and
+   optionally CovidQA-RAG, TechQA, LegalBench-RAG, or one finance dataset.
+3. **Mechanism/boundary rows:** Banking77 and CUAD, reported separately and not
+   pooled with evidence retrieval.
 
 ## Table-Design Guardrails
 
@@ -71,7 +109,11 @@ metrics.
    new GPU batch.
 2. On the GPU machine, run LoTTE science/search 400k.
 3. On the GPU machine, run LoTTE lifestyle/recreation/writing 100k rows.
-4. Decide whether science/search full and second-encoder robustness are worth
+4. If cross-domain LoTTE is stable, choose at most two external vertical
+   candidates for the next expansion batch. CovidQA-RAG is already complete;
+   the remaining preferred order is TechQA, LegalBench-RAG, then one finance
+   dataset.
+5. Decide whether science/search full and second-encoder robustness are worth
    the additional cost.
 
 ## Completed CPU Updates
@@ -84,3 +126,9 @@ metrics.
   dataset, Dense/BM25/hybrid, 8-epoch trust-weighted and no-feedback
   IntentRoute, five-fold cross-fitted budget selection, paired statistics, and
   feedback-recovery diagnostics.
+- CovidQA-RAG native full: completed RAGBench parquet download, preprocessing,
+  Dense/BM25/hybrid, 8-epoch trust-weighted and no-feedback IntentRoute,
+  five-fold cross-fitted budget selection, paired statistics, and feedback
+  recovery diagnostics. This row is the biomedical discriminative supplement to
+  PubMedQA: Dense is not saturated, and the selector finds a modest context
+  saving under small mean Hit@10 change.

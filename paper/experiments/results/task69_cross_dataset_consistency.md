@@ -23,6 +23,7 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE recreation/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
 | LoTTE writing/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
 | PubMedQA | native full | evidence_retrieval | 4348 | 1000 | 1000 | abstract_context_section | mechanism_transfer | complete_native_full |
+| CovidQA-RAG | native full | evidence_retrieval | 32392 | 1765 | 1726 | ragbench_relevant_sentence_keys | biomedical_discriminative_transfer | complete_native_full |
 | eManual deduplicated | native full | evidence_retrieval | 1729 | 132 | 130 | text_equivalent_after_deduplication | corrected_boundary | complete_corrected_boundary |
 | CUAD GT-anchored sample | 10k sample | evidence_retrieval | 10000 | 2550 | 79 | sparse_contract_evidence_anchors | sparse_gt_boundary | boundary_not_poolable |
 | Banking77 | native full | intent_retrieval_proxy | 10003 | 3080 | 3080 | same_intent_exemplar | feedback_route_learning | mechanism_not_poolable |
@@ -38,6 +39,7 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE recreation/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
 | LoTTE writing/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
 | PubMedQA | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
+| CovidQA-RAG | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | eManual deduplicated | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | CUAD GT-anchored sample | 10k sample | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
 | Banking77 | native full | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
@@ -56,6 +58,7 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 | LoTTE science/search | 100k | 0.8926 | 0.8915 | -0.11 | 16.88 | 0/3 | -- | reusable complete cross-domain row |
 | LoTTE science/search | 200k | 0.8574 | 0.8507 | -0.67 | 10.75 | 0/3 | -- | reusable complete cross-domain scale row |
 | PubMedQA | native full | 0.9930 | 0.9930 | 0.00 | 0.00 | 3/3 | -- | complete native-full transfer row |
+| CovidQA-RAG | native full | 0.6095 | 0.6074 | -0.21 | 8.34 | 0/3 | -- | complete native-full discriminative transfer row |
 | Banking77 | native full | 0.9805 | 0.9844 | 0.39 | -- | -- | 0.9983 | mechanism/boundary only |
 | CUAD GT-anchored | 10k sample | 0.0759 | 0.0886 | 1.27 | -- | -- | 0.2900 | mechanism/boundary only |
 | eManual deduplicated | native full | 0.8615 | 0.8590 | -0.26 | 16.20 | 0/3 | -- | complete corrected-boundary row |
@@ -70,4 +73,4 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 
 ## Interpretation Guardrail
 
-LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.
+LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.
