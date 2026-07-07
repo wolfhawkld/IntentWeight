@@ -40,6 +40,7 @@ They should be run on the GPU machine unless intentionally deferred.
 | P1 | LoTTE writing/search 100k | New domain, new processed corpus and embeddings | 100k domain-generalization row |
 | P1.5 | TechQA / technical-support evidence retrieval | Candidate RAGBench/TechQA corpus construction still needs validation; embeddings are new, and the original TechQA corpus may be much larger than the RAGBench row count | optional technical-support vertical row |
 | P1.5 | LegalBench-RAG | New legal corpus and span-to-chunk preprocessing; license/download and chunking must be checked before use | optional legal evidence-retrieval row or CUAD replacement |
+| P1.5 | FinQA full protocol | Feasibility download/preprocessing is complete, but the native processed corpus has 196,659 chunks and 16,562 queries; full Dense/IntentRoute should run on GPU or overnight infrastructure | optional finance-domain breadth row |
 | P2 | Additional embedding-backbone robustness | BGE or other GPU-friendly encoder requires full reranking under a second backbone | robustness appendix or reviewer-response evidence |
 
 ## Current CPU / Non-Large-Embedding Queue
@@ -50,7 +51,7 @@ metrics.
 
 | Priority | Task | Missing endpoint | Dataset role |
 |---|---|---|---|
-| P2 | FinQA or FiQA | Optional finance-domain preprocessing and common-protocol run | finance-domain breadth |
+| P2 | FiQA metadata/preprocessing check | Optional BEIR finance alternative only if FinQA proves too expensive or unsuitable | finance-domain fallback |
 | P2 | CUAD GT-anchored sample | optional token-budget and paired statistics only if kept as a boundary appendix row | sparse-GT boundary only |
 | P2 | Banking77 native full | optional route-learning summary table cleanup; not pooled with evidence retrieval | mechanism-only row |
 | P2 | Task69 audit integration | update protocol coverage after each CPU/GPU batch | reproducibility and reviewer readability |
@@ -132,3 +133,8 @@ The resulting paper-facing structure should be:
   recovery diagnostics. This row is the biomedical discriminative supplement to
   PubMedQA: Dense is not saturated, and the selector finds a modest context
   saving under small mean Hit@10 change.
+- FinQA feasibility probe: completed RAGBench parquet download, preprocessing,
+  and processed-dataset validation. The native processed corpus has 196,659
+  chunks and 16,562 queries, with 9,051 queries carrying usable GT. Full
+  common-protocol evaluation is moved to the GPU/overnight queue rather than
+  this CPU session.
