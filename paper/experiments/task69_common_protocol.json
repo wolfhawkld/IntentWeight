@@ -181,20 +181,20 @@
       "total_queries": 1000,
       "current_eval_queries": 1000,
       "gt_semantics": "abstract_context_section",
-      "sampling": "labeled train split; no frozen calibration/test budget protocol yet",
+      "sampling": "labeled train split; five-fold out-of-fold evaluation",
       "current_coverage": {
         "bm25": true,
         "dense": true,
         "hybrid_rrf": true,
         "intentroute_top10": true,
         "geometry": true,
-        "cross_fitted_budget": false,
-        "final_context_tokens": false,
-        "paired_statistics": false,
+        "cross_fitted_budget": true,
+        "final_context_tokens": true,
+        "paired_statistics": true,
         "feedback_control": true,
-        "feedback_recovery": false
+        "feedback_recovery": true
       },
-      "status": "partial_common_protocol"
+      "status": "complete_native_full"
     },
     {
       "id": "emanual_deduplicated",
@@ -212,15 +212,15 @@
         "bm25": true,
         "dense": true,
         "hybrid_rrf": true,
-        "intentroute_top10": false,
+        "intentroute_top10": true,
         "geometry": true,
-        "cross_fitted_budget": false,
-        "final_context_tokens": false,
-        "paired_statistics": false,
-        "feedback_control": false,
-        "feedback_recovery": false
+        "cross_fitted_budget": true,
+        "final_context_tokens": true,
+        "paired_statistics": true,
+        "feedback_control": true,
+        "feedback_recovery": true
       },
-      "status": "partial_common_protocol"
+      "status": "complete_corrected_boundary"
     },
     {
       "id": "cuad_gt_anchored",

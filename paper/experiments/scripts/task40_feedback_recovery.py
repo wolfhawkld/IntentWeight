@@ -118,6 +118,12 @@ def load_budgeted_seed_rankings(path: Path, *, source_prefix: str) -> Dict[str, 
         data = json.load(f)
     if not isinstance(data, dict):
         raise ValueError(f"Expected budgeted ranking variants: {path}")
+    nested = data.get(source_prefix)
+    if isinstance(nested, dict) and all(isinstance(value, dict) for value in nested.values()):
+        return {
+            str(seed): {str(q): [str(item) for item in ranking] for q, ranking in rankings.items()}
+            for seed, rankings in nested.items()
+        }
     variants: Dict[str, Dict[str, List[str]]] = {}
     for run_id, rankings in data.items():
         if not str(run_id).startswith(source_prefix):

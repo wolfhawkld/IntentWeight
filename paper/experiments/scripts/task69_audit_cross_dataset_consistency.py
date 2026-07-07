@@ -256,12 +256,16 @@ def current_result_snapshot() -> list[dict[str, Any]]:
     )
 
     rows.append(
-        feedback_snapshot(
+        paired_snapshot(
             dataset="PubMedQA",
             scale="native full",
-            dense_path=RESULTS / "dense_pubmedqa_metrics.json",
-            route_path=RESULTS / "linucb_trust_pubmedqa_prequential_metrics.json",
-            role="mechanism transfer",
+            path=RESULTS / "task69_4_pubmedqa_cross_fitted_calibration.paired.csv",
+            role="non-LoTTE evidence transfer",
+            source="paper/experiments/results/task69_4_pubmedqa_cross_fitted_calibration.paired.csv",
+            method_label="intentroute_crossfit",
+            scale_filter="pubmedqa",
+            protocol="five-fold cross-fitted calibration",
+            artifact_status="complete native-full transfer row",
         )
     )
     rows.append(
@@ -283,28 +287,18 @@ def current_result_snapshot() -> list[dict[str, Any]]:
         )
     )
 
-    emanual_rows = read_csv(RESULTS / "emanual_failure_analysis_tables.csv")
-    dense = next(
-        row
-        for row in emanual_rows
-        if row["method"] == "dedup_dense" and row["evaluation_mode"] == "deduplicated_text_corpus"
-    )
     rows.append(
-        {
-            "dataset": "eManual deduplicated",
-            "scale": "native full",
-            "role": "corrected boundary",
-            "protocol": "deduplicated text-equivalent evaluation",
-            "dense_hit@10": fmt(dense["recall@10"]),
-            "intentroute_hit@10": "--",
-            "hit_delta_pp": "--",
-            "evidence_recall_delta_pp": "--",
-            "context_saving_percent": "--",
-            "strict_ni_seeds": "--",
-            "feedback_route_metric": "--",
-            "artifact_status": "partial; corrected Dense only",
-            "source": "paper/experiments/results/emanual_failure_analysis_tables.csv",
-        }
+        paired_snapshot(
+            dataset="eManual deduplicated",
+            scale="native full",
+            path=RESULTS / "task69_4_emanual_dedup_cross_fitted_calibration.paired.csv",
+            role="corrected boundary",
+            source="paper/experiments/results/task69_4_emanual_dedup_cross_fitted_calibration.paired.csv",
+            method_label="intentroute_crossfit",
+            scale_filter="emanual_deduplicated",
+            protocol="five-fold cross-fitted calibration on deduplicated text corpus",
+            artifact_status="complete corrected-boundary row",
+        )
     )
     return rows
 
@@ -427,7 +421,7 @@ def build_markdown(
         "",
         "## Interpretation Guardrail",
         "",
-        "LoTTE technology/search and science/search 100k/200k now provide complete reusable rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results. PubMedQA and corrected eManual can join the common table only after their missing token-budget and paired endpoints are run. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
+        "LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
         "",
     ]
     return "\n".join(lines)
@@ -459,7 +453,7 @@ def main() -> None:
             "dataset_count": len(datasets),
             "common_evidence_count": sum(item["protocol_group"] == "common_evidence" for item in datasets),
             "complete_common_evidence_count": sum(
-                item["status"] == "complete_reusable_anchor" for item in datasets
+                str(item["status"]).startswith("complete") for item in datasets
             ),
             "inventory": inventory,
             "coverage": coverage,

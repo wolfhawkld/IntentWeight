@@ -22,8 +22,8 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE lifestyle/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
 | LoTTE recreation/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
 | LoTTE writing/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
-| PubMedQA | native full | evidence_retrieval | 4348 | 1000 | 1000 | abstract_context_section | mechanism_transfer | partial_common_protocol |
-| eManual deduplicated | native full | evidence_retrieval | 1729 | 132 | 130 | text_equivalent_after_deduplication | corrected_boundary | partial_common_protocol |
+| PubMedQA | native full | evidence_retrieval | 4348 | 1000 | 1000 | abstract_context_section | mechanism_transfer | complete_native_full |
+| eManual deduplicated | native full | evidence_retrieval | 1729 | 132 | 130 | text_equivalent_after_deduplication | corrected_boundary | complete_corrected_boundary |
 | CUAD GT-anchored sample | 10k sample | evidence_retrieval | 10000 | 2550 | 79 | sparse_contract_evidence_anchors | sparse_gt_boundary | boundary_not_poolable |
 | Banking77 | native full | intent_retrieval_proxy | 10003 | 3080 | 3080 | same_intent_exemplar | feedback_route_learning | mechanism_not_poolable |
 
@@ -37,8 +37,8 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE lifestyle/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
 | LoTTE recreation/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
 | LoTTE writing/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
-| PubMedQA | native full | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
-| eManual deduplicated | native full | yes | yes | yes | no | yes | no | no | no | no | no | 4/10 |
+| PubMedQA | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
+| eManual deduplicated | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | CUAD GT-anchored sample | 10k sample | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
 | Banking77 | native full | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
 
@@ -55,10 +55,10 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 | LoTTE science/search | 20k/q200 | 0.8929 | 0.9095 | 1.67 | 13.80 | 1/3 | -- | legacy fixed-split diagnostic |
 | LoTTE science/search | 100k | 0.8926 | 0.8915 | -0.11 | 16.88 | 0/3 | -- | reusable complete cross-domain row |
 | LoTTE science/search | 200k | 0.8574 | 0.8507 | -0.67 | 10.75 | 0/3 | -- | reusable complete cross-domain scale row |
-| PubMedQA | native full | 0.9930 | 0.9940 | 0.10 | -- | -- | 0.8860 | mechanism/boundary only |
+| PubMedQA | native full | 0.9930 | 0.9930 | 0.00 | 0.00 | 3/3 | -- | complete native-full transfer row |
 | Banking77 | native full | 0.9805 | 0.9844 | 0.39 | -- | -- | 0.9983 | mechanism/boundary only |
 | CUAD GT-anchored | 10k sample | 0.0759 | 0.0886 | 1.27 | -- | -- | 0.2900 | mechanism/boundary only |
-| eManual deduplicated | native full | 0.8615 | -- | -- | -- | -- | -- | partial; corrected Dense only |
+| eManual deduplicated | native full | 0.8615 | 0.8590 | -0.26 | 16.20 | 0/3 | -- | complete corrected-boundary row |
 
 ## Missing Experiment Batches
 
@@ -67,9 +67,7 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 | P1 | LoTTE lifestyle/search | 100k | bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery | run common protocol |
 | P1 | LoTTE recreation/search | 100k | bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery | run common protocol |
 | P1 | LoTTE writing/search | 100k | bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery | run common protocol |
-| P1 | PubMedQA | native full | cross_fitted_budget, final_context_tokens, paired_statistics, feedback_recovery | complete missing common-protocol stages |
-| P1 | eManual deduplicated | native full | intentroute_top10, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery | complete missing common-protocol stages |
 
 ## Interpretation Guardrail
 
-LoTTE technology/search and science/search 100k/200k now provide complete reusable rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results. PubMedQA and corrected eManual can join the common table only after their missing token-budget and paired endpoints are run. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.
+LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.

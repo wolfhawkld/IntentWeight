@@ -2,7 +2,7 @@
   "protocol_version": 1,
   "dataset_count": 10,
   "common_evidence_count": 8,
-  "complete_common_evidence_count": 3,
+  "complete_common_evidence_count": 5,
   "inventory": [
     {
       "dataset": "LoTTE technology/search",
@@ -91,9 +91,9 @@
       "total_queries": 1000,
       "eval_queries": 1000,
       "gt_semantics": "abstract_context_section",
-      "sampling": "labeled train split; no frozen calibration/test budget protocol yet",
+      "sampling": "labeled train split; five-fold out-of-fold evaluation",
       "paper_role": "mechanism_transfer",
-      "status": "partial_common_protocol"
+      "status": "complete_native_full"
     },
     {
       "dataset": "eManual deduplicated",
@@ -106,7 +106,7 @@
       "gt_semantics": "text_equivalent_after_deduplication",
       "sampling": "native test split; two queries have no usable GT",
       "paper_role": "corrected_boundary",
-      "status": "partial_common_protocol"
+      "status": "complete_corrected_boundary"
     },
     {
       "dataset": "CUAD GT-anchored sample",
@@ -247,13 +247,13 @@
       "hybrid_rrf": "yes",
       "intentroute_top10": "yes",
       "geometry": "yes",
-      "cross_fitted_budget": "no",
-      "final_context_tokens": "no",
-      "paired_statistics": "no",
+      "cross_fitted_budget": "yes",
+      "final_context_tokens": "yes",
+      "paired_statistics": "yes",
       "feedback_control": "yes",
-      "feedback_recovery": "no",
-      "coverage": "6/10",
-      "status": "partial_common_protocol"
+      "feedback_recovery": "yes",
+      "coverage": "10/10",
+      "status": "complete_native_full"
     },
     {
       "dataset": "eManual deduplicated",
@@ -262,15 +262,15 @@
       "bm25": "yes",
       "dense": "yes",
       "hybrid_rrf": "yes",
-      "intentroute_top10": "no",
+      "intentroute_top10": "yes",
       "geometry": "yes",
-      "cross_fitted_budget": "no",
-      "final_context_tokens": "no",
-      "paired_statistics": "no",
-      "feedback_control": "no",
-      "feedback_recovery": "no",
-      "coverage": "4/10",
-      "status": "partial_common_protocol"
+      "cross_fitted_budget": "yes",
+      "final_context_tokens": "yes",
+      "paired_statistics": "yes",
+      "feedback_control": "yes",
+      "feedback_recovery": "yes",
+      "coverage": "10/10",
+      "status": "complete_corrected_boundary"
     },
     {
       "dataset": "CUAD GT-anchored sample",
@@ -416,17 +416,17 @@
     {
       "dataset": "PubMedQA",
       "scale": "native full",
-      "role": "mechanism transfer",
-      "protocol": "dataset=pubmedqa|query_scope=split_train|corpus_scope=full|top_k=10|ks=1,5,10",
+      "role": "non-LoTTE evidence transfer",
+      "protocol": "five-fold cross-fitted calibration",
       "dense_hit@10": "0.9930",
-      "intentroute_hit@10": "0.9940",
-      "hit_delta_pp": "0.10",
-      "evidence_recall_delta_pp": "--",
-      "context_saving_percent": "--",
-      "strict_ni_seeds": "--",
-      "feedback_route_metric": "0.8860",
-      "artifact_status": "mechanism/boundary only",
-      "source": "paper/experiments/results/linucb_trust_pubmedqa_prequential_metrics.json"
+      "intentroute_hit@10": "0.9930",
+      "hit_delta_pp": "0.00",
+      "evidence_recall_delta_pp": "0.00",
+      "context_saving_percent": "0.00",
+      "strict_ni_seeds": "3/3",
+      "feedback_route_metric": "--",
+      "artifact_status": "complete native-full transfer row",
+      "source": "paper/experiments/results/task69_4_pubmedqa_cross_fitted_calibration.paired.csv"
     },
     {
       "dataset": "Banking77",
@@ -462,16 +462,16 @@
       "dataset": "eManual deduplicated",
       "scale": "native full",
       "role": "corrected boundary",
-      "protocol": "deduplicated text-equivalent evaluation",
+      "protocol": "five-fold cross-fitted calibration on deduplicated text corpus",
       "dense_hit@10": "0.8615",
-      "intentroute_hit@10": "--",
-      "hit_delta_pp": "--",
-      "evidence_recall_delta_pp": "--",
-      "context_saving_percent": "--",
-      "strict_ni_seeds": "--",
+      "intentroute_hit@10": "0.8590",
+      "hit_delta_pp": "-0.26",
+      "evidence_recall_delta_pp": "-3.07",
+      "context_saving_percent": "16.20",
+      "strict_ni_seeds": "0/3",
       "feedback_route_metric": "--",
-      "artifact_status": "partial; corrected Dense only",
-      "source": "paper/experiments/results/emanual_failure_analysis_tables.csv"
+      "artifact_status": "complete corrected-boundary row",
+      "source": "paper/experiments/results/task69_4_emanual_dedup_cross_fitted_calibration.paired.csv"
     }
   ],
   "missing_batches": [
@@ -495,20 +495,6 @@
       "missing": "bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",
       "priority": "P1",
       "action": "run common protocol"
-    },
-    {
-      "dataset": "PubMedQA",
-      "scale": "native full",
-      "missing": "cross_fitted_budget, final_context_tokens, paired_statistics, feedback_recovery",
-      "priority": "P1",
-      "action": "complete missing common-protocol stages"
-    },
-    {
-      "dataset": "eManual deduplicated",
-      "scale": "native full",
-      "missing": "intentroute_top10, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",
-      "priority": "P1",
-      "action": "complete missing common-protocol stages"
     }
   ]
 }

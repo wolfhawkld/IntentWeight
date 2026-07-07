@@ -1,0 +1,18 @@
+{
+  "dataset": "pubmedqa",
+  "scale": "native full",
+  "endpoint": "feedback_recovery",
+  "status": "not_applicable_under_common_protocol",
+  "reason": "The five-fold cross-fitted context-budget selector chose dense_top10_fallback in all folds, so there is no compressed budget-induced harmed-query set to recover.",
+  "queries": 1000,
+  "eligible_intentroute_folds": 0,
+  "folds": 5,
+  "intentroute_policy_counts": {
+    "dense_top10_fallback": 5
+  },
+  "dense_policy_counts": {
+    "dense_top10_fallback": 5
+  },
+  "source": "paper/experiments/results/task69_4_pubmedqa_cross_fitted_calibration.json",
+  "claim_boundary": "This is a no-op recovery endpoint and should not be reported as positive feedback recovery evidence."
+}

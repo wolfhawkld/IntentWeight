@@ -112,12 +112,17 @@ this checkpoint.
 
 ### Task69.4: Non-LoTTE Common-Protocol Completion
 
-Status: pending.
+Status: complete for PubMedQA native full and eManual deduplicated native full.
 
-- PubMedQA: add five-fold context-budget, final-token, paired, and recovery
-  endpoints on the existing native corpus.
-- eManual: run IntentRoute on the deduplicated/text-equivalent corpus before
-  adding it to the common performance table.
+- PubMedQA: added Dense/BM25/hybrid, 8-epoch trust-weighted and no-feedback
+  IntentRoute, five-fold context-budget, final-token, paired, and no-op
+  recovery endpoints on the native corpus. The frozen selector falls back to
+  Dense in all folds, yielding 0.00% context saving while preserving Hit@10.
+- eManual: generated the deduplicated/text-equivalent processed corpus, ran
+  Dense/BM25/hybrid, 8-epoch trust-weighted and no-feedback IntentRoute, added
+  five-fold context-budget, paired, final-token, and feedback-recovery
+  diagnostics. The cross-fitted row shows -0.26pp Hit@10 with 16.20% final-
+  context token saving.
 
 ### Task69.5: Mechanism And Boundary Tables
 

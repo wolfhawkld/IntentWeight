@@ -5,7 +5,7 @@ LoTTE science/search,200k,evidence_retrieval,common_evidence,201098,596,596,pass
 LoTTE lifestyle/search,100k,evidence_retrieval,common_evidence,pending,pending,pending,passage_qrels,planned nested GT-anchored 100k,planned_cross_domain,planned
 LoTTE recreation/search,100k,evidence_retrieval,common_evidence,pending,pending,pending,passage_qrels,planned nested GT-anchored 100k,planned_cross_domain,planned
 LoTTE writing/search,100k,evidence_retrieval,common_evidence,pending,pending,pending,passage_qrels,planned nested GT-anchored 100k,planned_cross_domain,planned
-PubMedQA,native full,evidence_retrieval,common_evidence,4348,1000,1000,abstract_context_section,labeled train split; no frozen calibration/test budget protocol yet,mechanism_transfer,partial_common_protocol
-eManual deduplicated,native full,evidence_retrieval,common_evidence,1729,132,130,text_equivalent_after_deduplication,native test split; two queries have no usable GT,corrected_boundary,partial_common_protocol
+PubMedQA,native full,evidence_retrieval,common_evidence,4348,1000,1000,abstract_context_section,labeled train split; five-fold out-of-fold evaluation,mechanism_transfer,complete_native_full
+eManual deduplicated,native full,evidence_retrieval,common_evidence,1729,132,130,text_equivalent_after_deduplication,native test split; two queries have no usable GT,corrected_boundary,complete_corrected_boundary
 CUAD GT-anchored sample,10k sample,evidence_retrieval,boundary_only,10000,2550,79,sparse_contract_evidence_anchors,first 100 test queries; 79 with GT; GT-anchored distractor sample,sparse_gt_boundary,boundary_not_poolable
 Banking77,native full,intent_retrieval_proxy,mechanism_only,10003,3080,3080,same_intent_exemplar,official train corpus and test queries,feedback_route_learning,mechanism_not_poolable
