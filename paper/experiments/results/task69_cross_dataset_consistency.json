@@ -1,8 +1,8 @@
 {
   "protocol_version": 1,
-  "dataset_count": 9,
-  "common_evidence_count": 7,
-  "complete_common_evidence_count": 2,
+  "dataset_count": 10,
+  "common_evidence_count": 8,
+  "complete_common_evidence_count": 3,
   "inventory": [
     {
       "dataset": "LoTTE technology/search",
@@ -28,6 +28,19 @@
       "gt_semantics": "passage_qrels",
       "sampling": "gt_anchored corpus; five-fold out-of-fold evaluation",
       "paper_role": "cross_domain",
+      "status": "complete_reusable_anchor"
+    },
+    {
+      "dataset": "LoTTE science/search",
+      "scale": "200k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "corpus_chunks": 201098,
+      "total_queries": 596,
+      "eval_queries": 596,
+      "gt_semantics": "passage_qrels",
+      "sampling": "gt_anchored nested corpus; five-fold out-of-fold evaluation",
+      "paper_role": "cross_domain_scale",
       "status": "complete_reusable_anchor"
     },
     {
@@ -125,6 +138,7 @@
   "coverage": [
     {
       "dataset": "LoTTE technology/search",
+      "scale": "100k",
       "protocol_group": "common_evidence",
       "bm25": "yes",
       "dense": "yes",
@@ -141,6 +155,24 @@
     },
     {
       "dataset": "LoTTE science/search",
+      "scale": "100k",
+      "protocol_group": "common_evidence",
+      "bm25": "yes",
+      "dense": "yes",
+      "hybrid_rrf": "yes",
+      "intentroute_top10": "yes",
+      "geometry": "yes",
+      "cross_fitted_budget": "yes",
+      "final_context_tokens": "yes",
+      "paired_statistics": "yes",
+      "feedback_control": "yes",
+      "feedback_recovery": "yes",
+      "coverage": "10/10",
+      "status": "complete_reusable_anchor"
+    },
+    {
+      "dataset": "LoTTE science/search",
+      "scale": "200k",
       "protocol_group": "common_evidence",
       "bm25": "yes",
       "dense": "yes",
@@ -157,6 +189,7 @@
     },
     {
       "dataset": "LoTTE lifestyle/search",
+      "scale": "100k",
       "protocol_group": "common_evidence",
       "bm25": "no",
       "dense": "no",
@@ -173,6 +206,7 @@
     },
     {
       "dataset": "LoTTE recreation/search",
+      "scale": "100k",
       "protocol_group": "common_evidence",
       "bm25": "no",
       "dense": "no",
@@ -189,6 +223,7 @@
     },
     {
       "dataset": "LoTTE writing/search",
+      "scale": "100k",
       "protocol_group": "common_evidence",
       "bm25": "no",
       "dense": "no",
@@ -205,6 +240,7 @@
     },
     {
       "dataset": "PubMedQA",
+      "scale": "native full",
       "protocol_group": "common_evidence",
       "bm25": "yes",
       "dense": "yes",
@@ -221,6 +257,7 @@
     },
     {
       "dataset": "eManual deduplicated",
+      "scale": "native full",
       "protocol_group": "common_evidence",
       "bm25": "yes",
       "dense": "yes",
@@ -237,6 +274,7 @@
     },
     {
       "dataset": "CUAD GT-anchored sample",
+      "scale": "10k sample",
       "protocol_group": "boundary_only",
       "bm25": "yes",
       "dense": "yes",
@@ -253,6 +291,7 @@
     },
     {
       "dataset": "Banking77",
+      "scale": "native full",
       "protocol_group": "mechanism_only",
       "bm25": "yes",
       "dense": "yes",
@@ -358,6 +397,21 @@
       "feedback_route_metric": "--",
       "artifact_status": "reusable complete cross-domain row",
       "source": "paper/experiments/results/task69_3_science_100k_cross_fitted_calibration.paired.csv"
+    },
+    {
+      "dataset": "LoTTE science/search",
+      "scale": "200k",
+      "role": "cross-domain scale",
+      "protocol": "five-fold cross-fitted calibration",
+      "dense_hit@10": "0.8574",
+      "intentroute_hit@10": "0.8507",
+      "hit_delta_pp": "-0.67",
+      "evidence_recall_delta_pp": "-2.97",
+      "context_saving_percent": "10.75",
+      "strict_ni_seeds": "0/3",
+      "feedback_route_metric": "--",
+      "artifact_status": "reusable complete cross-domain scale row",
+      "source": "paper/experiments/results/task69_3_science_200k_cross_fitted_calibration.paired.csv"
     },
     {
       "dataset": "PubMedQA",

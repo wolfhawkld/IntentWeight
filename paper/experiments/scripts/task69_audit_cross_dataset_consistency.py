@@ -49,7 +49,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
             if key not in fields:
                 fields.append(key)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -112,6 +112,7 @@ def coverage_matrix(datasets: Iterable[Mapping[str, Any]]) -> list[dict[str, Any
         complete = sum(bool(coverage.get(field)) for field in COVERAGE_FIELDS)
         row = {
             "dataset": item["display_name"],
+            "scale": item["scale"],
             "protocol_group": item["protocol_group"],
             **{field: bool_mark(coverage.get(field, False)) for field in COVERAGE_FIELDS},
             "coverage": f"{complete}/{len(COVERAGE_FIELDS)}",
@@ -240,6 +241,19 @@ def current_result_snapshot() -> list[dict[str, Any]]:
             artifact_status="reusable complete cross-domain row",
         )
     )
+    rows.append(
+        paired_snapshot(
+            dataset="LoTTE science/search",
+            scale="200k",
+            path=RESULTS / "task69_3_science_200k_cross_fitted_calibration.paired.csv",
+            role="cross-domain scale",
+            source="paper/experiments/results/task69_3_science_200k_cross_fitted_calibration.paired.csv",
+            method_label="intentroute_crossfit",
+            scale_filter="lotte_science_search_200k",
+            protocol="five-fold cross-fitted calibration",
+            artifact_status="reusable complete cross-domain scale row",
+        )
+    )
 
     rows.append(
         feedback_snapshot(
@@ -364,6 +378,7 @@ def build_markdown(
             coverage,
             [
                 ("dataset", "Dataset"),
+                ("scale", "Scale"),
                 ("bm25", "BM25"),
                 ("dense", "Dense"),
                 ("hybrid_rrf", "Hybrid"),
@@ -412,7 +427,7 @@ def build_markdown(
         "",
         "## Interpretation Guardrail",
         "",
-        "LoTTE technology/search and science/search 100k now provide complete reusable rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget result. PubMedQA and corrected eManual can join the common table only after their missing token-budget and paired endpoints are run. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
+        "LoTTE technology/search and science/search 100k/200k now provide complete reusable rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results. PubMedQA and corrected eManual can join the common table only after their missing token-budget and paired endpoints are run. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
         "",
     ]
     return "\n".join(lines)

@@ -18,6 +18,7 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 |---|---|---|---|---|---|---|---|---|
 | LoTTE technology/search | 100k | evidence_retrieval | 101311 | 596 | 417 | passage_qrels | full_stack_anchor | complete_reusable_anchor |
 | LoTTE science/search | 100k | evidence_retrieval | 101187 | 596 | 596 | passage_qrels | cross_domain | complete_reusable_anchor |
+| LoTTE science/search | 200k | evidence_retrieval | 201098 | 596 | 596 | passage_qrels | cross_domain_scale | complete_reusable_anchor |
 | LoTTE lifestyle/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
 | LoTTE recreation/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
 | LoTTE writing/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
@@ -28,17 +29,18 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 
 ## Evidence Coverage Matrix
 
-| Dataset | BM25 | Dense | Hybrid | Route | Geometry | OOF budget | Tokens | Paired | Feedback | Recovery | Coverage |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| LoTTE technology/search | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
-| LoTTE science/search | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
-| LoTTE lifestyle/search | no | no | no | no | no | no | no | no | no | no | 0/10 |
-| LoTTE recreation/search | no | no | no | no | no | no | no | no | no | no | 0/10 |
-| LoTTE writing/search | no | no | no | no | no | no | no | no | no | no | 0/10 |
-| PubMedQA | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
-| eManual deduplicated | yes | yes | yes | no | yes | no | no | no | no | no | 4/10 |
-| CUAD GT-anchored sample | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
-| Banking77 | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
+| Dataset | Scale | BM25 | Dense | Hybrid | Route | Geometry | OOF budget | Tokens | Paired | Feedback | Recovery | Coverage |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| LoTTE technology/search | 100k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
+| LoTTE science/search | 100k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
+| LoTTE science/search | 200k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
+| LoTTE lifestyle/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
+| LoTTE recreation/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
+| LoTTE writing/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
+| PubMedQA | native full | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
+| eManual deduplicated | native full | yes | yes | yes | no | yes | no | no | no | no | no | 4/10 |
+| CUAD GT-anchored sample | 10k sample | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
+| Banking77 | native full | yes | yes | yes | yes | yes | no | no | no | yes | no | 6/10 |
 
 ## Current Result Snapshot
 
@@ -52,6 +54,7 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 | LoTTE technology/search | 638k full | 0.7282 | 0.7310 | 0.28 | 15.23 | 0/3 | -- | reusable complete anchor |
 | LoTTE science/search | 20k/q200 | 0.8929 | 0.9095 | 1.67 | 13.80 | 1/3 | -- | legacy fixed-split diagnostic |
 | LoTTE science/search | 100k | 0.8926 | 0.8915 | -0.11 | 16.88 | 0/3 | -- | reusable complete cross-domain row |
+| LoTTE science/search | 200k | 0.8574 | 0.8507 | -0.67 | 10.75 | 0/3 | -- | reusable complete cross-domain scale row |
 | PubMedQA | native full | 0.9930 | 0.9940 | 0.10 | -- | -- | 0.8860 | mechanism/boundary only |
 | Banking77 | native full | 0.9805 | 0.9844 | 0.39 | -- | -- | 0.9983 | mechanism/boundary only |
 | CUAD GT-anchored | 10k sample | 0.0759 | 0.0886 | 1.27 | -- | -- | 0.2900 | mechanism/boundary only |
@@ -69,4 +72,4 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 
 ## Interpretation Guardrail
 
-LoTTE technology/search and science/search 100k now provide complete reusable rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget result. PubMedQA and corrected eManual can join the common table only after their missing token-budget and paired endpoints are run. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.
+LoTTE technology/search and science/search 100k/200k now provide complete reusable rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results. PubMedQA and corrected eManual can join the common table only after their missing token-budget and paired endpoints are run. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.

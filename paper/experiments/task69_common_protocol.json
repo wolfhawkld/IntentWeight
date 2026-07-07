@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-06",
+  "updated": "2026-07-07",
   "paper_method_name": "IntentRoute",
   "implementation_identifier": "IntentWeight",
   "common_evidence_protocol": {
@@ -85,6 +85,32 @@
       "current_eval_queries": 596,
       "gt_semantics": "passage_qrels",
       "sampling": "gt_anchored corpus; five-fold out-of-fold evaluation",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": true,
+        "final_context_tokens": true,
+        "paired_statistics": true,
+        "feedback_control": true,
+        "feedback_recovery": true
+      },
+      "status": "complete_reusable_anchor"
+    },
+    {
+      "id": "lotte_science_search_200k",
+      "display_name": "LoTTE science/search",
+      "scale": "200k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "cross_domain_scale",
+      "corpus_chunks": 201098,
+      "total_queries": 596,
+      "current_eval_queries": 596,
+      "gt_semantics": "passage_qrels",
+      "sampling": "gt_anchored nested corpus; five-fold out-of-fold evaluation",
       "current_coverage": {
         "bm25": true,
         "dense": true,
@@ -258,7 +284,7 @@
     {
       "dataset_family": "LoTTE science/search",
       "target_scales": ["100k", "200k", "400k", "native full"],
-      "status": "100k complete; 200k/400k/full pending"
+      "status": "100k and 200k complete; 400k/full pending"
     }
   ]
 }

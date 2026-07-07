@@ -70,7 +70,7 @@ The machine-readable protocol is
 
 ### Task69.3: LoTTE Cross-Domain Completion
 
-Status: in progress; science/search 100k checkpoint complete.
+Status: in progress; science/search 100k and 200k checkpoints complete.
 
 1. Complete science/search 100k with standalone BM25 and hybrid baselines,
    five-fold cross-fitted budgeting, and matched feedback controls.
@@ -88,14 +88,27 @@ Completed science/search 100k checkpoint:
 - mean EvidenceRecall@10 delta is approximately `-2.86pp`, so this supports
   sufficient-evidence retrieval rather than complete evidence collection.
 
+Completed science/search 200k checkpoint:
+
+- incrementally extended the canonical science/search scale-store from
+  101,187 to 201,098 corpus rows;
+- standalone BM25, Dense, hybrid RRF, trust-weighted IntentRoute, and
+  no-feedback control baselines;
+- five-fold cross-fitted budget selection over all 596 queries;
+- OOF mean Hit@10 delta `-0.67pp` with `10.75%` final-context token saving;
+- strict 1pp non-inferiority remains `0/3` seeds;
+- mean EvidenceRecall@10 delta is approximately `-2.97pp`, so this remains a
+  sufficient-evidence trade-off row rather than complete-evidence preservation.
+
 The technology/search experiment does not need to be rerun. Its existing
 Task38/65 rankings, five-fold selections, paired statistics, and token artifacts
 already satisfy the reference protocol. The shared Task69 table generator will
 verify and assemble those artifacts into the reference row; it will not reuse a
 previously reported aggregate as if it were raw evidence.
 
-The remaining Task69.3 work is science/search 200k/400k/full and the additional
-100k LoTTE domains. No larger-scale run has been started at this checkpoint.
+The remaining Task69.3 work is science/search 400k/full and the additional 100k
+LoTTE domains. No larger science/search run beyond 200k has been started at
+this checkpoint.
 
 ### Task69.4: Non-LoTTE Common-Protocol Completion
 

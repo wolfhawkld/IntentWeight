@@ -1,6 +1,7 @@
 dataset,scale,task_type,protocol_group,corpus_chunks,total_queries,eval_queries,gt_semantics,sampling,paper_role,status
 LoTTE technology/search,100k,evidence_retrieval,common_evidence,101311,596,417,passage_qrels,gt_anchored_nested_corpus; five-fold OOF available,full_stack_anchor,complete_reusable_anchor
 LoTTE science/search,100k,evidence_retrieval,common_evidence,101187,596,596,passage_qrels,gt_anchored corpus; five-fold out-of-fold evaluation,cross_domain,complete_reusable_anchor
+LoTTE science/search,200k,evidence_retrieval,common_evidence,201098,596,596,passage_qrels,gt_anchored nested corpus; five-fold out-of-fold evaluation,cross_domain_scale,complete_reusable_anchor
 LoTTE lifestyle/search,100k,evidence_retrieval,common_evidence,pending,pending,pending,passage_qrels,planned nested GT-anchored 100k,planned_cross_domain,planned
 LoTTE recreation/search,100k,evidence_retrieval,common_evidence,pending,pending,pending,passage_qrels,planned nested GT-anchored 100k,planned_cross_domain,planned
 LoTTE writing/search,100k,evidence_retrieval,common_evidence,pending,pending,pending,passage_qrels,planned nested GT-anchored 100k,planned_cross_domain,planned
