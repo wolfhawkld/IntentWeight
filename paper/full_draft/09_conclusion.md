@@ -7,9 +7,9 @@ geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
 policy separately controls the final evidence-context budget.
 
-The evaluation spans six domain-specific settings with different evidentiary
-roles. The main full-stack evidence comes from LoTTE technology/search at 100k
-to 638k corpus chunks. Under calibration/test budget selection, calibration-eligible operating
+The evaluation spans seven dataset settings with different evidentiary roles.
+The main full-stack evidence comes from LoTTE technology/search at 100k to 638k
+corpus chunks. Under calibration/test budget selection, calibration-eligible operating
 points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
 by 6-18%; the original 400k point remains calibration-ineligible. A normalized
 five-fold follow-up at 400k yields 14.50% mean saving with no mean Hit change,
@@ -33,10 +33,12 @@ LoTTE science/search provides cross-domain ranking support with a clear
 compression-calibration boundary. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
 aggressive context compression.
-PubMedQA and Banking77 extend the feedback-adaptation checks to biomedical
-evidence retrieval and banking-intent routing, while eManual and CUAD expose
-duplicate-text and sparse-ground-truth limits. These supporting settings broaden
-the mechanism and boundary evidence without being treated as equivalent
+PubMedQA and CovidQA-RAG extend the evidence-retrieval transfer checks to
+biomedical QA under near-ceiling and more discriminative dense baselines,
+respectively; Banking77 extends the feedback-adaptation check to
+banking-intent routing; and eManual and CUAD expose duplicate-text and
+sparse-ground-truth limits. These supporting settings broaden the transfer,
+mechanism, and boundary evidence without being treated as equivalent
 replications of the LoTTE quality-efficiency frontier.
 
 Strong post-retrieval baselines refine rather than weaken the conclusion.

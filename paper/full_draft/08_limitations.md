@@ -102,13 +102,15 @@ but it does not cover domain-specific encoders, late-interaction models, or
 proprietary embedding systems. The above-dense quality-first point is currently
 demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
-The study spans six domain-specific settings, but only LoTTE
-technology/search receives the complete multi-scale, matched-baseline,
-calibration/test, and downstream-generation protocol. LoTTE science/search
-strengthens cross-domain validity; PubMedQA and Banking77 test feedback
-adaptation; and eManual and CUAD expose benchmark boundaries. This breadth
-should not be interpreted as six independent full-stack replications. More
-complete repeated evaluations on additional vertical corpora remain necessary.
+The study spans seven dataset settings, but only LoTTE technology/search
+receives the complete multi-scale, matched-baseline, calibration/test, and
+downstream-generation protocol. LoTTE science/search strengthens cross-domain
+validity; PubMedQA and CovidQA-RAG test biomedical evidence-retrieval transfer
+under different dense ceilings; Banking77 tests feedback adaptation as an
+intent-routing proxy; and eManual and CUAD expose benchmark boundaries. This
+breadth should not be interpreted as seven independent full-stack
+replications. More complete repeated evaluations on additional vertical
+corpora remain necessary.
 
 ## 7.8 Future Work
 

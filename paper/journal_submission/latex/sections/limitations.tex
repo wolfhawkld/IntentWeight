@@ -48,7 +48,7 @@ KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and the
 
 The paper evaluates matched MiniLM, BGE-base, and E5-base dense/IntentRoute backbones, plus a QA-tuned MiniLM-family check and a cross-encoder reranker. This establishes backbone-level robustness within the tested LoTTE setting, but it does not cover domain-specific encoders, late-interaction models, or proprietary embedding systems. The above-dense quality-first point is currently demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
-The study spans six domain-specific settings, but only LoTTE technology/search receives the complete multi-scale, matched-baseline, calibration/test, and downstream-generation protocol. LoTTE science/search strengthens cross-domain validity; PubMedQA and Banking77 test feedback adaptation; and eManual and CUAD expose benchmark boundaries. This breadth should not be interpreted as six independent full-stack replications. More complete repeated evaluations on additional vertical corpora remain necessary.
+The study spans seven dataset settings, but only LoTTE technology/search receives the complete multi-scale, matched-baseline, calibration/test, and downstream-generation protocol. LoTTE science/search strengthens cross-domain validity; PubMedQA and CovidQA-RAG test biomedical evidence-retrieval transfer under different dense ceilings; Banking77 tests feedback adaptation as an intent-routing proxy; and eManual and CUAD expose benchmark boundaries. This breadth should not be interpreted as seven independent full-stack replications. More complete repeated evaluations on additional vertical corpora remain necessary.
 
 \subsection{Future Work}
 \label{sec:08-limitations:future-work}

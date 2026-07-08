@@ -25,14 +25,17 @@ decrease, so the result does not establish uniform answer-quality
 non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
 
-The broader six-setting evaluation adds two distinct forms of external
-evidence. PubMedQA and Banking77 show that trust-weighted route adaptation is
-observable in biomedical evidence retrieval and intent routing, although both
-operate near quality ceilings. eManual and CUAD expose how duplicated evidence,
-strict chunk identifiers, and sparse ground-truth anchors can dominate measured
-retrieval quality. These results do not form a pooled cross-dataset score.
-Instead, they separate the controller's full-stack LoTTE evidence from
-mechanism-transfer and benchmark-boundary evidence.
+The broader seven-setting evaluation adds three distinct forms of external
+evidence. PubMedQA shows that trust-weighted route adaptation is observable in
+biomedical evidence retrieval near a dense ceiling, while CovidQA-RAG provides
+a more discriminative biomedical transfer row with measurable final-context
+savings and a small mean hit loss under the strict cross-fitted budget. Banking77
+shows analogous feedback behavior in an intent-routing proxy. eManual and CUAD
+expose how duplicated evidence, strict chunk identifiers, and sparse
+ground-truth anchors can dominate measured retrieval quality. These results do
+not form a pooled cross-dataset score. Instead, they separate the controller's
+full-stack LoTTE evidence from transfer, mechanism, and benchmark-boundary
+evidence.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. IntentRoute's value

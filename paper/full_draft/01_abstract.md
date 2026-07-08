@@ -10,11 +10,13 @@ floor. A bounded piecewise relevance-manifold hypothesis motivates local route
 construction, with geometry evaluated diagnostically rather than treated as
 proof of relevance.
 
-We evaluate IntentRoute across six domain-specific settings. The primary scale
-study uses LoTTE technology/search from 100k to 638k chunks. A separate LoTTE
-science/search study tests cross-domain transfer at 20k and 100k corpus scales;
-PubMedQA and Banking77 examine feedback adaptation, while eManual and CUAD
-expose duplicate-text and sparse-ground-truth boundaries. At
+We evaluate IntentRoute across seven dataset settings spanning six domain
+areas. The primary scale study uses LoTTE technology/search from 100k to 638k
+chunks. A separate LoTTE science/search study tests cross-domain transfer at
+20k, 100k, and 200k corpus scales; PubMedQA and CovidQA-RAG test biomedical
+transfer under different dense ceilings; Banking77 examines feedback
+adaptation as an intent-routing proxy; and eManual and CUAD expose
+duplicate-text and sparse-ground-truth boundaries. At
 calibration-eligible technology/search operating
 points, IntentRoute reduces final evidence-context tokens by 6-18% while
 preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger

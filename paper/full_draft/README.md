@@ -37,7 +37,8 @@ draft. The most important internal evidence groups are:
 - LoTTE geometry scale validation;
 - calibration/test context-budget validation;
 - LoTTE science/search cross-domain validation;
-- PubMedQA and Banking77 feedback-adaptation evidence;
+- PubMedQA and CovidQA-RAG biomedical transfer evidence;
+- Banking77 feedback-adaptation evidence;
 - eManual duplicate-text analysis and CUAD sparse-GT boundary evidence;
 - feedback-driven hard-case recovery;
 - matched BGE/E5 backbone validation and BGE quality-first tunability;
@@ -85,9 +86,10 @@ while exposing domain-specific compression calibration, and simulated feedback
 can recover a meaningful fraction of budget-induced tail failures in
 post-feedback retry.
 
-The complete evaluation spans six domain-specific settings. LoTTE
+The complete evaluation spans seven dataset settings across six domain areas. LoTTE
 technology/search provides the full 100k-638k multi-scale quality-efficiency
-evidence; science/search tests domain transfer at 20k and 100k; PubMedQA and Banking77 test mechanism
+evidence; science/search tests domain transfer at 20k, 100k, and 200k;
+PubMedQA and CovidQA-RAG test biomedical transfer; Banking77 tests mechanism
 transfer; and eManual and CUAD expose data and evaluation boundaries. These
 roles must remain visible but must not be pooled as equivalent replications.
 
@@ -109,7 +111,9 @@ separate one-page title page, three vector figures, editable tables, references,
 highlights, keywords, and a reproducibility manifest.
 
 Task67 completed the repository-controlled submission-readiness pass. Task68
-aligns the abstract and main narrative with the six-setting evidence hierarchy.
+aligned the abstract and main narrative with the earlier six-setting evidence
+hierarchy; Task69.7 updates the paper-facing hierarchy to include the
+CovidQA-RAG native-full biomedical transfer row.
 Human authors must still fill author identity, affiliations, CRediT roles,
 funding, competing interests, acknowledgements, public data/code URLs, and the
 final AI-use disclosure.

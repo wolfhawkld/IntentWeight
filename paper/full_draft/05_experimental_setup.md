@@ -2,29 +2,32 @@
 
 ## 4.1 Datasets
 
-The experiments cover six domain-specific settings spanning technology,
-science, biomedical QA, banking intents, product manuals, and legal contracts.
-They have different tasks, ground-truth semantics, and evidentiary roles, so we
-do not treat them as equal support for the main claim:
+The experiments cover seven dataset settings across six domain areas:
+technology, science, biomedical QA, banking intents, product manuals, and legal
+contracts. They have different tasks, ground-truth semantics, and evidentiary
+roles, so we do not treat them as equal support for the main claim:
 
 - **LoTTE technology/search** is the main large-scale vertical-domain evidence
   benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
   596 test queries.
 - **LoTTE science/search** is the cross-domain validation benchmark. It tests
   whether ranking and context-budget behavior transfer beyond technology/search
-  at 20k/q200 and 100k scales.
-- **PubMedQA and Banking77** are supporting feedback-adaptation checks.
-  PubMedQA is an evidence-retrieval proof-of-concept with abstract-level ground
-  truth, while Banking77 is an intent-routing proxy rather than a strict
-  evidence-retrieval benchmark.
+  at 20k/q200, 100k, and 200k scales.
+- **PubMedQA and CovidQA-RAG** are biomedical transfer checks. PubMedQA is an
+  evidence-retrieval proof-of-concept with abstract-level ground truth and a
+  near-ceiling dense baseline; CovidQA-RAG is a more discriminative native-full
+  RAGBench evidence-retrieval row.
+- **Banking77** is a supporting feedback-adaptation check for intent routing
+  rather than a strict evidence-retrieval benchmark.
 - **eManual and CUAD** are boundary cases. eManual exposes duplicate-text and
   strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
 
 This hierarchy separates full-stack evidence, cross-domain transfer, mechanism
 transfer, and boundary analysis. The complete quality-efficiency claim is
 anchored in LoTTE technology/search, science/search tests domain transfer, and
-the secondary datasets test whether feedback behavior transfers or identify
-where corpus duplication and sparse labels limit inference.
+the secondary datasets test whether feedback behavior transfers, whether a
+biomedical evidence-retrieval transfer row remains discriminative, or where
+corpus duplication and sparse labels limit inference.
 
 ## 4.2 Baselines and Variants
 
