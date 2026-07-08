@@ -1,0 +1,7 @@
+dataset,method,hit@10,mrr@10,ndcg@10,scope,source
+Banking77,BM25,0.9698051948051948,0.8603728612657192,0.6762452477120666,"dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",paper/experiments/results/bm25_banking77_metrics.json
+Banking77,Dense,0.9805194805194806,0.941565914244486,0.8797407300703027,"dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",paper/experiments/results/dense_banking77_metrics.json
+Banking77,Hybrid RRF,0.9850649350649351,0.9394345238095243,0.850441276873849,"dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",paper/experiments/results/hybrid_banking77_metrics.json
+CUAD GT-anchored,BM25,0.05063291139240506,0.02320675105485232,0.020930956041706392,"dataset=cuad|query_scope=split_test_first_100|corpus_scope=gt_anchored_10000|top_k=10|ks=1,5,10",paper/experiments/results/bm25_cuad_metrics.json
+CUAD GT-anchored,Dense,0.0759493670886076,0.033438818565400846,0.034869397623285045,"dataset=cuad|query_scope=split_test_first_100|corpus_scope=gt_anchored_10000|top_k=10|ks=1,5,10",paper/experiments/results/dense_cuad_metrics.json
+CUAD GT-anchored,Hybrid RRF,0.06329113924050633,0.025437010247136828,0.025886616083808954,"dataset=cuad|query_scope=split_test_first_100|corpus_scope=gt_anchored_10000|top_k=10|ks=1,5,10",paper/experiments/results/hybrid_cuad_metrics.json

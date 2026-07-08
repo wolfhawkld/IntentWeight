@@ -1,6 +1,6 @@
 # Task69 Remaining Dataset TODO
 
-Updated: 2026-07-07
+Updated: 2026-07-08
 
 ## Purpose
 
@@ -20,6 +20,7 @@ The evidence chain remains:
 | LoTTE technology/search | 100k, 200k, 400k, 638k full | scale/full-stack anchor | complete |
 | LoTTE science/search | 100k, 200k | cross-domain scale | complete |
 | PubMedQA | native full | non-LoTTE evidence transfer | complete |
+| CovidQA-RAG | native full | biomedical discriminative transfer | complete |
 | eManual deduplicated | native full | corrected boundary | complete |
 
 These rows include Dense, BM25, hybrid RRF, IntentRoute, feedback controls,
@@ -52,8 +53,8 @@ metrics.
 | Priority | Task | Missing endpoint | Dataset role |
 |---|---|---|---|
 | P2 | FiQA metadata/preprocessing check | Optional BEIR finance alternative only if FinQA proves too expensive or unsuitable | finance-domain fallback |
-| P2 | CUAD GT-anchored sample | optional token-budget and paired statistics only if kept as a boundary appendix row | sparse-GT boundary only |
-| P2 | Banking77 native full | optional route-learning summary table cleanup; not pooled with evidence retrieval | mechanism-only row |
+| Done | CUAD GT-anchored sample | Task69.8 boundary summary generated; no token-budget row because it is not pooled | sparse-GT boundary only |
+| Done | Banking77 native full | Task69.8 route-learning summary generated; not pooled with evidence retrieval | mechanism-only row |
 | P2 | Task69 audit integration | update protocol coverage after each CPU/GPU batch | reproducibility and reviewer readability |
 
 ## Merged Dataset-Expansion Decision
@@ -138,3 +139,9 @@ The resulting paper-facing structure should be:
   chunks and 16,562 queries, with 9,051 queries carrying usable GT. Full
   common-protocol evaluation is moved to the GPU/overnight queue rather than
   this CPU session.
+- Task69.8 mechanism/boundary cleanup: generated
+  `paper/experiments/results/task69_8_mechanism_boundary_summary.*` from
+  existing Banking77 and CUAD artifacts. Banking77 now has a paper-facing
+  intent-routing mechanism summary that exposes both trust-weighted and
+  no-feedback behavior; CUAD remains a sparse-GT, GT-anchored boundary sample
+  with explicit non-pooling caveats.

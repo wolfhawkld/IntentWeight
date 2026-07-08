@@ -1,10 +1,10 @@
 # Task69 Cross-Dataset Experimental Consistency
 
-Updated: 2026-07-06
+Updated: 2026-07-08
 
 ## Objective
 
-Task69 converts the tiered six-setting narrative into a reviewer-readable
+Task69 converts the tiered seven-setting narrative into a reviewer-readable
 experimental matrix without pooling incompatible tasks. It addresses the valid
 part of the Nemesis consistency review: the current artifacts are quantitative,
 but their dimensions are too uneven for a reader to judge cross-dataset
@@ -112,12 +112,18 @@ this checkpoint.
 
 ### Task69.4: Non-LoTTE Common-Protocol Completion
 
-Status: complete for PubMedQA native full and eManual deduplicated native full.
+Status: complete for PubMedQA native full, CovidQA-RAG native full, and eManual
+deduplicated native full.
 
 - PubMedQA: added Dense/BM25/hybrid, 8-epoch trust-weighted and no-feedback
   IntentRoute, five-fold context-budget, final-token, paired, and no-op
   recovery endpoints on the native corpus. The frozen selector falls back to
   Dense in all folds, yielding 0.00% context saving while preserving Hit@10.
+- CovidQA-RAG: added RAGBench native-full Dense/BM25/hybrid, 8-epoch
+  trust-weighted and no-feedback IntentRoute, five-fold context-budget, paired
+  statistics, and feedback-recovery diagnostics. The discriminative biomedical
+  row has non-ceiling dense performance, small mean Hit@10 loss under
+  cross-fitted budget selection, and measurable final-context token saving.
 - eManual: generated the deduplicated/text-equivalent processed corpus, ran
   Dense/BM25/hybrid, 8-epoch trust-weighted and no-feedback IntentRoute, added
   five-fold context-budget, paired, final-token, and feedback-recovery
@@ -126,20 +132,38 @@ Status: complete for PubMedQA native full and eManual deduplicated native full.
 
 ### Task69.5: Mechanism And Boundary Tables
 
-Status: pending.
+Status: complete as Task69.8 CPU cleanup.
 
-- Banking77 remains a separate feedback route-learning table.
+- Banking77 remains a separate feedback route-learning table and is not pooled
+  with evidence retrieval. Task69.8 records that trust-weighted feedback
+  strongly improves route-level cluster hit and true reward over no-feedback,
+  while fused Hit@10 remains near ceiling and does not dominate all static
+  baselines.
 - CUAD remains a separate sparse-GT boundary table unless a defensible full
-  evidence benchmark is constructed.
+  evidence benchmark is constructed. Task69.8 records it as a GT-anchored
+  10k-sample boundary row with 79 evaluated queries, not as common positive
+  evidence.
+
+Task69.8 generated:
+
+- `paper/experiments/scripts/task69_8_mechanism_boundary_summary.py`
+- `paper/experiments/results/task69_8_mechanism_boundary_summary.md`
+- `paper/experiments/results/task69_8_mechanism_boundary_summary.summary.csv`
+- `paper/experiments/results/task69_8_mechanism_boundary_summary.baselines.csv`
+- `paper/experiments/results/task69_8_mechanism_boundary_summary.json`
 
 ### Task69.6: Paper Integration
 
-Status: pending until the missing experiments are complete.
+Status: partially complete.
 
 - generate the cross-dataset common-protocol result table;
 - retain a separate LoTTE scale table;
 - add a compact dataset/protocol table;
 - update figures and manuscript claims only from generated artifacts.
+
+Task69.7 integrated the CovidQA-RAG native-full transfer row into the current
+paper-facing hierarchy. Full paper integration remains pending for additional
+GPU-side LoTTE domain rows.
 
 ## Current Audit Outputs
 

@@ -1,0 +1,110 @@
+{
+  "guardrail": "mechanism/boundary only; not pooled with common evidence retrieval",
+  "static_baselines": [
+    {
+      "dataset": "Banking77",
+      "hit@10": 0.9698051948051948,
+      "method": "BM25",
+      "mrr@10": 0.8603728612657192,
+      "ndcg@10": 0.6762452477120666,
+      "scope": "dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",
+      "source": "paper/experiments/results/bm25_banking77_metrics.json"
+    },
+    {
+      "dataset": "Banking77",
+      "hit@10": 0.9805194805194806,
+      "method": "Dense",
+      "mrr@10": 0.941565914244486,
+      "ndcg@10": 0.8797407300703027,
+      "scope": "dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",
+      "source": "paper/experiments/results/dense_banking77_metrics.json"
+    },
+    {
+      "dataset": "Banking77",
+      "hit@10": 0.9850649350649351,
+      "method": "Hybrid RRF",
+      "mrr@10": 0.9394345238095243,
+      "ndcg@10": 0.850441276873849,
+      "scope": "dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",
+      "source": "paper/experiments/results/hybrid_banking77_metrics.json"
+    },
+    {
+      "dataset": "CUAD GT-anchored",
+      "hit@10": 0.05063291139240506,
+      "method": "BM25",
+      "mrr@10": 0.02320675105485232,
+      "ndcg@10": 0.020930956041706392,
+      "scope": "dataset=cuad|query_scope=split_test_first_100|corpus_scope=gt_anchored_10000|top_k=10|ks=1,5,10",
+      "source": "paper/experiments/results/bm25_cuad_metrics.json"
+    },
+    {
+      "dataset": "CUAD GT-anchored",
+      "hit@10": 0.0759493670886076,
+      "method": "Dense",
+      "mrr@10": 0.033438818565400846,
+      "ndcg@10": 0.034869397623285045,
+      "scope": "dataset=cuad|query_scope=split_test_first_100|corpus_scope=gt_anchored_10000|top_k=10|ks=1,5,10",
+      "source": "paper/experiments/results/dense_cuad_metrics.json"
+    },
+    {
+      "dataset": "CUAD GT-anchored",
+      "hit@10": 0.06329113924050633,
+      "method": "Hybrid RRF",
+      "mrr@10": 0.025437010247136828,
+      "ndcg@10": 0.025886616083808954,
+      "scope": "dataset=cuad|query_scope=split_test_first_100|corpus_scope=gt_anchored_10000|top_k=10|ks=1,5,10",
+      "source": "paper/experiments/results/hybrid_cuad_metrics.json"
+    }
+  ],
+  "summary": [
+    {
+      "caveat": "intent proxy, not evidence retrieval",
+      "cluster_label_purity": 0.6389083275017495,
+      "corpus_chunks": 10003,
+      "dataset": "Banking77",
+      "dense_hit@10": 0.9805194805194806,
+      "hit_delta_pp_vs_dense": 0.3896103896103953,
+      "hit_delta_pp_vs_no_feedback": -0.10822510822510178,
+      "last_true_reward": 0.9805194805194805,
+      "last_true_reward_gain_vs_no_feedback": 0.8145021645021644,
+      "nearest_cluster_hit@3": 0.9967532467532467,
+      "no_feedback_hit@10": 0.9854978354978355,
+      "pca_var@64": 0.8223497730909004,
+      "pooling_decision": "not pooled with common evidence retrieval",
+      "queries": 3080,
+      "role": "intent-routing mechanism",
+      "scope": "dataset=banking77|query_scope=split_test|corpus_scope=full|top_k=10|ks=1,5,10",
+      "selected_cluster_hit_gain_vs_no_feedback": 0.5593073593073593,
+      "selected_cluster_hit_last": 0.9982683982683983,
+      "source_dense": "paper/experiments/results/dense_banking77_metrics.json",
+      "source_geometry": "paper/experiments/results/manifold_diagnostics_banking77.json",
+      "source_trust": "paper/experiments/results/linucb_trust_banking77_heldout-test_test_corpus-full_q3080_prequential_metrics.json",
+      "trust_weighted_hit@10": 0.9844155844155845
+    },
+    {
+      "caveat": "GT-anchored 10k sample; 79 evaluated queries",
+      "cluster_label_purity": 0.0524,
+      "corpus_chunks": 10000,
+      "dataset": "CUAD GT-anchored",
+      "dense_hit@10": 0.0759493670886076,
+      "hit_delta_pp_vs_dense": 1.265822784810125,
+      "hit_delta_pp_vs_no_feedback": 2.10970464135021,
+      "last_true_reward": 0.023333333333333334,
+      "last_true_reward_gain_vs_no_feedback": 0.01,
+      "nearest_cluster_hit@3": 0.6075949367088608,
+      "no_feedback_hit@10": 0.06751054852320675,
+      "pca_var@64": 0.6235366524212196,
+      "pooling_decision": "not pooled with common evidence retrieval",
+      "queries": 79,
+      "role": "sparse-GT boundary",
+      "scope": "dataset=cuad|query_scope=split_test_first_100|corpus_scope=gt_anchored_10000|top_k=10|ks=1,5,10",
+      "selected_cluster_hit_gain_vs_no_feedback": 0.04666666666666672,
+      "selected_cluster_hit_last": 0.29000000000000004,
+      "source_dense": "paper/experiments/results/dense_cuad_metrics.json",
+      "source_geometry": "paper/experiments/results/manifold_diagnostics_cuad.json",
+      "source_trust": "paper/experiments/results/linucb_trust_cuad_prequential_metrics.json",
+      "trust_weighted_hit@10": 0.08860759493670885
+    }
+  ],
+  "task": "69.8"
+}
