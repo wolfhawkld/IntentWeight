@@ -100,6 +100,15 @@ main LoTTE evidence claim.
   $\mathrm{Hit@10}=0.9940$, last reward $0.8727$, and selected-cluster hit
   $0.8860$. The ground truth is abstract-level context, not a strict answer
   sentence.
+- **CovidQA-RAG** is the biomedical transfer row with a non-ceiling dense
+  baseline. The native-full RAGBench checkpoint contains 32,392 chunks and
+  1,726 evaluated queries after skipping 39 without usable ground truth. Dense
+  reaches $\mathrm{Hit@10}=0.6095$, BM25 reaches $0.4884$, hybrid RRF reaches
+  $0.6037$, no-feedback IntentRoute reaches $0.6294$, and trust-weighted
+  IntentRoute reaches $0.6300$ at fixed top-10. In the five-fold budgeted
+  protocol, four of five folds select a compressed route, mean hit delta is
+  -0.21 percentage points versus dense, mean final-context token saving is
+  8.34%, and strict 1pp non-inferiority remains $0/3$ seeds.
 - **Banking77** is an intent-routing proxy rather than an evidence-retrieval
   benchmark. Dense/reference $\mathrm{Hit@10}$ is $0.9805$; trust-weighted
   feedback reaches $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, and
@@ -594,3 +603,20 @@ The following rules apply when migrating the draft into a submission template:
 - describe geometry diagnostics as support for a piecewise local-structure
   interpretation, not theorem-level manifold proof;
 - keep dense retrieval visible as a recall floor and fallback route.
+
+### S12.4 Result-Family Protocol Registry
+
+**Supplementary Table S29. Dataset, protocol, and evidentiary-role registry.**
+
+| Result family | Corpus and query scope | Route/feedback protocol | Budget and paired endpoint | Paper role and boundary |
+|---|---|---|---|---|
+| LoTTE technology/search scale anchor | 100k--638k nested corpora; 596 canonical queries (417 in the original frozen split; 596 in OOF) | MiniLM, top-10, K=32, seeds 13/17/19; frozen scale-route artifacts | Original 30/70 calibration/test plus normalized five-fold OOF; paired bootstrap, McNemar, and 1pp NI | Main scale evidence; original and OOF results are reported separately |
+| LoTTE science/search diagnostic | 20k/q200; 200 sampled queries | Historical MiniLM fixed-split route study | Fixed 30/70 calibration/test | Legacy cross-domain ranking and budget diagnostic; not pooled with OOF rows |
+| LoTTE science/search common rows | 100k, 200k, 400k; 596 queries per scale | MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused simulated feedback with no-feedback control | Five-fold OOF zero-drop budget selection, Dense fallback, paired bootstrap, McNemar, 1pp NI, and recovery replay | Cross-domain evidence; 400k is a weak scale boundary (1/5 eligible folds) |
+| PubMedQA, CovidQA-RAG, eManual deduplicated | Native full: 4,348/1,000; 32,392/1,726; 1,729/130 corpus/query pairs | MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused trust/no-feedback controls | Five-fold OOF zero-drop budget selection and paired statistics | Transfer and corrected-boundary rows; not a shared scale curve |
+| Banking77 and CUAD | Banking77 native 10,003/3,080; CUAD GT-anchored 10k/79 evaluated | Historical route-learning proxy and sparse-GT smoke protocols | No common OOF token endpoint | Mechanism and boundary evidence only; excluded from pooled evidence-retrieval conclusions |
+
+The registry describes the paper-facing result families rather than retroactively
+equating their tasks. Detailed artifact hashes, historical protocol labels, and
+all route parameters remain in the reproducibility audit under
+`paper/experiments/`.

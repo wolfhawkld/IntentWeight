@@ -691,3 +691,28 @@ The following rules apply when migrating the draft into a submission template:
 \item describe geometry diagnostics as support for a piecewise local-structure interpretation, not theorem-level manifold proof;
 \item keep dense retrieval visible as a recall floor and fallback route.
 \end{itemize}
+
+\subsection{Result-Family Protocol Registry}
+\label{sec:12-appendix:result-family-protocol-registry}
+
+\begin{table*}[tbp]
+\centering
+\small
+\caption{Dataset, protocol, and evidentiary-role registry}
+\label{tab:s29}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\toprule
+Result family & Corpus and query scope & Route/feedback protocol & Budget and paired endpoint & Paper role and boundary \\
+\midrule
+LoTTE technology/search scale anchor & 100k--638k nested corpora; 596 canonical queries (417 in the original frozen split; 596 in OOF) & MiniLM, top-10, K=32, seeds 13/17/19; frozen scale-route artifacts & Original 30/70 calibration/test plus normalized five-fold OOF; paired bootstrap, McNemar, and 1pp NI & Main scale evidence; original and OOF results are reported separately \\
+LoTTE science/search diagnostic & 20k/q200; 200 sampled queries & Historical MiniLM fixed-split route study & Fixed 30/70 calibration/test & Legacy cross-domain ranking and budget diagnostic; not pooled with OOF rows \\
+LoTTE science/search common rows & 100k, 200k, 400k; 596 queries per scale & MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused simulated feedback with no-feedback control & Five-fold OOF zero-drop budget selection, Dense fallback, paired bootstrap, McNemar, 1pp NI, and recovery replay & Cross-domain evidence; 400k is a weak scale boundary (1/5 eligible folds) \\
+PubMedQA, CovidQA-RAG, eManual deduplicated & Native full: 4,348/1,000; 32,392/1,726; 1,729/130 corpus/query pairs & MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused trust/no-feedback controls & Five-fold OOF zero-drop budget selection and paired statistics & Transfer and corrected-boundary rows; not a shared scale curve \\
+Banking77 and CUAD & Banking77 native 10,003/3,080; CUAD GT-anchored 10k/79 evaluated & Historical route-learning proxy and sparse-GT smoke protocols & No common OOF token endpoint & Mechanism and boundary evidence only; excluded from pooled evidence-retrieval conclusions \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Table~\ref{tab:s29} is the canonical registry for the matched protocol definitions used in the cross-dataset comparisons.
+
+The registry describes the paper-facing result families rather than retroactively equating their tasks. Detailed artifact hashes, historical protocol labels, and all route parameters remain in the reproducibility audit under \nolinkurl{paper/experiments/}.

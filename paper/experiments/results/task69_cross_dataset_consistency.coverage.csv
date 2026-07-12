@@ -2,9 +2,10 @@ dataset,scale,protocol_group,bm25,dense,hybrid_rrf,intentroute_top10,geometry,cr
 LoTTE technology/search,100k,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_reusable_anchor
 LoTTE science/search,100k,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_reusable_anchor
 LoTTE science/search,200k,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_reusable_anchor
-LoTTE lifestyle/search,100k,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
-LoTTE recreation/search,100k,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
-LoTTE writing/search,100k,common_evidence,no,no,no,no,no,no,no,no,no,no,0/10,planned
+LoTTE science/search,400k,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_scale_boundary
+LoTTE lifestyle/search,100k,post_task69_expansion,no,no,no,no,no,no,no,no,no,no,0/10,deferred_post_task69
+LoTTE recreation/search,100k,post_task69_expansion,no,no,no,no,no,no,no,no,no,no,0/10,deferred_post_task69
+LoTTE writing/search,100k,post_task69_expansion,no,no,no,no,no,no,no,no,no,no,0/10,deferred_post_task69
 PubMedQA,native full,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_native_full
 CovidQA-RAG,native full,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_native_full
 eManual deduplicated,native full,common_evidence,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,10/10,complete_corrected_boundary

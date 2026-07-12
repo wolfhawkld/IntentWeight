@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "updated": "2026-07-07",
+  "version": 2,
+  "updated": "2026-07-12",
   "paper_method_name": "IntentRoute",
   "implementation_identifier": "IntentWeight",
   "common_evidence_protocol": {
@@ -126,49 +126,78 @@
       "status": "complete_reusable_anchor"
     },
     {
+      "id": "lotte_science_search_400k",
+      "display_name": "LoTTE science/search",
+      "scale": "400k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "paper_role": "cross_domain_scale_boundary",
+      "corpus_chunks": 400902,
+      "total_queries": 596,
+      "current_eval_queries": 596,
+      "gt_semantics": "passage_qrels",
+      "sampling": "gt_anchored nested corpus; five-fold out-of-fold evaluation",
+      "current_coverage": {
+        "bm25": true,
+        "dense": true,
+        "hybrid_rrf": true,
+        "intentroute_top10": true,
+        "geometry": true,
+        "cross_fitted_budget": true,
+        "final_context_tokens": true,
+        "paired_statistics": true,
+        "feedback_control": true,
+        "feedback_recovery": true
+      },
+      "status": "complete_scale_boundary"
+    },
+    {
       "id": "lotte_lifestyle_search_100k",
       "display_name": "LoTTE lifestyle/search",
       "scale": "100k",
       "task_type": "evidence_retrieval",
-      "protocol_group": "common_evidence",
-      "paper_role": "planned_cross_domain",
+      "protocol_group": "post_task69_expansion",
+      "paper_role": "deferred_hypothesis_driven_expansion",
+      "required_for_task69": false,
       "corpus_chunks": null,
       "total_queries": null,
       "current_eval_queries": null,
       "gt_semantics": "passage_qrels",
       "sampling": "planned nested GT-anchored 100k",
       "current_coverage": {},
-      "status": "planned"
+      "status": "deferred_post_task69"
     },
     {
       "id": "lotte_recreation_search_100k",
       "display_name": "LoTTE recreation/search",
       "scale": "100k",
       "task_type": "evidence_retrieval",
-      "protocol_group": "common_evidence",
-      "paper_role": "planned_cross_domain",
+      "protocol_group": "post_task69_expansion",
+      "paper_role": "deferred_hypothesis_driven_expansion",
+      "required_for_task69": false,
       "corpus_chunks": null,
       "total_queries": null,
       "current_eval_queries": null,
       "gt_semantics": "passage_qrels",
       "sampling": "planned nested GT-anchored 100k",
       "current_coverage": {},
-      "status": "planned"
+      "status": "deferred_post_task69"
     },
     {
       "id": "lotte_writing_search_100k",
       "display_name": "LoTTE writing/search",
       "scale": "100k",
       "task_type": "evidence_retrieval",
-      "protocol_group": "common_evidence",
-      "paper_role": "planned_cross_domain",
+      "protocol_group": "post_task69_expansion",
+      "paper_role": "deferred_hypothesis_driven_expansion",
+      "required_for_task69": false,
       "corpus_chunks": null,
       "total_queries": null,
       "current_eval_queries": null,
       "gt_semantics": "passage_qrels",
       "sampling": "planned nested GT-anchored 100k",
       "current_coverage": {},
-      "status": "planned"
+      "status": "deferred_post_task69"
     },
     {
       "id": "pubmedqa",
@@ -310,7 +339,7 @@
     {
       "dataset_family": "LoTTE science/search",
       "target_scales": ["100k", "200k", "400k", "native full"],
-      "status": "100k and 200k complete; 400k/full pending"
+      "status": "100k, 200k, and 400k complete; native full is a post-Task69 optional expansion"
     }
   ]
 }

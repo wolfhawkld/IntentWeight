@@ -169,6 +169,17 @@ can introduce small hit losses. The ranking signal transfers, but compression
 strength requires domain- and scale-specific calibration. Supplementary Section S8 reports
 the complete seed-level table.
 
+The matched five-fold protocol makes this boundary explicit on the
+shared 596-query science/search population. At 100k, 200k, and 400k, the mean
+IntentRoute $\mathrm{Hit@10}$ deltas are -0.11pp, -0.67pp, and -0.67pp, with
+16.88%, 10.75%, and 3.15% final-context token saving, respectively; strict
+1pp non-inferiority is `0/3` seeds at every scale. At 400k, only one of five
+folds selects a compressed policy. Its recovery replay has only 3-6
+budget-induced affected queries per seed, so it closes a protocol endpoint but
+does not overturn the scale-boundary interpretation. The supplementary protocol
+registry records the matched protocol and evidence roles without pooling these rows into
+the technology/search headline.
+
 The supporting transfer checks cover different retrieval abstractions and dense
 ceilings. On PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while
 the trust-weighted policy reaches $0.9940$ with selected-cluster hit $0.8860$.

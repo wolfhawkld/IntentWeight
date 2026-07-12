@@ -40,10 +40,15 @@ def write_json(path: Path, payload: Any) -> None:
         handle.write("\n")
 
 
-def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
-    if not rows:
-        raise ValueError(f"refusing to write empty CSV: {path}")
-    fields: list[str] = []
+def write_csv(
+    path: Path,
+    rows: list[dict[str, Any]],
+    *,
+    empty_fields: tuple[str, ...] = (),
+) -> None:
+    if not rows and not empty_fields:
+        raise ValueError(f"refusing to write empty CSV without a schema: {path}")
+    fields: list[str] = list(empty_fields)
     for row in rows:
         for key in row:
             if key not in fields:
@@ -171,6 +176,21 @@ def paired_snapshot(
     }
 
 
+def science_400k_recovery_status() -> str:
+    path = RESULTS / "task69_3_science_400k_feedback_recovery.csv"
+    rows = read_csv(path)
+    base_rows = [
+        row
+        for row in rows
+        if row.get("protocol") == "same_query_retry"
+        and row.get("method") == "budgeted_before_feedback"
+    ]
+    affected = sorted(int(row["affected_count"]) for row in base_rows)
+    if len(base_rows) != 3 or affected != [3, 5, 6]:
+        raise ValueError(f"unexpected science 400k recovery rows in {path}")
+    return "complete boundary; recovery has 3-6 affected queries/seed"
+
+
 def feedback_snapshot(
     *,
     dataset: str,
@@ -254,6 +274,19 @@ def current_result_snapshot() -> list[dict[str, Any]]:
             artifact_status="reusable complete cross-domain scale row",
         )
     )
+    rows.append(
+        paired_snapshot(
+            dataset="LoTTE science/search",
+            scale="400k",
+            path=RESULTS / "task69_3_science_400k_cross_fitted_calibration.paired.csv",
+            role="cross-domain scale boundary",
+            source="paper/experiments/results/task69_3_science_400k_cross_fitted_calibration.paired.csv",
+            method_label="intentroute_crossfit",
+            scale_filter="lotte_science_search_400k",
+            protocol="five-fold cross-fitted calibration",
+            artifact_status=science_400k_recovery_status(),
+        )
+    )
 
     rows.append(
         paired_snapshot(
@@ -320,6 +353,8 @@ def missing_batches(datasets: Iterable[Mapping[str, Any]]) -> list[dict[str, str
     batches = []
     for item in datasets:
         if item["protocol_group"] != "common_evidence":
+            continue
+        if not item.get("required_for_task69", True):
             continue
         coverage = item.get("current_coverage", {})
         missing = [field for field in COVERAGE_FIELDS if not coverage.get(field, False)]
@@ -434,7 +469,7 @@ def build_markdown(
         "",
         "## Interpretation Guardrail",
         "",
-        "LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
+        "LoTTE technology/search, LoTTE science/search 100k/200k/400k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full provide complete rows under the common endpoint set. Science/search 400k is a weak boundary row: only one of five folds is budget eligible, its OOF mean Hit@10 delta is -0.67pp with 3.15% saving, and recovery has only 3-6 affected queries per seed. The deferred lifestyle/recreation/writing rows are post-Task69 expansion candidates, not missing Task69 endpoints. Technology reuses verified Task38/65 artifacts; science uses Task69.3 standalone baselines and frozen budget evaluation; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
         "",
     ]
     return "\n".join(lines)
@@ -458,13 +493,20 @@ def main() -> None:
     write_csv(output.with_suffix(".inventory.csv"), inventory)
     write_csv(output.with_suffix(".coverage.csv"), coverage)
     write_csv(output.with_suffix(".results.csv"), snapshot)
-    write_csv(output.with_suffix(".missing.csv"), missing)
+    write_csv(
+        output.with_suffix(".missing.csv"),
+        missing,
+        empty_fields=("priority", "dataset", "scale", "missing", "action"),
+    )
     write_json(
         output.with_suffix(".json"),
         {
             "protocol_version": protocol["version"],
             "dataset_count": len(datasets),
             "common_evidence_count": sum(item["protocol_group"] == "common_evidence" for item in datasets),
+            "deferred_post_task69_expansion_count": sum(
+                not item.get("required_for_task69", True) for item in datasets
+            ),
             "complete_common_evidence_count": sum(
                 str(item["status"]).startswith("complete") for item in datasets
             ),
@@ -481,6 +523,10 @@ def main() -> None:
     print(f"datasets={len(datasets)}")
     print(f"common_evidence={sum(item['protocol_group'] == 'common_evidence' for item in datasets)}")
     print(f"missing_batches={len(missing)}")
+    print(
+        "deferred_post_task69_expansions="
+        f"{sum(not item.get('required_for_task69', True) for item in datasets)}"
+    )
     print(output.with_suffix('.md').relative_to(ROOT))
 
 

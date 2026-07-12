@@ -1,6 +1,6 @@
 # Task69 Runtime Optimization Validation
 
-Date: 2026-07-11
+Date: 2026-07-12
 
 ## Purpose
 
@@ -55,12 +55,26 @@ because that configuration still computes legacy cluster candidates before its
 dense fallback; the exact cache removes this redundant repeated embedding
 scoring.
 
-## Scope And Next Run
+## 400k Direct Scale Check
 
-This validation covers both configurations pending for the 400k Task69.3
-science/search run. The 100k exact-equivalence gate is complete for the
-trust-weighted and no-feedback conditions. No optimized 400k routing job has
-been launched yet.
+The 100k exact-equivalence gate covers both feedback conditions used by the
+400k Task69.3 science/search run. That 400k run subsequently completed with
+the cached-exact backend.
 
-The 400k exact score cache is local and Git ignored. It is approximately 1 GiB
-and will be generated once before the next optimized 400k route run.
+Because the slow legacy 400k job was stopped before a complete end-to-end
+comparison, a direct scale-specific check was run on the actual 400,902-chunk
+corpus: the same first 32 held-out test queries, seed `13`, one epoch,
+trust-weighted `final_fused` feedback, and both `full_multi_route` and
+`gated_cost_aware` modes. The only changed setting was
+`cached_exact_scores` versus legacy `on_demand`.
+
+- all 32 final top-10 rankings are exactly equal for both routing modes;
+- after excluding backend identifiers, cache metadata, and elapsed time, every
+  reported per-mode metric is exactly equal;
+- the cached and legacy sample summaries differ only in retrieval-engine labels
+  and elapsed time.
+
+This is direct 400k confirmation that the cache does not change the routing
+result. It is not presented as a second full 596-query/eight-epoch legacy
+experiment; the complete paper-facing 400k result uses the optimized backend
+only. The local score cache remains Git ignored.

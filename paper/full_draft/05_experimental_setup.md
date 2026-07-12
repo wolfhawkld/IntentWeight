@@ -12,7 +12,8 @@ roles, so we do not treat them as equal support for the main claim:
   596 test queries.
 - **LoTTE science/search** is the cross-domain validation benchmark. It tests
   whether ranking and context-budget behavior transfer beyond technology/search
-  at 20k/q200, 100k, and 200k scales.
+  at 20k/q200, 100k, 200k, and 400k scales. The 400k row is retained as a
+  scale boundary rather than a lossless-compression replication.
 - **PubMedQA and CovidQA-RAG** are biomedical transfer checks. PubMedQA is an
   evidence-retrieval proof-of-concept with abstract-level ground truth and a
   near-ceiling dense baseline; CovidQA-RAG is a more discriminative native-full
@@ -28,6 +29,13 @@ anchored in LoTTE technology/search, science/search tests domain transfer, and
 the secondary datasets test whether feedback behavior transfers, whether a
 biomedical evidence-retrieval transfer row remains discriminative, or where
 corpus duplication and sparse labels limit inference.
+
+The supplementary protocol registry records the dataset/query scope, route-feedback
+protocol, context-budget endpoint, and evidentiary role for each result family.
+It distinguishes the common evidence-retrieval protocol from the Banking77
+intent proxy, the CUAD sparse-GT boundary, and historical fixed-split
+diagnostics. This prevents unlike evaluation families from being treated as
+pooled replications.
 
 ## 4.2 Baselines and Variants
 

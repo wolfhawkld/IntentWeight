@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import os
 from pathlib import Path
@@ -18,6 +19,7 @@ SOURCE = ROOT / "paper" / "full_draft" / "figures"
 TARGET = ROOT / "paper" / "latex" / "figures"
 MM_TO_INCH = 1.0 / 25.4
 FULL_WIDTH_INCH = 190.0 * MM_TO_INCH
+FIGURE1_HEIGHT_INCH = 90.0 * MM_TO_INCH
 
 plt.rcParams.update(
     {
@@ -87,7 +89,7 @@ def set_chunk_axis(ax: plt.Axes) -> None:
 
 
 def system_diagram() -> None:
-    fig, ax = plt.subplots(figsize=(11.0, 4.8))
+    fig, ax = plt.subplots(figsize=(FULL_WIDTH_INCH, FIGURE1_HEIGHT_INCH))
     ax.set_xlim(0, 11)
     ax.set_ylim(0, 5)
     ax.axis("off")
@@ -133,14 +135,6 @@ def system_diagram() -> None:
     arrow((9.25, 3.35), (9.25, 1.95))
     arrow((8.4, 1.62), (6.1, 1.02))
     arrow((5.25, 1.35), (5.15, 2.15))
-    ax.text(0.3, 4.75, "IntentRoute evidence-selection controller", fontsize=13, weight="bold")
-    ax.text(
-        0.3,
-        4.5,
-        "Confidence gates route fusion and fallback; calibration independently sets the final context budget.",
-        fontsize=9,
-        color="#52606d",
-    )
     save(fig, "figure1_system_diagram.pdf")
 
 
@@ -279,8 +273,17 @@ def feedback_adaptation() -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--refresh-figure1-placeholder",
+        action="store_true",
+        help="Regenerate the technical Figure 1 placeholder; default builds preserve an author-supplied asset.",
+    )
+    args = parser.parse_args()
     figure1 = TARGET / "figure1_system_diagram.pdf"
-    if not figure1.exists():
+    if args.refresh_figure1_placeholder:
+        system_diagram()
+    elif not figure1.exists():
         raise SystemExit(
             "missing author-supplied Figure 1 placeholder/final asset: "
             f"{figure1.relative_to(ROOT)}"

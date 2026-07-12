@@ -1,6 +1,6 @@
 # Task69 Runtime Optimization Plan
 
-Updated: 2026-07-11
+Updated: 2026-07-12
 
 ## Scope
 
@@ -13,8 +13,8 @@ Task69 common protocol, retrieval candidate definition, routing policy,
 feedback simulation, seeds, epochs, or reported metrics.
 
 Do not mix artifacts from the legacy and optimized retrieval engines in a
-single result table. The pending 400k run will start afresh with the optimized
-engine after the validation gate is complete.
+single result table. The 400k run was started afresh with the optimized engine
+after the validation gate; its paper-facing results use that one backend only.
 
 ## Observed Bottlenecks
 
@@ -156,5 +156,14 @@ in `task69_runtime_optimization_validation.md`.
 The matching no-feedback comparison also passed on 2026-07-12: final rankings
 and all non-runtime metrics were exactly equal, while elapsed time decreased
 from `1022.613 s` to `95.128 s` (`10.750x`). The full 100k validation gate is
-therefore complete for both Task69.3 feedback conditions. No optimized 400k
-route execution has been started yet.
+therefore complete for both Task69.3 feedback conditions.
+
+The subsequent science/search 400k run completed with the same cached-exact
+backend. The legacy 400k run had been stopped before a full end-to-end
+comparison was available. A direct 400k check therefore compares both engines
+on the real 400,902-chunk corpus, the same first 32 test queries, seed `13`,
+one epoch, and both routing modes. Final top-10 rankings are exactly equal;
+after excluding backend/runtime metadata, all per-mode metrics are exactly
+equal. This is direct scale-specific validation of the execution optimization,
+while the completed 596-query/eight-epoch 400k result remains a single-backend
+experiment rather than a duplicated expensive legacy run.

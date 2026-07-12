@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-07-01
+Updated: 2026-07-12
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -31,6 +31,8 @@ accidentally promoted into paper-facing claims.
 | `task33_3_clean_ablation_table.md` | Main/supporting evidence | Clean LoTTE 100k ablation table for dense floor, feedback, trust weighting, and final policy. |
 | `task33_6_additional_seeds_summary.md` | Supporting evidence | Five-seed stability check for LoTTE 100k; do not claim statistical superiority. |
 | `task69_3_science_100k_checkpoint_summary.md` | Main/supporting cross-domain evidence | Common-protocol LoTTE science/search 100k baselines, matched feedback control, and five-fold context-budget result; report the `-0.11pp` Hit delta and `16.88%` saving together with `0/3` strict NI and the EvidenceRecall boundary. |
+| `task69_3_science_200k_checkpoint_summary.md` | Main/supporting cross-domain evidence | Common-protocol LoTTE science/search 200k scale extension; report the `-0.67pp` Hit delta and `10.75%` saving together with `0/3` strict NI and the EvidenceRecall boundary. |
+| `task70_formal_frozen_policy_summary.md` | Boundary evidence | Formal frozen unseen-query results for technology/search 100k and science/search 100k, including paired inference and the feedback-transfer boundary. | Use to bound feedback to repeated-query adaptation/hard-case recovery; do not claim a first-pass learned-feedback advantage on unseen queries. |
 
 ## Supporting Evidence
 
@@ -80,7 +82,7 @@ accidentally promoted into paper-facing claims.
 | `task36_9_full_draft_consistency_audit.md` | Supporting writing revision | Adds an automated manuscript/BibTeX audit and tightens the broad evidence-selection framing to avoid manifold and RAG overclaiming; no new experiment. |
 | `task36_10_review_packet.md` | Supporting writing revision | Adds a regenerable venue-neutral independent-review packet with manuscript, references, figure index, checklist, validation report, and file manifest; no new experiment. |
 | `task36_11_literature_gap_expansion.md` | Supporting writing revision | Adds direct adaptive-retrieval, bandit-routing, and context-compression prior art; explicitly distinguishes IntentRoute from MBA-RAG and avoids first-use overclaiming; no new experiment. |
-| `task69_cross_dataset_consistency_plan.md` | Supporting protocol guardrail | Defines the cross-dataset common endpoint set, separates evidence retrieval from intent-routing and sparse-GT boundary evidence, and records pending experiment batches. |
+| `task69_cross_dataset_consistency_plan.md` | Supporting protocol guardrail | Defines the cross-dataset common endpoint set, separates evidence retrieval from intent-routing and sparse-GT boundary evidence, and records deferred post-Task69 expansion candidates. |
 | `task36_12_acl_latex_migration.md` | Supporting writing revision | Adds a modular ACL-style LaTeX migration, official ACL style files, PDF figure assets, and static validation; the subsequent PDF compile audit is recorded in `task36_13_pdf_compile_audit.md`. |
 | `task36_13_pdf_compile_audit.md` | Supporting writing revision | Installs lightweight TinyTeX, resolves real ACL compile issues, adds PDF rendering audit, and records the 19-page complete-draft layout; the next pass must produce a shorter submission cut. |
 | `task49_strong_baseline_reframing_summary.md` | Supporting writing revision | Integrates Task46/47/48 strong baselines into the manuscript framing; use for the route-and-budget controller plus shared compressor/reranker decomposition. |
@@ -95,6 +97,7 @@ accidentally promoted into paper-facing claims.
 | `task26_low_cost_routing_summary.md` | Boundary/negative evidence | Candidate-cost trade-off only; does not prove final token savings. |
 | `task27_dense_linucb_tradeoff_summary.md` | Boundary/negative evidence | Two-route dense-vs-LinUCB boundary test; sub-dense candidate cost loses quality and does not prove token savings. |
 | `task46_sentence_mmr_same_budget_summary.md` | Boundary/strong baseline evidence | Dense+Sentence-MMR preserves dense chunk-support at 100k with lower selected sentence tokens; use to qualify IntentRoute as complementary to context compression, not dominant over it. |
+| `task69_3_science_400k_checkpoint_summary.md` | Boundary/negative evidence | Science/search 400k matched endpoint and OOF budget boundary: only `1/5` folds are eligible, average saving is `3.15%`, Hit@10 changes by `-0.67pp`, and strict NI is `0/3`. Its recovery endpoint has only 3-6 affected queries/seed; do not present this row as robust lossless compression evidence. |
 
 ## Historical Or Superseded
 

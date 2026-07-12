@@ -1,8 +1,9 @@
 {
-  "protocol_version": 1,
-  "dataset_count": 11,
-  "common_evidence_count": 9,
-  "complete_common_evidence_count": 6,
+  "protocol_version": 2,
+  "dataset_count": 12,
+  "common_evidence_count": 7,
+  "deferred_post_task69_expansion_count": 3,
+  "complete_common_evidence_count": 7,
   "inventory": [
     {
       "dataset": "LoTTE technology/search",
@@ -44,43 +45,56 @@
       "status": "complete_reusable_anchor"
     },
     {
+      "dataset": "LoTTE science/search",
+      "scale": "400k",
+      "task_type": "evidence_retrieval",
+      "protocol_group": "common_evidence",
+      "corpus_chunks": 400902,
+      "total_queries": 596,
+      "eval_queries": 596,
+      "gt_semantics": "passage_qrels",
+      "sampling": "gt_anchored nested corpus; five-fold out-of-fold evaluation",
+      "paper_role": "cross_domain_scale_boundary",
+      "status": "complete_scale_boundary"
+    },
+    {
       "dataset": "LoTTE lifestyle/search",
       "scale": "100k",
       "task_type": "evidence_retrieval",
-      "protocol_group": "common_evidence",
+      "protocol_group": "post_task69_expansion",
       "corpus_chunks": "pending",
       "total_queries": "pending",
       "eval_queries": "pending",
       "gt_semantics": "passage_qrels",
       "sampling": "planned nested GT-anchored 100k",
-      "paper_role": "planned_cross_domain",
-      "status": "planned"
+      "paper_role": "deferred_hypothesis_driven_expansion",
+      "status": "deferred_post_task69"
     },
     {
       "dataset": "LoTTE recreation/search",
       "scale": "100k",
       "task_type": "evidence_retrieval",
-      "protocol_group": "common_evidence",
+      "protocol_group": "post_task69_expansion",
       "corpus_chunks": "pending",
       "total_queries": "pending",
       "eval_queries": "pending",
       "gt_semantics": "passage_qrels",
       "sampling": "planned nested GT-anchored 100k",
-      "paper_role": "planned_cross_domain",
-      "status": "planned"
+      "paper_role": "deferred_hypothesis_driven_expansion",
+      "status": "deferred_post_task69"
     },
     {
       "dataset": "LoTTE writing/search",
       "scale": "100k",
       "task_type": "evidence_retrieval",
-      "protocol_group": "common_evidence",
+      "protocol_group": "post_task69_expansion",
       "corpus_chunks": "pending",
       "total_queries": "pending",
       "eval_queries": "pending",
       "gt_semantics": "passage_qrels",
       "sampling": "planned nested GT-anchored 100k",
-      "paper_role": "planned_cross_domain",
-      "status": "planned"
+      "paper_role": "deferred_hypothesis_driven_expansion",
+      "status": "deferred_post_task69"
     },
     {
       "dataset": "PubMedQA",
@@ -201,9 +215,26 @@
       "status": "complete_reusable_anchor"
     },
     {
+      "dataset": "LoTTE science/search",
+      "scale": "400k",
+      "protocol_group": "common_evidence",
+      "bm25": "yes",
+      "dense": "yes",
+      "hybrid_rrf": "yes",
+      "intentroute_top10": "yes",
+      "geometry": "yes",
+      "cross_fitted_budget": "yes",
+      "final_context_tokens": "yes",
+      "paired_statistics": "yes",
+      "feedback_control": "yes",
+      "feedback_recovery": "yes",
+      "coverage": "10/10",
+      "status": "complete_scale_boundary"
+    },
+    {
       "dataset": "LoTTE lifestyle/search",
       "scale": "100k",
-      "protocol_group": "common_evidence",
+      "protocol_group": "post_task69_expansion",
       "bm25": "no",
       "dense": "no",
       "hybrid_rrf": "no",
@@ -215,12 +246,12 @@
       "feedback_control": "no",
       "feedback_recovery": "no",
       "coverage": "0/10",
-      "status": "planned"
+      "status": "deferred_post_task69"
     },
     {
       "dataset": "LoTTE recreation/search",
       "scale": "100k",
-      "protocol_group": "common_evidence",
+      "protocol_group": "post_task69_expansion",
       "bm25": "no",
       "dense": "no",
       "hybrid_rrf": "no",
@@ -232,12 +263,12 @@
       "feedback_control": "no",
       "feedback_recovery": "no",
       "coverage": "0/10",
-      "status": "planned"
+      "status": "deferred_post_task69"
     },
     {
       "dataset": "LoTTE writing/search",
       "scale": "100k",
-      "protocol_group": "common_evidence",
+      "protocol_group": "post_task69_expansion",
       "bm25": "no",
       "dense": "no",
       "hybrid_rrf": "no",
@@ -249,7 +280,7 @@
       "feedback_control": "no",
       "feedback_recovery": "no",
       "coverage": "0/10",
-      "status": "planned"
+      "status": "deferred_post_task69"
     },
     {
       "dataset": "PubMedQA",
@@ -444,6 +475,21 @@
       "source": "paper/experiments/results/task69_3_science_200k_cross_fitted_calibration.paired.csv"
     },
     {
+      "dataset": "LoTTE science/search",
+      "scale": "400k",
+      "role": "cross-domain scale boundary",
+      "protocol": "five-fold cross-fitted calibration",
+      "dense_hit@10": "0.8238",
+      "intentroute_hit@10": "0.8171",
+      "hit_delta_pp": "-0.67",
+      "evidence_recall_delta_pp": "-1.12",
+      "context_saving_percent": "3.15",
+      "strict_ni_seeds": "0/3",
+      "feedback_route_metric": "--",
+      "artifact_status": "complete boundary; recovery has 3-6 affected queries/seed",
+      "source": "paper/experiments/results/task69_3_science_400k_cross_fitted_calibration.paired.csv"
+    },
+    {
       "dataset": "PubMedQA",
       "scale": "native full",
       "role": "non-LoTTE evidence transfer",
@@ -519,27 +565,5 @@
       "source": "paper/experiments/results/task69_4_emanual_dedup_cross_fitted_calibration.paired.csv"
     }
   ],
-  "missing_batches": [
-    {
-      "dataset": "LoTTE lifestyle/search",
-      "scale": "100k",
-      "missing": "bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",
-      "priority": "P1",
-      "action": "run common protocol"
-    },
-    {
-      "dataset": "LoTTE recreation/search",
-      "scale": "100k",
-      "missing": "bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",
-      "priority": "P1",
-      "action": "run common protocol"
-    },
-    {
-      "dataset": "LoTTE writing/search",
-      "scale": "100k",
-      "missing": "bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery",
-      "priority": "P1",
-      "action": "run common protocol"
-    }
-  ]
+  "missing_batches": []
 }

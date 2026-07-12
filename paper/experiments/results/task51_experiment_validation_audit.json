@@ -614,7 +614,7 @@
     },
     {
       "category": "dimension",
-      "detail": "chunks=20490",
+      "detail": "chunks=20977",
       "experiment": "task39_lotte_science_20k_q200_context_budget",
       "item": "corpus",
       "role": "cross_domain",
@@ -776,7 +776,7 @@
     },
     {
       "category": "dimension",
-      "detail": "chunks=101187",
+      "detail": "chunks=102369",
       "experiment": "task39_lotte_science_100k_context_budget",
       "item": "corpus",
       "role": "cross_domain",

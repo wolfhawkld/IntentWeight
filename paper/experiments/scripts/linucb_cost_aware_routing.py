@@ -506,6 +506,9 @@ def run_prequential_seed(
     arm_row_indices: Sequence[np.ndarray] | None = None,
     query_corpus_scores: np.ndarray | None = None,
     progress_callback: Callable[[Mapping[str, object]], None] | None = None,
+    initial_state: Mapping[str, object] | None = None,
+    freeze_updates: bool = False,
+    return_state: bool = False,
 ) -> Dict[str, object]:
     if routing_mode not in ROUTING_MODES:
         raise ValueError(f"Unsupported routing_mode: {routing_mode}")
@@ -557,14 +560,21 @@ def run_prequential_seed(
         partition_rng = np.random.default_rng(65020 + int(seed))
         arm_labels = partition_rng.permutation(arm_labels)
         centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
-    policy = global_linucb.GlobalLinUCBPolicy(
-        n_arms=n_effective_arms,
-        context_dim=query_context.shape[1],
-        alpha=alpha,
-        alpha_decay=alpha_decay,
-        alpha_min=alpha_min,
-        seed=seed,
-    )
+    if initial_state is None:
+        policy = global_linucb.GlobalLinUCBPolicy(
+            n_arms=n_effective_arms,
+            context_dim=query_context.shape[1],
+            alpha=alpha,
+            alpha_decay=alpha_decay,
+            alpha_min=alpha_min,
+            seed=seed,
+        )
+    else:
+        policy = initial_state.get("policy")
+        if not isinstance(policy, global_linucb.GlobalLinUCBPolicy):
+            raise ValueError("initial_state must contain a GlobalLinUCBPolicy under 'policy'")
+        if policy.n_arms != n_effective_arms or policy.context_dim != query_context.shape[1]:
+            raise ValueError("initial policy dimensions do not match the current routing artifacts")
     linucb_learning_enabled = routing_mode in {
         "full_multi_route",
         "gated_cost_aware",
@@ -576,6 +586,15 @@ def run_prequential_seed(
     simple_bandit_updates = 0
     route_reward_sums = np.zeros(n_effective_arms, dtype=np.float64)
     route_pull_counts = np.zeros(n_effective_arms, dtype=np.float64)
+    decision_observed_rewards: List[float] = []
+    if initial_state is not None:
+        initial_route_rewards = np.asarray(initial_state.get("route_reward_sums", route_reward_sums), dtype=np.float64)
+        initial_route_pulls = np.asarray(initial_state.get("route_pull_counts", route_pull_counts), dtype=np.float64)
+        if initial_route_rewards.shape != route_reward_sums.shape or initial_route_pulls.shape != route_pull_counts.shape:
+            raise ValueError("initial route statistics do not match the current arm count")
+        route_reward_sums = initial_route_rewards.copy()
+        route_pull_counts = initial_route_pulls.copy()
+        decision_observed_rewards = [float(value) for value in initial_state.get("observed_rewards", [])]
 
     rng = np.random.default_rng(seed)
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
@@ -590,6 +609,17 @@ def run_prequential_seed(
     query_traces: Dict[str, Dict[str, object]] = {}
     feedback_contexts: List[np.ndarray] = []
     feedback_arm_rewards: List[Dict[int, float]] = []
+    if initial_state is not None:
+        feedback_contexts = [
+            np.asarray(context, dtype=np.float32).copy()
+            for context in initial_state.get("feedback_contexts", [])
+        ]
+        feedback_arm_rewards = [
+            {int(arm): float(reward) for arm, reward in rewards.items()}
+            for rewards in initial_state.get("feedback_arm_rewards", [])
+        ]
+        if len(feedback_contexts) != len(feedback_arm_rewards):
+            raise ValueError("initial feedback contexts and rewards must have matching lengths")
     total_update_weight = 0.0
     cross_arm_update_weight = 0.0
     propagated_updates = 0
@@ -709,7 +739,7 @@ def run_prequential_seed(
             semantic_drift = selected_semantic_drift(context, centroids, selected_arms)
             if routing_mode in {"static_nearest_gated", "random_partition_static_ensemble"}:
                 confidence = centroid_similarity_confidence(context, centroids, selected_arms)
-            recent_reward_delta = _recent_window_delta(observed_rewards, window_size)
+            recent_reward_delta = _recent_window_delta(decision_observed_rewards, window_size)
             decision = decide_route(
                 routing_mode,
                 confidence=confidence,
@@ -845,13 +875,14 @@ def run_prequential_seed(
                 selected_final_true_rewards.append(float(final_true_reward))
                 selected_route_true_rewards.append(float(route_true_reward))
                 selected_observed_rewards.append(float(observation.observed_reward))
-                route_reward_sums[int(source_arm)] += float(route_true_reward)
-                route_pull_counts[int(source_arm)] += 1.0
-                if simple_bandit_enabled and update_weight > 0:
+                if not freeze_updates:
+                    route_reward_sums[int(source_arm)] += float(route_true_reward)
+                    route_pull_counts[int(source_arm)] += 1.0
+                if simple_bandit_enabled and update_weight > 0 and not freeze_updates:
                     simple_reward_sums[int(source_arm)] += float(update_weight * observation.observed_reward)
                     simple_pull_counts[int(source_arm)] += float(update_weight)
                     simple_bandit_updates += 1
-                if linucb_learning_enabled and update_weight > 0:
+                if linucb_learning_enabled and update_weight > 0 and not freeze_updates:
                     for target_arm, propagation_weight in manifold_linucb.arm_propagation_weights(
                         centroids,
                         source_arm,
@@ -866,7 +897,7 @@ def run_prequential_seed(
                             cross_arm_update_weight += weight
                             propagated_updates += 1
 
-            if linucb_learning_enabled and feedback_mode != "none":
+            if linucb_learning_enabled and feedback_mode != "none" and not freeze_updates:
                 feedback_contexts.append(context.copy())
                 feedback_arm_rewards.append(arm_memory_rewards)
 
@@ -894,6 +925,8 @@ def run_prequential_seed(
             final_true_rewards.append(float(interaction_final_true))
             route_true_rewards.append(float(interaction_route_true))
             observed_rewards.append(float(interaction_observed))
+            if not freeze_updates:
+                decision_observed_rewards.append(float(interaction_observed))
             epoch_true_rewards.append(float(interaction_true))
             epoch_final_true_rewards.append(float(interaction_final_true))
             epoch_route_true_rewards.append(float(interaction_route_true))
@@ -1040,7 +1073,18 @@ def run_prequential_seed(
         "propagated_updates": int(propagated_updates),
         "epoch_metrics": epoch_rows,
     })
-    return {"rankings": rankings, "metrics": metrics, "query_traces": query_traces}
+    result: Dict[str, object] = {"rankings": rankings, "metrics": metrics, "query_traces": query_traces}
+    if return_state:
+        # This in-memory state is intentionally excluded from normal checkpoints.
+        result["runtime_state"] = {
+            "policy": policy,
+            "feedback_contexts": feedback_contexts,
+            "feedback_arm_rewards": feedback_arm_rewards,
+            "route_reward_sums": route_reward_sums,
+            "route_pull_counts": route_pull_counts,
+            "observed_rewards": decision_observed_rewards,
+        }
+    return result
 
 
 def aggregate_seed_metrics(seed_metrics: Sequence[Mapping]) -> Dict[str, object]:

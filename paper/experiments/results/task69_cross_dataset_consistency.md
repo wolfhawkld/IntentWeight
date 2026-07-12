@@ -19,9 +19,10 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE technology/search | 100k | evidence_retrieval | 101311 | 596 | 417 | passage_qrels | full_stack_anchor | complete_reusable_anchor |
 | LoTTE science/search | 100k | evidence_retrieval | 101187 | 596 | 596 | passage_qrels | cross_domain | complete_reusable_anchor |
 | LoTTE science/search | 200k | evidence_retrieval | 201098 | 596 | 596 | passage_qrels | cross_domain_scale | complete_reusable_anchor |
-| LoTTE lifestyle/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
-| LoTTE recreation/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
-| LoTTE writing/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | planned_cross_domain | planned |
+| LoTTE science/search | 400k | evidence_retrieval | 400902 | 596 | 596 | passage_qrels | cross_domain_scale_boundary | complete_scale_boundary |
+| LoTTE lifestyle/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | deferred_hypothesis_driven_expansion | deferred_post_task69 |
+| LoTTE recreation/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | deferred_hypothesis_driven_expansion | deferred_post_task69 |
+| LoTTE writing/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | deferred_hypothesis_driven_expansion | deferred_post_task69 |
 | PubMedQA | native full | evidence_retrieval | 4348 | 1000 | 1000 | abstract_context_section | mechanism_transfer | complete_native_full |
 | CovidQA-RAG | native full | evidence_retrieval | 32392 | 1765 | 1726 | ragbench_relevant_sentence_keys | biomedical_discriminative_transfer | complete_native_full |
 | eManual deduplicated | native full | evidence_retrieval | 1729 | 132 | 130 | text_equivalent_after_deduplication | corrected_boundary | complete_corrected_boundary |
@@ -35,6 +36,7 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE technology/search | 100k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | LoTTE science/search | 100k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | LoTTE science/search | 200k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
+| LoTTE science/search | 400k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | LoTTE lifestyle/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
 | LoTTE recreation/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
 | LoTTE writing/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
@@ -57,6 +59,7 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 | LoTTE science/search | 20k/q200 | 0.8929 | 0.9095 | 1.67 | 13.80 | 1/3 | -- | legacy fixed-split diagnostic |
 | LoTTE science/search | 100k | 0.8926 | 0.8915 | -0.11 | 16.88 | 0/3 | -- | reusable complete cross-domain row |
 | LoTTE science/search | 200k | 0.8574 | 0.8507 | -0.67 | 10.75 | 0/3 | -- | reusable complete cross-domain scale row |
+| LoTTE science/search | 400k | 0.8238 | 0.8171 | -0.67 | 3.15 | 0/3 | -- | complete boundary; recovery has 3-6 affected queries/seed |
 | PubMedQA | native full | 0.9930 | 0.9930 | 0.00 | 0.00 | 3/3 | -- | complete native-full transfer row |
 | CovidQA-RAG | native full | 0.6095 | 0.6074 | -0.21 | 8.34 | 0/3 | -- | complete native-full discriminative transfer row |
 | Banking77 | native full | 0.9805 | 0.9844 | 0.39 | -- | -- | 0.9983 | mechanism/boundary only |
@@ -67,10 +70,7 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 
 | Priority | Dataset | Scale | Missing endpoints | Action |
 |---|---|---|---|---|
-| P1 | LoTTE lifestyle/search | 100k | bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery | run common protocol |
-| P1 | LoTTE recreation/search | 100k | bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery | run common protocol |
-| P1 | LoTTE writing/search | 100k | bm25, dense, hybrid_rrf, intentroute_top10, geometry, cross_fitted_budget, final_context_tokens, paired_statistics, feedback_control, feedback_recovery | run common protocol |
 
 ## Interpretation Guardrail
 
-LoTTE technology/search, LoTTE science/search 100k/200k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full now provide complete rows under the common endpoint set. Technology reuses verified Task38/65 artifacts; science uses the Task69.3 standalone baselines, matched feedback control, and five-fold cross-fitted budget results; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.
+LoTTE technology/search, LoTTE science/search 100k/200k/400k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full provide complete rows under the common endpoint set. Science/search 400k is a weak boundary row: only one of five folds is budget eligible, its OOF mean Hit@10 delta is -0.67pp with 3.15% saving, and recovery has only 3-6 affected queries per seed. The deferred lifestyle/recreation/writing rows are post-Task69 expansion candidates, not missing Task69 endpoints. Technology reuses verified Task38/65 artifacts; science uses Task69.3 standalone baselines and frozen budget evaluation; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.

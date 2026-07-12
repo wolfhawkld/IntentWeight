@@ -1,6 +1,6 @@
 # Task69 Cross-Dataset Experimental Consistency
 
-Updated: 2026-07-08
+Updated: 2026-07-12
 
 ## Objective
 
@@ -70,13 +70,15 @@ The machine-readable protocol is
 
 ### Task69.3: LoTTE Cross-Domain Completion
 
-Status: in progress; science/search 100k and 200k checkpoints complete.
+Status: complete for the required Task69 science/search scope: 100k, 200k, and
+the 400k scale-boundary row. Native full and new LoTTE domains are explicitly
+deferred post-Task69 expansion candidates.
 
 1. Complete science/search 100k with standalone BM25 and hybrid baselines,
    five-fold cross-fitted budgeting, and matched feedback controls.
 2. Extend science/search incrementally to 200k, 400k, and native full scale.
-3. Run lifestyle/search, recreation/search, and writing/search at 100k before
-   deciding whether additional scale curves are informative.
+3. Decide whether at most one or two additional LoTTE domains answer a specific
+   remaining coverage question after Task69 paper integration.
 
 Completed science/search 100k checkpoint:
 
@@ -100,15 +102,32 @@ Completed science/search 200k checkpoint:
 - mean EvidenceRecall@10 delta is approximately `-2.97pp`, so this remains a
   sufficient-evidence trade-off row rather than complete-evidence preservation.
 
+Completed science/search 400k core endpoint:
+
+- extends the canonical science/search scale-store to 400,902 chunks;
+- standalone BM25, Dense, hybrid RRF, trust-weighted IntentRoute, and matched
+  no-feedback control all use the same 596 test queries and cached-exact
+  retrieval engine;
+- five-fold frozen-ranking budget selection yields only `1/5` eligible folds,
+  `-0.67pp` mean Hit@10 delta, `3.15%` final-context token saving, and `0/3`
+  strict 1pp non-inferiority seeds;
+- mean EvidenceRecall@10 delta is approximately `-1.12pp`;
+- this is a scale-boundary result, not evidence for robust lossless
+  compression. The matched no-feedback control is complete. A Task40-style
+  recovery replay finds only 3-6 affected queries per seed and recovers 2-5
+  with same-query arm boosts; it is small-sample recovery evidence, not a new
+  first-pass quality claim.
+
 The technology/search experiment does not need to be rerun. Its existing
 Task38/65 rankings, five-fold selections, paired statistics, and token artifacts
 already satisfy the reference protocol. The shared Task69 table generator will
 verify and assemble those artifacts into the reference row; it will not reuse a
 previously reported aggregate as if it were raw evidence.
 
-The remaining Task69.3 work is science/search 400k/full and the additional 100k
-LoTTE domains. No larger science/search run beyond 200k has been started at
-this checkpoint.
+The optional science/search native-full scale and lifestyle/recreation/writing
+100k rows move to the post-Task69 expansion queue. Sol review explicitly
+recommends selecting at most one or two hypothesis-driven domains rather than
+adding all remaining LoTTE domains merely to increase dataset count.
 
 ### Task69.4: Non-LoTTE Common-Protocol Completion
 
@@ -154,16 +173,19 @@ Task69.8 generated:
 
 ### Task69.6: Paper Integration
 
-Status: partially complete.
+Status: complete.
 
-- generate the cross-dataset common-protocol result table;
-- retain a separate LoTTE scale table;
-- add a compact dataset/protocol table;
-- update figures and manuscript claims only from generated artifacts.
+- generated the cross-dataset common-protocol result table and machine-readable
+  audit;
+- retained separate LoTTE scale evidence rather than pooling unmatched rows;
+- added the compact dataset/protocol registry as Supplementary Table S29;
+- added the cross-domain OOF boundary paragraph to the manuscript;
+- regenerated and validated the review packet and journal submission package.
 
 Task69.7 integrated the CovidQA-RAG native-full transfer row into the current
-paper-facing hierarchy. Full paper integration remains pending for additional
-GPU-side LoTTE domain rows.
+paper-facing hierarchy. All mandatory Task69 paper integration is complete.
+Additional GPU-side LoTTE domains remain post-Task69, hypothesis-driven
+expansion candidates rather than completion requirements.
 
 ## Current Audit Outputs
 

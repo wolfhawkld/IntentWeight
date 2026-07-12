@@ -1746,16 +1746,19 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     evidence-retrieval 最小公共协议，并生成 dataset/protocol inventory、
     evidence coverage matrix、current-result snapshot 与 missing-batch 清单。
     当前 LoTTE technology/search 是可直接复用、无需重跑的完整 full-stack
-    anchor；science/search、
-    PubMedQA 与去重 eManual 仍需补齐统一协议，Banking77 与 CUAD 分别保持
+    anchor；science/search 100k/200k、PubMedQA 与去重 eManual 已有完整统一
+    协议行。science/search 400k 已补齐 matched retrieval、feedback control 与
+    五折 OOF budget，但仅 `1/5` fold 通过预算资格门槛，因此作为明确的规模
+    boundary，而非强 token-saving 证据。Banking77 与 CUAD 分别保持
     mechanism-only 和 boundary-only，不参与跨数据集 pooled conclusion。
-43. LoTTE science/search 100k common-protocol checkpoint：Task69.3 已完成首个
-    checkpoint，详见
-    `paper/experiments/task69_3_science_100k_checkpoint_summary.md`。BM25、
-    Hybrid、matched no-feedback control 与五折 OOF budget 均已补齐；OOF
-    Hit@10 delta 为 `-0.11pp`、final-context saving 为 `16.88%`，但 strict NI
-    为 `0/3` 且 EvidenceRecall@10 平均下降约 `2.86pp`，因此结论限定为
-    sufficient-evidence trade-off。更大 science scales 与新增 domains 尚未启动。
+43. LoTTE science/search common-protocol checkpoints：Task69.3 的 100k、200k
+    与 400k core endpoint 均已完成，详见
+    `paper/experiments/task69_3_science_100k_checkpoint_summary.md`、
+    `paper/experiments/task69_3_science_200k_checkpoint_summary.md` 和
+    `paper/experiments/task69_3_science_400k_checkpoint_summary.md`。400k OOF
+    Hit@10 delta 为 `-0.67pp`、final-context saving 为 `3.15%`、strict NI 为
+    `0/3`，仅支持一个保守的规模边界结论；native full 与新增 LoTTE domains
+    尚未启动。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1782,8 +1785,10 @@ cross-fitted calibration、第 38 项 Task65.7 multi-judge downstream
 robustness 也已完成。
 第 39 项 Task66 Elsevier/IP&M submission conversion 也已完成。
 第 40 项 Task67 final submission validation 与第 41 项 Task68 multi-dataset
-narrative alignment 也已完成。第 42 项 Task69 已完成 69.1-69.2 的审计与
-协议冻结，69.3-69.6 的补充实验和论文整合待继续。
+narrative alignment 也已完成。第 42 项 Task69 已完成 69.1-69.6：science/search
+100k/200k/400k、非 LoTTE common-protocol rows、机制/边界表和论文整合均已
+闭环。science/search 400k 是明确的弱规模边界，新增 LoTTE domains 和 native
+science full 属于 post-Task69 的假设驱动扩展，不是当前任务缺失项。
 
 ---
 

@@ -1,0 +1,20 @@
+[
+  {
+    "checks": 16,
+    "dataset": "lotte_technology_search_100k",
+    "fold_method_seed_cells": 90,
+    "paired_rows": 18,
+    "prefix": "paper/experiments/results/task70_formal_technology_100k",
+    "queries": 596,
+    "status": "pass"
+  },
+  {
+    "checks": 16,
+    "dataset": "lotte_science_search_100k",
+    "fold_method_seed_cells": 90,
+    "paired_rows": 18,
+    "prefix": "paper/experiments/results/task70_formal_science_100k",
+    "queries": 596,
+    "status": "pass"
+  }
+]

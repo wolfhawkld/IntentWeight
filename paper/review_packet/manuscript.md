@@ -14,11 +14,13 @@ floor. A bounded piecewise relevance-manifold hypothesis motivates local route
 construction, with geometry evaluated diagnostically rather than treated as
 proof of relevance.
 
-We evaluate IntentRoute across six domain-specific settings. The primary scale
-study uses LoTTE technology/search from 100k to 638k chunks. A separate LoTTE
-science/search study tests cross-domain transfer at 20k and 100k corpus scales;
-PubMedQA and Banking77 examine feedback adaptation, while eManual and CUAD
-expose duplicate-text and sparse-ground-truth boundaries. At
+We evaluate IntentRoute across seven dataset settings spanning six domain
+areas. The primary scale study uses LoTTE technology/search from 100k to 638k
+chunks. A separate LoTTE science/search study tests cross-domain transfer at
+20k, 100k, and 200k corpus scales; PubMedQA and CovidQA-RAG test biomedical
+transfer under different dense ceilings; Banking77 examines feedback
+adaptation as an intent-routing proxy; and eManual and CUAD expose
+duplicate-text and sparse-ground-truth boundaries. At
 calibration-eligible technology/search operating
 points, IntentRoute reduces final evidence-context tokens by 6-18% while
 preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger
@@ -108,18 +110,19 @@ generator as input tokens, each percentage point of evidence-context reduction
 translates directly into a proportional per-query inference-cost reduction, a
 recurring saving that scales with deployment query volume.
 
-We evaluate IntentRoute across six domain-specific settings with deliberately
-tiered evidentiary roles. LoTTE technology/search supplies the full-stack,
+We evaluate IntentRoute across seven dataset settings with deliberately tiered
+evidentiary roles. LoTTE technology/search supplies the full-stack,
 large-scale quality-efficiency evaluation from 100k to 638k chunks. A separate
-LoTTE science/search study tests cross-domain transfer at 20k and 100k corpus
-scales. PubMedQA and Banking77 test feedback adaptation in
-biomedical evidence retrieval and banking-intent routing. eManual and CUAD
-expose duplicate-text, strict chunk-identity, and sparse-ground-truth
-boundaries in manual and legal retrieval. We do not pool these settings as if
-their tasks, labels, and evidence strength were interchangeable. Instead,
-LoTTE technology/search anchors the complete retrieval-and-budget claim,
-science/search tests cross-domain transfer, and the other datasets test
-mechanism transfer and failure boundaries.
+LoTTE science/search study tests cross-domain transfer at 20k, 100k, and 200k
+corpus scales. PubMedQA and CovidQA-RAG test biomedical evidence-retrieval
+transfer under near-ceiling and more discriminative dense baselines,
+respectively; Banking77 tests feedback adaptation in banking-intent routing;
+and eManual and CUAD expose duplicate-text, strict chunk-identity, and
+sparse-ground-truth boundaries in manual and legal retrieval. We do not pool
+these settings as if their tasks, labels, and evidence strength were
+interchangeable. Instead, LoTTE technology/search anchors the complete
+retrieval-and-budget claim, science/search tests cross-domain transfer, and
+the other datasets test transfer, mechanism, and failure boundaries.
 
 On LoTTE technology/search, we scale from 100k to 638k corpus chunks and
 compare against dense-only retrieval using
@@ -154,11 +157,11 @@ answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
 under three LLM judges. No judge or shared-key majority finds a statistically
 significant correctness difference, while faithfulness effects remain
 method-dependent. LoTTE science/search provides cross-domain evidence;
-PubMedQA and Banking77 provide supporting feedback-adaptation checks; and
-eManual and CUAD expose evaluation and data-quality boundaries. Together with
-feedback-driven hard-case recovery, these settings broaden the mechanism and
-boundary evidence without extending the LoTTE token-saving headline to
-incomparable tasks.
+PubMedQA and CovidQA-RAG provide biomedical transfer checks; Banking77 provides
+an intent-routing feedback check; and eManual and CUAD expose evaluation and
+data-quality boundaries. Together with feedback-driven hard-case recovery,
+these settings broaden the transfer, mechanism, and boundary evidence without
+extending the LoTTE token-saving headline to incomparable tasks.
 
 The contributions of this paper are:
 
@@ -180,9 +183,10 @@ The contributions of this paper are:
    cross-encoder reranking, showing that IntentRoute is an upstream controller
    that composes with rather than replaces these downstream layers.
 5. We add a 300-query, three-judge answer-level evaluation, controlled
-   feedback recovery, PubMedQA and Banking77 mechanism checks, and eManual and
-   CUAD boundary analyses to evaluate the controller across six
-   domain-specific settings without conflating their evidentiary roles.
+   feedback recovery, PubMedQA and CovidQA-RAG biomedical transfer checks,
+   Banking77 mechanism checks, and eManual and CUAD boundary analyses to
+   evaluate the controller across seven dataset settings without conflating
+   their evidentiary roles.
 
 The resulting claim is intentionally bounded. IntentRoute is not presented as
 a universal replacement for dense retrieval, a proof of a relevance manifold,
@@ -671,29 +675,40 @@ evaluation.
 
 ## 4.1 Datasets
 
-The experiments cover six domain-specific settings spanning technology,
-science, biomedical QA, banking intents, product manuals, and legal contracts.
-They have different tasks, ground-truth semantics, and evidentiary roles, so we
-do not treat them as equal support for the main claim:
+The experiments cover seven dataset settings across six domain areas:
+technology, science, biomedical QA, banking intents, product manuals, and legal
+contracts. They have different tasks, ground-truth semantics, and evidentiary
+roles, so we do not treat them as equal support for the main claim:
 
 - **LoTTE technology/search** is the main large-scale vertical-domain evidence
   benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
   596 test queries.
 - **LoTTE science/search** is the cross-domain validation benchmark. It tests
   whether ranking and context-budget behavior transfer beyond technology/search
-  at 20k/q200 and 100k scales.
-- **PubMedQA and Banking77** are supporting feedback-adaptation checks.
-  PubMedQA is an evidence-retrieval proof-of-concept with abstract-level ground
-  truth, while Banking77 is an intent-routing proxy rather than a strict
-  evidence-retrieval benchmark.
+  at 20k/q200, 100k, 200k, and 400k scales. The 400k row is retained as a
+  scale boundary rather than a lossless-compression replication.
+- **PubMedQA and CovidQA-RAG** are biomedical transfer checks. PubMedQA is an
+  evidence-retrieval proof-of-concept with abstract-level ground truth and a
+  near-ceiling dense baseline; CovidQA-RAG is a more discriminative native-full
+  RAGBench evidence-retrieval row.
+- **Banking77** is a supporting feedback-adaptation check for intent routing
+  rather than a strict evidence-retrieval benchmark.
 - **eManual and CUAD** are boundary cases. eManual exposes duplicate-text and
   strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
 
 This hierarchy separates full-stack evidence, cross-domain transfer, mechanism
 transfer, and boundary analysis. The complete quality-efficiency claim is
 anchored in LoTTE technology/search, science/search tests domain transfer, and
-the secondary datasets test whether feedback behavior transfers or identify
-where corpus duplication and sparse labels limit inference.
+the secondary datasets test whether feedback behavior transfers, whether a
+biomedical evidence-retrieval transfer row remains discriminative, or where
+corpus duplication and sparse labels limit inference.
+
+Supplementary Table S29 registers the dataset/query scope, route-feedback
+protocol, context-budget endpoint, and evidentiary role for each result family.
+It distinguishes the common evidence-retrieval protocol from the Banking77
+intent proxy, the CUAD sparse-GT boundary, and historical fixed-split
+diagnostics. This prevents unlike evaluation families from being treated as
+pooled replications.
 
 ## 4.2 Baselines and Variants
 
@@ -1153,13 +1168,31 @@ can introduce small hit losses. The ranking signal transfers, but compression
 strength requires domain- and scale-specific calibration. Supplementary Section S8 reports
 the complete seed-level table.
 
-The supporting feedback checks cover two different retrieval abstractions. On
-PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while the
-trust-weighted policy reaches $0.9940$ with selected-cluster hit $0.8860$. On
-the Banking77 intent-routing proxy, the corresponding dense and trust-weighted
-scores are $0.9805$ and $0.9844$, and selected-cluster hit reaches $0.9983$.
-The near-ceiling final scores limit claims about aggregate improvement, but the
-route diagnostics support feedback adaptation beyond the LoTTE task format.
+The matched five-fold protocol makes this boundary explicit on the
+shared 596-query science/search population. At 100k, 200k, and 400k, the mean
+IntentRoute $\mathrm{Hit@10}$ deltas are -0.11pp, -0.67pp, and -0.67pp, with
+16.88%, 10.75%, and 3.15% final-context token saving, respectively; strict
+1pp non-inferiority is `0/3` seeds at every scale. At 400k, only one of five
+folds selects a compressed policy. Its recovery replay has only 3-6
+budget-induced affected queries per seed, so it closes a protocol endpoint but
+does not overturn the scale-boundary interpretation. Supplementary Table S29
+records the matched protocol and evidence roles without pooling these rows into
+the technology/search headline.
+
+The supporting transfer checks cover different retrieval abstractions and dense
+ceilings. On PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while
+the trust-weighted policy reaches $0.9940$ with selected-cluster hit $0.8860$.
+CovidQA-RAG is more discriminative: dense reaches $\mathrm{Hit@10}=0.6095$,
+trust-weighted fixed top-10 IntentRoute reaches $0.6300$, and a five-fold
+budgeted evaluation saves 8.34% final-context tokens with a -0.21 percentage
+point mean hit delta versus dense. The strict 1pp non-inferiority rule remains
+unmet on CovidQA-RAG, so this row supports transfer of the quality-efficiency
+trade-off rather than a guaranteed non-inferior result. On the Banking77
+intent-routing proxy, the corresponding dense and trust-weighted scores are
+$0.9805$ and $0.9844$, and selected-cluster hit reaches $0.9983$. The
+near-ceiling PubMedQA and Banking77 final scores limit claims about aggregate
+improvement, but the route diagnostics support feedback adaptation beyond the
+LoTTE task format.
 
 The two boundary datasets explain why benchmark construction matters. eManual
 contains 18,812 chunks but only 1,729 unique text strings: dense
@@ -1168,9 +1201,9 @@ $0.5615$ under text-equivalent matching and $0.8615$ after corpus
 deduplication. On the GT-anchored CUAD sample, dense reaches $0.0759$ and the
 trust-weighted smoke run reaches $0.0886$; sparse evidence anchors prevent this
 sample from serving as full-corpus positive evidence. Supplementary Sections
-S4 and S8 retain the complete tables. These datasets support mechanism and
-boundary analysis rather than extending the LoTTE token-saving headline or
-establishing universal dense-retrieval dominance.
+S4 and S8 retain the complete tables. These datasets support mechanism,
+transfer, and boundary analysis rather than replacing the LoTTE token-saving
+headline or establishing universal dense-retrieval dominance.
 
 ## 5.6 Strong Post-Retrieval Baselines
 
@@ -1250,14 +1283,17 @@ decrease, so the result does not establish uniform answer-quality
 non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
 
-The broader six-setting evaluation adds two distinct forms of external
-evidence. PubMedQA and Banking77 show that trust-weighted route adaptation is
-observable in biomedical evidence retrieval and intent routing, although both
-operate near quality ceilings. eManual and CUAD expose how duplicated evidence,
-strict chunk identifiers, and sparse ground-truth anchors can dominate measured
-retrieval quality. These results do not form a pooled cross-dataset score.
-Instead, they separate the controller's full-stack LoTTE evidence from
-mechanism-transfer and benchmark-boundary evidence.
+The broader seven-setting evaluation adds three distinct forms of external
+evidence. PubMedQA shows that trust-weighted route adaptation is observable in
+biomedical evidence retrieval near a dense ceiling, while CovidQA-RAG provides
+a more discriminative biomedical transfer row with measurable final-context
+savings and a small mean hit loss under the strict cross-fitted budget. Banking77
+shows analogous feedback behavior in an intent-routing proxy. eManual and CUAD
+expose how duplicated evidence, strict chunk identifiers, and sparse
+ground-truth anchors can dominate measured retrieval quality. These results do
+not form a pooled cross-dataset score. Instead, they separate the controller's
+full-stack LoTTE evidence from transfer, mechanism, and benchmark-boundary
+evidence.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. IntentRoute's value
@@ -1528,13 +1564,15 @@ but it does not cover domain-specific encoders, late-interaction models, or
 proprietary embedding systems. The above-dense quality-first point is currently
 demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
-The study spans six domain-specific settings, but only LoTTE
-technology/search receives the complete multi-scale, matched-baseline,
-calibration/test, and downstream-generation protocol. LoTTE science/search
-strengthens cross-domain validity; PubMedQA and Banking77 test feedback
-adaptation; and eManual and CUAD expose benchmark boundaries. This breadth
-should not be interpreted as six independent full-stack replications. More
-complete repeated evaluations on additional vertical corpora remain necessary.
+The study spans seven dataset settings, but only LoTTE technology/search
+receives the complete multi-scale, matched-baseline, calibration/test, and
+downstream-generation protocol. LoTTE science/search strengthens cross-domain
+validity; PubMedQA and CovidQA-RAG test biomedical evidence-retrieval transfer
+under different dense ceilings; Banking77 tests feedback adaptation as an
+intent-routing proxy; and eManual and CUAD expose benchmark boundaries. This
+breadth should not be interpreted as seven independent full-stack
+replications. More complete repeated evaluations on additional vertical
+corpora remain necessary.
 
 ## 7.8 Future Work
 
@@ -1566,9 +1604,9 @@ geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
 policy separately controls the final evidence-context budget.
 
-The evaluation spans six domain-specific settings with different evidentiary
-roles. The main full-stack evidence comes from LoTTE technology/search at 100k
-to 638k corpus chunks. Under calibration/test budget selection, calibration-eligible operating
+The evaluation spans seven dataset settings with different evidentiary roles.
+The main full-stack evidence comes from LoTTE technology/search at 100k to 638k
+corpus chunks. Under calibration/test budget selection, calibration-eligible operating
 points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
 by 6-18%; the original 400k point remains calibration-ineligible. A normalized
 five-fold follow-up at 400k yields 14.50% mean saving with no mean Hit change,
@@ -1592,10 +1630,12 @@ LoTTE science/search provides cross-domain ranking support with a clear
 compression-calibration boundary. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
 aggressive context compression.
-PubMedQA and Banking77 extend the feedback-adaptation checks to biomedical
-evidence retrieval and banking-intent routing, while eManual and CUAD expose
-duplicate-text and sparse-ground-truth limits. These supporting settings broaden
-the mechanism and boundary evidence without being treated as equivalent
+PubMedQA and CovidQA-RAG extend the evidence-retrieval transfer checks to
+biomedical QA under near-ceiling and more discriminative dense baselines,
+respectively; Banking77 extends the feedback-adaptation check to
+banking-intent routing; and eManual and CUAD expose duplicate-text and
+sparse-ground-truth limits. These supporting settings broaden the transfer,
+mechanism, and boundary evidence without being treated as equivalent
 replications of the LoTTE quality-efficiency frontier.
 
 Strong post-retrieval baselines refine rather than weaken the conclusion.

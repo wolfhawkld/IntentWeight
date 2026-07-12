@@ -72,9 +72,9 @@ def gt_set(query: Mapping) -> set[str]:
     return {str(item) for item in query.get("ground_truth_chunk_ids", [])}
 
 
-def hit(query: Mapping, ranking: Sequence[str]) -> bool:
+def hit(query: Mapping, ranking: Sequence[str], *, top_k: int) -> bool:
     gt = gt_set(query)
-    return bool(gt and any(str(item) in gt for item in ranking))
+    return bool(gt and any(str(item) in gt for item in ranking[:top_k]))
 
 
 def deterministic_split(
@@ -247,17 +247,31 @@ def average_tokens(
     queries: Sequence[Mapping],
     rankings: Mapping[str, Sequence[str]],
     chunk_tokens: Mapping[str, int],
+    *,
+    top_k: int,
 ) -> float:
     values = []
     for query in queries:
-        values.append(sum(chunk_tokens.get(item, 0) for item in rankings.get(qid(query), [])))
+        # Dense artifact caches may retain more than top_k candidates. Recovery
+        # comparisons are against the final top-k evidence context.
+        values.append(sum(
+            chunk_tokens.get(item, 0)
+            for item in rankings.get(qid(query), [])[:top_k]
+        ))
     return mean(values) if values else 0.0
 
 
-def evaluate_hit_rate(queries: Sequence[Mapping], rankings: Mapping[str, Sequence[str]]) -> float:
+def evaluate_hit_rate(
+    queries: Sequence[Mapping],
+    rankings: Mapping[str, Sequence[str]],
+    *,
+    top_k: int,
+) -> float:
     if not queries:
         return 0.0
-    return sum(1 for query in queries if hit(query, rankings.get(qid(query), []))) / len(queries)
+    return sum(
+        1 for query in queries if hit(query, rankings.get(qid(query), []), top_k=top_k)
+    ) / len(queries)
 
 
 def affected_queries(
@@ -265,14 +279,16 @@ def affected_queries(
     dense_rankings: Mapping[str, Sequence[str]],
     fixed_rankings: Mapping[str, Sequence[str]],
     budget_rankings: Mapping[str, Sequence[str]],
+    *,
+    top_k: int,
 ) -> tuple[List[Mapping], List[Mapping]]:
     dense_affected = []
     compression_affected = []
     for query in queries:
         query_id = qid(query)
-        dense_hit = hit(query, dense_rankings.get(query_id, []))
-        fixed_hit = hit(query, fixed_rankings.get(query_id, []))
-        budget_hit = hit(query, budget_rankings.get(query_id, []))
+        dense_hit = hit(query, dense_rankings.get(query_id, []), top_k=top_k)
+        fixed_hit = hit(query, fixed_rankings.get(query_id, []), top_k=top_k)
+        budget_hit = hit(query, budget_rankings.get(query_id, []), top_k=top_k)
         if dense_hit and not budget_hit:
             dense_affected.append(query)
         if fixed_hit and not budget_hit:
@@ -336,9 +352,9 @@ def same_query_recovery_rows(
         retry_rankings["same_full_context"][query_id] = [str(item) for item in fixed_rankings.get(query_id, [])[:top_k]]
 
     rows: List[Dict[str, object]] = []
-    dense_tokens = average_tokens(affected, dense_rankings, chunk_tokens)
-    base_tokens = average_tokens(affected, budget_rankings, chunk_tokens)
-    base_hit = evaluate_hit_rate(affected, budget_rankings)
+    dense_tokens = average_tokens(affected, dense_rankings, chunk_tokens, top_k=top_k)
+    base_tokens = average_tokens(affected, budget_rankings, chunk_tokens, top_k=top_k)
+    base_hit = evaluate_hit_rate(affected, budget_rankings, top_k=top_k)
     rows.append({
         "protocol": "same_query_retry",
         "seed": seed,
@@ -357,19 +373,19 @@ def same_query_recovery_rows(
         regressed = 0
         for query in affected:
             query_id = qid(query)
-            before = hit(query, budget_rankings.get(query_id, []))
-            after = hit(query, rankings.get(query_id, []))
+            before = hit(query, budget_rankings.get(query_id, []), top_k=top_k)
+            after = hit(query, rankings.get(query_id, []), top_k=top_k)
             if after and not before:
                 recovered += 1
             if before and not after:
                 regressed += 1
-        tokens = average_tokens(affected, rankings, chunk_tokens)
+        tokens = average_tokens(affected, rankings, chunk_tokens, top_k=top_k)
         rows.append({
             "protocol": "same_query_retry",
             "seed": seed,
             "method": method,
             "affected_count": len(affected),
-            "hit_rate": evaluate_hit_rate(affected, rankings),
+            "hit_rate": evaluate_hit_rate(affected, rankings, top_k=top_k),
             "recovered_count": recovered,
             "regressed_count": regressed,
             "avg_context_tokens": tokens,
@@ -391,11 +407,14 @@ def learn_arm_feedback_map(
     context: SeedContext,
     *,
     min_examples: int,
+    top_k: int,
 ) -> Dict[int, List[int]]:
     counts: Dict[int, Counter] = defaultdict(Counter)
     for query in calibration_queries:
         query_id = qid(query)
-        if not hit(query, dense_rankings.get(query_id, [])) or hit(query, budget_rankings.get(query_id, [])):
+        if not hit(query, dense_rankings.get(query_id, []), top_k=top_k) or hit(
+            query, budget_rankings.get(query_id, []), top_k=top_k
+        ):
             continue
         query_arm = context.query_arm.get(query_id)
         if query_arm is None:
@@ -480,13 +499,14 @@ def all_query_rows(
     before_rankings: Mapping[str, Sequence[str]],
     variants: Mapping[str, Mapping[str, Sequence[str]]],
     chunk_tokens: Mapping[str, int],
+    top_k: int,
     learned_arm_count: int = 0,
 ) -> List[Dict[str, object]]:
     rows = []
-    dense_hit = evaluate_hit_rate(queries, dense_rankings)
-    dense_tokens = average_tokens(queries, dense_rankings, chunk_tokens)
-    before_hit = evaluate_hit_rate(queries, before_rankings)
-    before_tokens = average_tokens(queries, before_rankings, chunk_tokens)
+    dense_hit = evaluate_hit_rate(queries, dense_rankings, top_k=top_k)
+    dense_tokens = average_tokens(queries, dense_rankings, chunk_tokens, top_k=top_k)
+    before_hit = evaluate_hit_rate(queries, before_rankings, top_k=top_k)
+    before_tokens = average_tokens(queries, before_rankings, chunk_tokens, top_k=top_k)
     rows.append({
         "protocol": protocol,
         "seed": seed,
@@ -501,8 +521,8 @@ def all_query_rows(
         "token_saving_percent_vs_dense": (1.0 - before_tokens / dense_tokens) * 100.0 if dense_tokens else 0.0,
     })
     for method, rankings in variants.items():
-        method_hit = evaluate_hit_rate(queries, rankings)
-        tokens = average_tokens(queries, rankings, chunk_tokens)
+        method_hit = evaluate_hit_rate(queries, rankings, top_k=top_k)
+        tokens = average_tokens(queries, rankings, chunk_tokens, top_k=top_k)
         rows.append({
             "protocol": protocol,
             "seed": seed,
@@ -668,12 +688,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             dense_rankings,
             fixed_rankings,
             budget_rankings,
+            top_k=args.top_k,
         )
         dense_affected_test, compression_affected_test = affected_queries(
             test_queries,
             dense_rankings,
             fixed_rankings,
             budget_rankings,
+            top_k=args.top_k,
         )
         details["same_query"][seed] = {
             "dense_affected_all": [qid(query) for query in dense_affected_all],
@@ -705,6 +727,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             before_rankings=budget_rankings,
             variants=same_variants,
             chunk_tokens=chunk_tokens,
+            top_k=args.top_k,
         ))
 
         learned = learn_arm_feedback_map(
@@ -713,6 +736,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             budget_rankings,
             context,
             min_examples=args.min_learned_arm_examples,
+            top_k=args.top_k,
         )
         generalized = generalized_rankings(
             test_queries,
@@ -739,6 +763,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             before_rankings=budget_rankings,
             variants=generalized,
             chunk_tokens=chunk_tokens,
+            top_k=args.top_k,
             learned_arm_count=len(learned),
         ))
 

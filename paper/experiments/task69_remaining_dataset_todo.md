@@ -1,6 +1,6 @@
 # Task69 Remaining Dataset TODO
 
-Updated: 2026-07-08
+Updated: 2026-07-12
 
 ## Purpose
 
@@ -19,6 +19,7 @@ The evidence chain remains:
 |---|---:|---|---|
 | LoTTE technology/search | 100k, 200k, 400k, 638k full | scale/full-stack anchor | complete |
 | LoTTE science/search | 100k, 200k | cross-domain scale | complete |
+| LoTTE science/search | 400k | cross-domain scale boundary | complete weak-boundary row; recovery has 3-6 affected queries/seed |
 | PubMedQA | native full | non-LoTTE evidence transfer | complete |
 | CovidQA-RAG | native full | biomedical discriminative transfer | complete |
 | eManual deduplicated | native full | corrected boundary | complete |
@@ -27,18 +28,15 @@ These rows include Dense, BM25, hybrid RRF, IntentRoute, feedback controls,
 final-context tokens, five-fold cross-fitted budget selection, and paired
 statistics.
 
-## GPU / Embedding-Heavy Queue
+## Post-Task69 GPU / Embedding-Heavy Queue
 
 These tasks require new large corpus embeddings or new LoTTE domain stores.
 They should be run on the GPU machine unless intentionally deferred.
 
 | Priority | Task | Why it is embedding-heavy | Target output |
 |---|---|---|---|
-| P1 | LoTTE science/search 400k | Extends the science scale-store from 200k to 400k; about 200k new corpus rows | common-protocol 400k row |
 | P2 | LoTTE science/search native full | Native science/search is much larger than technology full; only run if resources justify it | optional full-scale cross-domain row |
-| P1 | LoTTE lifestyle/search 100k | New domain, new processed corpus and embeddings | 100k domain-generalization row |
-| P1 | LoTTE recreation/search 100k | New domain, new processed corpus and embeddings | 100k domain-generalization row |
-| P1 | LoTTE writing/search 100k | New domain, new processed corpus and embeddings | 100k domain-generalization row |
+| P2 | One or two of lifestyle/recreation/writing 100k | New domain, new processed corpus and embeddings; select only against a stated coverage gap | hypothesis-driven domain-generalization row |
 | P1.5 | TechQA / technical-support evidence retrieval | Candidate RAGBench/TechQA corpus construction still needs validation; embeddings are new, and the original TechQA corpus may be much larger than the RAGBench row count | optional technical-support vertical row |
 | P1.5 | LegalBench-RAG | New legal corpus and span-to-chunk preprocessing; license/download and chunking must be checked before use | optional legal evidence-retrieval row or CUAD replacement |
 | P1.5 | FinQA full protocol | Feasibility download/preprocessing is complete, but the native processed corpus has 196,659 chunks and 16,562 queries; full Dense/IntentRoute should run on GPU or overnight infrastructure | optional finance-domain breadth row |
@@ -55,7 +53,7 @@ metrics.
 | P2 | FiQA metadata/preprocessing check | Optional BEIR finance alternative only if FinQA proves too expensive or unsuitable | finance-domain fallback |
 | Done | CUAD GT-anchored sample | Task69.8 boundary summary generated; no token-budget row because it is not pooled | sparse-GT boundary only |
 | Done | Banking77 native full | Task69.8 route-learning summary generated; not pooled with evidence retrieval | mechanism-only row |
-| P2 | Task69 audit integration | update protocol coverage after each CPU/GPU batch | reproducibility and reviewer readability |
+| Done | Task69 paper integration | Added Supplementary Table S29 and the science/search OOF boundary paragraph; review and journal packages passed validation | reproducibility and reviewer readability |
 
 ## Merged Dataset-Expansion Decision
 
@@ -85,8 +83,9 @@ direction:
 
 The resulting paper-facing structure should be:
 
-1. **LoTTE scale/domain matrix:** technology/search full scale, science/search
-   partial scale, and lifestyle/recreation/writing 100k.
+1. **LoTTE scale/domain matrix:** technology/search full scale and
+   science/search through its 400k boundary; add at most two new 100k domains
+   only when a coverage gap remains after paper integration.
 2. **External vertical evidence rows:** eManual deduplicated, PubMedQA, and
    optionally CovidQA-RAG, TechQA, LegalBench-RAG, or one finance dataset.
 3. **Mechanism/boundary rows:** Banking77 and CUAD, reported separately and not
@@ -107,15 +106,13 @@ The resulting paper-facing structure should be:
 
 ## Suggested Execution Order
 
-1. Update the Task69 audit and paper-facing dataset/protocol table after each
-   new GPU batch.
-2. On the GPU machine, run LoTTE science/search 400k.
-3. On the GPU machine, run LoTTE lifestyle/recreation/writing 100k rows.
-4. If cross-domain LoTTE is stable, choose at most two external vertical
+1. Select at most one or two LoTTE 100k domains only if they answer a stated
+   coverage question.
+2. If cross-domain LoTTE is stable, choose at most two external vertical
    candidates for the next expansion batch. CovidQA-RAG is already complete;
    the remaining preferred order is TechQA, LegalBench-RAG, then one finance
    dataset.
-5. Decide whether science/search full and second-encoder robustness are worth
+3. Decide whether science/search full and second-encoder robustness are worth
    the additional cost.
 
 ## Completed CPU Updates
