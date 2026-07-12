@@ -168,6 +168,8 @@ def append_scale_store_streaming(
     if copy_chunk_size <= 0:
         raise ValueError(f"copy_chunk_size must be positive, got {copy_chunk_size}")
 
+    store_dir.mkdir(parents=True, exist_ok=True)
+
     ids_path = store_dir / "canonical_corpus_ids.json"
     embeddings_path = store_dir / "canonical_corpus_embeddings.npy"
     if ids_path.exists() and embeddings_path.exists():

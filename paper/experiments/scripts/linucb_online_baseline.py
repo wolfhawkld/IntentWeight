@@ -130,9 +130,10 @@ class GlobalLinUCBPolicy:
         scores = np.zeros(self.n_arms, dtype=np.float64)
         alpha = self.effective_alpha
         for arm in range(self.n_arms):
-            theta = np.linalg.solve(self.A[arm], self.b[arm])
+            solutions = np.linalg.solve(self.A[arm], np.column_stack((self.b[arm], context)))
+            theta = solutions[:, 0]
             point_estimate = float(np.dot(theta, context))
-            a_inv_context = np.linalg.solve(self.A[arm], context)
+            a_inv_context = solutions[:, 1]
             uncertainty = float(np.sqrt(max(0.0, np.dot(context, a_inv_context))))
             scores[arm] = point_estimate + alpha * uncertainty
         if self.tie_jitter:
@@ -189,6 +190,49 @@ def retrieve_from_arms(
         return []
     candidate_embeddings = corpus_embeddings[candidate_indices]
     scores = candidate_embeddings @ query_embedding
+    k = min(top_k, candidate_indices.size)
+    if k == candidate_indices.size:
+        top_local = np.arange(candidate_indices.size)
+    else:
+        top_local = np.argpartition(-scores, k - 1)[:k]
+    ordered_local = sorted(top_local.tolist(), key=lambda idx: (-float(scores[idx]), int(candidate_indices[idx])))
+    return [chunk_ids[int(candidate_indices[idx])] for idx in ordered_local]
+
+
+def build_arm_row_indices(arm_labels: np.ndarray, n_arms: int | None = None) -> tuple[np.ndarray, ...]:
+    """Return sorted corpus-row indices for each arm."""
+    labels = np.asarray(arm_labels, dtype=np.int32)
+    if labels.ndim != 1:
+        raise ValueError(f"arm_labels must be one-dimensional, got shape={labels.shape}")
+    if n_arms is None:
+        n_arms = int(np.max(labels)) + 1 if labels.size else 0
+    if n_arms < 0:
+        raise ValueError(f"n_arms must be non-negative, got {n_arms}")
+    return tuple(np.flatnonzero(labels == arm).astype(np.int64, copy=False) for arm in range(n_arms))
+
+
+def retrieve_from_arm_score_cache(
+    query_scores: np.ndarray,
+    chunk_ids: Sequence[str],
+    arm_row_indices: Sequence[np.ndarray],
+    selected_arms: Sequence[int],
+    *,
+    top_k: int,
+) -> List[str]:
+    """Retrieve from selected arms using cached exact query-corpus scores."""
+    if top_k <= 0:
+        return []
+    selected = np.unique(np.asarray(selected_arms, dtype=np.int32))
+    selected = selected[(selected >= 0) & (selected < len(arm_row_indices))]
+    if selected.size == 0:
+        return []
+    parts = [arm_row_indices[int(arm)] for arm in selected if arm_row_indices[int(arm)].size]
+    if not parts:
+        return []
+    candidate_indices = np.concatenate(parts)
+    # np.flatnonzero(np.isin(...)) in the legacy path is globally row-sorted.
+    candidate_indices.sort()
+    scores = np.asarray(query_scores)[candidate_indices]
     k = min(top_k, candidate_indices.size)
     if k == candidate_indices.size:
         top_local = np.arange(candidate_indices.size)

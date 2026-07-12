@@ -133,6 +133,41 @@ class LargeScaleArtifactsTests(unittest.TestCase):
             np.testing.assert_allclose(first["centroids"], second["centroids"])
             np.testing.assert_array_equal(first["arm_labels"], second["arm_labels"])
 
+    def test_query_corpus_scores_are_cached_and_exact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache_dir = Path(tmp)
+            first, first_info = large_scale_artifacts.load_or_compute_query_corpus_scores(
+                self.corpus,
+                self.queries,
+                self.corpus_embeddings,
+                self.query_embeddings,
+                dataset="toy",
+                model_name="fake-model",
+                cache_dir=cache_dir,
+                progress_every=10,
+            )
+            second, second_info = large_scale_artifacts.load_or_compute_query_corpus_scores(
+                self.corpus,
+                self.queries,
+                self.corpus_embeddings,
+                self.query_embeddings,
+                dataset="toy",
+                model_name="fake-model",
+                cache_dir=cache_dir,
+                progress_every=10,
+            )
+
+            expected = np.vstack([
+                self.corpus_embeddings @ self.query_embeddings[0],
+                self.corpus_embeddings @ self.query_embeddings[1],
+            ])
+            self.assertFalse(first_info["cache_hit"])
+            self.assertTrue(second_info["cache_hit"])
+            self.assertEqual(first.shape, expected.shape)
+            np.testing.assert_array_equal(first, expected)
+            np.testing.assert_array_equal(second, expected)
+            self.assertTrue(Path(first_info["artifact_path"]).exists())
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

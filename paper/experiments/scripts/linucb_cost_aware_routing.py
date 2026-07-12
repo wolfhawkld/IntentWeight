@@ -16,7 +16,7 @@ import importlib.util
 import json
 import time
 from pathlib import Path
-from typing import Dict, Iterable, List, Mapping, NamedTuple, Sequence
+from typing import Callable, Dict, Iterable, List, Mapping, NamedTuple, Sequence
 
 import numpy as np
 
@@ -71,6 +71,10 @@ FINAL_CONTEXT_POLICIES = (
     "confidence_topk",
 )
 FEEDBACK_MODES = linucb_trust.FEEDBACK_MODES
+CLUSTER_RETRIEVAL_ENGINES = (
+    "on_demand",
+    "cached_exact_scores",
+)
 
 
 class RoutingDecision(NamedTuple):
@@ -140,6 +144,7 @@ def build_artifact_slug(dataset: str, run_metadata: Mapping[str, object]) -> str
         _slug_part(run_metadata.get("query_split", "all")),
         f"corpus-{_slug_part(run_metadata.get('corpus_scope', 'full'))}",
         f"q{_slug_part(run_metadata.get('num_queries', 'all'))}",
+        f"cluster-{_slug_part(run_metadata.get('cluster_retrieval_engine', 'on_demand'))}",
     ])
 
 
@@ -497,6 +502,10 @@ def run_prequential_seed(
     shared_context_artifacts: Mapping[str, np.ndarray] | None = None,
     dense_rankings_by_qid: Mapping[str, Sequence[str]] | None = None,
     bm25_rankings_by_qid: Mapping[str, Sequence[str]] | None = None,
+    cluster_retrieval_engine: str = "on_demand",
+    arm_row_indices: Sequence[np.ndarray] | None = None,
+    query_corpus_scores: np.ndarray | None = None,
+    progress_callback: Callable[[Mapping[str, object]], None] | None = None,
 ) -> Dict[str, object]:
     if routing_mode not in ROUTING_MODES:
         raise ValueError(f"Unsupported routing_mode: {routing_mode}")
@@ -508,12 +517,24 @@ def run_prequential_seed(
         raise ValueError(f"Unsupported confidence_mode: {confidence_mode}")
     if final_context_policy not in FINAL_CONTEXT_POLICIES:
         raise ValueError(f"Unsupported final_context_policy: {final_context_policy}")
+    if cluster_retrieval_engine not in CLUSTER_RETRIEVAL_ENGINES:
+        raise ValueError(f"Unsupported cluster_retrieval_engine: {cluster_retrieval_engine}")
     if epochs <= 0:
         raise ValueError(f"epochs must be positive, got {epochs}")
     if min(top_k, cluster_depth) <= 0:
         raise ValueError("top_k and cluster_depth must be positive")
     if min(dense_depth, bm25_depth, dense_lite_depth, bm25_lite_depth, dense_floor_k, dense_lite_floor_k) < 0:
         raise ValueError("dense/BM25 depths and dense floors must be non-negative")
+    if cluster_retrieval_engine == "cached_exact_scores":
+        if arm_row_indices is None or query_corpus_scores is None:
+            raise ValueError("cached_exact_scores requires arm_row_indices and query_corpus_scores")
+        if len(arm_row_indices) == 0:
+            raise ValueError("cached_exact_scores requires at least one arm index")
+        if query_corpus_scores.shape != (len(queries), len(corpus)):
+            raise ValueError(
+                "query_corpus_scores shape must match selected queries and corpus: "
+                f"expected={(len(queries), len(corpus))}, got={query_corpus_scores.shape}"
+            )
 
     if shared_context_artifacts is not None:
         corpus_context = np.asarray(shared_context_artifacts["corpus_context"], dtype=np.float32)
@@ -733,14 +754,23 @@ def run_prequential_seed(
                     chunk_ids,
                     depth=decision.bm25_depth,
                 )
-            cluster_ranking = global_linucb.retrieve_from_arms(
-                query_embeddings[query_idx],
-                corpus_embeddings,
-                chunk_ids,
-                arm_labels,
-                selected_arms,
-                top_k=decision.cluster_depth,
-            )
+            if cluster_retrieval_engine == "cached_exact_scores":
+                cluster_ranking = global_linucb.retrieve_from_arm_score_cache(
+                    query_corpus_scores[query_idx],
+                    chunk_ids,
+                    arm_row_indices,
+                    selected_arms,
+                    top_k=decision.cluster_depth,
+                )
+            else:
+                cluster_ranking = global_linucb.retrieve_from_arms(
+                    query_embeddings[query_idx],
+                    corpus_embeddings,
+                    chunk_ids,
+                    arm_labels,
+                    selected_arms,
+                    top_k=decision.cluster_depth,
+                )
             ranking = linucb_soft.weighted_reciprocal_rank_fusion(
                 (
                     (dense_ranking, decision.dense_weight),
@@ -882,6 +912,16 @@ def run_prequential_seed(
             "confidence": _mean(epoch_confidences),
             "lite_route_rate": _mean(epoch_lite_routes),
         })
+        if progress_callback is not None:
+            progress_callback({
+                "seed": int(seed),
+                "routing_mode": routing_mode,
+                "epoch": int(epoch + 1),
+                "epochs": int(epochs),
+                "interactions_completed": int((epoch + 1) * len(queries)),
+                "interactions_total": int(epochs * len(queries)),
+                "last_epoch": epoch_rows[-1],
+            })
 
     metrics = retrieval_metrics.evaluate_rankings(queries, rankings, ks=ks)
     first_epoch = epoch_rows[0] if epoch_rows else {}
@@ -896,6 +936,7 @@ def run_prequential_seed(
         "reward_attribution": reward_attribution,
         "confidence_mode": confidence_mode,
         "final_context_policy": final_context_policy,
+        "cluster_retrieval_engine": cluster_retrieval_engine,
         "epochs": epochs,
         "num_interactions": len(source_costs),
         "avg_true_feedback_reward": _mean(true_rewards),
@@ -1128,6 +1169,7 @@ def run_dataset(
     scale_store_dir: Path | None = None,
     use_scale_store: bool = False,
     scale_store_canonical_name: str = "lotte_technology_search",
+    cluster_retrieval_engine: str = "cached_exact_scores",
     query_prefix: str = "",
     corpus_prefix: str = "",
     write_query_traces: bool = False,
@@ -1139,6 +1181,8 @@ def run_dataset(
         raise ValueError(f"Unsupported confidence_mode: {confidence_mode}")
     if final_context_policy not in FINAL_CONTEXT_POLICIES:
         raise ValueError(f"Unsupported final_context_policy: {final_context_policy}")
+    if cluster_retrieval_engine not in CLUSTER_RETRIEVAL_ENGINES:
+        raise ValueError(f"Unsupported cluster_retrieval_engine: {cluster_retrieval_engine}")
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
     queries = experiment_guardrails.apply_query_controls(queries_all, query_split=query_split, max_queries=max_queries)
@@ -1166,6 +1210,7 @@ def run_dataset(
             ks=ks,
         ),
         "num_queries": len(queries),
+        "cluster_retrieval_engine": cluster_retrieval_engine,
     }
     artifact_slug = build_artifact_slug(dataset, run_metadata)
 
@@ -1219,6 +1264,9 @@ def run_dataset(
     bm25_ranking_cache: Dict[str, object] = {"cache_hit": False, "cache_enabled": False}
     context_cache_by_seed: Dict[int, Dict[str, object]] = {}
     context_artifacts_by_seed: Dict[int, Mapping[str, np.ndarray]] = {}
+    arm_row_indices_by_seed: Dict[int, tuple[np.ndarray, ...]] = {}
+    query_corpus_scores: np.ndarray | None = None
+    query_corpus_score_cache: Dict[str, object] = {"cache_hit": False, "cache_enabled": False}
     if use_artifact_cache:
         if max_dense_artifact_depth > 0:
             dense_rankings_by_qid, dense_ranking_cache = large_scale_artifacts.load_or_compute_dense_rankings(
@@ -1264,6 +1312,23 @@ def run_dataset(
             )
             context_artifacts_by_seed[int(seed)] = artifacts
             context_cache_by_seed[int(seed)] = context_cache
+            arm_row_indices_by_seed[int(seed)] = global_linucb.build_arm_row_indices(
+                artifacts["arm_labels"],
+                n_arms=len(artifacts["centroids"]),
+            )
+        if cluster_retrieval_engine == "cached_exact_scores":
+            query_corpus_scores, query_corpus_score_cache = large_scale_artifacts.load_or_compute_query_corpus_scores(
+                corpus,
+                queries,
+                corpus_embeddings,
+                query_embeddings,
+                dataset=dataset,
+                model_name=model_name,
+                cache_dir=artifact_dir,
+                force=force_artifact_cache,
+            )
+    elif cluster_retrieval_engine == "cached_exact_scores":
+        raise ValueError("cached_exact_scores requires artifact caching; omit --no-artifact-cache")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     metrics_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_metrics.json"
@@ -1325,6 +1390,7 @@ def run_dataset(
         "run_metadata": run_metadata,
         "gt_coverage": gt_coverage,
         "write_query_traces": write_query_traces,
+        "cluster_retrieval_engine": cluster_retrieval_engine,
     }
 
     rows: List[Dict[str, object]] = []
@@ -1344,6 +1410,17 @@ def run_dataset(
                 print(f"  checkpoint hit: mode={routing_mode} seed={seed}")
                 seed_results.append(checkpoint_result)
                 continue
+
+            progress_path = output_dir / "progress" / (
+                f"linucb_cost_{artifact_slug}__{routing_mode}__seed{seed}.json"
+            )
+
+            def write_progress(progress: Mapping[str, object], *, path: Path = progress_path) -> None:
+                write_json_atomic(path, {
+                    "status": "running",
+                    "signature": signature,
+                    "progress": dict(progress),
+                })
 
             result = run_prequential_seed(
                 corpus,
@@ -1402,6 +1479,10 @@ def run_dataset(
                 shared_context_artifacts=context_artifacts_by_seed.get(int(seed)),
                 dense_rankings_by_qid=dense_rankings_by_qid,
                 bm25_rankings_by_qid=bm25_rankings_by_qid,
+                cluster_retrieval_engine=cluster_retrieval_engine,
+                arm_row_indices=arm_row_indices_by_seed.get(int(seed)),
+                query_corpus_scores=query_corpus_scores,
+                progress_callback=write_progress,
             )
             save_seed_checkpoint(
                 checkpoint_path,
@@ -1410,6 +1491,11 @@ def run_dataset(
                 write_query_traces=write_query_traces,
             )
             print(f"  checkpoint wrote: mode={routing_mode} seed={seed} -> {checkpoint_path}")
+            write_json_atomic(progress_path, {
+                "status": "completed",
+                "signature": signature,
+                "checkpoint_path": str(checkpoint_path),
+            })
             seed_results.append(result)
         elapsed_sec = time.perf_counter() - start
         per_seed_metrics = [result["metrics"] for result in seed_results]
@@ -1427,6 +1513,7 @@ def run_dataset(
             "reward_attribution": reward_attribution,
             "confidence_mode": confidence_mode,
             "final_context_policy": final_context_policy,
+            "cluster_retrieval_engine": cluster_retrieval_engine,
             "feedback_source": (
                 "simulated_feedback_recorded_no_policy_update"
                 if routing_mode in {
@@ -1528,6 +1615,8 @@ def run_dataset(
                 context_cache_by_seed.get(int(seed), {}).get("artifact_path", "")
                 for seed in seeds
             ],
+            "query_corpus_score_cache_hit": query_corpus_score_cache.get("cache_hit", False),
+            "query_corpus_score_artifact_path": query_corpus_score_cache.get("artifact_path", ""),
             "artifact_slug": artifact_slug,
             "elapsed_sec": round(elapsed_sec, 3),
             **run_metadata,
@@ -1569,7 +1658,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
     new_rows = list(rows)
     if not new_rows:
         return
-    existing: Dict[tuple[str, str, str, str, str, str, str, str, str, str, str, str], Mapping] = {}
+    existing: Dict[tuple[str, ...], Mapping] = {}
     if summary_path.exists():
         with summary_path.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
@@ -1581,6 +1670,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
                     row.get("query_prefix", ""),
                     row.get("corpus_prefix", ""),
                     row.get("routing_mode", ""),
+                    row.get("cluster_retrieval_engine", "on_demand"),
                     row.get("reward_attribution", ""),
                     row.get("confidence_mode", ""),
                     row.get("final_context_policy", ""),
@@ -1596,6 +1686,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
             str(row.get("query_prefix", "")),
             str(row.get("corpus_prefix", "")),
             str(row.get("routing_mode", "")),
+            str(row.get("cluster_retrieval_engine", "on_demand")),
             str(row.get("reward_attribution", "")),
             str(row.get("confidence_mode", "")),
             str(row.get("final_context_policy", "")),
@@ -1608,6 +1699,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "dataset",
         "method",
         "routing_mode",
+        "cluster_retrieval_engine",
         "feedback_mode",
         "reward_attribution",
         "confidence_mode",
@@ -1790,6 +1882,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--scale-store-dir", type=Path, default=DEFAULT_SCALE_STORE_DIR)
     parser.add_argument("--use-scale-store", action="store_true", help="Load corpus embeddings from canonical LoTTE scale store")
     parser.add_argument("--scale-store-canonical-name", default="lotte_technology_search")
+    parser.add_argument(
+        "--cluster-retrieval-engine",
+        default="cached_exact_scores",
+        choices=CLUSTER_RETRIEVAL_ENGINES,
+        help="Use cached exact query-corpus scores or legacy on-demand arm retrieval",
+    )
     parser.add_argument("--routing-modes", default="full_multi_route,gated_cost_aware")
     parser.add_argument("--feedback-mode", default="trust_weighted", choices=FEEDBACK_MODES)
     parser.add_argument("--reward-attribution", default="final_fused", choices=REWARD_ATTRIBUTIONS)
@@ -1940,6 +2038,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             scale_store_dir=args.scale_store_dir,
             use_scale_store=args.use_scale_store,
             scale_store_canonical_name=args.scale_store_canonical_name,
+            cluster_retrieval_engine=args.cluster_retrieval_engine,
             query_prefix=args.query_prefix,
             corpus_prefix=args.corpus_prefix,
             write_query_traces=args.write_query_traces,

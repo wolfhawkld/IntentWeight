@@ -46,6 +46,90 @@ class LinUCBOnlineBaselineTests(unittest.TestCase):
 
         self.assertEqual(ranking, ["c_a", "c_b"])
 
+    def test_cached_arm_score_retrieval_matches_legacy_with_interleaved_arms_and_ties(self):
+        corpus_embeddings = np.asarray([
+            [1.0, 0.0],
+            [0.5, 0.0],
+            [1.0, 0.0],
+            [0.5, 0.0],
+            [0.0, 1.0],
+        ], dtype=np.float32)
+        chunk_ids = ["c0", "c1", "c2", "c3", "c4"]
+        arm_labels = np.asarray([1, 0, 1, 0, 2], dtype=np.int32)
+        query = np.asarray([1.0, 0.0], dtype=np.float32)
+
+        legacy = linucb_online_baseline.retrieve_from_arms(
+            query,
+            corpus_embeddings,
+            chunk_ids,
+            arm_labels,
+            [1, 0],
+            top_k=3,
+        )
+        cached = linucb_online_baseline.retrieve_from_arm_score_cache(
+            corpus_embeddings @ query,
+            chunk_ids,
+            linucb_online_baseline.build_arm_row_indices(arm_labels),
+            [1, 0],
+            top_k=3,
+        )
+
+        self.assertEqual(legacy, ["c0", "c2", "c1"])
+        self.assertEqual(cached, legacy)
+
+    def test_cached_arm_score_retrieval_matches_legacy_for_random_embeddings(self):
+        rng = np.random.default_rng(23)
+        corpus_embeddings = rng.normal(size=(127, 16)).astype(np.float32)
+        query_embeddings = rng.normal(size=(5, 16)).astype(np.float32)
+        chunk_ids = [f"c{idx}" for idx in range(len(corpus_embeddings))]
+        arm_labels = rng.integers(0, 7, size=len(corpus_embeddings), dtype=np.int32)
+        arm_indices = linucb_online_baseline.build_arm_row_indices(arm_labels)
+
+        for query in query_embeddings:
+            for selected_arms in ([0], [1, 4], [6, 2, 3]):
+                legacy = linucb_online_baseline.retrieve_from_arms(
+                    query,
+                    corpus_embeddings,
+                    chunk_ids,
+                    arm_labels,
+                    selected_arms,
+                    top_k=10,
+                )
+                cached = linucb_online_baseline.retrieve_from_arm_score_cache(
+                    corpus_embeddings @ query,
+                    chunk_ids,
+                    arm_indices,
+                    selected_arms,
+                    top_k=10,
+                )
+                self.assertEqual(cached, legacy)
+
+    def test_policy_scores_match_two_solve_reference(self):
+        policy = linucb_online_baseline.GlobalLinUCBPolicy(
+            n_arms=2,
+            context_dim=2,
+            alpha=0.7,
+            alpha_decay=0.0,
+            alpha_min=0.7,
+            seed=5,
+            tie_jitter=0.0,
+        )
+        policy.A[0] = np.asarray([[2.0, 0.3], [0.3, 1.5]], dtype=np.float32)
+        policy.A[1] = np.asarray([[1.2, 0.1], [0.1, 2.1]], dtype=np.float32)
+        policy.b[0] = np.asarray([0.8, 0.2], dtype=np.float32)
+        policy.b[1] = np.asarray([0.1, 0.9], dtype=np.float32)
+        context = np.asarray([0.6, 0.4], dtype=np.float32)
+
+        expected = []
+        for arm in range(policy.n_arms):
+            theta = np.linalg.solve(policy.A[arm], policy.b[arm])
+            point_estimate = float(np.dot(theta, context))
+            a_inv_context = np.linalg.solve(policy.A[arm], context)
+            uncertainty = float(np.sqrt(max(0.0, np.dot(context, a_inv_context))))
+            expected.append(point_estimate + policy.effective_alpha * uncertainty)
+
+        np.testing.assert_allclose(policy.scores(context), np.asarray(expected), rtol=1e-6, atol=1e-7)
+
     def test_prequential_seed_returns_metrics_and_updates_feedback(self):
         corpus = [
             {"chunk_id": "c_alpha", "text": "alpha document"},

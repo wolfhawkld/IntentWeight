@@ -134,7 +134,8 @@ def local_feedback_boosts(
 
     contexts = np.asarray(feedback_contexts, dtype=np.float32)
     distances = np.linalg.norm(contexts - context.astype(np.float32), axis=1)
-    nearest = sorted(range(len(distances)), key=lambda idx: (float(distances[idx]), idx))[:feedback_k]
+    indices = np.arange(len(distances), dtype=np.int64)
+    nearest = np.lexsort((indices, distances))[:feedback_k].tolist()
     reward_sums = np.zeros(n_arms, dtype=np.float64)
     total_neighbor_weight = 0.0
     for idx in nearest:

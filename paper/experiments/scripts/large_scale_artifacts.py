@@ -398,6 +398,95 @@ def load_or_compute_bm25_rankings(
     return rankings, metadata
 
 
+def load_or_compute_query_corpus_scores(
+    corpus: Sequence[Mapping],
+    queries: Sequence[Mapping],
+    corpus_embeddings: np.ndarray,
+    query_embeddings: np.ndarray,
+    *,
+    dataset: str,
+    model_name: str,
+    cache_dir: Path = DEFAULT_ARTIFACT_CACHE_DIR,
+    force: bool = False,
+    progress_every: int = 50,
+) -> tuple[np.ndarray, Dict[str, object]]:
+    """Load or compute exact static query-to-corpus dot-product scores.
+
+    Cluster-local retrieval changes only the selected arms, not the underlying
+    query/corpus scores. Persisting these scores removes repeated CPU matrix
+    products while preserving the legacy candidate union, top-k, and tie-break
+    operations at route time.
+    """
+    if len(corpus_embeddings) != len(corpus):
+        raise ValueError(f"corpus embedding rows={len(corpus_embeddings)} but corpus rows={len(corpus)}")
+    if len(query_embeddings) != len(queries):
+        raise ValueError(f"query embedding rows={len(query_embeddings)} but query rows={len(queries)}")
+    if corpus_embeddings.ndim != 2 or query_embeddings.ndim != 2:
+        raise ValueError("corpus_embeddings and query_embeddings must be two-dimensional")
+    if corpus_embeddings.shape[1] != query_embeddings.shape[1]:
+        raise ValueError(
+            f"embedding dimension mismatch: corpus={corpus_embeddings.shape[1]} "
+            f"queries={query_embeddings.shape[1]}"
+        )
+
+    payload = _artifact_payload(
+        dataset=dataset,
+        artifact_kind="query_corpus_scores",
+        corpus=corpus,
+        queries=queries,
+        model_name=model_name,
+        params={"score_engine": "exact_numpy_rowwise_matvec_v1", "dtype": "float32"},
+    )
+    fingerprint = _payload_fingerprint(payload)
+    scores_path, metadata_path = _artifact_paths(
+        Path(cache_dir),
+        dataset=dataset,
+        artifact_kind="query_corpus_scores",
+        fingerprint=fingerprint,
+        extension="npy",
+    )
+    expected_shape = (len(queries), len(corpus))
+    if not force and scores_path.exists() and metadata_path.exists():
+        with metadata_path.open("r", encoding="utf-8") as f:
+            metadata = json.load(f)
+        if _valid_metadata(metadata, payload, fingerprint):
+            scores = np.load(scores_path, mmap_mode="r")
+            if scores.shape == expected_shape and scores.dtype == np.float32:
+                info = dict(metadata)
+                info["cache_hit"] = True
+                return scores, info
+
+    cache_dir = Path(cache_dir)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    temporary_path = scores_path.with_suffix(scores_path.suffix + ".tmp")
+    start = time.perf_counter()
+    scores = np.lib.format.open_memmap(
+        temporary_path,
+        mode="w+",
+        dtype=np.float32,
+        shape=expected_shape,
+    )
+    for query_idx, query_embedding in enumerate(query_embeddings):
+        # Match the legacy retrieval orientation: corpus rows multiplied by one query.
+        scores[query_idx] = corpus_embeddings @ query_embedding
+        completed = query_idx + 1
+        if completed == 1 or completed % progress_every == 0 or completed == len(queries):
+            print(f"[{dataset}] query-corpus scores {completed}/{len(queries)}", flush=True)
+    scores.flush()
+    del scores
+    temporary_path.replace(scores_path)
+    elapsed_sec = time.perf_counter() - start
+    metadata = {
+        **_base_metadata(payload, fingerprint, scores_path, metadata_path),
+        "cache_hit": False,
+        "compute_elapsed_sec": round(elapsed_sec, 3),
+        "score_shape": list(expected_shape),
+        "dtype": "float32",
+    }
+    metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return np.load(scores_path, mmap_mode="r"), metadata
+
+
 def load_or_compute_context_clusters(
     corpus: Sequence[Mapping],
     queries: Sequence[Mapping],
