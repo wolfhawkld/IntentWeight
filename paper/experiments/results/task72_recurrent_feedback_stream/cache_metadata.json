@@ -1,0 +1,146 @@
+{
+  "lotte_science_search_100k": {
+    "bm25": {
+      "artifact_kind": "bm25_rankings",
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_science_search_100k__bm25_rankings__5d0511cfb3c6e82c.json",
+      "artifact_version": "large_scale_artifacts_v1",
+      "cache_hit": true,
+      "compute_elapsed_sec": 24.005,
+      "corpus_count": 101187,
+      "corpus_fingerprint": "671fa7b326b99b8ca386923bc0644b6679e78bcd6798e691581334d79d667567",
+      "dataset": "lotte_science_search_100k",
+      "fingerprint": "5d0511cfb3c6e82ca85cb312d12aef428a8f960986e5f434b59d2cc30d9d2d82",
+      "metadata_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_science_search_100k__bm25_rankings__5d0511cfb3c6e82c.meta.json",
+      "model_name": "sparse-bm25",
+      "params": {
+        "depth": 100,
+        "ranking_engine": "query_term_bounded_bm25_v1"
+      },
+      "query_count": 596,
+      "query_fingerprint": "453d54abd0677a2f19ca4c25a32fcdf91fe1b72aea78792711528fd192551efa"
+    },
+    "dense": {
+      "artifact_kind": "dense_rankings",
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_science_search_100k__dense_rankings__31aed4defe45a127.json",
+      "artifact_version": "large_scale_artifacts_v1",
+      "cache_hit": true,
+      "compute_elapsed_sec": 6.259,
+      "corpus_count": 101187,
+      "corpus_fingerprint": "671fa7b326b99b8ca386923bc0644b6679e78bcd6798e691581334d79d667567",
+      "dataset": "lotte_science_search_100k",
+      "fingerprint": "31aed4defe45a127b9d27d62d9bd302076ca611e030bc0c7b883398eaf0cc58f",
+      "metadata_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_science_search_100k__dense_rankings__31aed4defe45a127.meta.json",
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "params": {
+        "depth": 100,
+        "ranking_engine": "exact_cosine_numpy_lexsort_v1"
+      },
+      "query_count": 596,
+      "query_fingerprint": "453d54abd0677a2f19ca4c25a32fcdf91fe1b72aea78792711528fd192551efa"
+    },
+    "query_corpus_scores": {
+      "artifact_kind": "query_corpus_scores",
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_science_search_100k__query_corpus_scores__5eed725ce2c50838.npy",
+      "artifact_version": "large_scale_artifacts_v1",
+      "cache_hit": true,
+      "compute_elapsed_sec": 3.53,
+      "corpus_count": 101187,
+      "corpus_fingerprint": "671fa7b326b99b8ca386923bc0644b6679e78bcd6798e691581334d79d667567",
+      "dataset": "lotte_science_search_100k",
+      "dtype": "float32",
+      "fingerprint": "5eed725ce2c508383d51785e8168ed859e269502ed93f19c7558904c0a664a1a",
+      "metadata_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_science_search_100k__query_corpus_scores__5eed725ce2c50838.meta.json",
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "params": {
+        "dtype": "float32",
+        "score_engine": "exact_numpy_rowwise_matvec_v1"
+      },
+      "query_count": 596,
+      "query_fingerprint": "453d54abd0677a2f19ca4c25a32fcdf91fe1b72aea78792711528fd192551efa",
+      "score_shape": [
+        596,
+        101187
+      ]
+    },
+    "scale_store": {
+      "canonical_count": 201098,
+      "canonical_embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/scale_store/lotte_science_search/canonical_corpus_embeddings.npy",
+      "canonical_name": "lotte_science_search",
+      "enabled": true,
+      "scale_store_dir": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/scale_store/lotte_science_search",
+      "selected_rows": 101187
+    }
+  },
+  "lotte_technology_search_100k": {
+    "bm25": {
+      "artifact_kind": "bm25_rankings",
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__bm25_rankings__a24c10b9c8f5e5ea.json",
+      "artifact_version": "large_scale_artifacts_v1",
+      "cache_hit": true,
+      "compute_elapsed_sec": 19.537,
+      "corpus_count": 101311,
+      "corpus_fingerprint": "60ef5529c079a71ea60792b416bd072445feb186da31c3f5b1accc868af6eb9d",
+      "dataset": "lotte_technology_search_100k",
+      "fingerprint": "a24c10b9c8f5e5eacae755308cba7ffe5fcc6d5522eb3c1b8cab7c7fd742cce5",
+      "metadata_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__bm25_rankings__a24c10b9c8f5e5ea.meta.json",
+      "model_name": "sparse-bm25",
+      "params": {
+        "depth": 100,
+        "ranking_engine": "query_term_bounded_bm25_v1"
+      },
+      "query_count": 596,
+      "query_fingerprint": "6c7ae007c1bcc394f8876cf5c8329e44c08a7c346233f3bf3938a2fb33adfc0e"
+    },
+    "dense": {
+      "artifact_kind": "dense_rankings",
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__dense_rankings__943110fcc8a19b7c.json",
+      "artifact_version": "large_scale_artifacts_v1",
+      "cache_hit": true,
+      "compute_elapsed_sec": 5.536,
+      "corpus_count": 101311,
+      "corpus_fingerprint": "60ef5529c079a71ea60792b416bd072445feb186da31c3f5b1accc868af6eb9d",
+      "dataset": "lotte_technology_search_100k",
+      "fingerprint": "943110fcc8a19b7cd0c1a879a13f9b3eb4bbd4c55e69e717a294ca8892d32d22",
+      "metadata_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__dense_rankings__943110fcc8a19b7c.meta.json",
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "params": {
+        "depth": 100,
+        "ranking_engine": "exact_cosine_numpy_lexsort_v1"
+      },
+      "query_count": 596,
+      "query_fingerprint": "6c7ae007c1bcc394f8876cf5c8329e44c08a7c346233f3bf3938a2fb33adfc0e"
+    },
+    "query_corpus_scores": {
+      "artifact_kind": "query_corpus_scores",
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__query_corpus_scores__ad66da3c4faf7680.npy",
+      "artifact_version": "large_scale_artifacts_v1",
+      "cache_hit": true,
+      "compute_elapsed_sec": 5.504,
+      "corpus_count": 101311,
+      "corpus_fingerprint": "60ef5529c079a71ea60792b416bd072445feb186da31c3f5b1accc868af6eb9d",
+      "dataset": "lotte_technology_search_100k",
+      "dtype": "float32",
+      "fingerprint": "ad66da3c4faf7680da4be5e8b4b98216be22549cb8adf186cabc2c6f4fb0f8d8",
+      "metadata_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__query_corpus_scores__ad66da3c4faf7680.meta.json",
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "params": {
+        "dtype": "float32",
+        "score_engine": "exact_numpy_rowwise_matvec_v1"
+      },
+      "query_count": 596,
+      "query_fingerprint": "6c7ae007c1bcc394f8876cf5c8329e44c08a7c346233f3bf3938a2fb33adfc0e",
+      "score_shape": [
+        596,
+        101311
+      ]
+    },
+    "scale_store": {
+      "canonical_count": 638509,
+      "canonical_embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/scale_store/lotte_technology_search/canonical_corpus_embeddings.npy",
+      "canonical_name": "lotte_technology_search",
+      "enabled": true,
+      "scale_store_dir": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/scale_store/lotte_technology_search",
+      "selected_rows": 101311
+    }
+  }
+}

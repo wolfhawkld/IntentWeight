@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-07-12
+Updated: 2026-07-13
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -58,6 +58,7 @@ accidentally promoted into paper-facing claims.
 | `task55_backbone_stability_summary.md` | Supporting/stability evidence | Fixed-seed stability check for MiniLM/BGE/E5 matched-backbone results; use to show the claims are statistically checkable without presenting seeds as tuning targets. |
 | `task58_geometry_random_ablation_summary.md` | Supporting/boundary geometry-control evidence | Static-nearest versus uniform-random cluster-arm control under the same budget protocol; use to show geometry appears in route-control metrics while dense/BM25 rescue masks final Hit@10. |
 | `task59_feedback_control_ablation_summary.md` | Supporting/boundary feedback-control evidence | Learned LinUCB versus static-nearest, no-feedback, and random controls; use to show feedback improves route quality over no-feedback/random but does not by itself explain final fused Hit@10. |
+| `task72_1_cluster_credit_ablation_summary.md` | Supporting/boundary feedback mechanism evidence | Cluster-only credit-alignment ablation on fixed recurrent streams. Oracle feedback verifies route-learning capacity; noisy/trust-weighted gains over cold are conditional and static geometry remains stronger. Always pair with the Task72 full-fusion boundary. |
 | `task60_arm_count_sensitivity_summary.md` | Supporting/design-sensitivity evidence | KMeans arm-count grid over K={8,16,32,64,128}; use to defend n_clusters as a reproducible engineering parameter and to show full multi-route robustness plus gated-routing sensitivity. |
 | `task61_geometry_to_control_analysis.md` | Supporting/diagnostic synthesis evidence | Geometry-to-control correlation analysis across Task30/43/58/60 and Figure 3; use to show geometry is an explanatory route-control signal, not proof that geometry alone determines final Hit@10 or token saving. |
 | `task62_prompt_compression_baseline_summary.md` | Supporting/strong prompt-compression baseline evidence | Selective Context-style prompt-pruning baseline with tiktoken/cl100k_base accounting; use to show prompt compression is a strong downstream layer that can be stacked with IntentRoute rather than replaced by it. |
@@ -98,6 +99,7 @@ accidentally promoted into paper-facing claims.
 | `task27_dense_linucb_tradeoff_summary.md` | Boundary/negative evidence | Two-route dense-vs-LinUCB boundary test; sub-dense candidate cost loses quality and does not prove token savings. |
 | `task46_sentence_mmr_same_budget_summary.md` | Boundary/strong baseline evidence | Dense+Sentence-MMR preserves dense chunk-support at 100k with lower selected sentence tokens; use to qualify IntentRoute as complementary to context compression, not dominant over it. |
 | `task69_3_science_400k_checkpoint_summary.md` | Boundary/negative evidence | Science/search 400k matched endpoint and OOF budget boundary: only `1/5` folds are eligible, average saving is `3.15%`, Hit@10 changes by `-0.67pp`, and strict NI is `0/3`. Its recovery endpoint has only 3-6 affected queries/seed; do not present this row as robust lossless compression evidence. |
+| `task72_recurrent_feedback_stream_summary.md` | Boundary/negative feedback evidence | Controlled recurrent-stream evaluation with no answer/context caching. Full-fused feedback does not yield a stable final-retrieval or recovery advantage; use only to bound credit assignment and keep Task40 recovery conditional. |
 
 ## Historical Or Superseded
 
@@ -114,6 +116,7 @@ accidentally promoted into paper-facing claims.
 | `task33_5_llm_generation_smoke_handoff.md` | Internal handoff | Superseded by `task33_5_llm_generation_smoke_summary.md`. |
 | `task33_pre_writing_validation_backlog.md` | Internal backlog | Use only for project management, not paper evidence. |
 | `task53_embedding_backbone_generalization_plan.md` | Internal handoff/backlog | Superseded by `task53_embedding_backbone_generalization_summary.md`; kept as task provenance. |
+| `results/task71_2_systems_profile/` and `scripts/task71_2_*systems_profile.py` | Internal implementation audit | Single-configuration timing, memory, and cache measurements. Retain for reproducibility only; do not cite as comparative systems evidence or include in the main/supplementary experiment tables. |
 
 ## Paper-Facing Rule
 

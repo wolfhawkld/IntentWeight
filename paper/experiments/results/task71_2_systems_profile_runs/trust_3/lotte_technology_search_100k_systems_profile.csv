@@ -1,0 +1,11 @@
+feedback_mode,stage,calls,total_ms,p50_ms,p95_ms,max_ms
+trust_weighted,bm25_route,596,5.582,0.0081,0.0101,0.4143
+trust_weighted,cluster_route,596,12392.4494,17.5798,37.9088,120.8531
+trust_weighted,dense_route,596,7.0186,0.0109,0.0147,0.0733
+trust_weighted,feedback_memory_append,596,0.894,0.0014,0.0021,0.0179
+trust_weighted,feedback_observation_and_trust,1788,110.6177,0.031,0.1076,6.4719
+trust_weighted,feedback_state_update,1788,385.5671,0.1443,0.2564,11.4946
+trust_weighted,final_context_budget,596,5.0515,0.0077,0.0112,0.0595
+trust_weighted,fusion_and_dense_floor,596,197.108,0.2479,0.4323,11.6844
+trust_weighted,linucb_update,7152,248.607,0.0241,0.0443,8.1212
+trust_weighted,routing_and_gating,596,5882.4496,8.5582,16.5997,42.873

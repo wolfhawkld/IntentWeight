@@ -1,0 +1,168 @@
+{
+  "cache_disk_bytes": {
+    "bm25_rankings": 2347120,
+    "context_clusters": 26502670,
+    "corpus_embeddings": 155613824,
+    "dense_rankings": 2348458,
+    "query_corpus_scores": 0,
+    "query_embeddings": 915584,
+    "total_selected_artifacts": 187727656
+  },
+  "cluster_retrieval_engine": "on_demand",
+  "cold_artifact_load_ms": {
+    "load_bm25_rankings": 248.6566,
+    "load_context_clusters": 342.7516,
+    "load_corpus_embeddings": 264.2096,
+    "load_corpus_json": 2290.731,
+    "load_dense_rankings": 244.9447,
+    "load_queries_json": 2.8957,
+    "load_query_embeddings": 1.7891
+  },
+  "dataset": "lotte_technology_search_100k",
+  "epochs": 1,
+  "hardware": {
+    "cpu_model": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "logical_cpus": 16,
+    "memory_total_bytes": 6697938944,
+    "numpy": "2.4.4",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "historical_offline_metadata": {
+    "bm25_rankings": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__bm25_rankings__a24c10b9c8f5e5ea.json",
+      "cache_hit": true,
+      "compute_elapsed_sec": 19.537
+    },
+    "context_clusters": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__context_clusters__72118ad7197779a7.npz",
+      "cache_hit": true,
+      "compute_elapsed_sec": 0.529
+    },
+    "corpus_embeddings": {
+      "cache_hit": true,
+      "embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__corpus__n101311__60ef5529c079a71e.npy",
+      "encode_elapsed_sec": 1596.974
+    },
+    "dense_rankings": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__dense_rankings__943110fcc8a19b7c.json",
+      "cache_hit": true,
+      "compute_elapsed_sec": 5.536
+    },
+    "query_corpus_scores": {
+      "cache_hit": false
+    },
+    "query_embeddings": {
+      "cache_hit": true,
+      "embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__queries__n596__6c7ae007c1bcc394.npy",
+      "encode_elapsed_sec": 0.93
+    }
+  },
+  "interpretation_boundary": [
+    "Cache materialization and warm routing are measured separately.",
+    "Final-context token savings remain a generation-input measure, not total system cost.",
+    "Simulated-feedback update timing is an operational feasibility measurement, not real-user RLHF evidence.",
+    "Historical artifact build times may originate from earlier runs and are not reported as current hardware benchmarks."
+  ],
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "num_corpus_chunks": 101311,
+  "num_queries": 596,
+  "online_profiles": {
+    "trust_weighted": {
+      "feedback_state": {
+        "feedback_context_count": 596,
+        "feedback_reward_record_count": 596,
+        "in_memory_numeric_bytes": 685056,
+        "persistence_note": "pickle snapshot is a sizing microbenchmark, not a production persistence protocol",
+        "snapshot_deserialize_ms": 2.7362,
+        "snapshot_pickle_bytes": 730371,
+        "snapshot_serialize_ms": 2.7118
+      },
+      "interactions": 596,
+      "interactions_per_sec": 30.9249,
+      "stage_timings": {
+        "bm25_route": {
+          "calls": 596,
+          "max_ms": 0.4143,
+          "p50_ms": 0.0081,
+          "p95_ms": 0.0101,
+          "total_ms": 5.582
+        },
+        "cluster_route": {
+          "calls": 596,
+          "max_ms": 120.8531,
+          "p50_ms": 17.5798,
+          "p95_ms": 37.9088,
+          "total_ms": 12392.4494
+        },
+        "dense_route": {
+          "calls": 596,
+          "max_ms": 0.0733,
+          "p50_ms": 0.0109,
+          "p95_ms": 0.0147,
+          "total_ms": 7.0186
+        },
+        "feedback_memory_append": {
+          "calls": 596,
+          "max_ms": 0.0179,
+          "p50_ms": 0.0014,
+          "p95_ms": 0.0021,
+          "total_ms": 0.894
+        },
+        "feedback_observation_and_trust": {
+          "calls": 1788,
+          "max_ms": 6.4719,
+          "p50_ms": 0.031,
+          "p95_ms": 0.1076,
+          "total_ms": 110.6177
+        },
+        "feedback_state_update": {
+          "calls": 1788,
+          "max_ms": 11.4946,
+          "p50_ms": 0.1443,
+          "p95_ms": 0.2564,
+          "total_ms": 385.5671
+        },
+        "final_context_budget": {
+          "calls": 596,
+          "max_ms": 0.0595,
+          "p50_ms": 0.0077,
+          "p95_ms": 0.0112,
+          "total_ms": 5.0515
+        },
+        "fusion_and_dense_floor": {
+          "calls": 596,
+          "max_ms": 11.6844,
+          "p50_ms": 0.2479,
+          "p95_ms": 0.4323,
+          "total_ms": 197.108
+        },
+        "linucb_update": {
+          "calls": 7152,
+          "max_ms": 8.1212,
+          "p50_ms": 0.0241,
+          "p95_ms": 0.0443,
+          "total_ms": 248.607
+        },
+        "routing_and_gating": {
+          "calls": 596,
+          "max_ms": 42.873,
+          "p50_ms": 8.5582,
+          "p95_ms": 16.5997,
+          "total_ms": 5882.4496
+        }
+      },
+      "stream_elapsed_ms": 19272.4803,
+      "stream_p50_ms": 19272.4803,
+      "stream_p95_ms": 19272.4803
+    }
+  },
+  "peak_rss_bytes": 1008369664,
+  "purpose": "systems and feedback operational profile",
+  "query_encoding": {
+    "enabled": false
+  },
+  "repetitions": 1,
+  "seed": 13,
+  "task": "Task71.2"
+}

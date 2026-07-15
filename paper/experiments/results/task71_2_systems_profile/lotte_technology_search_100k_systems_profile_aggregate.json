@@ -1,0 +1,877 @@
+{
+  "cache_disk_bytes": {
+    "bm25_rankings": 2347120,
+    "context_clusters": 26502670,
+    "corpus_embeddings": 155613824,
+    "dense_rankings": 2348458,
+    "query_corpus_scores": 0,
+    "query_embeddings": 915584,
+    "total_selected_artifacts": 187727656
+  },
+  "cluster_retrieval_engine": "on_demand",
+  "cold_artifact_load_ms_per_run": {
+    "load_bm25_rankings": {
+      "max": 150.1291,
+      "median": 139.04,
+      "min": 133.9325
+    },
+    "load_context_clusters": {
+      "max": 153.274,
+      "median": 149.5824,
+      "min": 133.9461
+    },
+    "load_corpus_embeddings": {
+      "max": 160.3829,
+      "median": 149.9733,
+      "min": 147.6182
+    },
+    "load_corpus_json": {
+      "max": 1326.1624,
+      "median": 1270.2388,
+      "min": 1232.5313
+    },
+    "load_dense_rankings": {
+      "max": 173.0948,
+      "median": 137.4659,
+      "min": 133.1982
+    },
+    "load_queries_json": {
+      "max": 1.6534,
+      "median": 1.538,
+      "min": 1.4969
+    },
+    "load_query_embeddings": {
+      "max": 1.257,
+      "median": 1.1157,
+      "min": 1.0632
+    }
+  },
+  "dataset": "lotte_technology_search_100k",
+  "epochs_per_run": 1,
+  "hardware": {
+    "cpu_model": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "logical_cpus": 16,
+    "memory_total_bytes": 6697938944,
+    "numpy": "2.4.4",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "historical_offline_metadata": {
+    "bm25_rankings": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__bm25_rankings__a24c10b9c8f5e5ea.json",
+      "cache_hit": true,
+      "compute_elapsed_sec": 19.537
+    },
+    "context_clusters": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__context_clusters__72118ad7197779a7.npz",
+      "cache_hit": true,
+      "compute_elapsed_sec": 0.529
+    },
+    "corpus_embeddings": {
+      "cache_hit": true,
+      "embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__corpus__n101311__60ef5529c079a71e.npy",
+      "encode_elapsed_sec": 1596.974
+    },
+    "dense_rankings": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__dense_rankings__943110fcc8a19b7c.json",
+      "cache_hit": true,
+      "compute_elapsed_sec": 5.536
+    },
+    "query_corpus_scores": {
+      "cache_hit": false
+    },
+    "query_embeddings": {
+      "cache_hit": true,
+      "embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__queries__n596__6c7ae007c1bcc394.npy",
+      "encode_elapsed_sec": 0.93
+    }
+  },
+  "independent_runs_per_mode": 3,
+  "interpretation_boundary": [
+    "The workload profiles cached-artifact online routing, not offline preprocessing or an end-to-end service.",
+    "The fixed top-k route workload is not the calibrated final-context token evaluation.",
+    "Feedback measurements establish local operational overhead, not real-user RLHF effectiveness.",
+    "Mode-specific wall times are unpaired independent process measurements and are not a latency significance test."
+  ],
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "modes": {
+    "none": {
+      "feedback_state": {
+        "feedback_context_count": {
+          "max": 0.0,
+          "median": 0.0,
+          "min": 0.0
+        },
+        "feedback_reward_record_count": {
+          "max": 0.0,
+          "median": 0.0,
+          "min": 0.0
+        },
+        "in_memory_numeric_bytes": {
+          "max": 532480.0,
+          "median": 532480.0,
+          "min": 532480.0
+        },
+        "snapshot_deserialize_ms": {
+          "max": 0.3873,
+          "median": 0.3543,
+          "min": 0.3257
+        },
+        "snapshot_pickle_bytes": {
+          "max": 540801.0,
+          "median": 540801.0,
+          "min": 540801.0
+        },
+        "snapshot_serialize_ms": {
+          "max": 0.3473,
+          "median": 0.3259,
+          "min": 0.3168
+        }
+      },
+      "runs": 3,
+      "stage_timing": {
+        "bm25_route": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 0.1588,
+            "median": 0.0591,
+            "min": 0.031
+          },
+          "run_p50_ms": {
+            "max": 0.0075,
+            "median": 0.0074,
+            "min": 0.0073
+          },
+          "run_p95_ms": {
+            "max": 0.0092,
+            "median": 0.0087,
+            "min": 0.0083
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 4.766,
+            "median": 4.6884,
+            "min": 4.5015
+          }
+        },
+        "cluster_route": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 27.1036,
+            "median": 21.9121,
+            "min": 20.3295
+          },
+          "run_p50_ms": {
+            "max": 5.3145,
+            "median": 4.6442,
+            "min": 4.471
+          },
+          "run_p95_ms": {
+            "max": 12.2176,
+            "median": 11.2849,
+            "min": 7.8719
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 3689.7997,
+            "median": 3395.8689,
+            "min": 2981.2262
+          }
+        },
+        "dense_route": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 1.6377,
+            "median": 0.2017,
+            "min": 0.0645
+          },
+          "run_p50_ms": {
+            "max": 0.0097,
+            "median": 0.0092,
+            "min": 0.0092
+          },
+          "run_p95_ms": {
+            "max": 0.0124,
+            "median": 0.0122,
+            "min": 0.0111
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 8.8704,
+            "median": 6.1569,
+            "min": 5.7394
+          }
+        },
+        "feedback_memory_append": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 0.0112,
+            "median": 0.0021,
+            "min": 0.0009
+          },
+          "run_p50_ms": {
+            "max": 0.0004,
+            "median": 0.0004,
+            "min": 0.0004
+          },
+          "run_p95_ms": {
+            "max": 0.0005,
+            "median": 0.0005,
+            "min": 0.0005
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 0.2512,
+            "median": 0.2412,
+            "min": 0.2214
+          }
+        },
+        "feedback_observation": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 1.9515,
+            "median": 0.1017,
+            "min": 0.0944
+          },
+          "run_p50_ms": {
+            "max": 0.0018,
+            "median": 0.0018,
+            "min": 0.0017
+          },
+          "run_p95_ms": {
+            "max": 0.0075,
+            "median": 0.0075,
+            "min": 0.0073
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 8.4746,
+            "median": 6.4987,
+            "min": 6.0686
+          }
+        },
+        "feedback_reward_measurement": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 0.6926,
+            "median": 0.6107,
+            "min": 0.346
+          },
+          "run_p50_ms": {
+            "max": 0.0119,
+            "median": 0.0118,
+            "min": 0.0116
+          },
+          "run_p95_ms": {
+            "max": 0.0532,
+            "median": 0.053,
+            "min": 0.0524
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 45.5127,
+            "median": 42.9501,
+            "min": 42.8438
+          }
+        },
+        "feedback_state_update": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 0.8083,
+            "median": 0.0934,
+            "min": 0.0713
+          },
+          "run_p50_ms": {
+            "max": 0.0013,
+            "median": 0.0013,
+            "min": 0.0012
+          },
+          "run_p95_ms": {
+            "max": 0.0062,
+            "median": 0.0057,
+            "min": 0.0052
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 5.6292,
+            "median": 4.8194,
+            "min": 4.1457
+          }
+        },
+        "feedback_trust_weighting": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 0.0271,
+            "median": 0.0204,
+            "min": 0.0202
+          },
+          "run_p50_ms": {
+            "max": 0.001,
+            "median": 0.001,
+            "min": 0.001
+          },
+          "run_p95_ms": {
+            "max": 0.0037,
+            "median": 0.0031,
+            "min": 0.0027
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 3.1057,
+            "median": 2.8335,
+            "min": 2.5493
+          }
+        },
+        "final_context_budget": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 0.7649,
+            "median": 0.0653,
+            "min": 0.0434
+          },
+          "run_p50_ms": {
+            "max": 0.008,
+            "median": 0.0071,
+            "min": 0.0061
+          },
+          "run_p95_ms": {
+            "max": 0.0099,
+            "median": 0.0084,
+            "min": 0.0078
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 6.2749,
+            "median": 4.2144,
+            "min": 3.8211
+          }
+        },
+        "fusion_and_dense_floor": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 4.1495,
+            "median": 2.9127,
+            "min": 2.6651
+          },
+          "run_p50_ms": {
+            "max": 0.2482,
+            "median": 0.24,
+            "min": 0.2354
+          },
+          "run_p95_ms": {
+            "max": 0.3845,
+            "median": 0.3093,
+            "min": 0.2966
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 170.3112,
+            "median": 158.6007,
+            "min": 151.3218
+          }
+        },
+        "routing_and_gating": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 15.3917,
+            "median": 12.1941,
+            "min": 11.9507
+          },
+          "run_p50_ms": {
+            "max": 4.0642,
+            "median": 3.8734,
+            "min": 3.8187
+          },
+          "run_p95_ms": {
+            "max": 7.8031,
+            "median": 7.5794,
+            "min": 5.2336
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 2763.1197,
+            "median": 2612.9556,
+            "min": 2408.9279
+          }
+        }
+      },
+      "warm_stream": {
+        "elapsed_ms_per_run": {
+          "max": 6798.9702,
+          "median": 6347.6336,
+          "min": 5743.3715
+        },
+        "interactions_per_sec": {
+          "max": 103.7718,
+          "median": 93.8933,
+          "min": 87.6603
+        },
+        "peak_rss_bytes_per_run": {
+          "max": 1009201152.0,
+          "median": 1008775168.0,
+          "min": 1008762880.0
+        }
+      }
+    },
+    "trust_weighted": {
+      "feedback_state": {
+        "feedback_context_count": {
+          "max": 596.0,
+          "median": 596.0,
+          "min": 596.0
+        },
+        "feedback_reward_record_count": {
+          "max": 596.0,
+          "median": 596.0,
+          "min": 596.0
+        },
+        "in_memory_numeric_bytes": {
+          "max": 685056.0,
+          "median": 685056.0,
+          "min": 685056.0
+        },
+        "snapshot_deserialize_ms": {
+          "max": 2.1916,
+          "median": 1.9681,
+          "min": 1.8946
+        },
+        "snapshot_pickle_bytes": {
+          "max": 730371.0,
+          "median": 730371.0,
+          "min": 730371.0
+        },
+        "snapshot_serialize_ms": {
+          "max": 2.6225,
+          "median": 2.6117,
+          "min": 2.3493
+        }
+      },
+      "runs": 3,
+      "stage_timing": {
+        "bm25_route": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 0.0686,
+            "median": 0.0471,
+            "min": 0.0238
+          },
+          "run_p50_ms": {
+            "max": 0.0072,
+            "median": 0.0072,
+            "min": 0.0071
+          },
+          "run_p95_ms": {
+            "max": 0.0083,
+            "median": 0.0081,
+            "min": 0.0081
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 4.5116,
+            "median": 4.3953,
+            "min": 4.3726
+          }
+        },
+        "cluster_route": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 21.4688,
+            "median": 17.8532,
+            "min": 14.7362
+          },
+          "run_p50_ms": {
+            "max": 4.8789,
+            "median": 4.789,
+            "min": 4.7191
+          },
+          "run_p95_ms": {
+            "max": 8.8749,
+            "median": 8.6815,
+            "min": 8.2153
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 3255.3199,
+            "median": 3190.3266,
+            "min": 3054.3053
+          }
+        },
+        "dense_route": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 0.1177,
+            "median": 0.0421,
+            "min": 0.024
+          },
+          "run_p50_ms": {
+            "max": 0.0096,
+            "median": 0.009,
+            "min": 0.0088
+          },
+          "run_p95_ms": {
+            "max": 0.0115,
+            "median": 0.0109,
+            "min": 0.0104
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 6.0453,
+            "median": 5.4824,
+            "min": 5.4233
+          }
+        },
+        "feedback_memory_append": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 0.0129,
+            "median": 0.0082,
+            "min": 0.0066
+          },
+          "run_p50_ms": {
+            "max": 0.0014,
+            "median": 0.0013,
+            "min": 0.0013
+          },
+          "run_p95_ms": {
+            "max": 0.0019,
+            "median": 0.0018,
+            "min": 0.0017
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 0.8551,
+            "median": 0.8394,
+            "min": 0.7918
+          }
+        },
+        "feedback_observation": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 0.5297,
+            "median": 0.1241,
+            "min": 0.0485
+          },
+          "run_p50_ms": {
+            "max": 0.0082,
+            "median": 0.0073,
+            "min": 0.0067
+          },
+          "run_p95_ms": {
+            "max": 0.0233,
+            "median": 0.0225,
+            "min": 0.0225
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 21.4007,
+            "median": 21.3374,
+            "min": 20.1749
+          }
+        },
+        "feedback_reward_measurement": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 3.6665,
+            "median": 0.9057,
+            "min": 0.2874
+          },
+          "run_p50_ms": {
+            "max": 0.0238,
+            "median": 0.0193,
+            "min": 0.0157
+          },
+          "run_p95_ms": {
+            "max": 0.052,
+            "median": 0.0509,
+            "min": 0.0501
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 51.3939,
+            "median": 50.592,
+            "min": 45.3221
+          }
+        },
+        "feedback_state_update": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 3.1697,
+            "median": 2.2258,
+            "min": 1.6529
+          },
+          "run_p50_ms": {
+            "max": 0.1384,
+            "median": 0.1325,
+            "min": 0.1311
+          },
+          "run_p95_ms": {
+            "max": 0.2119,
+            "median": 0.2107,
+            "min": 0.2046
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 270.5918,
+            "median": 266.64,
+            "min": 257.0234
+          }
+        },
+        "feedback_trust_weighting": {
+          "calls_per_run": {
+            "max": 1788.0,
+            "median": 1788.0,
+            "min": 1788.0
+          },
+          "run_max_ms": {
+            "max": 0.1046,
+            "median": 0.0761,
+            "min": 0.0493
+          },
+          "run_p50_ms": {
+            "max": 0.002,
+            "median": 0.0018,
+            "min": 0.0017
+          },
+          "run_p95_ms": {
+            "max": 0.0041,
+            "median": 0.0041,
+            "min": 0.0037
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 4.3654,
+            "median": 4.3071,
+            "min": 4.225
+          }
+        },
+        "final_context_budget": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 0.0552,
+            "median": 0.0228,
+            "min": 0.0194
+          },
+          "run_p50_ms": {
+            "max": 0.0077,
+            "median": 0.007,
+            "min": 0.0066
+          },
+          "run_p95_ms": {
+            "max": 0.0086,
+            "median": 0.008,
+            "min": 0.0079
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 4.6967,
+            "median": 4.1169,
+            "min": 3.955
+          }
+        },
+        "fusion_and_dense_floor": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 4.3263,
+            "median": 3.6619,
+            "min": 2.6828
+          },
+          "run_p50_ms": {
+            "max": 0.2399,
+            "median": 0.2387,
+            "min": 0.2353
+          },
+          "run_p95_ms": {
+            "max": 0.3048,
+            "median": 0.2992,
+            "min": 0.2881
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 160.5155,
+            "median": 152.3694,
+            "min": 150.073
+          }
+        },
+        "linucb_update": {
+          "calls_per_run": {
+            "max": 7152.0,
+            "median": 7152.0,
+            "min": 7152.0
+          },
+          "run_max_ms": {
+            "max": 2.0524,
+            "median": 1.1143,
+            "min": 0.9296
+          },
+          "run_p50_ms": {
+            "max": 0.0229,
+            "median": 0.0226,
+            "min": 0.0225
+          },
+          "run_p95_ms": {
+            "max": 0.0424,
+            "median": 0.0411,
+            "min": 0.0404
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 179.7499,
+            "median": 171.2528,
+            "min": 167.3102
+          }
+        },
+        "routing_and_gating": {
+          "calls_per_run": {
+            "max": 596.0,
+            "median": 596.0,
+            "min": 596.0
+          },
+          "run_max_ms": {
+            "max": 37.442,
+            "median": 36.0096,
+            "min": 34.2469
+          },
+          "run_p50_ms": {
+            "max": 4.2416,
+            "median": 4.2167,
+            "min": 4.1088
+          },
+          "run_p95_ms": {
+            "max": 6.2819,
+            "median": 5.6812,
+            "min": 4.9161
+          },
+          "runs": 3,
+          "total_ms_per_run": {
+            "max": 2699.1028,
+            "median": 2639.9535,
+            "min": 2535.2761
+          }
+        }
+      },
+      "warm_stream": {
+        "elapsed_ms_per_run": {
+          "max": 6570.0446,
+          "median": 6429.9185,
+          "min": 6174.1453
+        },
+        "interactions_per_sec": {
+          "max": 96.5316,
+          "median": 92.6917,
+          "min": 90.7148
+        },
+        "peak_rss_bytes_per_run": {
+          "max": 1008930816.0,
+          "median": 1008726016.0,
+          "min": 1008664576.0
+        }
+      }
+    }
+  },
+  "num_corpus_chunks": 101311,
+  "num_queries": 596,
+  "purpose": "artifact-backed operational profile; controller overhead only",
+  "query_encoding": {
+    "enabled": true,
+    "max_ms": 20.002,
+    "model_load_ms": 4591.7802,
+    "note": "single-query CPU encoding after model load; retrieval artifacts are profiled separately",
+    "p50_ms": 7.1559,
+    "p95_ms": 8.6183,
+    "samples": 64
+  },
+  "run_artifacts": {
+    "none": [
+      "paper/experiments/results/task71_2_systems_profile_runs_v2/none_1/lotte_technology_search_100k_systems_profile.json",
+      "paper/experiments/results/task71_2_systems_profile_runs_v2/none_2/lotte_technology_search_100k_systems_profile.json",
+      "paper/experiments/results/task71_2_systems_profile_runs_v2/none_3/lotte_technology_search_100k_systems_profile.json"
+    ],
+    "trust_weighted": [
+      "paper/experiments/results/task71_2_systems_profile_runs_v2/trust_1/lotte_technology_search_100k_systems_profile.json",
+      "paper/experiments/results/task71_2_systems_profile_runs_v2/trust_2/lotte_technology_search_100k_systems_profile.json",
+      "paper/experiments/results/task71_2_systems_profile_runs_v2/trust_3/lotte_technology_search_100k_systems_profile.json"
+    ]
+  },
+  "seed": 13,
+  "task": "Task71.2"
+}

@@ -15,6 +15,14 @@ shows that feedback can repair a meaningful fraction of affected queries when
 the evidence remains reachable through the candidate pool and arm structure; it
 does not imply universal recovery.
 
+The formal frozen-policy audit reinforces this boundary. After route state is
+trained on disjoint history folds and then frozen, learned full routing does not
+outperform matched static-nearest or cold no-feedback full routing on unseen
+queries in either tested LoTTE domain. Learned gating is significantly below
+Dense in all three seeds of both domains. Feedback is therefore supported as a
+controlled repeated-interaction and recovery mechanism, not as a demonstrated
+universal first-pass gain on arbitrary unseen queries.
+
 ## 7.2 Limited Generation Evaluation
 
 The downstream evaluation expands to 300 frozen-test queries, seven methods,
@@ -76,6 +84,14 @@ The route stability checks use the fixed seeds 13, 17, and 19 as engineering
 replicates; query-level paired tests provide the main inferential evidence. The
 400k seed-level saving interval remains wider than at other scales, and the
 cross-fitted follow-up establishes strict non-inferiority in 0/3 seeds.
+
+The fixed `1pp` threshold is a conservative engineering guardrail for the
+headline hit event, not a formal equivalence theorem: it represents only about
+four original-split or six out-of-fold query-hit outcomes. The paper also
+contains multiple scales, controls, backbones, datasets, and judges. These
+analyses map heterogeneity and mechanism boundaries rather than form an IID
+replication pool, so secondary $p$-values are not used to support a global
+superiority conclusion or mechanically aggregated into one claim.
 
 ## 7.6 Geometry and Fixed-Arm Scope
 

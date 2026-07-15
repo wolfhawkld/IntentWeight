@@ -32,7 +32,11 @@ lack of strict answer-level non-inferiority.
 LoTTE science/search provides cross-domain ranking support with a clear
 compression-calibration boundary. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
-aggressive context compression.
+aggressive context compression. A formal frozen-policy audit separates this
+result from first-pass unseen-query transfer: learned full routing remains near
+Dense but does not exceed matched static or cold full controls, while learned
+gating is unsafe in the two tested domains. Feedback is consequently interpreted
+as controlled repeated-query adaptation and conditional recovery.
 PubMedQA and CovidQA-RAG extend the evidence-retrieval transfer checks to
 biomedical QA under near-ceiling and more discriminative dense baselines,
 respectively; Banking77 extends the feedback-adaptation check to

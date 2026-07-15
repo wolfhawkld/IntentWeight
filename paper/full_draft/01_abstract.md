@@ -20,9 +20,11 @@ duplicate-text and sparse-ground-truth boundaries. At
 calibration-eligible technology/search operating
 points, IntentRoute reduces final evidence-context tokens by 6-18% while
 preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger
-quality losses of dense-only adaptive truncation. Simulated feedback improves
-or recovers route decisions for a meaningful subset of affected queries. In a
-frozen 300-query technology/search evaluation, matched variants reduce language-model input
+quality losses of dense-only adaptive truncation. Under controlled
+repeated-query trajectories, simulated feedback improves route confidence or
+recovers a meaningful subset of affected queries; it is not evaluated as a
+first-pass feedback advantage for unseen queries. In a frozen 300-query
+technology/search evaluation, matched variants reduce language-model input
 context by 6-12% with no statistically detectable correctness difference
 across three judges, although faithfulness preservation is not uniform across
 embedding backbones. These results support geometry-guided,

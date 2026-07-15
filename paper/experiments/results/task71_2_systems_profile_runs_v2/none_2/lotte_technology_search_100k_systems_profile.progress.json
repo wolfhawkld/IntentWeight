@@ -1,0 +1,7 @@
+{
+  "dataset": "lotte_technology_search_100k",
+  "profile_csv": "paper/experiments/results/task71_2_systems_profile_runs_v2/none_2/lotte_technology_search_100k_systems_profile.csv",
+  "profile_json": "paper/experiments/results/task71_2_systems_profile_runs_v2/none_2/lotte_technology_search_100k_systems_profile.json",
+  "profile_markdown": "paper/experiments/results/task71_2_systems_profile_runs_v2/none_2/lotte_technology_search_100k_systems_profile.md",
+  "status": "completed"
+}

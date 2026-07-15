@@ -1,6 +1,6 @@
 # Task71 Post-Task69 Submission-Readiness Plan
 
-Updated: 2026-07-12
+Updated: 2026-07-13
 
 ## Purpose
 
@@ -16,6 +16,11 @@ The central paper direction remains:
 
 It does not restore unsupported direct-compression, unseen-query, or
 end-to-end-efficiency claims.
+
+The plan deliberately separates paper evidence from adjacent product ideas.
+High-frequency answer caching, context caching, real-user RLHF, and a
+per-query learned compression ratio may be useful future engineering features,
+but they are not prerequisites for, or implicit conclusions of, this paper.
 
 ## Current Baseline
 
@@ -46,9 +51,8 @@ Execution sequence:
 
 1. Method-to-code alignment and claim sweep using the tested implementation
    and the formal Task70 boundary.
-2. End-to-end systems profile.
-3. Literature, statistical framing, and manuscript integration.
-4. Final Figure 1, author metadata, package regeneration, and external review.
+2. Literature, statistical framing, and manuscript integration.
+3. Final Figure 1, author metadata, package regeneration, and external review.
 
 The Task71 number denotes the post-Task69 submission-readiness workstream.
 
@@ -70,9 +74,44 @@ The Task71 number denotes the post-Task69 submission-readiness workstream.
 7. Retain seeds 13/17/19 and five-fold cross-fitting where specified. Do not
    weaken the design because larger seed counts are too slow on the CPU.
 
-## Workstream After Task70: Method-to-Code Alignment
+## Claim Ledger After Task70
+
+The following distinctions are part of the paper claim boundary and must be
+preserved in all later experiments, tables, figures, and prose.
+
+1. **Feedback scope.** The tested mechanism is a contextual-bandit controller
+   with controlled simulated feedback, not production RLHF. It supports
+   repeated-interaction adaptation and conditional hard-case recovery. Task70
+   rules out presenting it as a stable first-pass advantage on arbitrary
+   unseen queries.
+2. **Budget scope.** LinUCB feedback changes route state and evidence-pool
+   composition. A separate calibration procedure selects the final-context
+   budget. The paper does not claim that LinUCB learns a per-query or
+   per-region compression ratio, nor that route confidence directly predicts
+   safe compression.
+3. **Cost scope.** Final evidence-context tokens are a provider-independent
+   measure of downstream LLM input-token demand. Given a declared input-token
+   price, they can be translated into a conditional LLM input-cost saving. This
+   alone is not an end-to-end total-cost, latency, memory, or energy claim.
+4. **Generalization scope.** A useful operating point need not exist for every
+   corpus, scale, query region, or calibration fold. Dense fallback is a
+   designed safe outcome when the calibration gate rejects compression; a zero
+   saving row is not evidence that the method has failed to execute.
+5. **Statistical scope.** Additional datasets improve external validity only
+   when they use the common protocol and answer a predeclared question. They
+   must not be pooled mechanically to manufacture a stronger significance
+   result for heterogeneous tasks.
+
+## Task71.1: Method-to-Code Alignment (Complete)
 
 Priority: P0. No new retrieval experiment is required.
+
+Completed: 2026-07-13. The line-level audit is recorded in
+`task71_1_method_code_alignment_audit.md`. The canonical draft, ACL migration,
+and journal submission package now describe the tested controller context,
+feedback update, budget operator, attribution, common protocol, and frozen
+unseen-query boundary without changing the evaluated method or result
+artifacts.
 
 Audit all paper-facing method statements against the tested implementation,
 then update the manuscript, reproducibility notes, and regression checks:
@@ -99,6 +138,11 @@ Completion gate:
 - pass targeted regression tests and manuscript validators;
 - do not rerun core results because the tested method is described accurately
   rather than changed.
+
+Validation completed: full-draft, ACL LaTeX, ACL PDF, table/figure, paper
+evidence, and journal-submission validators pass. The journal build explicitly
+loads Latin Modern in the CAS manuscript and supplement so the generated PDFs
+contain no Type 3 fonts.
 
 ## Task70: Formal Frozen Unseen-Query Evaluation (Complete)
 
@@ -131,38 +175,38 @@ Decision rule:
 - Paper boundary: retain feedback as recurring-query adaptation and hard-case
   recovery, not a universal first-pass or frozen unseen-query advantage.
 
-## Phase 3: End-to-End Systems Profile
+## Task71.2: Auxiliary Implementation Operational Audit (Complete, Not Paper Evidence)
 
-Priority: P0. CPU is the primary online route environment; GPU preprocessing
-is reported separately.
+Priority: P2. Retained for implementation reproducibility only.
 
-Implement a reproducible profiling harness for the tested MiniLM pipeline:
+Completed, 2026-07-13: the artifact-backed LoTTE technology/search 100k
+reference implementation profile is recorded in
+`results/task71_2_systems_profile/lotte_technology_search_100k_systems_profile_aggregate.{json,csv,md}`.
+It measures reward observation, trust weighting, state bookkeeping, LinUCB
+updates, persistence sizing, cached artifact loading, and MiniLM query
+encoding on one declared WSL/CPU configuration. These quantities are hardware,
+cache-policy, and retrieval-backend dependent; they are not statistically
+generalizable systems evidence. Accordingly, they are excluded from the main
+paper, supplementary experiment tables, and the quality-context-cost argument.
 
-- offline embedding, KMeans/context artifacts, Dense/BM25 rankings,
-  exact-score cache construction, elapsed time, peak RSS, disk-cache size,
-  and hardware configuration;
-- warm/cold p50 and p95 retrieval-routing latency, throughput, and route
-  invocation rates;
-- separate Dense, BM25, cluster-local, fusion, routing, and budget stages;
-- evaluate technology/search 100k and science/search 400k;
-- report final-context tokens beside, but never as a replacement for, system
-  latency or memory;
-- state the deployment workload used to amortize one-time preprocessing.
+The scripts and raw artifacts remain useful for implementation inspection. No
+science/search 400k hardware profile, offline-construction rerun, amortized
+serving-cost calculation, or cross-device benchmark is required for this
+paper. A future systems paper would need matched Dense/Hybrid/IntentRoute
+comparisons across declared deployment configurations before making latency,
+memory, throughput, or end-to-end cost claims.
 
-The AMD GPU may profile embedding/cache construction. Online LinUCB routing
-remains CPU work. CPU and GPU numbers must not be merged into one end-to-end
-claim without one declared deployment setup.
-
-Completion gate:
-
-- create a main or supplementary systems-cost table;
-- distinguish warm/cold and offline/online boundaries;
-- use context efficiency, not general system efficiency, wherever broader
-  systems data is absent.
-
-## Phase 4: Literature, Positioning, and Statistical Framing
+## Task71.3: Literature, Positioning, and Statistical Framing
 
 Priority: P0 before the next external review.
+
+Completed 2026-07-13. The task refreshed direct adaptive-retrieval and
+adaptive-context-compression positioning from primary 2025 sources, documented
+the role of the 1pp engineering guardrail, and distinguished primary frozen
+comparison families from exploratory mechanism, robustness, and boundary
+analyses. It did not alter numerical result artifacts or create a global pooled
+superiority claim. The full-draft, ACL LaTeX, journal-submission, and
+evidence-traceability validators passed after regeneration.
 
 - Refresh related work from current primary sources for adaptive RAG, context
   selection/compression, and bandit retrieval.
@@ -180,8 +224,16 @@ Priority: P0 before the next external review.
 
 Priority: P0 after Phases 1-4.
 
-- Integrate the method audit, Task70 outcomes, systems profile, and updated
-  literature into the main manuscript and supplement.
+Automated integration completed 2026-07-13. The audit in
+`phase5_submission_integration_audit.md` confirms that Task71.1 method/code
+alignment, the Task70 frozen-policy boundary, and Task71.3 literature and
+statistical framing are present in the canonical draft and generated packages.
+The phase remains open only for final author-produced artwork, submission
+metadata, and independent human review.
+
+- Integrate the method audit, Task70 outcomes, and updated literature into the
+  main manuscript and supplement. Do not promote Task71.2 implementation
+  timing to paper evidence.
 - Regenerate tables and figures only from traceable artifacts.
 - Update stale Task67 historical text: the current Figure 1 placeholder now
   passes technical dimension/font validation but is still non-final artwork.
@@ -202,10 +254,66 @@ when they answer a defined scientific question.
 
 | Condition or gap | Follow-up | Rationale |
 |---|---|---|
-| Frozen Task70 lacks a clear learned-feedback advantage | Non-stationary or preference-shift experiment | Tests the setting where feedback adaptation should be uniquely useful. |
+| Feedback remains central after the Task70 boundary | Task72: recurrent, non-stationary feedback-stream evaluation without answer/context caching | Completed 2026-07-13. It found no stable final-retrieval feedback advantage under full fusion; retain as a credit-assignment boundary, not positive feedback evidence. |
 | A reviewer requires a current compression comparator | LLMLingua-2 or equivalent same-budget baseline | Stronger than a routine ablation while preserving route-versus-compressor decomposition. |
 | Geometry motivation remains challenged | Representation-independent or intrinsic-dimension diagnostic | Strengthens the design hypothesis without claiming a manifold theorem. |
-| Domain breadth remains insufficient | One or two LoTTE 100k domains | Run only for a predeclared domain-generalization question. |
+| Domain breadth remains insufficient | Task73: one or two LoTTE 100k domains under the full common protocol | Tests a predeclared domain-generalization question; do not use dataset count alone as rationale. |
+| Deployment-facing monetary interpretation is requested | Dated LLM input-price sensitivity table from final-context tokens | Converts measured final-context tokens to a conditional generation-stage input-cost component without claiming total-cost dominance. |
+
+## Conditional Follow-Up Task Definitions
+
+### Task72: Recurrent Feedback-Stream Evaluation
+
+Priority: P1 research strengthening. This task is optional for submission, but
+is the most direct way to strengthen the feedback-adaptation part of the
+existing thesis after Task70.
+
+Design a controlled query stream with recurring local intents and a declared
+non-stationary preference or relevance shift. The protocol must keep answer
+caching and context caching disabled: every event executes retrieval and
+generation-context construction anew. It should separately report repeated
+queries, semantically nearby queries, and entirely unseen queries.
+
+Required controls: Dense, static-nearest routing, cold no-feedback routing,
+and learned feedback routing with the same Dense/BM25 rescue and budget
+policy. Report query-level Hit@10/EvidenceRecall@10, recovery rate, final
+context tokens, Dense invocation rate, and confidence intervals. The result
+may support recurrent-stream adaptation even if it shows no gain on entirely
+unseen queries; it must not be reframed as general RLHF validation.
+
+Completed 2026-07-13; see `task72_recurrent_feedback_stream_summary.md`.
+The declared two-domain, three-seed run has complete coverage but does not
+support a stable learned-feedback improvement in final fused retrieval or
+recovery after the local-intent shift. It strengthens the existing attribution
+boundary: full-fused reward can be dominated by Dense/BM25 rescue and cannot be
+used as direct evidence that feedback improves the cluster route. Retain this
+as boundary evidence only.
+
+### Task72.1: Cluster-Credit Feedback Ablation
+
+Priority: P1 mechanism clarification. Completed 2026-07-13; see
+`task72_1_cluster_credit_ablation_summary.md`.
+
+Task72.1 reuses the Task72 streams unchanged and removes Dense/BM25 rescue so
+feedback reward, LinUCB update, and evaluation share a cluster-only retrieval
+objective. It confirms learnable route capacity under oracle feedback and
+conditional improvements under noisy feedback relative to cold LinUCB, but
+does not establish stable trust-weighting superiority or beat static-nearest
+geometry. This is supporting mechanism evidence only. It must be reported with
+the Task72 full-fusion boundary rather than used to claim production RLHF or
+universal feedback gains.
+
+### Task73: Hypothesis-Driven LoTTE Domain Expansion
+
+Priority: P2 external-validity strengthening. Run one or two of
+lifestyle/search, recreation/search, and writing/search at 100k only after
+stating what domain property is being tested. Use the frozen Task69 common
+protocol: shared preprocessing, MiniLM backbone, K=32, seeds 13/17/19,
+eight-epoch prequential trajectory, Dense/BM25/hybrid controls, five-fold
+cross-fitted budget selection, paired statistics, and explicit non-pooling.
+
+The objective is to estimate heterogeneity of the bounded operating frontier,
+not to obtain a single pooled p-value or force every domain to save tokens.
 
 ## Optional GPU / Overnight Expansion Queue
 
@@ -231,6 +339,15 @@ unless an external deadline makes that necessary.
 - Do not expand seed count beyond 13/17/19 under current CPU constraints.
 - Do not add all remaining LoTTE domains, every vertical dataset, or a third
   encoder for dataset-count optics.
+- Do not add high-confidence answer caching, context caching, or semantic
+  response reuse to the paper method. These are separate product optimizations
+  whose cost model and correctness criteria differ from evidence selection.
+- Do not relabel controlled simulated-feedback routing as RLHF or claim that
+  the present experiments validate real-user feedback behavior.
+- Do not introduce a per-query learned compression-ratio mechanism without a
+  new method definition and a fully rerun evaluation family.
+- Do not pool heterogeneous datasets, repeated-query trajectories, or
+  overlapping calibration partitions as if they were IID replications.
 - Do not alter the algorithm to match inaccurate prose; update prose to match
   the tested implementation.
 - Do not weaken metrics, tokenization, split discipline, or baseline strength
@@ -240,12 +357,14 @@ unless an external deadline makes that necessary.
 
 The paper is ready for final external review or submission only when:
 
-1. Phases 1-5 pass their completion gates.
+1. Task71.1, Task71.3, and Phase 5 pass their completion gates. Task71.2 is an
+   auxiliary reproducibility audit rather than a submission gate.
 2. The main claim remains bounded to a calibrated quality-context-cost
    frontier, with Dense retained as a recall floor.
 3. The Task70 outcome is integrated honestly, including a negative or mixed
    outcome if that is what the frozen test finds.
-4. The systems profile prevents unsupported end-to-end efficiency claims.
+4. The manuscript avoids unsupported end-to-end latency, memory, throughput,
+   energy, or total-serving-cost claims.
 5. The final author-produced Figure 1 and all author metadata are present and
    validated.
 6. Regenerated review and journal packages pass without critical errors.

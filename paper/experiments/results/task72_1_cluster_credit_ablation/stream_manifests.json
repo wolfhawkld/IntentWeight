@@ -1,0 +1,3848 @@
+{
+  "lotte_science_search_100k": {
+    "anchors_per_region": 20,
+    "events": [
+      {
+        "condition": "repeated",
+        "event_index": 0,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q168",
+        "query_index": 168,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 1,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q562",
+        "query_index": 562,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 2,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q402",
+        "query_index": 402,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 3,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q580",
+        "query_index": 580,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 4,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q63",
+        "query_index": 63,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 5,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q445",
+        "query_index": 445,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 6,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q443",
+        "query_index": 443,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 7,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q479",
+        "query_index": 479,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 8,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q178",
+        "query_index": 178,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 9,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q254",
+        "query_index": 254,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 10,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q539",
+        "query_index": 539,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 11,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q485",
+        "query_index": 485,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 12,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q296",
+        "query_index": 296,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 13,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q174",
+        "query_index": 174,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 14,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q506",
+        "query_index": 506,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 15,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q455",
+        "query_index": 455,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 16,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q447",
+        "query_index": 447,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 17,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q250",
+        "query_index": 250,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 18,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q424",
+        "query_index": 424,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 19,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_science_search_100k_q440",
+        "query_index": 440,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 20,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q168",
+        "query_index": 168,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 21,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q562",
+        "query_index": 562,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 22,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q402",
+        "query_index": 402,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 23,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q580",
+        "query_index": 580,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 24,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q63",
+        "query_index": 63,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 25,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q445",
+        "query_index": 445,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 26,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q443",
+        "query_index": 443,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 27,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q479",
+        "query_index": 479,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 28,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q178",
+        "query_index": 178,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 29,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q254",
+        "query_index": 254,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 30,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q539",
+        "query_index": 539,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 31,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q485",
+        "query_index": 485,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 32,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q296",
+        "query_index": 296,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 33,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q174",
+        "query_index": 174,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 34,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q506",
+        "query_index": 506,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 35,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q455",
+        "query_index": 455,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 36,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q447",
+        "query_index": 447,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 37,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q250",
+        "query_index": 250,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 38,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q424",
+        "query_index": 424,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 39,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_science_search_100k_q440",
+        "query_index": 440,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 40,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q427",
+        "query_index": 427,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 41,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q36",
+        "query_index": 36,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 42,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q267",
+        "query_index": 267,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 43,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q76",
+        "query_index": 76,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 44,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q458",
+        "query_index": 458,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 45,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q62",
+        "query_index": 62,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 46,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q230",
+        "query_index": 230,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 47,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q385",
+        "query_index": 385,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 48,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q377",
+        "query_index": 377,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 49,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q576",
+        "query_index": 576,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 50,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q411",
+        "query_index": 411,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 51,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q357",
+        "query_index": 357,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 52,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q504",
+        "query_index": 504,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 53,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q430",
+        "query_index": 430,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 54,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q469",
+        "query_index": 469,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 55,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q472",
+        "query_index": 472,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 56,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q72",
+        "query_index": 72,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 57,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q333",
+        "query_index": 333,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 58,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q470",
+        "query_index": 470,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 59,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q337",
+        "query_index": 337,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 60,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q159",
+        "query_index": 159,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 61,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q355",
+        "query_index": 355,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 62,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q434",
+        "query_index": 434,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 63,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_science_search_100k_q423",
+        "query_index": 423,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 64,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q529",
+        "query_index": 529,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 65,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q15",
+        "query_index": 15,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 66,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q99",
+        "query_index": 99,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 67,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q378",
+        "query_index": 378,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 68,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q317",
+        "query_index": 317,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 69,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q577",
+        "query_index": 577,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 70,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q359",
+        "query_index": 359,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 71,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q586",
+        "query_index": 586,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 72,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q398",
+        "query_index": 398,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 73,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q417",
+        "query_index": 417,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 74,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q383",
+        "query_index": 383,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 75,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q409",
+        "query_index": 409,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 76,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q221",
+        "query_index": 221,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 77,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q183",
+        "query_index": 183,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 78,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q286",
+        "query_index": 286,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 79,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q567",
+        "query_index": 567,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 80,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q544",
+        "query_index": 544,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 81,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q217",
+        "query_index": 217,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 82,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q346",
+        "query_index": 346,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 83,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_science_search_100k_q331",
+        "query_index": 331,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 84,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q529",
+        "query_index": 529,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 85,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q15",
+        "query_index": 15,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 86,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q99",
+        "query_index": 99,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 87,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q378",
+        "query_index": 378,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 88,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q317",
+        "query_index": 317,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 89,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q577",
+        "query_index": 577,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 90,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q359",
+        "query_index": 359,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 91,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q586",
+        "query_index": 586,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 92,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q398",
+        "query_index": 398,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 93,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q417",
+        "query_index": 417,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 94,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q383",
+        "query_index": 383,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 95,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q409",
+        "query_index": 409,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 96,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q221",
+        "query_index": 221,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 97,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q183",
+        "query_index": 183,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 98,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q286",
+        "query_index": 286,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 99,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q567",
+        "query_index": 567,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 100,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q544",
+        "query_index": 544,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 101,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q217",
+        "query_index": 217,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 102,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q346",
+        "query_index": 346,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 103,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_science_search_100k_q331",
+        "query_index": 331,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 104,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q509",
+        "query_index": 509,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 105,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q201",
+        "query_index": 201,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 106,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q456",
+        "query_index": 456,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 107,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q484",
+        "query_index": 484,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 108,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q477",
+        "query_index": 477,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 109,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q40",
+        "query_index": 40,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 110,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q535",
+        "query_index": 535,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 111,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q345",
+        "query_index": 345,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 112,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q132",
+        "query_index": 132,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 113,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q222",
+        "query_index": 222,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 114,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q269",
+        "query_index": 269,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 115,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q6",
+        "query_index": 6,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 116,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q358",
+        "query_index": 358,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 117,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q459",
+        "query_index": 459,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 118,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q237",
+        "query_index": 237,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 119,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q332",
+        "query_index": 332,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 120,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q30",
+        "query_index": 30,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 121,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q71",
+        "query_index": 71,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 122,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q498",
+        "query_index": 498,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 123,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q410",
+        "query_index": 410,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 124,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q478",
+        "query_index": 478,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 125,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q365",
+        "query_index": 365,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 126,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q558",
+        "query_index": 558,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 127,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_science_search_100k_q375",
+        "query_index": 375,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 128,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q168",
+        "query_index": 168,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 129,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q562",
+        "query_index": 562,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 130,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q402",
+        "query_index": 402,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 131,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q580",
+        "query_index": 580,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 132,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q63",
+        "query_index": 63,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 133,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q445",
+        "query_index": 445,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 134,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q443",
+        "query_index": 443,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 135,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q479",
+        "query_index": 479,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 136,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q178",
+        "query_index": 178,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 137,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q254",
+        "query_index": 254,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 138,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q539",
+        "query_index": 539,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 139,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q485",
+        "query_index": 485,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 140,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q296",
+        "query_index": 296,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 141,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q174",
+        "query_index": 174,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 142,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q506",
+        "query_index": 506,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 143,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q455",
+        "query_index": 455,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 144,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q447",
+        "query_index": 447,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 145,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q250",
+        "query_index": 250,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 146,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q424",
+        "query_index": 424,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 147,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_science_search_100k_q440",
+        "query_index": 440,
+        "region": "A"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 148,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q387",
+        "query_index": 387,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 149,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q380",
+        "query_index": 380,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 150,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q127",
+        "query_index": 127,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 151,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q88",
+        "query_index": 88,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 152,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q575",
+        "query_index": 575,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 153,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q302",
+        "query_index": 302,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 154,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q189",
+        "query_index": 189,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 155,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q384",
+        "query_index": 384,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 156,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q524",
+        "query_index": 524,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 157,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q232",
+        "query_index": 232,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 158,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q538",
+        "query_index": 538,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 159,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q95",
+        "query_index": 95,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 160,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q530",
+        "query_index": 530,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 161,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q517",
+        "query_index": 517,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 162,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q102",
+        "query_index": 102,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 163,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q172",
+        "query_index": 172,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 164,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q273",
+        "query_index": 273,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 165,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q342",
+        "query_index": 342,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 166,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q523",
+        "query_index": 523,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 167,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q25",
+        "query_index": 25,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 168,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q74",
+        "query_index": 74,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 169,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q444",
+        "query_index": 444,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 170,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q489",
+        "query_index": 489,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 171,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q585",
+        "query_index": 585,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 172,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q270",
+        "query_index": 270,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 173,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q157",
+        "query_index": 157,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 174,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q93",
+        "query_index": 93,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 175,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q84",
+        "query_index": 84,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 176,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q592",
+        "query_index": 592,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 177,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q297",
+        "query_index": 297,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 178,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q272",
+        "query_index": 272,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 179,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q253",
+        "query_index": 253,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 180,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q196",
+        "query_index": 196,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 181,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q149",
+        "query_index": 149,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 182,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q69",
+        "query_index": 69,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 183,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q516",
+        "query_index": 516,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 184,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q194",
+        "query_index": 194,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 185,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q236",
+        "query_index": 236,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 186,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q86",
+        "query_index": 86,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 187,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q405",
+        "query_index": 405,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 188,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q426",
+        "query_index": 426,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 189,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q579",
+        "query_index": 579,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 190,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q454",
+        "query_index": 454,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 191,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q503",
+        "query_index": 503,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 192,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q473",
+        "query_index": 473,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 193,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q452",
+        "query_index": 452,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 194,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q512",
+        "query_index": 512,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 195,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q551",
+        "query_index": 551,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 196,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q285",
+        "query_index": 285,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 197,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q393",
+        "query_index": 393,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 198,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q449",
+        "query_index": 449,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 199,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q591",
+        "query_index": 591,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 200,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q219",
+        "query_index": 219,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 201,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q303",
+        "query_index": 303,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 202,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q49",
+        "query_index": 49,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 203,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q249",
+        "query_index": 249,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 204,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q240",
+        "query_index": 240,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 205,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q271",
+        "query_index": 271,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 206,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q234",
+        "query_index": 234,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 207,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q552",
+        "query_index": 552,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 208,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q143",
+        "query_index": 143,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 209,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q198",
+        "query_index": 198,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 210,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q537",
+        "query_index": 537,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 211,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_science_search_100k_q309",
+        "query_index": 309,
+        "region": "other"
+      }
+    ],
+    "nearby_per_region": 24,
+    "num_events": 212,
+    "num_unique_queries": 152,
+    "region_a_arm": 21,
+    "region_a_query_count": 128,
+    "region_b_arm": 3,
+    "region_b_query_count": 96,
+    "stream_cluster_seed": 13,
+    "stream_seed": 72013,
+    "unseen_count": 64
+  },
+  "lotte_technology_search_100k": {
+    "anchors_per_region": 20,
+    "events": [
+      {
+        "condition": "repeated",
+        "event_index": 0,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q487",
+        "query_index": 487,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 1,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q272",
+        "query_index": 272,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 2,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q348",
+        "query_index": 348,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 3,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q455",
+        "query_index": 455,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 4,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q441",
+        "query_index": 441,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 5,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q379",
+        "query_index": 379,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 6,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q291",
+        "query_index": 291,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 7,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q451",
+        "query_index": 451,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 8,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q484",
+        "query_index": 484,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 9,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q468",
+        "query_index": 468,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 10,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q390",
+        "query_index": 390,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 11,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q282",
+        "query_index": 282,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 12,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q496",
+        "query_index": 496,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 13,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q439",
+        "query_index": 439,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 14,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q128",
+        "query_index": 128,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 15,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q308",
+        "query_index": 308,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 16,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q312",
+        "query_index": 312,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 17,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q304",
+        "query_index": 304,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 18,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q378",
+        "query_index": 378,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 19,
+        "occurrence": 1,
+        "phase": "A_recurrent_warmup_1",
+        "query_id": "lotte_technology_search_100k_q514",
+        "query_index": 514,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 20,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q487",
+        "query_index": 487,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 21,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q272",
+        "query_index": 272,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 22,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q348",
+        "query_index": 348,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 23,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q455",
+        "query_index": 455,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 24,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q441",
+        "query_index": 441,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 25,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q379",
+        "query_index": 379,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 26,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q291",
+        "query_index": 291,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 27,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q451",
+        "query_index": 451,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 28,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q484",
+        "query_index": 484,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 29,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q468",
+        "query_index": 468,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 30,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q390",
+        "query_index": 390,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 31,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q282",
+        "query_index": 282,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 32,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q496",
+        "query_index": 496,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 33,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q439",
+        "query_index": 439,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 34,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q128",
+        "query_index": 128,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 35,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q308",
+        "query_index": 308,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 36,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q312",
+        "query_index": 312,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 37,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q304",
+        "query_index": 304,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 38,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q378",
+        "query_index": 378,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 39,
+        "occurrence": 2,
+        "phase": "A_recurrent_warmup_2",
+        "query_id": "lotte_technology_search_100k_q514",
+        "query_index": 514,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 40,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q419",
+        "query_index": 419,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 41,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q425",
+        "query_index": 425,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 42,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q452",
+        "query_index": 452,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 43,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q289",
+        "query_index": 289,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 44,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q502",
+        "query_index": 502,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 45,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q278",
+        "query_index": 278,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 46,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q453",
+        "query_index": 453,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 47,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q14",
+        "query_index": 14,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 48,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q337",
+        "query_index": 337,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 49,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q448",
+        "query_index": 448,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 50,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q372",
+        "query_index": 372,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 51,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q317",
+        "query_index": 317,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 52,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q401",
+        "query_index": 401,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 53,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q450",
+        "query_index": 450,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 54,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q433",
+        "query_index": 433,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 55,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q338",
+        "query_index": 338,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 56,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q367",
+        "query_index": 367,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 57,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q588",
+        "query_index": 588,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 58,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q519",
+        "query_index": 519,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 59,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q112",
+        "query_index": 112,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 60,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q581",
+        "query_index": 581,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 61,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q75",
+        "query_index": 75,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 62,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q329",
+        "query_index": 329,
+        "region": "A"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 63,
+        "occurrence": 1,
+        "phase": "A_nearby",
+        "query_id": "lotte_technology_search_100k_q540",
+        "query_index": 540,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 64,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q592",
+        "query_index": 592,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 65,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q562",
+        "query_index": 562,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 66,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q310",
+        "query_index": 310,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 67,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q531",
+        "query_index": 531,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 68,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q556",
+        "query_index": 556,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 69,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q585",
+        "query_index": 585,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 70,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q551",
+        "query_index": 551,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 71,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q537",
+        "query_index": 537,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 72,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q37",
+        "query_index": 37,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 73,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q520",
+        "query_index": 520,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 74,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q547",
+        "query_index": 547,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 75,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q508",
+        "query_index": 508,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 76,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q541",
+        "query_index": 541,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 77,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q260",
+        "query_index": 260,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 78,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q548",
+        "query_index": 548,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 79,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q431",
+        "query_index": 431,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 80,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q474",
+        "query_index": 474,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 81,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q593",
+        "query_index": 593,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 82,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q570",
+        "query_index": 570,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 83,
+        "occurrence": 1,
+        "phase": "B_recurrent_shift_1",
+        "query_id": "lotte_technology_search_100k_q205",
+        "query_index": 205,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 84,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q592",
+        "query_index": 592,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 85,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q562",
+        "query_index": 562,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 86,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q310",
+        "query_index": 310,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 87,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q531",
+        "query_index": 531,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 88,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q556",
+        "query_index": 556,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 89,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q585",
+        "query_index": 585,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 90,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q551",
+        "query_index": 551,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 91,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q537",
+        "query_index": 537,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 92,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q37",
+        "query_index": 37,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 93,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q520",
+        "query_index": 520,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 94,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q547",
+        "query_index": 547,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 95,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q508",
+        "query_index": 508,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 96,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q541",
+        "query_index": 541,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 97,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q260",
+        "query_index": 260,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 98,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q548",
+        "query_index": 548,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 99,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q431",
+        "query_index": 431,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 100,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q474",
+        "query_index": 474,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 101,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q593",
+        "query_index": 593,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 102,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q570",
+        "query_index": 570,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 103,
+        "occurrence": 2,
+        "phase": "B_recurrent_shift_2",
+        "query_id": "lotte_technology_search_100k_q205",
+        "query_index": 205,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 104,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q553",
+        "query_index": 553,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 105,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q513",
+        "query_index": 513,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 106,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q558",
+        "query_index": 558,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 107,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q89",
+        "query_index": 89,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 108,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q589",
+        "query_index": 589,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 109,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q475",
+        "query_index": 475,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 110,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q564",
+        "query_index": 564,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 111,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q127",
+        "query_index": 127,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 112,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q546",
+        "query_index": 546,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 113,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q105",
+        "query_index": 105,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 114,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q185",
+        "query_index": 185,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 115,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q165",
+        "query_index": 165,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 116,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q590",
+        "query_index": 590,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 117,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q574",
+        "query_index": 574,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 118,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q565",
+        "query_index": 565,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 119,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q315",
+        "query_index": 315,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 120,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q473",
+        "query_index": 473,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 121,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q573",
+        "query_index": 573,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 122,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q326",
+        "query_index": 326,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 123,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q568",
+        "query_index": 568,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 124,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q591",
+        "query_index": 591,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 125,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q554",
+        "query_index": 554,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 126,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q88",
+        "query_index": 88,
+        "region": "B"
+      },
+      {
+        "condition": "nearby",
+        "event_index": 127,
+        "occurrence": 1,
+        "phase": "B_nearby",
+        "query_id": "lotte_technology_search_100k_q142",
+        "query_index": 142,
+        "region": "B"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 128,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q487",
+        "query_index": 487,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 129,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q272",
+        "query_index": 272,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 130,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q348",
+        "query_index": 348,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 131,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q455",
+        "query_index": 455,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 132,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q441",
+        "query_index": 441,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 133,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q379",
+        "query_index": 379,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 134,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q291",
+        "query_index": 291,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 135,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q451",
+        "query_index": 451,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 136,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q484",
+        "query_index": 484,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 137,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q468",
+        "query_index": 468,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 138,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q390",
+        "query_index": 390,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 139,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q282",
+        "query_index": 282,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 140,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q496",
+        "query_index": 496,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 141,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q439",
+        "query_index": 439,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 142,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q128",
+        "query_index": 128,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 143,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q308",
+        "query_index": 308,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 144,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q312",
+        "query_index": 312,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 145,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q304",
+        "query_index": 304,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 146,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q378",
+        "query_index": 378,
+        "region": "A"
+      },
+      {
+        "condition": "repeated",
+        "event_index": 147,
+        "occurrence": 3,
+        "phase": "A_recurrent_return",
+        "query_id": "lotte_technology_search_100k_q514",
+        "query_index": 514,
+        "region": "A"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 148,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q463",
+        "query_index": 463,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 149,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q460",
+        "query_index": 460,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 150,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q177",
+        "query_index": 177,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 151,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q170",
+        "query_index": 170,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 152,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q98",
+        "query_index": 98,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 153,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q259",
+        "query_index": 259,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 154,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q167",
+        "query_index": 167,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 155,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q45",
+        "query_index": 45,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 156,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q242",
+        "query_index": 242,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 157,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q196",
+        "query_index": 196,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 158,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q388",
+        "query_index": 388,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 159,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q32",
+        "query_index": 32,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 160,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q515",
+        "query_index": 515,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 161,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q510",
+        "query_index": 510,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 162,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q262",
+        "query_index": 262,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 163,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q25",
+        "query_index": 25,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 164,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q267",
+        "query_index": 267,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 165,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q297",
+        "query_index": 297,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 166,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q478",
+        "query_index": 478,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 167,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q41",
+        "query_index": 41,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 168,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q2",
+        "query_index": 2,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 169,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q86",
+        "query_index": 86,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 170,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q578",
+        "query_index": 578,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 171,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q587",
+        "query_index": 587,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 172,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q91",
+        "query_index": 91,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 173,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q429",
+        "query_index": 429,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 174,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q149",
+        "query_index": 149,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 175,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q446",
+        "query_index": 446,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 176,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q331",
+        "query_index": 331,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 177,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q340",
+        "query_index": 340,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 178,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q78",
+        "query_index": 78,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 179,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q280",
+        "query_index": 280,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 180,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q241",
+        "query_index": 241,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 181,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q159",
+        "query_index": 159,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 182,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q108",
+        "query_index": 108,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 183,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q102",
+        "query_index": 102,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 184,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q155",
+        "query_index": 155,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 185,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q523",
+        "query_index": 523,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 186,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q6",
+        "query_index": 6,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 187,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q400",
+        "query_index": 400,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 188,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q479",
+        "query_index": 479,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 189,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q418",
+        "query_index": 418,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 190,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q288",
+        "query_index": 288,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 191,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q154",
+        "query_index": 154,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 192,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q294",
+        "query_index": 294,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 193,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q214",
+        "query_index": 214,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 194,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q195",
+        "query_index": 195,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 195,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q133",
+        "query_index": 133,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 196,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q497",
+        "query_index": 497,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 197,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q93",
+        "query_index": 93,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 198,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q364",
+        "query_index": 364,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 199,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q363",
+        "query_index": 363,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 200,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q361",
+        "query_index": 361,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 201,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q518",
+        "query_index": 518,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 202,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q99",
+        "query_index": 99,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 203,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q176",
+        "query_index": 176,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 204,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q347",
+        "query_index": 347,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 205,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q10",
+        "query_index": 10,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 206,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q500",
+        "query_index": 500,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 207,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q335",
+        "query_index": 335,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 208,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q319",
+        "query_index": 319,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 209,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q74",
+        "query_index": 74,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 210,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q12",
+        "query_index": 12,
+        "region": "other"
+      },
+      {
+        "condition": "unseen",
+        "event_index": 211,
+        "occurrence": 1,
+        "phase": "unseen_tail",
+        "query_id": "lotte_technology_search_100k_q17",
+        "query_index": 17,
+        "region": "other"
+      }
+    ],
+    "nearby_per_region": 24,
+    "num_events": 212,
+    "num_unique_queries": 152,
+    "region_a_arm": 14,
+    "region_a_query_count": 123,
+    "region_b_arm": 16,
+    "region_b_query_count": 57,
+    "stream_cluster_seed": 13,
+    "stream_seed": 72013,
+    "unseen_count": 64
+  }
+}

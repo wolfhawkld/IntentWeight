@@ -119,6 +119,17 @@ science/search 100k settings, but
 the stricter calibration-to-test effect is small and domain-dependent.
 Supplementary Sections S9 and S11 contain the full recovery and control tables.
 
+The formal frozen-policy audit separates this repeated-interaction evidence from
+first-pass transfer to unseen queries. Across five folds and seeds 13/17/19,
+learned full routing is above Dense on average in technology/search 100k
+(+1.17pp) and science/search 100k (+0.78pp), but it does not exceed matched
+cold no-feedback full routing (-0.11pp and -0.39pp) or static-nearest full
+routing (+0.28pp and -0.56pp); no such paired comparison is significant across
+all seeds. Learned gated routing is instead significantly below Dense by 4.08pp
+and 5.59pp in the two domains. Thus, the full rescue surface transfers, whereas
+controlled feedback is supported as repeated-query adaptation and conditional
+recovery rather than a universal frozen first-pass improvement.
+
 A frozen-trajectory route replay further isolates the confidence gate. Keeping
 the selected arms and feedback state fixed, the original query-to-tier
 assignment exceeds a shuffled-tier control with identical tier frequencies by

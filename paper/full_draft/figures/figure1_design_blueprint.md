@@ -34,7 +34,7 @@ adaptation while preserving one obvious reading direction.
 └─────────────────────────────────────────────────────────────────────────────│────┘
                                                                               │
 ┌──────────────────────────── ONLINE DATA PLANE ───────────────────────────────│────┐
-│ Query -> Controller features -> ┬-> Global dense: semantic recall floor ----┐│    │
+│ Query -> PCA controller context -> ┬-> Global dense: semantic recall floor -┐│    │
 │                                 ├-> BM25: lexical anchors ------------------┼┤    │
 │                                 └-> LinUCB selects arms -> Cluster-local ---┤│    │
 │                                      │                                      ││    │
@@ -45,8 +45,8 @@ adaptation while preserving one obvious reading direction.
 └───────────────────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────── FEEDBACK / ADAPTATION ────────────────────────────────┐
-│ Current-query outcome -> simulated/user feedback -> trust weight τ                │
-│                    -> cluster-only reward -> update LinUCB for later queries ──┐   │
+│ Current-query outcome -> controlled simulated feedback -> trust weight τ         │
+│                    -> evidence reward -> update LinUCB for later queries ─────┐   │
 │                                                                                └───┘
 └───────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -64,7 +64,7 @@ left-to-right reading path and should use the strongest contrast.
 Recommended node sequence:
 
 1. **Query + session context**
-2. **Controller features**
+2. **PCA query controller context**
 3. Three aligned route cards:
    - **Global dense** — `semantic recall floor`
    - **BM25** — `lexical anchors`
@@ -118,9 +118,9 @@ weight than the online pipeline.
 
 Recommended labels:
 
-- **Outcome signal** — `retrieval quality - λ cost`
-- **Trust weighting** — `τ × reward`
-- **Cluster-only credit** — `avoid dense/BM25 rescue credit`
+- **Outcome signal** — `observed evidence reward`
+- **Trust weighting** — `weighted policy update`
+- **Attribution** — `declared per result family`
 - return label: **`updates later queries only`**
 
 The return arrow should terminate at **LinUCB arm state**, not at the current
@@ -140,7 +140,7 @@ copy is recommended.
 | Node | Title | Subtitle |
 | --- | --- | --- |
 | Input | Query + session context | current request |
-| Features | Controller features | query, route agreement, geometry |
+| Features | PCA query context | controller representation |
 | Dense | Global dense | semantic recall floor |
 | Lexical | BM25 | lexical anchors |
 | Geometry | Fixed local arms | KMeans, K=32 |
@@ -149,14 +149,13 @@ copy is recommended.
 | Local retrieval | Cluster-local dense | search selected arms |
 | Fusion | Weighted rank fusion | dense + BM25 + local |
 | Calibration | Frozen budget policy | selected on calibration queries |
-| Budget | Final-context budget | safe prefix under (r,m) |
+| Budget | Final-context budget | ordered budgeted subset under (r,m) |
 | Context | Budgeted evidence | generator input context |
 | Generator | LLM / downstream agent | evidence-grounded response |
-| Feedback | Trust-weighted feedback | cluster-only credit; future updates |
+| Feedback | Simulated trust-weighted feedback | evidence reward; later-query updates |
 
 Avoid placing formulas inside the figure except for compact symbols such as
-`K=32`, `(r,m)`, `τ`, and `quality - λ cost`. Detailed equations belong in the
-method section.
+`K=32`, `(r,m)`, and `τ`. Detailed equations belong in the method section.
 
 ## 5. Arrow Grammar
 

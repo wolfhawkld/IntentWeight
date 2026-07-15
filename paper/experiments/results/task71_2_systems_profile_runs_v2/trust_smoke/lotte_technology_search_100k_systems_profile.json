@@ -1,0 +1,182 @@
+{
+  "cache_disk_bytes": {
+    "bm25_rankings": 2347120,
+    "context_clusters": 26502670,
+    "corpus_embeddings": 155613824,
+    "dense_rankings": 2348458,
+    "query_corpus_scores": 0,
+    "query_embeddings": 915584,
+    "total_selected_artifacts": 187727656
+  },
+  "cluster_retrieval_engine": "on_demand",
+  "cold_artifact_load_ms": {
+    "load_bm25_rankings": 131.7407,
+    "load_context_clusters": 134.0382,
+    "load_corpus_embeddings": 151.3067,
+    "load_corpus_json": 1214.0838,
+    "load_dense_rankings": 129.9228,
+    "load_queries_json": 1.6292,
+    "load_query_embeddings": 1.0037
+  },
+  "dataset": "lotte_technology_search_100k",
+  "epochs": 1,
+  "hardware": {
+    "cpu_model": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "logical_cpus": 16,
+    "memory_total_bytes": 6697938944,
+    "numpy": "2.4.4",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "historical_offline_metadata": {
+    "bm25_rankings": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__bm25_rankings__a24c10b9c8f5e5ea.json",
+      "cache_hit": true,
+      "compute_elapsed_sec": 19.537
+    },
+    "context_clusters": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__context_clusters__72118ad7197779a7.npz",
+      "cache_hit": true,
+      "compute_elapsed_sec": 0.529
+    },
+    "corpus_embeddings": {
+      "cache_hit": true,
+      "embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__corpus__n101311__60ef5529c079a71e.npy",
+      "encode_elapsed_sec": 1596.974
+    },
+    "dense_rankings": {
+      "artifact_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/retrieval_artifacts/lotte_technology_search_100k__dense_rankings__943110fcc8a19b7c.json",
+      "cache_hit": true,
+      "compute_elapsed_sec": 5.536
+    },
+    "query_corpus_scores": {
+      "cache_hit": false
+    },
+    "query_embeddings": {
+      "cache_hit": true,
+      "embedding_path": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/data/embeddings/lotte_technology_search_100k__sentence-transformers-all-MiniLM-L6-v2__queries__n596__6c7ae007c1bcc394.npy",
+      "encode_elapsed_sec": 0.93
+    }
+  },
+  "interpretation_boundary": [
+    "Cache materialization and warm routing are measured separately.",
+    "Final-context token savings remain a generation-input measure, not total system cost.",
+    "Simulated-feedback update timing is an operational feasibility measurement, not real-user RLHF evidence.",
+    "Historical artifact build times may originate from earlier runs and are not reported as current hardware benchmarks."
+  ],
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "num_corpus_chunks": 101311,
+  "num_queries": 596,
+  "online_profiles": {
+    "trust_weighted": {
+      "feedback_state": {
+        "feedback_context_count": 596,
+        "feedback_reward_record_count": 596,
+        "in_memory_numeric_bytes": 685056,
+        "persistence_note": "pickle snapshot is a sizing microbenchmark, not a production persistence protocol",
+        "snapshot_deserialize_ms": 2.0509,
+        "snapshot_pickle_bytes": 730371,
+        "snapshot_serialize_ms": 2.529
+      },
+      "interactions": 596,
+      "interactions_per_sec": 95.8547,
+      "stage_timings": {
+        "bm25_route": {
+          "calls": 596,
+          "max_ms": 0.0605,
+          "p50_ms": 0.007,
+          "p95_ms": 0.0083,
+          "total_ms": 4.4386
+        },
+        "cluster_route": {
+          "calls": 596,
+          "max_ms": 18.7196,
+          "p50_ms": 4.4047,
+          "p95_ms": 8.3303,
+          "total_ms": 2971.1734
+        },
+        "dense_route": {
+          "calls": 596,
+          "max_ms": 0.0796,
+          "p50_ms": 0.0095,
+          "p95_ms": 0.0114,
+          "total_ms": 5.8786
+        },
+        "feedback_memory_append": {
+          "calls": 596,
+          "max_ms": 0.0093,
+          "p50_ms": 0.0012,
+          "p95_ms": 0.0018,
+          "total_ms": 0.7903
+        },
+        "feedback_observation": {
+          "calls": 1788,
+          "max_ms": 0.3645,
+          "p50_ms": 0.0076,
+          "p95_ms": 0.0217,
+          "total_ms": 19.3966
+        },
+        "feedback_reward_measurement": {
+          "calls": 1788,
+          "max_ms": 0.3611,
+          "p50_ms": 0.0216,
+          "p95_ms": 0.0506,
+          "total_ms": 49.0083
+        },
+        "feedback_state_update": {
+          "calls": 1788,
+          "max_ms": 5.1726,
+          "p50_ms": 0.1318,
+          "p95_ms": 0.2076,
+          "total_ms": 269.2853
+        },
+        "feedback_trust_weighting": {
+          "calls": 1788,
+          "max_ms": 0.0932,
+          "p50_ms": 0.0018,
+          "p95_ms": 0.0038,
+          "total_ms": 4.1034
+        },
+        "final_context_budget": {
+          "calls": 596,
+          "max_ms": 0.13,
+          "p50_ms": 0.0061,
+          "p95_ms": 0.0083,
+          "total_ms": 3.9888
+        },
+        "fusion_and_dense_floor": {
+          "calls": 596,
+          "max_ms": 2.0486,
+          "p50_ms": 0.2326,
+          "p95_ms": 0.2839,
+          "total_ms": 144.0147
+        },
+        "linucb_update": {
+          "calls": 7152,
+          "max_ms": 5.0596,
+          "p50_ms": 0.0224,
+          "p95_ms": 0.0393,
+          "total_ms": 178.2287
+        },
+        "routing_and_gating": {
+          "calls": 596,
+          "max_ms": 18.4401,
+          "p50_ms": 4.134,
+          "p95_ms": 5.9059,
+          "total_ms": 2618.4319
+        }
+      },
+      "stream_elapsed_ms": 6217.7453,
+      "stream_p50_ms": 6217.7453,
+      "stream_p95_ms": 6217.7453
+    }
+  },
+  "peak_rss_bytes": 1008578560,
+  "purpose": "systems and feedback operational profile",
+  "query_encoding": {
+    "enabled": false
+  },
+  "repetitions": 1,
+  "seed": 13,
+  "task": "Task71.2"
+}

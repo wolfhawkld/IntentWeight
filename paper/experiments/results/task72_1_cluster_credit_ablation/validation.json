@@ -1,0 +1,22 @@
+{
+  "actual_event_rows": 6360,
+  "cluster_only_retrieval_passed": true,
+  "controller_seeds": [
+    13,
+    17,
+    19
+  ],
+  "event_coverage_passed": true,
+  "expected_event_rows": 6360,
+  "feedback_update_invariant_passed": true,
+  "methods": [
+    "cluster_static_nearest",
+    "cluster_cold_no_feedback",
+    "cluster_equal_noisy",
+    "cluster_trust_weighted",
+    "cluster_oracle"
+  ],
+  "no_answer_or_context_cache": true,
+  "reused_task72_manifest": true,
+  "run_count": 30
+}

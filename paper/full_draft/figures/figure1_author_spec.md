@@ -13,14 +13,15 @@ ready-to-use node text, arrow grammar, palette, and authoring workflow.
 
 The final diagram must preserve the following method semantics:
 
-1. query input and query/controller features;
+1. query input and a PCA-projected query controller representation;
 2. parallel global dense and BM25 recall routes;
 3. geometry-defined cluster arms selected by LinUCB;
 4. route confidence controlling route fusion and dense fallback;
 5. rank fusion producing the evidence ranking;
 6. independently calibrated final-context budgeting after rank fusion;
 7. generator consumption of the budgeted evidence context;
-8. trust-weighted feedback updating the LinUCB route policy;
+8. controlled trust-weighted simulated feedback updating the LinUCB route
+   policy for later queries;
 9. no arrow implying that route confidence directly predicts per-query
    compression safety;
 10. no arrow implying that LinUCB replaces the dense or BM25 recall routes.

@@ -451,6 +451,13 @@ technology 100k & full-context fallback on learned risky arms after calibration 
 
 The held-out effect is small and domain-dependent. Feedback should therefore be used as a controlled fallback trigger rather than as unconditional global reranking.
 
+\subsection{Frozen Unseen-Query Policy Audit}
+\label{sec:12-appendix:frozen-unseen-query-policy-audit}
+
+The formal frozen-policy audit trains learned route state on four disjoint canonical folds for eight prequential epochs, freezes policy matrices, feedback memory, route statistics, and reward history, then ranks the fifth fold once with zero held-out feedback updates. This retrieval-only audit covers 596 queries per domain, five folds, and seeds 13/17/19.
+
+On technology/search 100k, learned full routing reaches $\mathrm{Hit@10}=0.8792$ versus 0.8674 for Dense, but is 0.11pp below cold no-feedback full routing and has no significant paired advantage over static-nearest full routing. On science/search 100k, learned full routing reaches 0.9004 versus 0.8926 for Dense, but is 0.39pp below cold no-feedback full and 0.56pp below static-nearest full. Learned gated routing is significantly below Dense in all seeds in both domains (-4.08pp and -5.59pp mean deltas). The audit therefore supports transfer of the full Dense/BM25-rescued route surface, not a universal first-pass advantage of learned simulated feedback.
+
 \section{Strong Post-Retrieval Baselines}
 \label{sec:12-appendix:strong-post-retrieval-baselines}
 
@@ -707,6 +714,7 @@ Result family & Corpus and query scope & Route/feedback protocol & Budget and pa
 LoTTE technology/search scale anchor & 100k--638k nested corpora; 596 canonical queries (417 in the original frozen split; 596 in OOF) & MiniLM, top-10, K=32, seeds 13/17/19; frozen scale-route artifacts & Original 30/70 calibration/test plus normalized five-fold OOF; paired bootstrap, McNemar, and 1pp NI & Main scale evidence; original and OOF results are reported separately \\
 LoTTE science/search diagnostic & 20k/q200; 200 sampled queries & Historical MiniLM fixed-split route study & Fixed 30/70 calibration/test & Legacy cross-domain ranking and budget diagnostic; not pooled with OOF rows \\
 LoTTE science/search common rows & 100k, 200k, 400k; 596 queries per scale & MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused simulated feedback with no-feedback control & Five-fold OOF zero-drop budget selection, Dense fallback, paired bootstrap, McNemar, 1pp NI, and recovery replay & Cross-domain evidence; 400k is a weak scale boundary (1/5 eligible folds) \\
+Frozen-policy unseen-query audit & LoTTE technology/search and science/search 100k; 596 queries each & Five history/test folds; seeds 13/17/19; eight history epochs; policy and feedback state frozen on the held-out fold & Query-paired bootstrap and McNemar on retrieval metrics; no held-out feedback update or budget endpoint & Boundary evidence: full rescue surface transfers, but learned feedback does not beat matched static/cold full routing and frozen gating is unsafe \\
 PubMedQA, CovidQA-RAG, eManual deduplicated & Native full: 4,348/1,000; 32,392/1,726; 1,729/130 corpus/query pairs & MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused trust/no-feedback controls & Five-fold OOF zero-drop budget selection and paired statistics & Transfer and corrected-boundary rows; not a shared scale curve \\
 Banking77 and CUAD & Banking77 native 10,003/3,080; CUAD GT-anchored 10k/79 evaluated & Historical route-learning proxy and sparse-GT smoke protocols & No common OOF token endpoint & Mechanism and boundary evidence only; excluded from pooled evidence-retrieval conclusions \\
 \bottomrule

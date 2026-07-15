@@ -444,6 +444,16 @@ def _recent_window_delta(values: Sequence[float], window_size: int) -> float:
     return float(_mean(recent) - _mean(previous))
 
 
+def _record_stage_timing(
+    stage_timings: Dict[str, List[int]] | None,
+    stage: str,
+    started_ns: int,
+) -> None:
+    """Append an optional stage duration without changing normal experiment output."""
+    if stage_timings is not None:
+        stage_timings.setdefault(stage, []).append(max(0, time.perf_counter_ns() - started_ns))
+
+
 def run_prequential_seed(
     corpus: Sequence[Mapping],
     queries: Sequence[Mapping],
@@ -509,6 +519,10 @@ def run_prequential_seed(
     initial_state: Mapping[str, object] | None = None,
     freeze_updates: bool = False,
     return_state: bool = False,
+    stage_timings: Dict[str, List[int]] | None = None,
+    event_indices: Sequence[int] | None = None,
+    event_labels: Sequence[str] | None = None,
+    collect_interaction_records: bool = False,
 ) -> Dict[str, object]:
     if routing_mode not in ROUTING_MODES:
         raise ValueError(f"Unsupported routing_mode: {routing_mode}")
@@ -528,6 +542,22 @@ def run_prequential_seed(
         raise ValueError("top_k and cluster_depth must be positive")
     if min(dense_depth, bm25_depth, dense_lite_depth, bm25_lite_depth, dense_floor_k, dense_lite_floor_k) < 0:
         raise ValueError("dense/BM25 depths and dense floors must be non-negative")
+    stream_indices: List[int] | None = None
+    stream_labels: List[str] | None = None
+    if event_indices is not None:
+        if epochs != 1:
+            raise ValueError("event_indices requires epochs=1 because it defines the full interaction stream")
+        stream_indices = [int(index) for index in event_indices]
+        if not stream_indices:
+            raise ValueError("event_indices must not be empty")
+        if any(index < 0 or index >= len(queries) for index in stream_indices):
+            raise ValueError("event_indices contains an out-of-range query index")
+        if event_labels is None:
+            stream_labels = ["stream" for _ in stream_indices]
+        else:
+            stream_labels = [str(label) for label in event_labels]
+            if len(stream_labels) != len(stream_indices):
+                raise ValueError("event_labels must have the same length as event_indices")
     if cluster_retrieval_engine == "cached_exact_scores":
         if arm_row_indices is None or query_corpus_scores is None:
             raise ValueError("cached_exact_scores requires arm_row_indices and query_corpus_scores")
@@ -671,10 +701,14 @@ def run_prequential_seed(
         "fallback_reward_drop": 0,
     }
     epoch_rows: List[Dict[str, float]] = []
+    interaction_records: List[Dict[str, object]] = []
 
     for epoch in range(epochs):
-        epoch_indices = np.arange(len(queries))
-        rng.shuffle(epoch_indices)
+        if stream_indices is None:
+            epoch_indices = np.arange(len(queries))
+            rng.shuffle(epoch_indices)
+        else:
+            epoch_indices = np.asarray(stream_indices, dtype=np.int64)
         epoch_true_rewards: List[float] = []
         epoch_final_true_rewards: List[float] = []
         epoch_route_true_rewards: List[float] = []
@@ -683,11 +717,13 @@ def run_prequential_seed(
         epoch_confidences: List[float] = []
         epoch_lite_routes: List[float] = []
 
-        for query_idx in epoch_indices:
+        for event_offset, query_idx in enumerate(epoch_indices):
             query_idx = int(query_idx)
             query = queries[query_idx]
             qid = _query_id(query)
+            event_label = stream_labels[event_offset] if stream_labels is not None else "prequential"
             context = query_context[query_idx]
+            stage_started_ns = time.perf_counter_ns()
             if linucb_learning_enabled:
                 selected_arms, boosts = manifold_linucb.select_arms_with_local_feedback(
                     policy,
@@ -763,9 +799,11 @@ def run_prequential_seed(
                 drift_threshold=drift_threshold,
                 reward_drop_threshold=reward_drop_threshold,
             )
+            _record_stage_timing(stage_timings, "routing_and_gating", stage_started_ns)
             route_counts[decision.route] += 1
             route_reason_counts[decision.route_reason] += 1
 
+            stage_started_ns = time.perf_counter_ns()
             if dense_rankings_by_qid is not None:
                 dense_ranking = [str(chunk_id) for chunk_id in dense_rankings_by_qid.get(qid, [])[: decision.dense_depth]]
             else:
@@ -775,6 +813,8 @@ def run_prequential_seed(
                     chunk_ids,
                     depth=decision.dense_depth,
                 )
+            _record_stage_timing(stage_timings, "dense_route", stage_started_ns)
+            stage_started_ns = time.perf_counter_ns()
             if bm25_rankings_by_qid is not None:
                 bm25_ranking = [str(chunk_id) for chunk_id in bm25_rankings_by_qid.get(qid, [])[: decision.bm25_depth]]
             else:
@@ -784,6 +824,8 @@ def run_prequential_seed(
                     chunk_ids,
                     depth=decision.bm25_depth,
                 )
+            _record_stage_timing(stage_timings, "bm25_route", stage_started_ns)
+            stage_started_ns = time.perf_counter_ns()
             if cluster_retrieval_engine == "cached_exact_scores":
                 cluster_ranking = global_linucb.retrieve_from_arm_score_cache(
                     query_corpus_scores[query_idx],
@@ -801,6 +843,8 @@ def run_prequential_seed(
                     selected_arms,
                     top_k=decision.cluster_depth,
                 )
+            _record_stage_timing(stage_timings, "cluster_route", stage_started_ns)
+            stage_started_ns = time.perf_counter_ns()
             ranking = linucb_soft.weighted_reciprocal_rank_fusion(
                 (
                     (dense_ranking, decision.dense_weight),
@@ -816,6 +860,8 @@ def run_prequential_seed(
                 dense_floor_k=decision.dense_floor_k,
                 top_k=top_k,
             )
+            _record_stage_timing(stage_timings, "fusion_and_dense_floor", stage_started_ns)
+            stage_started_ns = time.perf_counter_ns()
             final_context_decision = decide_final_context(
                 final_context_policy,
                 confidence=confidence,
@@ -829,6 +875,7 @@ def run_prequential_seed(
                 drift_threshold=drift_threshold,
             )
             ranking = ranking[: final_context_decision.final_k]
+            _record_stage_timing(stage_timings, "final_context_budget", stage_started_ns)
             rankings[qid] = ranking
             final_context_ks.append(float(final_context_decision.final_k))
             final_context_reason_counts[final_context_decision.reason] += 1
@@ -855,9 +902,13 @@ def run_prequential_seed(
             selected_route_true_rewards: List[float] = []
             selected_observed_rewards: List[float] = []
             for source_arm in selected_arms:
+                stage_started_ns = time.perf_counter_ns()
                 final_true_reward = global_linucb._arm_reward(ranking, gt, source_arm, arm_labels_by_chunk)
                 route_true_reward = global_linucb._arm_reward(cluster_ranking, gt, source_arm, arm_labels_by_chunk)
                 true_reward = route_true_reward if reward_attribution == "cluster_only" else final_true_reward
+                _record_stage_timing(stage_timings, "feedback_reward_measurement", stage_started_ns)
+
+                stage_started_ns = time.perf_counter_ns()
                 observation = linucb_trust.simulate_user_feedback(
                     true_reward,
                     rng,
@@ -868,6 +919,9 @@ def run_prequential_seed(
                     high_accuracy=high_accuracy,
                     low_accuracy=low_accuracy,
                 )
+                _record_stage_timing(stage_timings, "feedback_observation", stage_started_ns)
+
+                stage_started_ns = time.perf_counter_ns()
                 update_weight = linucb_trust.update_weight_for_mode(feedback_mode, observation)
                 memory_reward = linucb_trust.memory_reward_for_mode(feedback_mode, observation)
                 arm_memory_rewards[int(source_arm)] = memory_reward
@@ -875,6 +929,9 @@ def run_prequential_seed(
                 selected_final_true_rewards.append(float(final_true_reward))
                 selected_route_true_rewards.append(float(route_true_reward))
                 selected_observed_rewards.append(float(observation.observed_reward))
+                _record_stage_timing(stage_timings, "feedback_trust_weighting", stage_started_ns)
+
+                stage_started_ns = time.perf_counter_ns()
                 if not freeze_updates:
                     route_reward_sums[int(source_arm)] += float(route_true_reward)
                     route_pull_counts[int(source_arm)] += 1.0
@@ -891,15 +948,20 @@ def run_prequential_seed(
                         propagation_strength=propagation_strength,
                     ):
                         weight = float(update_weight * propagation_weight)
+                        update_started_ns = time.perf_counter_ns()
                         policy.update(target_arm, context, observation.observed_reward, weight=weight)
+                        _record_stage_timing(stage_timings, "linucb_update", update_started_ns)
                         total_update_weight += weight
                         if target_arm != source_arm:
                             cross_arm_update_weight += weight
                             propagated_updates += 1
+                _record_stage_timing(stage_timings, "feedback_state_update", stage_started_ns)
 
+            stage_started_ns = time.perf_counter_ns()
             if linucb_learning_enabled and feedback_mode != "none" and not freeze_updates:
                 feedback_contexts.append(context.copy())
                 feedback_arm_rewards.append(arm_memory_rewards)
+            _record_stage_timing(stage_timings, "feedback_memory_append", stage_started_ns)
 
             interaction_true = max(selected_update_true_rewards) if selected_update_true_rewards else 0.0
             interaction_final_true = max(selected_final_true_rewards) if selected_final_true_rewards else 0.0
@@ -921,6 +983,28 @@ def run_prequential_seed(
                     "final_true_reward": float(interaction_final_true),
                     "source_candidate_cost": float(interaction_cost),
                 }
+            if collect_interaction_records:
+                interaction_records.append({
+                    "event_index": int(len(interaction_records)),
+                    "event_label": event_label,
+                    "query_index": query_idx,
+                    "query_id": qid,
+                    "ranking": [str(chunk_id) for chunk_id in ranking],
+                    "route": decision.route,
+                    "route_reason": decision.route_reason,
+                    "dense_queried": bool(decision.dense_depth > 0),
+                    "bm25_queried": bool(decision.bm25_depth > 0),
+                    "selected_arms": [int(arm) for arm in selected_arms],
+                    "selected_cluster_hit": float(selected_cluster_hit),
+                    "final_hit": float(final_hit),
+                    "final_context_k": int(final_context_decision.final_k),
+                    "confidence": float(confidence),
+                    "semantic_drift": float(semantic_drift),
+                    "route_true_reward": float(interaction_route_true),
+                    "final_true_reward": float(interaction_final_true),
+                    "observed_reward": float(interaction_observed),
+                    "source_candidate_cost": float(interaction_cost),
+                })
             true_rewards.append(float(interaction_true))
             final_true_rewards.append(float(interaction_final_true))
             route_true_rewards.append(float(interaction_route_true))
@@ -1074,6 +1158,8 @@ def run_prequential_seed(
         "epoch_metrics": epoch_rows,
     })
     result: Dict[str, object] = {"rankings": rankings, "metrics": metrics, "query_traces": query_traces}
+    if collect_interaction_records:
+        result["interaction_records"] = interaction_records
     if return_state:
         # This in-memory state is intentionally excluded from normal checkpoints.
         result["runtime_state"] = {

@@ -65,6 +65,15 @@ corrective actions when retrieval confidence is low [@yan2024crag]. These
 methods establish that retrieval behavior should respond to query difficulty,
 generation uncertainty, or evidence quality rather than remain fixed.
 
+Recent work sharpens this distinction between internal and external adaptation
+signals. SeaKR activates retrieval from uncertainty extracted from language
+model internal states [@yao2025seakr], whereas an LLM-independent study compares
+external query features as lightweight retrieval triggers [@marina2025llm].
+These methods primarily decide whether or how to invoke retrieval from a
+single-query signal. IntentRoute instead keeps dense retrieval as a recall
+floor, routes among fixed corpus-local evidence paths, and updates route
+confidence from controlled feedback over repeated interactions.
+
 Contextual bandits provide a natural abstraction for adaptive route control. A
 policy observes a context, selects an action, receives feedback, and updates its
 future decisions. LinUCB is a simple and interpretable contextual bandit
@@ -121,6 +130,14 @@ refines retrieved passages through sentence-level reranking and reconstruction
 [@hwang2024dslr]. REPLUG shows another complementary direction: a frozen
 black-box language model can be paired with a tuneable retrieval model
 [@shi2024replug].
+
+More recent adaptive compressors vary retained context from model attention or
+input complexity rather than applying one fixed compression rate
+[@luo2025attncomp; @guo2025adaptivecompression]. These approaches operate on
+the retrieved context and commonly require an attention-based or hierarchical
+compression component. They are complementary rather than direct replacements
+for IntentRoute's upstream evidence-route selection and independently
+calibrated chunk-budget policy.
 
 IntentRoute operates earlier in the pipeline. It selects evidence routes and
 sets final-context budgets before generation rather than compressing tokens

@@ -1,0 +1,19 @@
+{
+  "actual_event_rows": 5088,
+  "controller_seeds": [
+    13,
+    17,
+    19
+  ],
+  "event_coverage_passed": true,
+  "expected_event_rows": 5088,
+  "immutable_artifact_backend_declared": true,
+  "methods": [
+    "dense",
+    "static_nearest",
+    "cold_no_feedback",
+    "learned_feedback"
+  ],
+  "no_answer_or_context_cache": true,
+  "run_count": 24
+}

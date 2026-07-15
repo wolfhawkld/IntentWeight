@@ -233,7 +233,16 @@ effect without additional deployment safeguards.
 
 Some experiments use multiple prequential epochs over the same query stream to
 simulate repeated interaction. These runs are useful for route-policy
-self-evolution analysis. They are not IID held-out generalization results.
+adaptation analysis. They are not IID held-out generalization results.
+
+The formal frozen-policy audit makes the complementary first-pass boundary
+explicit. It trains route state on four disjoint query folds, freezes policy and
+feedback memory, and ranks the fifth fold once without held-out updates. Across
+LoTTE technology/search and science/search 100k, learned full routing remains
+near or above Dense but does not exceed matched static-nearest or cold
+no-feedback full routing; learned gating is significantly below Dense in all
+three route seeds. This audit is retrieval-only and does not evaluate
+final-context token saving or answer quality.
 
 ## 4.6 Implementation Notes
 
@@ -289,9 +298,23 @@ as a strict calibration-eligible main operating point.
 Frozen test results are paired by query against dense top-10. We report
 bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context
 token savings where available, and use a 1 percentage-point non-inferiority
-margin for strict seed-level checks. This separates two claims: whether the
-method preserves retrieval quality under a conservative paired criterion, and
-whether it reduces the final evidence-context tokens sent to the generator.
+margin as a strict seed-level engineering guardrail. On the original 417-query
+frozen test split, one percentage point corresponds to roughly four query-hit
+outcomes; on the 596-query out-of-fold population, it corresponds to roughly
+six. Passing this diagnostic is not treated as formal equivalence, and failing
+it does not erase the descriptive paired result. This separates two claims:
+whether the method preserves retrieval quality under a conservative paired
+criterion, and whether it reduces the final evidence-context tokens sent to
+the generator.
+
+The frozen calibration/test comparisons and the normalized five-fold scale
+results are the primary evidence families. Fine-grid action selection,
+overlapping-partition sensitivity, same-saving interpolation, arm-count and
+geometry controls, feedback recovery, transfer datasets, and multi-judge
+analysis are mechanism, robustness, or boundary analyses. We report their
+paired statistics where available, but do not pool heterogeneous conditions or
+use an unadjusted cross-condition $p$-value to assert a global superiority
+claim. They are interpreted conditionally and labeled accordingly.
 
 Two additional audits test selection robustness. First, Dense and IntentRoute
 independently select actions on the same 100k calibration split over a fine

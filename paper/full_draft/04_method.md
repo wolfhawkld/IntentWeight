@@ -82,9 +82,9 @@ rescue cases where the cluster route misses relevant evidence.
 
 ## 3.5 LinUCB Route Policy
 
-For each query $q_t$, IntentRoute computes a context feature vector
-$x_t \in \mathbb{R}^{p}$. Features include query embedding projections, route
-confidence signals, and local geometry signals. For each arm
+For each query $q_t$, IntentRoute computes a controller context vector
+$x_t \in \mathbb{R}^{p}$ by applying a corpus-fitted PCA projection to the
+query embedding and then L2-normalizing the projected vector. For each arm
 $a \in \mathcal{A}$, LinUCB maintains a linear value model:
 
 $$
@@ -104,40 +104,23 @@ The policy selects the top candidate arms by score. The selected arms define
 the cluster-local retrieval path and provide confidence signals for route
 gating and fallback.
 
-### Feature Groups and Route Confidence
+### Controller Context and Route-Gating Signals
 
-The LinUCB context vector is not intended to introduce a new representation
-model. It collects signals that decide whether local routing is reliable for
-the current query. The following summary lists the feature groups used by the
-controller.
+The tested LinUCB context is deliberately narrow: it is the normalized
+PCA-projected query embedding, not a concatenation of dense scores, BM25
+scores, route agreement, feedback summaries, or budget variables. The PCA fit
+uses corpus embeddings only, so query vectors and fixed KMeans arm centroids
+share one controller space.
 
-The feature groups are:
-
-- query representation: normalized query embedding and PCA/context projection,
-  used to place the query on the same local surface as corpus arms;
-- dense confidence: dense score concentration, top-rank margin, and fallback
-  availability, used to estimate whether global dense retrieval is already
-  reliable;
-- lexical confidence: BM25 candidate availability and lexical-match strength,
-  used to protect queries that depend on exact terminology;
-- route agreement: overlap among dense, BM25, and cluster-local candidates,
-  used to detect when independent routes support the same evidence region;
-- local geometry: nearest centroid similarity, selected arm identity, and
-  semantic drift, used to estimate whether the query lies close to selected
-  local arms;
-- feedback state: selected-arm value, pull-count maturity, and recent route
-  reward, used to estimate whether LinUCB has enough evidence to trust the
-  local route;
-- budget state: route confidence tier and fallback status, used by the older
-  conservative `confidence_topk` diagnostic; the main calibrated budget does
-  not map these features to a per-query token ratio.
-
-Route confidence is computed from the selected-arm value estimate, the
-top-versus-rest arm margin, and an arm-maturity term based on feedback count.
-Semantic drift is defined as one minus the nearest selected-centroid similarity.
-Low confidence or high drift keeps the dense fallback active; high confidence
-and low drift can enable a lighter route. Only the conservative diagnostic
-policy additionally uses this tier to reduce context size.
+After LinUCB selects arms from this context, the implementation computes
+policy-derived confidence and centroid-based semantic drift as separate
+route-gating signals. These signals determine whether the system retains the
+full dense/BM25/cluster fusion surface or permits a lighter route with a Dense
+floor. Dense and BM25 rankings are then constructed and fused after the route
+decision; their score concentration, lexical strength, and route overlap are
+not inputs to the tested LinUCB vector. The main calibrated budget remains
+separate from these signals and does not map confidence to a per-query token
+ratio.
 
 ## 3.6 Trust-Weighted Feedback
 
@@ -146,39 +129,43 @@ the trust-weighted mode, each simulated user feedback event is assigned a trust
 weight. Higher-trust feedback contributes more to the arm update and local
 feedback memory. Lower-trust feedback has a weaker effect.
 
-Conceptually:
+For a selected source arm, let $o_{t,a}$ be the observed simulated-feedback
+reward and let $w_{t,a}$ be its trust- and propagation-weighted update weight.
+The tested update is:
 
 $$
 \begin{aligned}
-r_t &= g_t - \lambda c_t, \\
-\tilde{r}_t &= \tau_t r_t, \\
-A_a &\leftarrow A_a + \tau_t x_t x_t^\top, \\
-b_a &\leftarrow b_a + \tilde{r}_t x_t.
+A_a &\leftarrow A_a + w_{t,a} x_t x_t^\top, \\
+b_a &\leftarrow b_a + w_{t,a} o_{t,a} x_t.
 \end{aligned}
 $$
 
-Here, $g_t$ is the retrieval-quality signal, $c_t$ is the cost penalty,
-$\lambda$ controls the quality-cost trade-off, $\tau_t$ is the feedback trust
-weight, and $\tilde{r}_t$ is the weighted reward applied to the selected arm.
+The reward is an evidence-quality signal derived from the selected route or
+the final fused ranking, according to the declared attribution mode. Trust
+weighting changes the update strength, and neighboring arms can receive a
+decayed propagated update. Candidate cost and final-context tokens are measured
+separately; the tested LinUCB reward does not include a $-\lambda c_t$
+cost-penalty term.
 
 The current experiments do not claim that real human feedback was collected.
-They show that under controlled simulated feedback, the route policy can
-self-improve. The strongest feedback evidence is visible in policy metrics such
-as last true reward and selected-cluster hit rate, especially when final
-retrieval quality is already protected by dense and BM25 fallback.
+They evaluate controlled repeated-interaction adaptation and hard-case recovery.
+The strongest feedback evidence is visible in policy metrics such as last true
+reward and selected-cluster hit rate, especially when final retrieval quality is
+already protected by dense and BM25 fallback.
 
 ## 3.7 Route-Level Credit Assignment
 
-Early experiments used final fused retrieval success as the reward signal. This
-can over-credit the selected cluster arm when dense or BM25 rescue the final
-ranking. IntentRoute therefore uses a stricter `cluster_only` reward
-attribution mode in the main policy-learning experiments. The LinUCB arm is
-updated using the quality of its own cluster-local route.
+The implementation supports two attribution modes. `final_fused` assigns reward
+from the final fused ranking, whereas `cluster_only` assigns reward from the
+selected cluster-local route and avoids crediting Dense/BM25 rescue to that arm.
+The common cross-dataset evidence rows and formal frozen-policy audit use
+`final_fused` attribution; `cluster_only` is retained for dedicated
+credit-assignment and mechanism diagnostics. Every result family reports its
+attribution mode in Supplementary Table S29.
 
-This distinction is important. The final fused ranking measures the system
-outcome, while cluster-only reward measures whether LinUCB is learning a better
-route. Dense and BM25 rescue paths protect final quality; cluster-only credit
-assignment tests whether the adaptive component itself is improving.
+This distinction matters because final fused reward measures the system outcome,
+while cluster-only reward isolates the cluster-route component. Neither mode
+allows Dense/BM25 rescue to be omitted from the interpretation of final quality.
 
 ## 3.8 Prequential Adaptation Protocol
 
@@ -200,6 +187,14 @@ from that query. Multi-epoch results are therefore controlled repeated
 interaction studies. They should not be over-interpreted as single-pass
 generalization results.
 
+The separate frozen-policy audit tests this boundary directly: it trains
+policy state on disjoint history folds and ranks held-out queries once with all
+updates frozen. It evaluates transferable route-policy behavior, not
+final-context budgeting. The audit does not establish a learned-feedback
+advantage over matched static-nearest or cold no-feedback full routing, and it
+finds that learned cost-aware gating is unsafe as a frozen first-pass policy in
+the tested domains.
+
 ## 3.9 Final Context Budgeting and Conservative Confidence Baseline
 
 Preliminary token-cost analysis showed that reducing source candidates does not
@@ -208,20 +203,24 @@ confidence-gated routing with an explicit calibrated budget policy, the central
 quality-cost control interface.
 
 Let $R_t$ be the ranking produced by the confidence-gated route surface. A
-calibration policy $\pi_\phi$ selects a token ratio $r \in (0,1]$ and minimum
-prefix $m$. The final context is the longest ranked prefix of at least $m$
-chunks satisfying
+calibration policy $\pi_\phi$ selects a token ratio $r \in (0,1]$ and a
+mandatory ranked prefix size $m$. The final context begins with that prefix,
+then scans the remaining top-10 candidates in rank order and retains a candidate
+only when it fits the residual budget:
 
 $$
 \mathrm{Tokens}(C_t) \le r\,\mathrm{Tokens}(R_t[:10]).
 $$
 
-The policy parameters $\phi$ are selected on calibration queries subject to a
-retrieval-quality eligibility gate and then frozen before held-out test
-evaluation. Geometry and feedback affect route construction, while the stronger
-token saving arises when the separately calibrated length budget acts on the
-routed ranking. The implementation does not learn a direct per-query mapping
-from confidence to token ratio.
+This is an order-preserving budgeted subset with a mandatory prefix. It may skip
+an oversized later chunk and admit a smaller lower-ranked chunk, so it is not
+necessarily a contiguous longest ranked prefix. The policy parameters $\phi$
+are selected on calibration queries subject to a retrieval-quality eligibility
+gate and then frozen before held-out test evaluation. Geometry and feedback
+affect route construction, while the stronger token saving arises when the
+separately calibrated length budget acts on the routed ranking. The
+implementation does not learn a direct per-query mapping from confidence to
+token ratio.
 
 The conservative `confidence_topk` policy works as follows:
 
@@ -279,7 +278,7 @@ ranking is produced before feedback is observed.
 
 Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 
-1. Embed $q_t$ and compute context features $x_t$.
+1. Embed $q_t$ and form the normalized PCA controller context $x_t$.
 2. Score cluster arms with LinUCB using $s_t(a)$.
 3. Retrieve candidates from the global dense route, the global BM25 route, and
    dense search within selected cluster arms.
@@ -290,17 +289,19 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 7. Only after evaluation, convert the ground-truth label into simulated
    feedback and update LinUCB for later queries.
 8. If the interaction is a post-feedback retry or a later query in a risky
-   local region, use the updated arm state to choose a safer context budget or
-   fallback path.
+   local region, use the updated arm state to choose a safer route or fallback
+   path; final-context budgeting remains independently calibrated.
 
 Output: final retrieved context $C_t$ and updated policy state.
 
 ## 3.12 Reproducibility Parameters
 
-The main configuration uses 32 fixed KMeans/MiniBatchKMeans arms, three
-candidate arms per query, a 64-dimensional context projection,
-$\alpha=1.0$, and three prequential epochs unless otherwise stated. The
-calibration grid covers $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
+The common cross-dataset evidence protocol uses 32 fixed KMeans/MiniBatchKMeans arms,
+three candidate arms per query, a 64-dimensional context projection,
+$\alpha=1.0$, and eight prequential epochs. Earlier mechanism diagnostics may
+use other epoch counts and attribution modes; Supplementary Table S29 records
+those result-family differences. The calibration grid covers
+$r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
 $m \in \{4,\ldots,8\}$. Supplementary Section S12 reports the complete route
 depths, safety floors, fusion weights, confidence thresholds, decay, and trust
 parameters; scale-specific cache paths and dataset sizes remain in the tracked

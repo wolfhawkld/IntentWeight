@@ -1,0 +1,24 @@
+{
+  "boundary": "This profile excludes retrieval, routing, feedback, and generation.",
+  "dataset": "lotte_technology_search_100k",
+  "hardware": {
+    "cpu_model": "AMD Ryzen 7 5800H with Radeon Graphics",
+    "logical_cpus": 16,
+    "memory_total_bytes": 6697938944,
+    "numpy": "2.4.4",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "purpose": "MiniLM single-query encoding microbenchmark",
+  "query_encoding": {
+    "enabled": true,
+    "max_ms": 20.002,
+    "model_load_ms": 4591.7802,
+    "note": "single-query CPU encoding after model load; retrieval artifacts are profiled separately",
+    "p50_ms": 7.1559,
+    "p95_ms": 8.6183,
+    "samples": 64
+  },
+  "task": "Task71.2"
+}

@@ -1,0 +1,10 @@
+feedback_mode,stage,calls,total_ms,p50_ms,p95_ms,max_ms
+none,bm25_route,596,4.8426,0.0079,0.0096,0.0283
+none,cluster_route,596,9192.6311,15.4213,23.4063,34.3254
+none,dense_route,596,6.6921,0.0104,0.0131,0.1122
+none,feedback_memory_append,596,0.279,0.0004,0.0007,0.0136
+none,feedback_observation_and_trust,1788,66.5294,0.0148,0.0855,1.7146
+none,feedback_state_update,1788,5.0968,0.0013,0.0061,0.3822
+none,final_context_budget,596,4.6128,0.0074,0.0102,0.0296
+none,fusion_and_dense_floor,596,168.0444,0.2525,0.3792,4.4658
+none,routing_and_gating,596,4813.1271,8.07,12.1736,35.6199
