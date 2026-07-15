@@ -1,6 +1,6 @@
 # Task71 Post-Task69 Submission-Readiness Plan
 
-Updated: 2026-07-13
+Updated: 2026-07-15
 
 ## Purpose
 
@@ -33,6 +33,10 @@ The following evidence is closed and must be treated as frozen:
 - The exact-cache backend is valid for Task69. The 100k full-route comparison
   matched legacy execution exactly, and a direct 400k 32-query check produced
   exactly equal rankings and non-runtime metrics for both routing modes.
+- Task72.2 closes the post-review runtime-integrity risks: future
+  embedding-dependent artifacts are content-bound, checkpoints are provenance
+  bound and structurally validated, cached random partitions use the active
+  arm indices, and checkpoint recovery is separated from execution timing.
 - Matched-backbone MiniLM, BGE, and E5 evidence is complete. A third encoder
   is not required for the current paper.
 - The journal package passes technical validation. Figure 1 is technically
@@ -302,6 +306,19 @@ does not establish stable trust-weighting superiority or beat static-nearest
 geometry. This is supporting mechanism evidence only. It must be reported with
 the Task72 full-fusion boundary rather than used to claim production RLHF or
 universal feedback gains.
+
+### Task72.2: Runtime Integrity Hardening
+
+Priority: P0 infrastructure gate before Task73. Completed 2026-07-15; see
+`task72_2_runtime_integrity_hardening.md`.
+
+Task72.2 binds embedding-dependent artifacts to exact embedding content,
+introduces source/input/artifact-bound checkpoint v2 validation, fixes cached
+random-partition arm-index consistency, and separates cache construction,
+actual seed computation, and checkpoint restoration timing. It changes no
+Task69 retrieval result or paper claim. Historical checkpoints remain
+provenance only; future experiments must use the hardened implementation and
+fresh output directories.
 
 ### Task73: Hypothesis-Driven LoTTE Domain Expansion
 

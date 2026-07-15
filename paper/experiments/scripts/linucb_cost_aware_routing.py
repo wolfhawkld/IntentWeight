@@ -12,9 +12,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import importlib.util
 import json
+import platform
 import time
+from importlib import metadata as importlib_metadata
 from pathlib import Path
 from typing import Callable, Dict, Iterable, List, Mapping, NamedTuple, Sequence
 
@@ -75,6 +78,19 @@ CLUSTER_RETRIEVAL_ENGINES = (
     "on_demand",
     "cached_exact_scores",
 )
+CHECKPOINT_FORMAT_VERSION = "linucb_cost_seed_checkpoint_v2"
+ROUTING_SOURCE_FILES = (
+    "linucb_cost_aware_routing.py",
+    "linucb_soft_routing.py",
+    "linucb_trust_feedback.py",
+    "linucb_online_baseline.py",
+    "linucb_manifold_local.py",
+    "large_scale_artifacts.py",
+    "dense_baseline.py",
+    "bm25_baseline.py",
+    "experiment_guardrails.py",
+    "retrieval_metrics.py",
+)
 
 
 class RoutingDecision(NamedTuple):
@@ -94,6 +110,58 @@ class RoutingDecision(NamedTuple):
 class FinalContextDecision(NamedTuple):
     final_k: int
     reason: str
+
+
+def routing_source_fingerprint() -> str:
+    """Fingerprint the executable routing implementation without relying on Git state."""
+    hasher = hashlib.sha256()
+    for filename in ROUTING_SOURCE_FILES:
+        path = SCRIPT_DIR / filename
+        if not path.exists():
+            raise FileNotFoundError(f"Missing routing source dependency: {path}")
+        encoded_name = filename.encode("utf-8")
+        hasher.update(len(encoded_name).to_bytes(8, "little"))
+        hasher.update(encoded_name)
+        hasher.update(path.read_bytes())
+    return hasher.hexdigest()
+
+
+def runtime_dependency_versions() -> Dict[str, str]:
+    versions = {"python": platform.python_version(), "numpy": np.__version__}
+    for distribution in ("scikit-learn", "scipy"):
+        try:
+            versions[distribution] = importlib_metadata.version(distribution)
+        except importlib_metadata.PackageNotFoundError:
+            versions[distribution] = "unavailable"
+    return versions
+
+
+def validate_arm_row_indices(
+    arm_labels: np.ndarray,
+    arm_row_indices: Sequence[np.ndarray],
+    *,
+    n_arms: int,
+) -> None:
+    """Require cached arm rows to be an exact partition of the active labels."""
+    labels = np.asarray(arm_labels, dtype=np.int32)
+    if len(arm_row_indices) != n_arms:
+        raise ValueError(f"expected {n_arms} arm row arrays, got {len(arm_row_indices)}")
+    seen = np.zeros(len(labels), dtype=bool)
+    for arm, row_indices in enumerate(arm_row_indices):
+        rows = np.asarray(row_indices, dtype=np.int64)
+        if rows.ndim != 1:
+            raise ValueError(f"arm {arm} row indices must be one-dimensional")
+        if np.any(rows < 0) or np.any(rows >= len(labels)):
+            raise ValueError(f"arm {arm} contains an out-of-range corpus row")
+        if len(np.unique(rows)) != len(rows):
+            raise ValueError(f"arm {arm} contains duplicate corpus rows")
+        if np.any(seen[rows]):
+            raise ValueError(f"arm {arm} contains a duplicate corpus row")
+        if np.any(labels[rows] != arm):
+            raise ValueError(f"arm {arm} row indices do not match the active arm labels")
+        seen[rows] = True
+    if not np.all(seen):
+        raise ValueError("arm row indices do not cover the full corpus")
 
 
 def parse_ints(value: str) -> tuple[int, ...]:
@@ -586,10 +654,22 @@ def run_prequential_seed(
         arm_labels = global_linucb.cluster_corpus(corpus_context, n_clusters=n_clusters, seed=seed)
         n_effective_arms = int(np.max(arm_labels)) + 1
         centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
+    active_arm_row_indices = arm_row_indices
     if routing_mode in {"random_partition_feedback_ensemble", "random_partition_static_ensemble"}:
         partition_rng = np.random.default_rng(65020 + int(seed))
         arm_labels = partition_rng.permutation(arm_labels)
         centroids = manifold_linucb.arm_centroids(corpus_context, arm_labels, n_effective_arms)
+        if cluster_retrieval_engine == "cached_exact_scores":
+            active_arm_row_indices = global_linucb.build_arm_row_indices(
+                arm_labels,
+                n_arms=n_effective_arms,
+            )
+    if cluster_retrieval_engine == "cached_exact_scores":
+        validate_arm_row_indices(
+            arm_labels,
+            active_arm_row_indices,
+            n_arms=n_effective_arms,
+        )
     if initial_state is None:
         policy = global_linucb.GlobalLinUCBPolicy(
             n_arms=n_effective_arms,
@@ -830,7 +910,7 @@ def run_prequential_seed(
                 cluster_ranking = global_linucb.retrieve_from_arm_score_cache(
                     query_corpus_scores[query_idx],
                     chunk_ids,
-                    arm_row_indices,
+                    active_arm_row_indices,
                     selected_arms,
                     top_k=decision.cluster_depth,
                 )
@@ -1192,23 +1272,101 @@ def seed_checkpoint_path(output_dir: Path, artifact_slug: str, routing_mode: str
     return output_dir / "checkpoints" / f"linucb_cost_{artifact_slug}__{routing_mode}__seed{seed}.json"
 
 
-def load_seed_checkpoint(path: Path, signature: Mapping[str, object]) -> Dict[str, object] | None:
+def load_seed_checkpoint(
+    path: Path,
+    signature: Mapping[str, object],
+    *,
+    expected_query_ids: Sequence[str],
+    expected_ranking_depths: Sequence[int],
+    diagnostics: Dict[str, object] | None = None,
+) -> Dict[str, object] | None:
+    def reject(reason: str) -> None:
+        if diagnostics is not None:
+            diagnostics.update({"status": "rejected", "reason": reason})
+
     if not path.exists():
+        reject("missing")
         return None
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        reject("unreadable_json")
+        return None
+    if not isinstance(data, dict):
+        reject("invalid_payload_type")
+        return None
+    if data.get("checkpoint_format_version") != CHECKPOINT_FORMAT_VERSION:
+        reject("format_version_mismatch")
         return None
     if data.get("signature") != dict(signature):
+        reject("signature_mismatch")
         return None
     metrics = data.get("metrics")
     rankings = data.get("rankings")
     if not isinstance(metrics, dict) or not isinstance(rankings, dict):
+        reject("missing_metrics_or_rankings")
         return None
+
+    expected_ids = {str(query_id) for query_id in expected_query_ids}
+    try:
+        expected_query_count = int(signature.get("expected_query_count", len(expected_ids)))
+    except (TypeError, ValueError):
+        reject("invalid_expected_query_count")
+        return None
+    if len(expected_ids) != expected_query_count:
+        reject("expected_query_id_count_mismatch")
+        return None
+    if {str(query_id) for query_id in rankings} != expected_ids:
+        reject("query_coverage_mismatch")
+        return None
+    allowed_depths = {int(depth) for depth in expected_ranking_depths}
+    if not allowed_depths or any(depth <= 0 for depth in allowed_depths):
+        raise ValueError("expected_ranking_depths must contain positive values")
+    signature_depths = signature.get("expected_ranking_depths")
+    if signature_depths is not None and {int(depth) for depth in signature_depths} != allowed_depths:
+        reject("expected_ranking_depth_signature_mismatch")
+        return None
+    normalized_rankings: Dict[str, List[str]] = {}
+    for query_id, ranking in rankings.items():
+        if not isinstance(ranking, list):
+            reject("invalid_ranking_type")
+            return None
+        normalized = [str(chunk_id) for chunk_id in ranking]
+        if len(normalized) not in allowed_depths:
+            reject("ranking_depth_mismatch")
+            return None
+        if len(set(normalized)) != len(normalized):
+            reject("duplicate_ranking_ids")
+            return None
+        normalized_rankings[str(query_id)] = normalized
+
+    try:
+        metrics_valid = (
+            int(metrics.get("seed", -1)) == int(signature["seed"])
+            and str(metrics.get("routing_mode", "")) == str(signature["routing_mode"])
+            and int(metrics.get("epochs", -1)) == int(signature["epochs"])
+            and int(metrics.get("num_interactions", -1)) == int(signature["expected_num_interactions"])
+        )
+    except (KeyError, TypeError, ValueError):
+        metrics_valid = False
+    if not metrics_valid:
+        reject("metrics_protocol_mismatch")
+        return None
+    epoch_metrics = metrics.get("epoch_metrics")
+    if not isinstance(epoch_metrics, list) or len(epoch_metrics) != int(signature["epochs"]):
+        reject("epoch_metrics_mismatch")
+        return None
+
     query_traces = data.get("query_traces", {})
     if not isinstance(query_traces, dict):
-        query_traces = {}
-    return {"metrics": metrics, "rankings": rankings, "query_traces": query_traces}
+        reject("invalid_query_traces")
+        return None
+    if bool(signature.get("write_query_traces")) and {str(query_id) for query_id in query_traces} != expected_ids:
+        reject("query_trace_coverage_mismatch")
+        return None
+    if diagnostics is not None:
+        diagnostics.update({"status": "hit", "reason": "validated"})
+    return {"metrics": metrics, "rankings": normalized_rankings, "query_traces": query_traces}
 
 
 def save_seed_checkpoint(
@@ -1219,6 +1377,7 @@ def save_seed_checkpoint(
     write_query_traces: bool,
 ) -> None:
     payload = {
+        "checkpoint_format_version": CHECKPOINT_FORMAT_VERSION,
         "signature": dict(signature),
         "metrics": result["metrics"],
         "rankings": result["rankings"],
@@ -1384,6 +1543,20 @@ def run_dataset(
         use_embedding_cache=use_embedding_cache,
         force_embedding_cache=force_embedding_cache,
     )
+    corpus_record_fingerprint = dense_baseline.embedding_cache.records_fingerprint(corpus, "corpus")
+    query_record_fingerprint = dense_baseline.embedding_cache.records_fingerprint(queries, "queries")
+    corpus_embedding_fingerprint = large_scale_artifacts.embedding_array_fingerprint(corpus_embeddings)
+    query_embedding_fingerprint = large_scale_artifacts.embedding_array_fingerprint(query_embeddings)
+    code_fingerprint = routing_source_fingerprint()
+    dependency_versions = runtime_dependency_versions()
+    run_metadata.update({
+        "corpus_record_fingerprint": corpus_record_fingerprint,
+        "query_record_fingerprint": query_record_fingerprint,
+        "corpus_embedding_fingerprint": corpus_embedding_fingerprint,
+        "query_embedding_fingerprint": query_embedding_fingerprint,
+        "routing_source_fingerprint": code_fingerprint,
+        "runtime_dependency_versions": dependency_versions,
+    })
 
     max_dense_artifact_depth = max(dense_depth, dense_lite_depth)
     max_bm25_artifact_depth = max(bm25_depth, bm25_lite_depth)
@@ -1410,6 +1583,8 @@ def run_dataset(
                 cache_dir=artifact_dir,
                 batch_size=batch_size,
                 force=force_artifact_cache,
+                corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+                query_embedding_fingerprint=query_embedding_fingerprint,
             )
         else:
             dense_rankings_by_qid = {}
@@ -1439,6 +1614,8 @@ def run_dataset(
                 seed=seed,
                 cache_dir=artifact_dir,
                 force=force_artifact_cache,
+                corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+                query_embedding_fingerprint=query_embedding_fingerprint,
             )
             context_artifacts_by_seed[int(seed)] = artifacts
             context_cache_by_seed[int(seed)] = context_cache
@@ -1456,18 +1633,70 @@ def run_dataset(
                 model_name=model_name,
                 cache_dir=artifact_dir,
                 force=force_artifact_cache,
+                corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+                query_embedding_fingerprint=query_embedding_fingerprint,
             )
     elif cluster_retrieval_engine == "cached_exact_scores":
         raise ValueError("cached_exact_scores requires artifact caching; omit --no-artifact-cache")
+
+    preparation_elapsed_sec = time.perf_counter() - start
+    artifact_hit_flags: List[bool] = []
+    if use_artifact_cache:
+        if max_dense_artifact_depth > 0:
+            artifact_hit_flags.append(bool(dense_ranking_cache.get("cache_hit", False)))
+        if max_bm25_artifact_depth > 0:
+            artifact_hit_flags.append(bool(bm25_ranking_cache.get("cache_hit", False)))
+        artifact_hit_flags.extend(
+            bool(context_cache_by_seed.get(int(seed), {}).get("cache_hit", False))
+            for seed in seeds
+        )
+        if cluster_retrieval_engine == "cached_exact_scores":
+            artifact_hit_flags.append(bool(query_corpus_score_cache.get("cache_hit", False)))
+    if not use_artifact_cache:
+        artifact_cache_state = "disabled"
+    elif not artifact_hit_flags:
+        artifact_cache_state = "no_required_artifacts"
+    elif all(artifact_hit_flags):
+        artifact_cache_state = "all_hit"
+    elif any(artifact_hit_flags):
+        artifact_cache_state = "partial_hit"
+    else:
+        artifact_cache_state = "all_miss"
+
+    expected_query_ids = {_query_id(query) for query in queries}
+    expected_ranking_depths = {min(top_k, len(corpus))}
+    if final_context_policy == "confidence_topk":
+        expected_ranking_depths.update({
+            min(final_context_high_k, top_k, len(corpus)),
+            min(final_context_mid_k, top_k, len(corpus)),
+        })
+    expected_ranking_depths.discard(0)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     metrics_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_metrics.json"
     rankings_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_rankings.json"
     traces_path = output_dir / f"linucb_cost_{artifact_slug}_prequential_traces.json"
     checkpoint_signature_base: Dict[str, object] = {
+        "checkpoint_format_version": CHECKPOINT_FORMAT_VERSION,
+        "routing_source_fingerprint": code_fingerprint,
+        "runtime_dependency_versions": dependency_versions,
         "dataset": dataset,
         "artifact_slug": artifact_slug,
         "model": model_name,
+        "corpus_record_fingerprint": corpus_record_fingerprint,
+        "query_record_fingerprint": query_record_fingerprint,
+        "corpus_embedding_fingerprint": corpus_embedding_fingerprint,
+        "query_embedding_fingerprint": query_embedding_fingerprint,
+        "dense_ranking_artifact_fingerprint": dense_ranking_cache.get("fingerprint", ""),
+        "bm25_ranking_artifact_fingerprint": bm25_ranking_cache.get("fingerprint", ""),
+        "query_corpus_score_artifact_fingerprint": query_corpus_score_cache.get("fingerprint", ""),
+        "dense_ranking_content_fingerprint": dense_ranking_cache.get("content_fingerprint", ""),
+        "bm25_ranking_content_fingerprint": bm25_ranking_cache.get("content_fingerprint", ""),
+        "query_corpus_score_content_fingerprint": query_corpus_score_cache.get("content_fingerprint", ""),
+        "expected_query_count": len(queries),
+        "expected_corpus_count": len(corpus),
+        "expected_num_interactions": len(queries) * epochs,
+        "expected_ranking_depths": sorted(expected_ranking_depths),
         "query_prefix": query_prefix,
         "corpus_prefix": corpus_prefix,
         "feedback_mode": feedback_mode,
@@ -1521,22 +1750,55 @@ def run_dataset(
         "gt_coverage": gt_coverage,
         "write_query_traces": write_query_traces,
         "cluster_retrieval_engine": cluster_retrieval_engine,
+        "scale_store_canonical_name": scale_store_canonical_name if use_scale_store else "",
     }
 
     rows: List[Dict[str, object]] = []
     all_rankings: Dict[str, Dict[str, Dict[str, List[str]]]] = {}
     all_query_traces: Dict[str, Dict[str, Dict[str, Dict[str, object]]]] = {}
     for routing_mode in routing_modes:
+        routing_mode_started = time.perf_counter()
+        checkpoint_hits = 0
+        checkpoint_misses = 0
+        checkpoint_bypassed = 0
+        checkpoint_restore_elapsed_sec = 0.0
+        checkpoint_write_elapsed_sec = 0.0
+        seed_compute_elapsed_sec = 0.0
+        checkpoint_miss_reasons: Dict[str, int] = {}
         seed_results = []
         for seed in seeds:
             signature = {
                 **checkpoint_signature_base,
                 "routing_mode": routing_mode,
                 "seed": int(seed),
+                "context_cluster_artifact_fingerprint": context_cache_by_seed.get(int(seed), {}).get(
+                    "fingerprint", ""
+                ),
+                "context_cluster_content_fingerprint": context_cache_by_seed.get(int(seed), {}).get(
+                    "content_fingerprint", ""
+                ),
             }
             checkpoint_path = seed_checkpoint_path(output_dir, artifact_slug, routing_mode, int(seed))
-            checkpoint_result = load_seed_checkpoint(checkpoint_path, signature) if resume_checkpoints else None
+            checkpoint_result = None
+            if resume_checkpoints:
+                checkpoint_diagnostics: Dict[str, object] = {}
+                checkpoint_restore_started = time.perf_counter()
+                checkpoint_result = load_seed_checkpoint(
+                    checkpoint_path,
+                    signature,
+                    expected_query_ids=expected_query_ids,
+                    expected_ranking_depths=expected_ranking_depths,
+                    diagnostics=checkpoint_diagnostics,
+                )
+                checkpoint_restore_elapsed_sec += time.perf_counter() - checkpoint_restore_started
+                if checkpoint_result is None:
+                    checkpoint_misses += 1
+                    miss_reason = str(checkpoint_diagnostics.get("reason", "unknown"))
+                    checkpoint_miss_reasons[miss_reason] = checkpoint_miss_reasons.get(miss_reason, 0) + 1
+            else:
+                checkpoint_bypassed += 1
             if checkpoint_result is not None:
+                checkpoint_hits += 1
                 print(f"  checkpoint hit: mode={routing_mode} seed={seed}")
                 seed_results.append(checkpoint_result)
                 continue
@@ -1552,6 +1814,7 @@ def run_dataset(
                     "progress": dict(progress),
                 })
 
+            seed_compute_started = time.perf_counter()
             result = run_prequential_seed(
                 corpus,
                 queries,
@@ -1614,12 +1877,15 @@ def run_dataset(
                 query_corpus_scores=query_corpus_scores,
                 progress_callback=write_progress,
             )
+            seed_compute_elapsed_sec += time.perf_counter() - seed_compute_started
+            checkpoint_write_started = time.perf_counter()
             save_seed_checkpoint(
                 checkpoint_path,
                 signature=signature,
                 result=result,
                 write_query_traces=write_query_traces,
             )
+            checkpoint_write_elapsed_sec += time.perf_counter() - checkpoint_write_started
             print(f"  checkpoint wrote: mode={routing_mode} seed={seed} -> {checkpoint_path}")
             write_json_atomic(progress_path, {
                 "status": "completed",
@@ -1627,10 +1893,21 @@ def run_dataset(
                 "checkpoint_path": str(checkpoint_path),
             })
             seed_results.append(result)
+        routing_mode_elapsed_sec = time.perf_counter() - routing_mode_started
         elapsed_sec = time.perf_counter() - start
         per_seed_metrics = [result["metrics"] for result in seed_results]
         representative = per_seed_metrics[0]
         aggregated = aggregate_seed_metrics(per_seed_metrics)
+        if checkpoint_hits == len(seeds):
+            runtime_measurement_class = "checkpoint_restore"
+        elif checkpoint_hits > 0:
+            runtime_measurement_class = "mixed_checkpoint_restore_and_compute"
+        elif artifact_cache_state == "all_hit":
+            runtime_measurement_class = "warm_artifact_cache_compute"
+        elif use_artifact_cache:
+            runtime_measurement_class = "artifact_build_or_partial_cache_compute"
+        else:
+            runtime_measurement_class = "uncached_compute"
         metadata = {
             "dataset": dataset,
             "method": f"linucb_cost_{routing_mode}",
@@ -1726,8 +2003,15 @@ def run_dataset(
             "query_embedding_cache_hit": query_cache.get("cache_hit", False),
             "corpus_embedding_cache_path": corpus_cache.get("embedding_path", ""),
             "query_embedding_cache_path": query_cache.get("embedding_path", ""),
+            "corpus_record_fingerprint": corpus_record_fingerprint,
+            "query_record_fingerprint": query_record_fingerprint,
+            "corpus_embedding_fingerprint": corpus_embedding_fingerprint,
+            "query_embedding_fingerprint": query_embedding_fingerprint,
+            "routing_source_fingerprint": code_fingerprint,
+            "runtime_dependency_versions": dependency_versions,
             "artifact_cache_enabled": bool(use_artifact_cache),
             "artifact_cache_dir": str(artifact_dir) if use_artifact_cache else "",
+            "artifact_cache_state": artifact_cache_state,
             "dense_ranking_cache_hit": dense_ranking_cache.get("cache_hit", False),
             "bm25_ranking_cache_hit": bm25_ranking_cache.get("cache_hit", False),
             "context_cluster_cache_hits": [
@@ -1747,6 +2031,32 @@ def run_dataset(
             ],
             "query_corpus_score_cache_hit": query_corpus_score_cache.get("cache_hit", False),
             "query_corpus_score_artifact_path": query_corpus_score_cache.get("artifact_path", ""),
+            "dense_ranking_artifact_fingerprint": dense_ranking_cache.get("fingerprint", ""),
+            "bm25_ranking_artifact_fingerprint": bm25_ranking_cache.get("fingerprint", ""),
+            "context_cluster_artifact_fingerprints": [
+                context_cache_by_seed.get(int(seed), {}).get("fingerprint", "")
+                for seed in seeds
+            ],
+            "query_corpus_score_artifact_fingerprint": query_corpus_score_cache.get("fingerprint", ""),
+            "dense_ranking_content_fingerprint": dense_ranking_cache.get("content_fingerprint", ""),
+            "bm25_ranking_content_fingerprint": bm25_ranking_cache.get("content_fingerprint", ""),
+            "context_cluster_content_fingerprints": [
+                context_cache_by_seed.get(int(seed), {}).get("content_fingerprint", "")
+                for seed in seeds
+            ],
+            "query_corpus_score_content_fingerprint": query_corpus_score_cache.get("content_fingerprint", ""),
+            "checkpoint_format_version": CHECKPOINT_FORMAT_VERSION,
+            "checkpoint_resume_enabled": bool(resume_checkpoints),
+            "checkpoint_hits": checkpoint_hits,
+            "checkpoint_misses": checkpoint_misses,
+            "checkpoint_bypassed": checkpoint_bypassed,
+            "checkpoint_miss_reasons": checkpoint_miss_reasons,
+            "runtime_measurement_class": runtime_measurement_class,
+            "preparation_elapsed_sec": round(preparation_elapsed_sec, 3),
+            "routing_mode_elapsed_sec": round(routing_mode_elapsed_sec, 3),
+            "seed_compute_elapsed_sec": round(seed_compute_elapsed_sec, 3),
+            "checkpoint_restore_elapsed_sec": round(checkpoint_restore_elapsed_sec, 3),
+            "checkpoint_write_elapsed_sec": round(checkpoint_write_elapsed_sec, 3),
             "artifact_slug": artifact_slug,
             "elapsed_sec": round(elapsed_sec, 3),
             **run_metadata,
@@ -1872,11 +2182,23 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "corpus_embedding_cache_hit",
         "query_embedding_cache_hit",
         "artifact_cache_enabled",
+        "artifact_cache_state",
         "dense_ranking_cache_hit",
         "bm25_ranking_cache_hit",
         "context_cluster_cache_hits",
+        "query_corpus_score_cache_hit",
         "scale_store_enabled",
         "scale_store_selected_rows",
+        "checkpoint_resume_enabled",
+        "checkpoint_hits",
+        "checkpoint_misses",
+        "checkpoint_bypassed",
+        "runtime_measurement_class",
+        "preparation_elapsed_sec",
+        "routing_mode_elapsed_sec",
+        "seed_compute_elapsed_sec",
+        "checkpoint_restore_elapsed_sec",
+        "checkpoint_write_elapsed_sec",
     ]
     preferred_set = set(preferred) | {"elapsed_sec", "notes"}
     metric_keys = sorted({

@@ -32,6 +32,9 @@ bm25_baseline = _load_script_module("bm25_baseline", SCRIPT_DIR / "bm25_baseline
 
 DEFAULT_ARTIFACT_CACHE_DIR = SCRIPT_DIR.parent / "data" / "retrieval_artifacts"
 ARTIFACT_VERSION = "large_scale_artifacts_v1"
+NDARRAY_FINGERPRINT_VERSION = "ndarray_sha256_v1"
+ARTIFACT_CONTENT_FINGERPRINT_VERSION = "logical_content_sha256_v1"
+FINGERPRINT_CHUNK_BYTES = 16 * 1024 * 1024
 
 
 def _record_id(record: Mapping, record_kind: str) -> str:
@@ -108,6 +111,63 @@ def _payload_fingerprint(payload: Mapping[str, object]) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _ndarray_content_fingerprint(array: np.ndarray, *, chunk_rows: int = 4096) -> str:
+    if chunk_rows <= 0:
+        raise ValueError(f"chunk_rows must be positive, got {chunk_rows}")
+    values = np.asarray(array)
+    if values.ndim <= 0:
+        raise ValueError(f"array must have at least one dimension, got shape={values.shape}")
+    if values.dtype.hasobject:
+        raise ValueError("object-dtype arrays cannot be fingerprinted")
+
+    header = {
+        "fingerprint_version": NDARRAY_FINGERPRINT_VERSION,
+        "shape": list(values.shape),
+        "dtype": values.dtype.str,
+    }
+    hasher = hashlib.sha256()
+    hasher.update(json.dumps(header, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+    row_width = int(np.prod(values.shape[1:], dtype=np.int64)) if values.ndim > 1 else 1
+    row_bytes = max(1, row_width * values.dtype.itemsize)
+    effective_chunk_rows = max(1, min(chunk_rows, FINGERPRINT_CHUNK_BYTES // row_bytes))
+    for row_start in range(0, len(values), effective_chunk_rows):
+        row_chunk = np.ascontiguousarray(values[row_start : row_start + effective_chunk_rows])
+        hasher.update(memoryview(row_chunk).cast("B"))
+    return hasher.hexdigest()
+
+
+def embedding_array_fingerprint(array: np.ndarray, *, chunk_rows: int = 4096) -> str:
+    """Hash an embedding array's identity and exact numeric content."""
+    embeddings = np.asarray(array)
+    if embeddings.ndim != 2:
+        raise ValueError(f"embedding array must be two-dimensional, got shape={embeddings.shape}")
+    return _ndarray_content_fingerprint(embeddings, chunk_rows=chunk_rows)
+
+
+def rankings_content_fingerprint(rankings: Mapping[str, Sequence[str]]) -> str:
+    normalized = {
+        str(query_id): [str(chunk_id) for chunk_id in ranking]
+        for query_id, ranking in rankings.items()
+    }
+    encoded = json.dumps(normalized, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    hasher = hashlib.sha256()
+    hasher.update(ARTIFACT_CONTENT_FINGERPRINT_VERSION.encode("utf-8"))
+    hasher.update(encoded)
+    return hasher.hexdigest()
+
+
+def arrays_content_fingerprint(arrays: Mapping[str, np.ndarray]) -> str:
+    payload = {
+        str(name): _ndarray_content_fingerprint(np.asarray(array))
+        for name, array in sorted(arrays.items())
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    hasher = hashlib.sha256()
+    hasher.update(ARTIFACT_CONTENT_FINGERPRINT_VERSION.encode("utf-8"))
+    hasher.update(encoded)
+    return hasher.hexdigest()
+
+
 def _artifact_payload(
     *,
     dataset: str,
@@ -116,8 +176,12 @@ def _artifact_payload(
     queries: Sequence[Mapping],
     model_name: str,
     params: Mapping[str, object],
+    corpus_embedding_fingerprint: str | None = None,
+    query_embedding_fingerprint: str | None = None,
 ) -> Dict[str, object]:
-    return {
+    if (corpus_embedding_fingerprint is None) != (query_embedding_fingerprint is None):
+        raise ValueError("corpus and query embedding fingerprints must be supplied together")
+    payload: Dict[str, object] = {
         "artifact_version": ARTIFACT_VERSION,
         "dataset": dataset,
         "artifact_kind": artifact_kind,
@@ -128,6 +192,13 @@ def _artifact_payload(
         "query_fingerprint": embedding_cache.records_fingerprint(queries, "queries"),
         "params": dict(params),
     }
+    if corpus_embedding_fingerprint is not None:
+        payload.update({
+            "embedding_fingerprint_version": NDARRAY_FINGERPRINT_VERSION,
+            "corpus_embedding_fingerprint": corpus_embedding_fingerprint,
+            "query_embedding_fingerprint": query_embedding_fingerprint,
+        })
+    return payload
 
 
 def _artifact_paths(
@@ -147,17 +218,8 @@ def _artifact_paths(
 
 
 def _valid_metadata(metadata: Mapping, payload: Mapping[str, object], fingerprint: str) -> bool:
-    return (
-        metadata.get("artifact_version") == ARTIFACT_VERSION
-        and metadata.get("fingerprint") == fingerprint
-        and metadata.get("dataset") == payload["dataset"]
-        and metadata.get("artifact_kind") == payload["artifact_kind"]
-        and metadata.get("model_name") == payload["model_name"]
-        and metadata.get("corpus_count") == payload["corpus_count"]
-        and metadata.get("query_count") == payload["query_count"]
-        and metadata.get("corpus_fingerprint") == payload["corpus_fingerprint"]
-        and metadata.get("query_fingerprint") == payload["query_fingerprint"]
-        and metadata.get("params") == payload["params"]
+    return metadata.get("fingerprint") == fingerprint and all(
+        metadata.get(key) == value for key, value in payload.items()
     )
 
 
@@ -178,6 +240,57 @@ def _load_json_rankings(path: Path) -> Dict[str, List[str]]:
     return {str(qid): [str(chunk_id) for chunk_id in ranking] for qid, ranking in data.items()}
 
 
+def _rankings_structurally_valid(
+    rankings: Mapping[str, Sequence[str]],
+    queries: Sequence[Mapping],
+    *,
+    depth: int,
+    require_exact_depth: bool,
+) -> bool:
+    if set(rankings) != {_query_id(query) for query in queries}:
+        return False
+    for ranking in rankings.values():
+        normalized = [str(chunk_id) for chunk_id in ranking]
+        if len(normalized) > depth or (require_exact_depth and len(normalized) != depth):
+            return False
+        if len(set(normalized)) != len(normalized):
+            return False
+    return True
+
+
+def _write_metadata(path: Path, metadata: Mapping[str, object]) -> None:
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    temporary_path.write_text(
+        json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    temporary_path.replace(path)
+
+
+def _verified_content_metadata(
+    metadata: Mapping[str, object],
+    *,
+    content_fingerprint: str,
+    metadata_path: Path,
+    allow_missing_migration: bool = False,
+) -> Dict[str, object] | None:
+    stored = metadata.get("content_fingerprint")
+    if stored is None and allow_missing_migration:
+        migrated = {
+            **metadata,
+            "content_fingerprint_version": ARTIFACT_CONTENT_FINGERPRINT_VERSION,
+            "content_fingerprint": content_fingerprint,
+        }
+        _write_metadata(metadata_path, migrated)
+        return migrated
+    if (
+        metadata.get("content_fingerprint_version") != ARTIFACT_CONTENT_FINGERPRINT_VERSION
+        or stored != content_fingerprint
+    ):
+        return None
+    return dict(metadata)
+
+
 def load_or_compute_dense_rankings(
     corpus: Sequence[Mapping],
     queries: Sequence[Mapping],
@@ -190,6 +303,8 @@ def load_or_compute_dense_rankings(
     cache_dir: Path = DEFAULT_ARTIFACT_CACHE_DIR,
     batch_size: int = 64,
     force: bool = False,
+    corpus_embedding_fingerprint: str | None = None,
+    query_embedding_fingerprint: str | None = None,
 ) -> tuple[Dict[str, List[str]], Dict[str, object]]:
     """Load or compute exact dense top-depth rankings for all selected queries."""
     if depth <= 0:
@@ -202,6 +317,8 @@ def load_or_compute_dense_rankings(
         raise ValueError(f"query embedding rows={len(query_embeddings)} but query rows={len(queries)}")
 
     effective_depth = min(depth, len(corpus))
+    corpus_embedding_fingerprint = corpus_embedding_fingerprint or embedding_array_fingerprint(corpus_embeddings)
+    query_embedding_fingerprint = query_embedding_fingerprint or embedding_array_fingerprint(query_embeddings)
     payload = _artifact_payload(
         dataset=dataset,
         artifact_kind="dense_rankings",
@@ -209,6 +326,8 @@ def load_or_compute_dense_rankings(
         queries=queries,
         model_name=model_name,
         params={"depth": effective_depth, "ranking_engine": "exact_cosine_numpy_lexsort_v1"},
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     fingerprint = _payload_fingerprint(payload)
     ranking_path, metadata_path = _artifact_paths(
@@ -222,9 +341,21 @@ def load_or_compute_dense_rankings(
         with metadata_path.open("r", encoding="utf-8") as f:
             metadata = json.load(f)
         if _valid_metadata(metadata, payload, fingerprint):
-            info = dict(metadata)
-            info["cache_hit"] = True
-            return _load_json_rankings(ranking_path), info
+            cached_rankings = _load_json_rankings(ranking_path)
+            if _rankings_structurally_valid(
+                cached_rankings,
+                queries,
+                depth=effective_depth,
+                require_exact_depth=True,
+            ):
+                info = _verified_content_metadata(
+                    metadata,
+                    content_fingerprint=rankings_content_fingerprint(cached_rankings),
+                    metadata_path=metadata_path,
+                )
+                if info is not None:
+                    info["cache_hit"] = True
+                    return cached_rankings, info
 
     chunk_ids = [_chunk_id(chunk) for chunk in corpus]
     rankings: Dict[str, List[str]] = {}
@@ -242,10 +373,12 @@ def load_or_compute_dense_rankings(
     ranking_path.write_text(json.dumps(rankings, ensure_ascii=False), encoding="utf-8")
     metadata = {
         **_base_metadata(payload, fingerprint, ranking_path, metadata_path),
+        "content_fingerprint_version": ARTIFACT_CONTENT_FINGERPRINT_VERSION,
+        "content_fingerprint": rankings_content_fingerprint(rankings),
         "cache_hit": False,
         "compute_elapsed_sec": round(elapsed_sec, 3),
     }
-    metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _write_metadata(metadata_path, metadata)
     return rankings, metadata
 
 
@@ -365,9 +498,22 @@ def load_or_compute_bm25_rankings(
         with metadata_path.open("r", encoding="utf-8") as f:
             metadata = json.load(f)
         if _valid_metadata(metadata, payload, fingerprint):
-            info = dict(metadata)
-            info["cache_hit"] = True
-            return _load_json_rankings(ranking_path), info
+            cached_rankings = _load_json_rankings(ranking_path)
+            if _rankings_structurally_valid(
+                cached_rankings,
+                queries,
+                depth=effective_depth,
+                require_exact_depth=False,
+            ):
+                info = _verified_content_metadata(
+                    metadata,
+                    content_fingerprint=rankings_content_fingerprint(cached_rankings),
+                    metadata_path=metadata_path,
+                    allow_missing_migration=True,
+                )
+                if info is not None:
+                    info["cache_hit"] = True
+                    return cached_rankings, info
 
     if progress_every <= 0:
         raise ValueError(f"progress_every must be positive, got {progress_every}")
@@ -391,10 +537,12 @@ def load_or_compute_bm25_rankings(
     ranking_path.write_text(json.dumps(rankings, ensure_ascii=False), encoding="utf-8")
     metadata = {
         **_base_metadata(payload, fingerprint, ranking_path, metadata_path),
+        "content_fingerprint_version": ARTIFACT_CONTENT_FINGERPRINT_VERSION,
+        "content_fingerprint": rankings_content_fingerprint(rankings),
         "cache_hit": False,
         "compute_elapsed_sec": round(elapsed_sec, 3),
     }
-    metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _write_metadata(metadata_path, metadata)
     return rankings, metadata
 
 
@@ -409,6 +557,8 @@ def load_or_compute_query_corpus_scores(
     cache_dir: Path = DEFAULT_ARTIFACT_CACHE_DIR,
     force: bool = False,
     progress_every: int = 50,
+    corpus_embedding_fingerprint: str | None = None,
+    query_embedding_fingerprint: str | None = None,
 ) -> tuple[np.ndarray, Dict[str, object]]:
     """Load or compute exact static query-to-corpus dot-product scores.
 
@@ -429,6 +579,8 @@ def load_or_compute_query_corpus_scores(
             f"queries={query_embeddings.shape[1]}"
         )
 
+    corpus_embedding_fingerprint = corpus_embedding_fingerprint or embedding_array_fingerprint(corpus_embeddings)
+    query_embedding_fingerprint = query_embedding_fingerprint or embedding_array_fingerprint(query_embeddings)
     payload = _artifact_payload(
         dataset=dataset,
         artifact_kind="query_corpus_scores",
@@ -436,6 +588,8 @@ def load_or_compute_query_corpus_scores(
         queries=queries,
         model_name=model_name,
         params={"score_engine": "exact_numpy_rowwise_matvec_v1", "dtype": "float32"},
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     fingerprint = _payload_fingerprint(payload)
     scores_path, metadata_path = _artifact_paths(
@@ -452,9 +606,15 @@ def load_or_compute_query_corpus_scores(
         if _valid_metadata(metadata, payload, fingerprint):
             scores = np.load(scores_path, mmap_mode="r")
             if scores.shape == expected_shape and scores.dtype == np.float32:
-                info = dict(metadata)
-                info["cache_hit"] = True
-                return scores, info
+                info = _verified_content_metadata(
+                    metadata,
+                    content_fingerprint=embedding_array_fingerprint(scores),
+                    metadata_path=metadata_path,
+                )
+                if info is not None:
+                    info["cache_hit"] = True
+                    return scores, info
+            del scores
 
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -476,15 +636,18 @@ def load_or_compute_query_corpus_scores(
     del scores
     temporary_path.replace(scores_path)
     elapsed_sec = time.perf_counter() - start
+    persisted_scores = np.load(scores_path, mmap_mode="r")
     metadata = {
         **_base_metadata(payload, fingerprint, scores_path, metadata_path),
+        "content_fingerprint_version": ARTIFACT_CONTENT_FINGERPRINT_VERSION,
+        "content_fingerprint": embedding_array_fingerprint(persisted_scores),
         "cache_hit": False,
         "compute_elapsed_sec": round(elapsed_sec, 3),
         "score_shape": list(expected_shape),
         "dtype": "float32",
     }
-    metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return np.load(scores_path, mmap_mode="r"), metadata
+    _write_metadata(metadata_path, metadata)
+    return persisted_scores, metadata
 
 
 def load_or_compute_context_clusters(
@@ -500,6 +663,8 @@ def load_or_compute_context_clusters(
     seed: int,
     cache_dir: Path = DEFAULT_ARTIFACT_CACHE_DIR,
     force: bool = False,
+    corpus_embedding_fingerprint: str | None = None,
+    query_embedding_fingerprint: str | None = None,
 ) -> tuple[Dict[str, np.ndarray], Dict[str, object]]:
     """Load or compute PCA context vectors plus KMeans cluster labels."""
     if context_dim <= 0:
@@ -511,6 +676,8 @@ def load_or_compute_context_clusters(
     if len(query_embeddings) != len(queries):
         raise ValueError(f"query embedding rows={len(query_embeddings)} but query rows={len(queries)}")
 
+    corpus_embedding_fingerprint = corpus_embedding_fingerprint or embedding_array_fingerprint(corpus_embeddings)
+    query_embedding_fingerprint = query_embedding_fingerprint or embedding_array_fingerprint(query_embeddings)
     payload = _artifact_payload(
         dataset=dataset,
         artifact_kind="context_clusters",
@@ -524,6 +691,8 @@ def load_or_compute_context_clusters(
             "projection_engine": "pca_corpus_fit_v1",
             "cluster_engine": "minibatch_kmeans_v1",
         },
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     fingerprint = _payload_fingerprint(payload)
     arrays_path, metadata_path = _artifact_paths(
@@ -544,9 +713,25 @@ def load_or_compute_context_clusters(
                     "arm_labels": data["arm_labels"].astype(np.int32, copy=False),
                     "centroids": data["centroids"].astype(np.float32, copy=False),
                 }
-            info = dict(metadata)
-            info["cache_hit"] = True
-            return arrays, info
+            arrays_valid = (
+                arrays["corpus_context"].ndim == 2
+                and arrays["query_context"].ndim == 2
+                and arrays["arm_labels"].shape == (len(corpus),)
+                and arrays["centroids"].ndim == 2
+                and len(arrays["corpus_context"]) == len(corpus)
+                and len(arrays["query_context"]) == len(queries)
+                and arrays["corpus_context"].shape[1] == arrays["query_context"].shape[1]
+                and arrays["corpus_context"].shape[1] == arrays["centroids"].shape[1]
+            )
+            if arrays_valid:
+                info = _verified_content_metadata(
+                    metadata,
+                    content_fingerprint=arrays_content_fingerprint(arrays),
+                    metadata_path=metadata_path,
+                )
+                if info is not None:
+                    info["cache_hit"] = True
+                    return arrays, info
 
     start = time.perf_counter()
     _, corpus_context, query_context = _fit_context_projection(
@@ -572,13 +757,20 @@ def load_or_compute_context_clusters(
     )
     metadata = {
         **_base_metadata(payload, fingerprint, arrays_path, metadata_path),
+        "content_fingerprint_version": ARTIFACT_CONTENT_FINGERPRINT_VERSION,
+        "content_fingerprint": arrays_content_fingerprint({
+            "corpus_context": corpus_context,
+            "query_context": query_context,
+            "arm_labels": arm_labels.astype(np.int32, copy=False),
+            "centroids": centroids.astype(np.float32, copy=False),
+        }),
         "cache_hit": False,
         "compute_elapsed_sec": round(elapsed_sec, 3),
         "corpus_context_shape": list(corpus_context.shape),
         "query_context_shape": list(query_context.shape),
         "n_effective_arms": n_effective_arms,
     }
-    metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _write_metadata(metadata_path, metadata)
     return {
         "corpus_context": corpus_context,
         "query_context": query_context,

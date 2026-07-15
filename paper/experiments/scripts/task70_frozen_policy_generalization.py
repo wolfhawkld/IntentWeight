@@ -459,6 +459,8 @@ def load_artifacts(args, corpus, queries, encoder):
         embedding_cache_dir=args.embedding_cache_dir,
         use_embedding_cache=True,
     )
+    corpus_embedding_fingerprint = routing.large_scale_artifacts.embedding_array_fingerprint(corpus_embeddings)
+    query_embedding_fingerprint = routing.large_scale_artifacts.embedding_array_fingerprint(query_embeddings)
     dense_rankings, dense_cache = routing.large_scale_artifacts.load_or_compute_dense_rankings(
         corpus,
         queries,
@@ -469,6 +471,8 @@ def load_artifacts(args, corpus, queries, encoder):
         depth=100,
         cache_dir=args.artifact_cache_dir,
         batch_size=args.batch_size,
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     bm25_rankings, bm25_cache = routing.large_scale_artifacts.load_or_compute_bm25_rankings(
         corpus,
@@ -485,6 +489,8 @@ def load_artifacts(args, corpus, queries, encoder):
         dataset=args.dataset,
         model_name=args.model,
         cache_dir=args.artifact_cache_dir,
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     per_seed = {}
     for seed in args.seeds:
@@ -499,6 +505,8 @@ def load_artifacts(args, corpus, queries, encoder):
             n_clusters=args.n_clusters,
             seed=seed,
             cache_dir=args.artifact_cache_dir,
+            corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+            query_embedding_fingerprint=query_embedding_fingerprint,
         )
         per_seed[seed] = {
             "artifacts": artifacts,

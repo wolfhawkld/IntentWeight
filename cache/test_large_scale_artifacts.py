@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Tests for shared large-scale retrieval artifacts."""
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -85,6 +86,11 @@ class LargeScaleArtifactsTests(unittest.TestCase):
                 depth=2,
                 cache_dir=cache_dir,
             )
+            metadata_path = Path(first_info["metadata_path"])
+            legacy_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            legacy_metadata.pop("content_fingerprint", None)
+            legacy_metadata.pop("content_fingerprint_version", None)
+            metadata_path.write_text(json.dumps(legacy_metadata), encoding="utf-8")
             second, second_info = large_scale_artifacts.load_or_compute_bm25_rankings(
                 self.corpus,
                 self.queries,
@@ -95,6 +101,7 @@ class LargeScaleArtifactsTests(unittest.TestCase):
 
             self.assertFalse(first_info["cache_hit"])
             self.assertTrue(second_info["cache_hit"])
+            self.assertEqual(len(second_info["content_fingerprint"]), 64)
             self.assertEqual(first, second)
             self.assertEqual(first["q_beta"][0], "c_beta")
 
@@ -166,7 +173,81 @@ class LargeScaleArtifactsTests(unittest.TestCase):
             self.assertEqual(first.shape, expected.shape)
             np.testing.assert_array_equal(first, expected)
             np.testing.assert_array_equal(second, expected)
+            self.assertEqual(len(first_info["content_fingerprint"]), 64)
+            self.assertEqual(first_info["content_fingerprint"], second_info["content_fingerprint"])
             self.assertTrue(Path(first_info["artifact_path"]).exists())
+
+    def test_corrupted_query_corpus_score_content_is_recomputed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache_dir = Path(tmp)
+            first, first_info = large_scale_artifacts.load_or_compute_query_corpus_scores(
+                self.corpus,
+                self.queries,
+                self.corpus_embeddings,
+                self.query_embeddings,
+                dataset="toy",
+                model_name="fake-model",
+                cache_dir=cache_dir,
+                progress_every=10,
+            )
+            expected = np.asarray(first).copy()
+            del first
+            corrupted = np.load(first_info["artifact_path"], mmap_mode="r+")
+            corrupted[0, 0] += np.float32(0.25)
+            corrupted.flush()
+            del corrupted
+
+            repaired, repaired_info = large_scale_artifacts.load_or_compute_query_corpus_scores(
+                self.corpus,
+                self.queries,
+                self.corpus_embeddings,
+                self.query_embeddings,
+                dataset="toy",
+                model_name="fake-model",
+                cache_dir=cache_dir,
+                progress_every=10,
+            )
+
+            self.assertFalse(repaired_info["cache_hit"])
+            self.assertEqual(first_info["fingerprint"], repaired_info["fingerprint"])
+            self.assertEqual(first_info["content_fingerprint"], repaired_info["content_fingerprint"])
+            np.testing.assert_array_equal(repaired, expected)
+
+    def test_embedding_content_change_invalidates_artifact_cache(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache_dir = Path(tmp)
+            first, first_info = large_scale_artifacts.load_or_compute_query_corpus_scores(
+                self.corpus,
+                self.queries,
+                self.corpus_embeddings,
+                self.query_embeddings,
+                dataset="toy",
+                model_name="same-model-name",
+                cache_dir=cache_dir,
+                progress_every=10,
+            )
+            changed_corpus_embeddings = self.corpus_embeddings.copy()
+            changed_corpus_embeddings[0, 0] = 0.5
+            second, second_info = large_scale_artifacts.load_or_compute_query_corpus_scores(
+                self.corpus,
+                self.queries,
+                changed_corpus_embeddings,
+                self.query_embeddings,
+                dataset="toy",
+                model_name="same-model-name",
+                cache_dir=cache_dir,
+                progress_every=10,
+            )
+
+            self.assertFalse(first_info["cache_hit"])
+            self.assertFalse(second_info["cache_hit"])
+            self.assertNotEqual(first_info["fingerprint"], second_info["fingerprint"])
+            self.assertNotEqual(
+                first_info["corpus_embedding_fingerprint"],
+                second_info["corpus_embedding_fingerprint"],
+            )
+            self.assertNotEqual(Path(first_info["artifact_path"]), Path(second_info["artifact_path"]))
+            self.assertFalse(np.array_equal(first, second))
 
 
 if __name__ == "__main__":

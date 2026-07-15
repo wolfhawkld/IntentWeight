@@ -167,3 +167,14 @@ after excluding backend/runtime metadata, all per-mode metrics are exactly
 equal. This is direct scale-specific validation of the execution optimization,
 while the completed 596-query/eight-epoch 400k result remains a single-backend
 experiment rather than a duplicated expensive legacy run.
+
+## 2026-07-15 Runtime-Integrity Status
+
+Task72.2 completed the deferred provenance controls in this plan. New
+embedding-dependent artifacts bind exact embedding-array fingerprints;
+checkpoint v2 binds source, inputs, embeddings, artifact identities, and
+expected result structure; and cached random-partition ablations rebuild their
+arm-row indices after shuffling. Runtime output now distinguishes artifact
+preparation, no-checkpoint seed computation, and checkpoint restoration. See
+`task72_2_runtime_integrity_hardening.md` for the implementation and validation
+record.

@@ -155,6 +155,8 @@ def require_artifact_cache(
     params: Mapping[str, Any],
     extension: str,
     cache_dir: Path,
+    corpus_embedding_fingerprint: str | None = None,
+    query_embedding_fingerprint: str | None = None,
 ) -> None:
     payload = artifacts._artifact_payload(
         dataset=dataset,
@@ -163,6 +165,8 @@ def require_artifact_cache(
         queries=queries,
         model_name=model_name,
         params=params,
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     fingerprint = artifacts._payload_fingerprint(payload)
     artifact_path, metadata_path = artifacts._artifact_paths(
@@ -241,6 +245,8 @@ def load_profile_inputs(
     )
     if not corpus_info.get("cache_hit") or not query_info.get("cache_hit"):
         raise RuntimeError("Systems profiling requires existing embedding caches; an unexpected build was attempted")
+    corpus_embedding_fingerprint = artifacts.embedding_array_fingerprint(corpus_embeddings)
+    query_embedding_fingerprint = artifacts.embedding_array_fingerprint(query_embeddings)
 
     dense_depth = 100
     bm25_depth = 100
@@ -255,6 +261,8 @@ def load_profile_inputs(
         params={"depth": dense_depth, "ranking_engine": "exact_cosine_numpy_lexsort_v1"},
         extension="json",
         cache_dir=artifact_cache_dir,
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     require_artifact_cache(
         dataset=dataset,
@@ -281,6 +289,8 @@ def load_profile_inputs(
         },
         extension="npz",
         cache_dir=artifact_cache_dir,
+        corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+        query_embedding_fingerprint=query_embedding_fingerprint,
     )
     if cluster_retrieval_engine == "cached_exact_scores":
         require_artifact_cache(
@@ -292,6 +302,8 @@ def load_profile_inputs(
             params={"score_engine": "exact_numpy_rowwise_matvec_v1", "dtype": "float32"},
             extension="npy",
             cache_dir=artifact_cache_dir,
+            corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+            query_embedding_fingerprint=query_embedding_fingerprint,
         )
 
     dense_rankings, dense_info = timed_load(
@@ -299,6 +311,8 @@ def load_profile_inputs(
         lambda: artifacts.load_or_compute_dense_rankings(
             corpus, queries, corpus_embeddings, query_embeddings,
             dataset=dataset, model_name=model_name, depth=dense_depth, cache_dir=artifact_cache_dir,
+            corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+            query_embedding_fingerprint=query_embedding_fingerprint,
         ),
         load_timings,
     )
@@ -315,6 +329,8 @@ def load_profile_inputs(
             corpus, queries, corpus_embeddings, query_embeddings,
             dataset=dataset, model_name=model_name, context_dim=context_dim,
             n_clusters=n_clusters, seed=seed, cache_dir=artifact_cache_dir,
+            corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+            query_embedding_fingerprint=query_embedding_fingerprint,
         ),
         load_timings,
     )
@@ -330,6 +346,8 @@ def load_profile_inputs(
             lambda: artifacts.load_or_compute_query_corpus_scores(
                 corpus, queries, corpus_embeddings, query_embeddings,
                 dataset=dataset, model_name=model_name, cache_dir=artifact_cache_dir,
+                corpus_embedding_fingerprint=corpus_embedding_fingerprint,
+                query_embedding_fingerprint=query_embedding_fingerprint,
             ),
             load_timings,
         )
