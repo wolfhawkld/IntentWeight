@@ -5,33 +5,34 @@
 # Abstract
 
 Retrieval-augmented systems must balance evidence coverage, noise, and
-language-model context cost. IntentRoute separates this problem into
-feedback-adaptive route control and calibrated context budgeting. Dense, BM25,
-and geometry-defined cluster-local routes generate complementary evidence;
-trust-weighted LinUCB estimates route confidence; and an independently
-calibrated policy sets the final context size. Dense retrieval remains a recall
-floor. A bounded piecewise relevance-manifold hypothesis motivates local route
-construction, with geometry evaluated diagnostically rather than treated as
-proof of relevance.
+language-model context cost. IntentRoute separates feedback-adaptive route
+control from calibrated context budgeting. Dense, BM25, and geometry-defined
+cluster-local routes produce evidence; trust-weighted LinUCB estimates route
+confidence; independent calibration sets final context size; and Dense remains
+a recall floor. A piecewise
+relevance-manifold hypothesis motivates local routes, with geometry treated as
+diagnostic rather than proof of relevance.
 
-We evaluate IntentRoute across seven dataset settings spanning six domain
-areas. The primary scale study uses LoTTE technology/search from 100k to 638k
-chunks. A separate LoTTE science/search study tests cross-domain transfer at
-20k, 100k, and 200k corpus scales; PubMedQA and CovidQA-RAG test biomedical
-transfer under different dense ceilings; Banking77 examines feedback
-adaptation as an intent-routing proxy; and eManual and CUAD expose
-duplicate-text and sparse-ground-truth boundaries. At
-calibration-eligible technology/search operating
-points, IntentRoute reduces final evidence-context tokens by 6-18% while
-preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger
-quality losses of dense-only adaptive truncation. Simulated feedback improves
-or recovers route decisions for a meaningful subset of affected queries. In a
-frozen 300-query technology/search evaluation, matched variants reduce language-model input
+We evaluate nine dataset settings across eight domain areas. LoTTE
+technology/search supplies 100k-638k scale evidence; science/search tests
+domain and scale transfer; preregistered recreation/search and writing/search
+100k studies test domain heterogeneity; and biomedical, banking, manual, and
+legal settings provide transfer, mechanism, and boundary checks. At
+calibration-eligible technology/search points, IntentRoute reduces final
+evidence-context tokens by 6-18% while preserving near-dense query-level
+$\mathrm{Hit@10}$ and avoiding the larger losses of dense-only adaptive
+truncation. On 300 frozen queries, matched variants reduce
 context by 6-12% with no statistically detectable correctness difference
-across three judges, although faithfulness preservation is not uniform across
-embedding backbones. These results support geometry-guided,
-feedback-adaptive route control as a bounded quality-efficiency mechanism, not
-a universal replacement for dense retrieval.
+across three judges, although faithfulness is not uniformly preserved. In the
+preregistered expansion, no-feedback routes save 10.09% with a +0.12pp mean Hit
+change on writing/search, but 5.42% with -0.76pp and 0/3 strict
+non-inferiority seeds on recreation/search; trust-weighted calibration falls
+back to Dense in both. Both retain cluster-local signal, showing domain
+heterogeneity rather than a direct geometry-to-compression guarantee.
+Controlled feedback supports repeated-interaction adaptation and conditional
+recovery, not a universal first-pass gain on unseen queries. These results
+support a bounded quality-efficiency controller, not a universal dense
+replacement.
 
 ---
 
@@ -110,19 +111,23 @@ generator as input tokens, each percentage point of evidence-context reduction
 translates directly into a proportional per-query inference-cost reduction, a
 recurring saving that scales with deployment query volume.
 
-We evaluate IntentRoute across seven dataset settings with deliberately tiered
+We evaluate IntentRoute across nine dataset settings with deliberately tiered
 evidentiary roles. LoTTE technology/search supplies the full-stack,
 large-scale quality-efficiency evaluation from 100k to 638k chunks. A separate
 LoTTE science/search study tests cross-domain transfer at 20k, 100k, and 200k
-corpus scales. PubMedQA and CovidQA-RAG test biomedical evidence-retrieval
+corpus scales. Preregistered LoTTE recreation/search and writing/search 100k
+studies apply the same common protocol to test domain heterogeneity rather than
+to select another favorable replication. PubMedQA and CovidQA-RAG test biomedical evidence-retrieval
 transfer under near-ceiling and more discriminative dense baselines,
 respectively; Banking77 tests feedback adaptation in banking-intent routing;
 and eManual and CUAD expose duplicate-text, strict chunk-identity, and
 sparse-ground-truth boundaries in manual and legal retrieval. We do not pool
 these settings as if their tasks, labels, and evidence strength were
 interchangeable. Instead, LoTTE technology/search anchors the complete
-retrieval-and-budget claim, science/search tests cross-domain transfer, and
-the other datasets test transfer, mechanism, and failure boundaries.
+retrieval-and-budget claim, science/search tests cross-domain and scale
+transfer, recreation/search and writing/search test the heterogeneity of the
+same 100k operating frontier, and the other datasets test transfer, mechanism,
+and failure boundaries.
 
 On LoTTE technology/search, we scale from 100k to 638k corpus chunks and
 compare against dense-only retrieval using
@@ -157,6 +162,9 @@ answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
 under three LLM judges. No judge or shared-key majority finds a statistically
 significant correctness difference, while faithfulness effects remain
 method-dependent. LoTTE science/search provides cross-domain evidence;
+recreation/search and writing/search show that cluster-local route signal can
+persist while independently calibrated token saving and strict seed-level
+non-inferiority remain domain-dependent;
 PubMedQA and CovidQA-RAG provide biomedical transfer checks; Banking77 provides
 an intent-routing feedback check; and eManual and CUAD expose evaluation and
 data-quality boundaries. Together with feedback-driven hard-case recovery,
@@ -176,16 +184,17 @@ The contributions of this paper are:
    rescue masks.
 3. We provide frozen calibration/test evidence from 100k to 638k LoTTE
    technology/search chunks, cross-domain LoTTE science/search replication,
-   matched BGE/E5 backbones, and a tunable BGE quality-first point, separating
-   token reduction from retrieval-quality non-inferiority with paired
-   query-level statistics.
+   preregistered recreation/search and writing/search 100k external-validity
+   tests, matched BGE/E5 backbones, and a tunable BGE quality-first point,
+   separating token reduction from retrieval-quality non-inferiority with
+   paired query-level statistics.
 4. We compare against shared sentence and prompt compression plus
    cross-encoder reranking, showing that IntentRoute is an upstream controller
    that composes with rather than replaces these downstream layers.
 5. We add a 300-query, three-judge answer-level evaluation, controlled
    feedback recovery, PubMedQA and CovidQA-RAG biomedical transfer checks,
    Banking77 mechanism checks, and eManual and CUAD boundary analyses to
-   evaluate the controller across seven dataset settings without conflating
+   evaluate the controller across nine dataset settings without conflating
    their evidentiary roles.
 
 The resulting claim is intentionally bounded. IntentRoute is not presented as
@@ -265,6 +274,15 @@ corrective actions when retrieval confidence is low [@yan2024crag]. These
 methods establish that retrieval behavior should respond to query difficulty,
 generation uncertainty, or evidence quality rather than remain fixed.
 
+Recent work sharpens this distinction between internal and external adaptation
+signals. SeaKR activates retrieval from uncertainty extracted from language
+model internal states [@yao2025seakr], whereas an LLM-independent study compares
+external query features as lightweight retrieval triggers [@marina2025llm].
+These methods primarily decide whether or how to invoke retrieval from a
+single-query signal. IntentRoute instead keeps dense retrieval as a recall
+floor, routes among fixed corpus-local evidence paths, and updates route
+confidence from controlled feedback over repeated interactions.
+
 Contextual bandits provide a natural abstraction for adaptive route control. A
 policy observes a context, selects an action, receives feedback, and updates its
 future decisions. LinUCB is a simple and interpretable contextual bandit
@@ -321,6 +339,14 @@ refines retrieved passages through sentence-level reranking and reconstruction
 [@hwang2024dslr]. REPLUG shows another complementary direction: a frozen
 black-box language model can be paired with a tuneable retrieval model
 [@shi2024replug].
+
+More recent adaptive compressors vary retained context from model attention or
+input complexity rather than applying one fixed compression rate
+[@luo2025attncomp; @guo2025adaptivecompression]. These approaches operate on
+the retrieved context and commonly require an attention-based or hierarchical
+compression component. They are complementary rather than direct replacements
+for IntentRoute's upstream evidence-route selection and independently
+calibrated chunk-budget policy.
 
 IntentRoute operates earlier in the pipeline. It selects evidence routes and
 sets final-context budgets before generation rather than compressing tokens
@@ -439,9 +465,9 @@ rescue cases where the cluster route misses relevant evidence.
 
 ## 3.5 LinUCB Route Policy
 
-For each query $q_t$, IntentRoute computes a context feature vector
-$x_t \in \mathbb{R}^{p}$. Features include query embedding projections, route
-confidence signals, and local geometry signals. For each arm
+For each query $q_t$, IntentRoute computes a controller context vector
+$x_t \in \mathbb{R}^{p}$ by applying a corpus-fitted PCA projection to the
+query embedding and then L2-normalizing the projected vector. For each arm
 $a \in \mathcal{A}$, LinUCB maintains a linear value model:
 
 $$
@@ -461,40 +487,23 @@ The policy selects the top candidate arms by score. The selected arms define
 the cluster-local retrieval path and provide confidence signals for route
 gating and fallback.
 
-### Feature Groups and Route Confidence
+### Controller Context and Route-Gating Signals
 
-The LinUCB context vector is not intended to introduce a new representation
-model. It collects signals that decide whether local routing is reliable for
-the current query. The following summary lists the feature groups used by the
-controller.
+The tested LinUCB context is deliberately narrow: it is the normalized
+PCA-projected query embedding, not a concatenation of dense scores, BM25
+scores, route agreement, feedback summaries, or budget variables. The PCA fit
+uses corpus embeddings only, so query vectors and fixed KMeans arm centroids
+share one controller space.
 
-The feature groups are:
-
-- query representation: normalized query embedding and PCA/context projection,
-  used to place the query on the same local surface as corpus arms;
-- dense confidence: dense score concentration, top-rank margin, and fallback
-  availability, used to estimate whether global dense retrieval is already
-  reliable;
-- lexical confidence: BM25 candidate availability and lexical-match strength,
-  used to protect queries that depend on exact terminology;
-- route agreement: overlap among dense, BM25, and cluster-local candidates,
-  used to detect when independent routes support the same evidence region;
-- local geometry: nearest centroid similarity, selected arm identity, and
-  semantic drift, used to estimate whether the query lies close to selected
-  local arms;
-- feedback state: selected-arm value, pull-count maturity, and recent route
-  reward, used to estimate whether LinUCB has enough evidence to trust the
-  local route;
-- budget state: route confidence tier and fallback status, used by the older
-  conservative `confidence_topk` diagnostic; the main calibrated budget does
-  not map these features to a per-query token ratio.
-
-Route confidence is computed from the selected-arm value estimate, the
-top-versus-rest arm margin, and an arm-maturity term based on feedback count.
-Semantic drift is defined as one minus the nearest selected-centroid similarity.
-Low confidence or high drift keeps the dense fallback active; high confidence
-and low drift can enable a lighter route. Only the conservative diagnostic
-policy additionally uses this tier to reduce context size.
+After LinUCB selects arms from this context, the implementation computes
+policy-derived confidence and centroid-based semantic drift as separate
+route-gating signals. These signals determine whether the system retains the
+full dense/BM25/cluster fusion surface or permits a lighter route with a Dense
+floor. Dense and BM25 rankings are then constructed and fused after the route
+decision; their score concentration, lexical strength, and route overlap are
+not inputs to the tested LinUCB vector. The main calibrated budget remains
+separate from these signals and does not map confidence to a per-query token
+ratio.
 
 ## 3.6 Trust-Weighted Feedback
 
@@ -503,39 +512,43 @@ the trust-weighted mode, each simulated user feedback event is assigned a trust
 weight. Higher-trust feedback contributes more to the arm update and local
 feedback memory. Lower-trust feedback has a weaker effect.
 
-Conceptually:
+For a selected source arm, let $o_{t,a}$ be the observed simulated-feedback
+reward and let $w_{t,a}$ be its trust- and propagation-weighted update weight.
+The tested update is:
 
 $$
 \begin{aligned}
-r_t &= g_t - \lambda c_t, \\
-\tilde{r}_t &= \tau_t r_t, \\
-A_a &\leftarrow A_a + \tau_t x_t x_t^\top, \\
-b_a &\leftarrow b_a + \tilde{r}_t x_t.
+A_a &\leftarrow A_a + w_{t,a} x_t x_t^\top, \\
+b_a &\leftarrow b_a + w_{t,a} o_{t,a} x_t.
 \end{aligned}
 $$
 
-Here, $g_t$ is the retrieval-quality signal, $c_t$ is the cost penalty,
-$\lambda$ controls the quality-cost trade-off, $\tau_t$ is the feedback trust
-weight, and $\tilde{r}_t$ is the weighted reward applied to the selected arm.
+The reward is an evidence-quality signal derived from the selected route or
+the final fused ranking, according to the declared attribution mode. Trust
+weighting changes the update strength, and neighboring arms can receive a
+decayed propagated update. Candidate cost and final-context tokens are measured
+separately; the tested LinUCB reward does not include a $-\lambda c_t$
+cost-penalty term.
 
 The current experiments do not claim that real human feedback was collected.
-They show that under controlled simulated feedback, the route policy can
-self-improve. The strongest feedback evidence is visible in policy metrics such
-as last true reward and selected-cluster hit rate, especially when final
-retrieval quality is already protected by dense and BM25 fallback.
+They evaluate controlled repeated-interaction adaptation and hard-case recovery.
+The strongest feedback evidence is visible in policy metrics such as last true
+reward and selected-cluster hit rate, especially when final retrieval quality is
+already protected by dense and BM25 fallback.
 
 ## 3.7 Route-Level Credit Assignment
 
-Early experiments used final fused retrieval success as the reward signal. This
-can over-credit the selected cluster arm when dense or BM25 rescue the final
-ranking. IntentRoute therefore uses a stricter `cluster_only` reward
-attribution mode in the main policy-learning experiments. The LinUCB arm is
-updated using the quality of its own cluster-local route.
+The implementation supports two attribution modes. `final_fused` assigns reward
+from the final fused ranking, whereas `cluster_only` assigns reward from the
+selected cluster-local route and avoids crediting Dense/BM25 rescue to that arm.
+The common cross-dataset evidence rows and formal frozen-policy audit use
+`final_fused` attribution; `cluster_only` is retained for dedicated
+credit-assignment and mechanism diagnostics. Every result family reports its
+attribution mode in Supplementary Table S29.
 
-This distinction is important. The final fused ranking measures the system
-outcome, while cluster-only reward measures whether LinUCB is learning a better
-route. Dense and BM25 rescue paths protect final quality; cluster-only credit
-assignment tests whether the adaptive component itself is improving.
+This distinction matters because final fused reward measures the system outcome,
+while cluster-only reward isolates the cluster-route component. Neither mode
+allows Dense/BM25 rescue to be omitted from the interpretation of final quality.
 
 ## 3.8 Prequential Adaptation Protocol
 
@@ -557,6 +570,14 @@ from that query. Multi-epoch results are therefore controlled repeated
 interaction studies. They should not be over-interpreted as single-pass
 generalization results.
 
+The separate frozen-policy audit tests this boundary directly: it trains
+policy state on disjoint history folds and ranks held-out queries once with all
+updates frozen. It evaluates transferable route-policy behavior, not
+final-context budgeting. The audit does not establish a learned-feedback
+advantage over matched static-nearest or cold no-feedback full routing, and it
+finds that learned cost-aware gating is unsafe as a frozen first-pass policy in
+the tested domains.
+
 ## 3.9 Final Context Budgeting and Conservative Confidence Baseline
 
 Preliminary token-cost analysis showed that reducing source candidates does not
@@ -565,20 +586,24 @@ confidence-gated routing with an explicit calibrated budget policy, the central
 quality-cost control interface.
 
 Let $R_t$ be the ranking produced by the confidence-gated route surface. A
-calibration policy $\pi_\phi$ selects a token ratio $r \in (0,1]$ and minimum
-prefix $m$. The final context is the longest ranked prefix of at least $m$
-chunks satisfying
+calibration policy $\pi_\phi$ selects a token ratio $r \in (0,1]$ and a
+mandatory ranked prefix size $m$. The final context begins with that prefix,
+then scans the remaining top-10 candidates in rank order and retains a candidate
+only when it fits the residual budget:
 
 $$
 \mathrm{Tokens}(C_t) \le r\,\mathrm{Tokens}(R_t[:10]).
 $$
 
-The policy parameters $\phi$ are selected on calibration queries subject to a
-retrieval-quality eligibility gate and then frozen before held-out test
-evaluation. Geometry and feedback affect route construction, while the stronger
-token saving arises when the separately calibrated length budget acts on the
-routed ranking. The implementation does not learn a direct per-query mapping
-from confidence to token ratio.
+This is an order-preserving budgeted subset with a mandatory prefix. It may skip
+an oversized later chunk and admit a smaller lower-ranked chunk, so it is not
+necessarily a contiguous longest ranked prefix. The policy parameters $\phi$
+are selected on calibration queries subject to a retrieval-quality eligibility
+gate and then frozen before held-out test evaluation. Geometry and feedback
+affect route construction, while the stronger token saving arises when the
+separately calibrated length budget acts on the routed ranking. The
+implementation does not learn a direct per-query mapping from confidence to
+token ratio.
 
 The conservative `confidence_topk` policy works as follows:
 
@@ -636,7 +661,7 @@ ranking is produced before feedback is observed.
 
 Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 
-1. Embed $q_t$ and compute context features $x_t$.
+1. Embed $q_t$ and form the normalized PCA controller context $x_t$.
 2. Score cluster arms with LinUCB using $s_t(a)$.
 3. Retrieve candidates from the global dense route, the global BM25 route, and
    dense search within selected cluster arms.
@@ -647,17 +672,19 @@ Input: query $q_t$, corpus $D$, route artifacts, and the current LinUCB state.
 7. Only after evaluation, convert the ground-truth label into simulated
    feedback and update LinUCB for later queries.
 8. If the interaction is a post-feedback retry or a later query in a risky
-   local region, use the updated arm state to choose a safer context budget or
-   fallback path.
+   local region, use the updated arm state to choose a safer route or fallback
+   path; final-context budgeting remains independently calibrated.
 
 Output: final retrieved context $C_t$ and updated policy state.
 
 ## 3.12 Reproducibility Parameters
 
-The main configuration uses 32 fixed KMeans/MiniBatchKMeans arms, three
-candidate arms per query, a 64-dimensional context projection,
-$\alpha=1.0$, and three prequential epochs unless otherwise stated. The
-calibration grid covers $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
+The common cross-dataset evidence protocol uses 32 fixed KMeans/MiniBatchKMeans arms,
+three candidate arms per query, a 64-dimensional context projection,
+$\alpha=1.0$, and eight prequential epochs. Earlier mechanism diagnostics may
+use other epoch counts and attribution modes; Supplementary Table S29 records
+those result-family differences. The calibration grid covers
+$r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
 $m \in \{4,\ldots,8\}$. Supplementary Section S12 reports the complete route
 depths, safety floors, fusion weights, confidence thresholds, decay, and trust
 parameters; scale-specific cache paths and dataset sizes remain in the tracked
@@ -675,10 +702,11 @@ evaluation.
 
 ## 4.1 Datasets
 
-The experiments cover seven dataset settings across six domain areas:
-technology, science, biomedical QA, banking intents, product manuals, and legal
-contracts. They have different tasks, ground-truth semantics, and evidentiary
-roles, so we do not treat them as equal support for the main claim:
+The experiments cover nine dataset settings across eight domain areas:
+technology, science, recreation, writing, biomedical QA, banking intents,
+product manuals, and legal contracts. They have different tasks, ground-truth
+semantics, and evidentiary roles, so we do not treat them as equal support for
+the main claim:
 
 - **LoTTE technology/search** is the main large-scale vertical-domain evidence
   benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
@@ -687,6 +715,11 @@ roles, so we do not treat them as equal support for the main claim:
   whether ranking and context-budget behavior transfer beyond technology/search
   at 20k/q200, 100k, 200k, and 400k scales. The 400k row is retained as a
   scale boundary rather than a lossless-compression replication.
+- **LoTTE recreation/search and writing/search** are preregistered 100k
+  external-validity tests with 924 and 1,071 positive-qrel queries,
+  respectively. Both use the full common protocol and remain in the analysis
+  after the preregistered lexicality ordering is contradicted by the measured
+  query-positive overlap.
 - **PubMedQA and CovidQA-RAG** are biomedical transfer checks. PubMedQA is an
   evidence-retrieval proof-of-concept with abstract-level ground truth and a
   near-ceiling dense baseline; CovidQA-RAG is a more discriminative native-full
@@ -699,11 +732,12 @@ roles, so we do not treat them as equal support for the main claim:
 This hierarchy separates full-stack evidence, cross-domain transfer, mechanism
 transfer, and boundary analysis. The complete quality-efficiency claim is
 anchored in LoTTE technology/search, science/search tests domain transfer, and
-the secondary datasets test whether feedback behavior transfers, whether a
-biomedical evidence-retrieval transfer row remains discriminative, or where
-corpus duplication and sparse labels limit inference.
+recreation/search and writing/search test domain heterogeneity under a matched
+100k protocol. The secondary datasets test whether feedback behavior transfers,
+whether a biomedical evidence-retrieval transfer row remains discriminative,
+or where corpus duplication and sparse labels limit inference.
 
-Supplementary Table S29 registers the dataset/query scope, route-feedback
+The supplementary protocol registry records the dataset/query scope, route-feedback
 protocol, context-budget endpoint, and evidentiary role for each result family.
 It distinguishes the common evidence-retrieval protocol from the Banking77
 intent proxy, the CUAD sparse-GT boundary, and historical fixed-split
@@ -906,7 +940,16 @@ effect without additional deployment safeguards.
 
 Some experiments use multiple prequential epochs over the same query stream to
 simulate repeated interaction. These runs are useful for route-policy
-self-evolution analysis. They are not IID held-out generalization results.
+adaptation analysis. They are not IID held-out generalization results.
+
+The formal frozen-policy audit makes the complementary first-pass boundary
+explicit. It trains route state on four disjoint query folds, freezes policy and
+feedback memory, and ranks the fifth fold once without held-out updates. Across
+LoTTE technology/search and science/search 100k, learned full routing remains
+near or above Dense but does not exceed matched static-nearest or cold
+no-feedback full routing; learned gating is significantly below Dense in all
+three route seeds. This audit is retrieval-only and does not evaluate
+final-context token saving or answer quality.
 
 ## 4.6 Implementation Notes
 
@@ -962,9 +1005,31 @@ as a strict calibration-eligible main operating point.
 Frozen test results are paired by query against dense top-10. We report
 bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context
 token savings where available, and use a 1 percentage-point non-inferiority
-margin for strict seed-level checks. This separates two claims: whether the
-method preserves retrieval quality under a conservative paired criterion, and
-whether it reduces the final evidence-context tokens sent to the generator.
+margin as a strict seed-level engineering guardrail. On the original 417-query
+frozen test split, one percentage point corresponds to roughly four query-hit
+outcomes; on the 596-query out-of-fold population, it corresponds to roughly
+six. Passing this diagnostic is not treated as formal equivalence, and failing
+it does not erase the descriptive paired result. This separates two claims:
+whether the method preserves retrieval quality under a conservative paired
+criterion, and whether it reduces the final evidence-context tokens sent to
+the generator.
+
+The frozen calibration/test comparisons and the normalized five-fold scale
+results are the primary evidence families. Fine-grid action selection,
+overlapping-partition sensitivity, same-saving interpolation, arm-count and
+geometry controls, feedback recovery, transfer datasets, and multi-judge
+analysis are mechanism, robustness, or boundary analyses. We report their
+paired statistics where available, but do not pool heterogeneous conditions or
+use an unadjusted cross-condition $p$-value to assert a global superiority
+claim. They are interpreted conditionally and labeled accordingly.
+
+The preregistered domain expansion applies the normalized five-fold protocol to all
+924 recreation/search and 1,071 writing/search positive-qrel queries. Each
+domain uses the same MiniLM backbone, $K=32$, route seeds 13/17/19, eight
+prequential epochs, fixed top-10 endpoint, predefined budget grid, zero-drop
+eligibility gate, Dense fallback, paired bootstrap, McNemar analysis, and 1pp
+seed-level non-inferiority guardrail. The domains are calibrated and reported
+separately; no cross-domain pooled effect is computed.
 
 Two additional audits test selection robustness. First, Dense and IntentRoute
 independently select actions on the same 100k calibration split over a fine
@@ -1118,6 +1183,17 @@ science/search 100k settings, but
 the stricter calibration-to-test effect is small and domain-dependent.
 Supplementary Sections S9 and S11 contain the full recovery and control tables.
 
+The formal frozen-policy audit separates this repeated-interaction evidence from
+first-pass transfer to unseen queries. Across five folds and seeds 13/17/19,
+learned full routing is above Dense on average in technology/search 100k
+(+1.17pp) and science/search 100k (+0.78pp), but it does not exceed matched
+cold no-feedback full routing (-0.11pp and -0.39pp) or static-nearest full
+routing (+0.28pp and -0.56pp); no such paired comparison is significant across
+all seeds. Learned gated routing is instead significantly below Dense by 4.08pp
+and 5.59pp in the two domains. Thus, the full rescue surface transfers, whereas
+controlled feedback is supported as repeated-query adaptation and conditional
+recovery rather than a universal frozen first-pass improvement.
+
 A frozen-trajectory route replay further isolates the confidence gate. Keeping
 the selected arms and feedback state fixed, the original query-to-tier
 assignment exceeds a shuffled-tier control with identical tier frequencies by
@@ -1175,9 +1251,27 @@ IntentRoute $\mathrm{Hit@10}$ deltas are -0.11pp, -0.67pp, and -0.67pp, with
 1pp non-inferiority is `0/3` seeds at every scale. At 400k, only one of five
 folds selects a compressed policy. Its recovery replay has only 3-6
 budget-induced affected queries per seed, so it closes a protocol endpoint but
-does not overturn the scale-boundary interpretation. Supplementary Table S29
-records the matched protocol and evidence roles without pooling these rows into
+does not overturn the scale-boundary interpretation. The supplementary protocol
+registry records the matched protocol and evidence roles without pooling these rows into
 the technology/search headline.
+
+The preregistered recreation/search and writing/search 100k expansion tests
+whether this heterogeneity persists under a matched protocol. Both domains
+show usable static cluster-local signal: $\mathrm{NearestClusterHit@3}$ is
+0.8366 on recreation/search and 0.8655 on writing/search. Their independently
+calibrated no-feedback frontiers differ. Recreation/search selects compression
+in four of five folds, with a -0.76pp mean $\mathrm{Hit@10}$ change, 5.42%
+token saving, and strict 1pp non-inferiority in 0/3 seeds. Writing/search
+selects compression in all five folds, with a +0.12pp mean Hit change, 10.09%
+saving, and strict non-inferiority in 2/3 seeds. Trust-weighted calibration
+selects no compressed fold in either domain and therefore uses Dense fallback.
+The preregistered assumption that recreation/search was more lexical is
+directionally reversed by measured query-positive overlap, so it is not used
+to explain the frontier contrast. Supplementary Table S30 reports the matched
+domain and controller rows. The result extends the geometry and
+quality-context evidence beyond technology/science while establishing domain
+heterogeneity, not universal strict non-inferiority or a direct
+geometry-to-compression causal link.
 
 The supporting transfer checks cover different retrieval abstractions and dense
 ceilings. On PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while
@@ -1282,18 +1376,26 @@ point estimates, and the three-judge majority detects a BGE faithfulness
 decrease, so the result does not establish uniform answer-quality
 non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
+The preregistered recreation/search and writing/search expansion sharpens this
+boundary: both domains retain cluster-local route signal, but only
+writing/search supplies a useful 10.09% cross-fitted saving point with a
+slightly positive mean Hit change, and even that point passes the strict
+seed-level guardrail in only 2/3 seeds. Recreation/search is a weaker boundary,
+and trust-weighted calibration safely falls back to Dense in both domains.
 
-The broader seven-setting evaluation adds three distinct forms of external
-evidence. PubMedQA shows that trust-weighted route adaptation is observable in
-biomedical evidence retrieval near a dense ceiling, while CovidQA-RAG provides
-a more discriminative biomedical transfer row with measurable final-context
-savings and a small mean hit loss under the strict cross-fitted budget. Banking77
-shows analogous feedback behavior in an intent-routing proxy. eManual and CUAD
-expose how duplicated evidence, strict chunk identifiers, and sparse
-ground-truth anchors can dominate measured retrieval quality. These results do
-not form a pooled cross-dataset score. Instead, they separate the controller's
-full-stack LoTTE evidence from transfer, mechanism, and benchmark-boundary
-evidence.
+The broader nine-setting evaluation keeps external-validity, mechanism, and
+benchmark-boundary evidence separate. Recreation/search and writing/search map
+heterogeneity under the complete 100k common protocol. PubMedQA shows that
+trust-weighted route adaptation is observable in biomedical evidence retrieval
+near a dense ceiling, while CovidQA-RAG provides a more discriminative
+biomedical transfer row with measurable final-context savings and a small mean
+hit loss under the strict cross-fitted budget. Banking77 shows analogous
+feedback behavior in an intent-routing proxy. eManual and CUAD expose how
+duplicated evidence, strict chunk identifiers, and sparse ground-truth anchors
+can dominate measured retrieval quality. These results do not form a pooled
+cross-dataset score or nine equivalent replications. Instead, they separate the
+controller's full-stack LoTTE evidence from transfer, mechanism, and
+benchmark-boundary evidence.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. IntentRoute's value
@@ -1324,6 +1426,13 @@ select a compressed action in any fold at any tested scale, whereas
 IntentRoute selects one in every 200k, 400k, and 638k fold. This is evidence of
 calibration headroom created by the routed evidence ranking, not evidence that
 all route policies or partitions are safe.
+
+The additional 100k domains make the same distinction operational. The
+no-feedback writing/search route admits compression in all folds, whereas
+recreation/search does so in four and the trust-weighted controller does so in
+none. A Dense fallback is therefore a valid calibrated outcome, not a missing
+result; route signal and a safe budget frontier must be established separately
+for each domain.
 
 ## 6.3 Reranking and Final-Context Control
 
@@ -1384,9 +1493,11 @@ budgeting.
 
 The geometry diagnostics support a piecewise relevance-manifold framing.
 $\mathrm{NearestClusterHit@3}$ remains high across LoTTE technology/search scales, and local
-geometry provides useful routing information. However, context retention
-declines with scale, and geometry alone is not a complete retrieval model. If a
-cluster route prunes too early, correct evidence can be lost.
+geometry provides useful routing information. The added recreation/search and
+writing/search domains likewise reach 0.8366 and 0.8655, respectively. However,
+context retention and calibrated savings vary by scale and domain, and geometry
+alone is not a complete retrieval model. If a cluster route prunes too early,
+correct evidence can be lost.
 
 IntentRoute therefore uses geometry as one signal in a controller. Dense
 retrieval remains a fallback, BM25 provides lexical anchors, and LinUCB learns
@@ -1477,6 +1588,14 @@ shows that feedback can repair a meaningful fraction of affected queries when
 the evidence remains reachable through the candidate pool and arm structure; it
 does not imply universal recovery.
 
+The formal frozen-policy audit reinforces this boundary. After route state is
+trained on disjoint history folds and then frozen, learned full routing does not
+outperform matched static-nearest or cold no-feedback full routing on unseen
+queries in either tested LoTTE domain. Learned gating is significantly below
+Dense in all three seeds of both domains. Feedback is therefore supported as a
+controlled repeated-interaction and recovery mechanism, not as a demonstrated
+universal first-pass gain on arbitrary unseen queries.
+
 ## 7.2 Limited Generation Evaluation
 
 The downstream evaluation expands to 300 frozen-test queries, seven methods,
@@ -1534,18 +1653,36 @@ remain heterogeneous and the selected policy changes in every 400k fold. It
 therefore reduces the missing-calibration concern without establishing
 split-invariant deployment behavior.
 
+The preregistered 100k domain expansion confirms that this is not only a scale
+effect. Writing/search yields a useful no-feedback frontier at 10.09% mean
+saving and +0.12pp mean Hit change, but strict non-inferiority holds in only
+2/3 seeds. Recreation/search yields 5.42% saving at -0.76pp and 0/3 strict
+non-inferiority seeds. Trust-weighted calibration falls back to Dense in every
+fold in both domains. These rows support domain-dependent calibrated operating
+points, not a universal quality-preserving token-saving guarantee.
+
 The route stability checks use the fixed seeds 13, 17, and 19 as engineering
 replicates; query-level paired tests provide the main inferential evidence. The
 400k seed-level saving interval remains wider than at other scales, and the
 cross-fitted follow-up establishes strict non-inferiority in 0/3 seeds.
+
+The fixed `1pp` threshold is a conservative engineering guardrail for the
+headline hit event, not a formal equivalence theorem: it represents only about
+four original-split or six out-of-fold query-hit outcomes. The paper also
+contains multiple scales, controls, backbones, datasets, and judges. These
+analyses map heterogeneity and mechanism boundaries rather than form an IID
+replication pool, so secondary $p$-values are not used to support a global
+superiority conclusion or mechanically aggregated into one claim.
 
 ## 7.6 Geometry and Fixed-Arm Scope
 
 The piecewise relevance-manifold framing is supported by diagnostics such as
 $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These
 diagnostics do not prove a mathematical manifold theorem. They show that local
-geometry is informative for routing on LoTTE, while dense retrieval remains
-necessary.
+geometry is informative for routing across the tested LoTTE domains, while
+dense retrieval remains necessary. In particular, the strong cluster-local
+signals in recreation/search and writing/search coexist with different budget
+outcomes, so geometry is not a direct compression-safety predictor.
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and
 the experiments need reproducible, scalable arms. This is not a claim that
@@ -1564,15 +1701,17 @@ but it does not cover domain-specific encoders, late-interaction models, or
 proprietary embedding systems. The above-dense quality-first point is currently
 demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
-The study spans seven dataset settings, but only LoTTE technology/search
+The study spans nine dataset settings, but only LoTTE technology/search
 receives the complete multi-scale, matched-baseline, calibration/test, and
 downstream-generation protocol. LoTTE science/search strengthens cross-domain
-validity; PubMedQA and CovidQA-RAG test biomedical evidence-retrieval transfer
+and scale validity; recreation/search and writing/search add complete 100k
+common-protocol retrieval and budget rows but no multi-scale or generated-answer
+evaluation. PubMedQA and CovidQA-RAG test biomedical evidence-retrieval transfer
 under different dense ceilings; Banking77 tests feedback adaptation as an
 intent-routing proxy; and eManual and CUAD expose benchmark boundaries. This
-breadth should not be interpreted as seven independent full-stack
-replications. More complete repeated evaluations on additional vertical
-corpora remain necessary.
+breadth should not be interpreted as nine independent full-stack replications.
+More complete repeated evaluations on additional vertical corpora remain
+necessary.
 
 ## 7.8 Future Work
 
@@ -1604,7 +1743,7 @@ geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
 policy separately controls the final evidence-context budget.
 
-The evaluation spans seven dataset settings with different evidentiary roles.
+The evaluation spans nine dataset settings with different evidentiary roles.
 The main full-stack evidence comes from LoTTE technology/search at 100k to 638k
 corpus chunks. Under calibration/test budget selection, calibration-eligible operating
 points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
@@ -1627,9 +1766,20 @@ tunability. A 300-query evaluation with three LLM judges finds approximately
 change, while exposing method-dependent faithfulness effects and retaining the
 lack of strict answer-level non-inferiority.
 LoTTE science/search provides cross-domain ranking support with a clear
-compression-calibration boundary. Hard-case recovery experiments further show
+compression-calibration boundary. A preregistered recreation/search and
+writing/search expansion finds usable cluster-local route signal in both
+domains but different calibrated frontiers: writing/search saves 10.09% tokens
+with a +0.12pp mean Hit change and 2/3 strict non-inferiority seeds, whereas
+recreation/search saves 5.42% at -0.76pp and 0/3 strict seeds; trust-weighted
+calibration falls back to Dense in both. This supports domain-dependent
+external validity without turning geometry into a direct compression guarantee
+or claiming universal strict non-inferiority. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
-aggressive context compression.
+aggressive context compression. A formal frozen-policy audit separates this
+result from first-pass unseen-query transfer: learned full routing remains near
+Dense but does not exceed matched static or cold full controls, while learned
+gating is unsafe in the two tested domains. Feedback is consequently interpreted
+as controlled repeated-query adaptation and conditional recovery.
 PubMedQA and CovidQA-RAG extend the evidence-retrieval transfer checks to
 biomedical QA under near-ceiling and more discriminative dense baselines,
 respectively; Banking77 extends the feedback-adaptation check to

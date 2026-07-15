@@ -73,19 +73,23 @@ generator as input tokens, each percentage point of evidence-context reduction
 translates directly into a proportional per-query inference-cost reduction, a
 recurring saving that scales with deployment query volume.
 
-We evaluate IntentRoute across seven dataset settings with deliberately tiered
+We evaluate IntentRoute across nine dataset settings with deliberately tiered
 evidentiary roles. LoTTE technology/search supplies the full-stack,
 large-scale quality-efficiency evaluation from 100k to 638k chunks. A separate
 LoTTE science/search study tests cross-domain transfer at 20k, 100k, and 200k
-corpus scales. PubMedQA and CovidQA-RAG test biomedical evidence-retrieval
+corpus scales. Preregistered LoTTE recreation/search and writing/search 100k
+studies apply the same common protocol to test domain heterogeneity rather than
+to select another favorable replication. PubMedQA and CovidQA-RAG test biomedical evidence-retrieval
 transfer under near-ceiling and more discriminative dense baselines,
 respectively; Banking77 tests feedback adaptation in banking-intent routing;
 and eManual and CUAD expose duplicate-text, strict chunk-identity, and
 sparse-ground-truth boundaries in manual and legal retrieval. We do not pool
 these settings as if their tasks, labels, and evidence strength were
 interchangeable. Instead, LoTTE technology/search anchors the complete
-retrieval-and-budget claim, science/search tests cross-domain transfer, and
-the other datasets test transfer, mechanism, and failure boundaries.
+retrieval-and-budget claim, science/search tests cross-domain and scale
+transfer, recreation/search and writing/search test the heterogeneity of the
+same 100k operating frontier, and the other datasets test transfer, mechanism,
+and failure boundaries.
 
 On LoTTE technology/search, we scale from 100k to 638k corpus chunks and
 compare against dense-only retrieval using
@@ -120,6 +124,9 @@ answer-level evaluation finally compares matched BGE, E5, and SentMMR pipelines
 under three LLM judges. No judge or shared-key majority finds a statistically
 significant correctness difference, while faithfulness effects remain
 method-dependent. LoTTE science/search provides cross-domain evidence;
+recreation/search and writing/search show that cluster-local route signal can
+persist while independently calibrated token saving and strict seed-level
+non-inferiority remain domain-dependent;
 PubMedQA and CovidQA-RAG provide biomedical transfer checks; Banking77 provides
 an intent-routing feedback check; and eManual and CUAD expose evaluation and
 data-quality boundaries. Together with feedback-driven hard-case recovery,
@@ -139,16 +146,17 @@ The contributions of this paper are:
    rescue masks.
 3. We provide frozen calibration/test evidence from 100k to 638k LoTTE
    technology/search chunks, cross-domain LoTTE science/search replication,
-   matched BGE/E5 backbones, and a tunable BGE quality-first point, separating
-   token reduction from retrieval-quality non-inferiority with paired
-   query-level statistics.
+   preregistered recreation/search and writing/search 100k external-validity
+   tests, matched BGE/E5 backbones, and a tunable BGE quality-first point,
+   separating token reduction from retrieval-quality non-inferiority with
+   paired query-level statistics.
 4. We compare against shared sentence and prompt compression plus
    cross-encoder reranking, showing that IntentRoute is an upstream controller
    that composes with rather than replaces these downstream layers.
 5. We add a 300-query, three-judge answer-level evaluation, controlled
    feedback recovery, PubMedQA and CovidQA-RAG biomedical transfer checks,
    Banking77 mechanism checks, and eManual and CUAD boundary analyses to
-   evaluate the controller across seven dataset settings without conflating
+   evaluate the controller across nine dataset settings without conflating
    their evidentiary roles.
 
 The resulting claim is intentionally bounded. IntentRoute is not presented as

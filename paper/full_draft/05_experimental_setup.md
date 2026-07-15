@@ -2,10 +2,11 @@
 
 ## 4.1 Datasets
 
-The experiments cover seven dataset settings across six domain areas:
-technology, science, biomedical QA, banking intents, product manuals, and legal
-contracts. They have different tasks, ground-truth semantics, and evidentiary
-roles, so we do not treat them as equal support for the main claim:
+The experiments cover nine dataset settings across eight domain areas:
+technology, science, recreation, writing, biomedical QA, banking intents,
+product manuals, and legal contracts. They have different tasks, ground-truth
+semantics, and evidentiary roles, so we do not treat them as equal support for
+the main claim:
 
 - **LoTTE technology/search** is the main large-scale vertical-domain evidence
   benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
@@ -14,6 +15,11 @@ roles, so we do not treat them as equal support for the main claim:
   whether ranking and context-budget behavior transfer beyond technology/search
   at 20k/q200, 100k, 200k, and 400k scales. The 400k row is retained as a
   scale boundary rather than a lossless-compression replication.
+- **LoTTE recreation/search and writing/search** are preregistered 100k
+  external-validity tests with 924 and 1,071 positive-qrel queries,
+  respectively. Both use the full common protocol and remain in the analysis
+  after the preregistered lexicality ordering is contradicted by the measured
+  query-positive overlap.
 - **PubMedQA and CovidQA-RAG** are biomedical transfer checks. PubMedQA is an
   evidence-retrieval proof-of-concept with abstract-level ground truth and a
   near-ceiling dense baseline; CovidQA-RAG is a more discriminative native-full
@@ -26,9 +32,10 @@ roles, so we do not treat them as equal support for the main claim:
 This hierarchy separates full-stack evidence, cross-domain transfer, mechanism
 transfer, and boundary analysis. The complete quality-efficiency claim is
 anchored in LoTTE technology/search, science/search tests domain transfer, and
-the secondary datasets test whether feedback behavior transfers, whether a
-biomedical evidence-retrieval transfer row remains discriminative, or where
-corpus duplication and sparse labels limit inference.
+recreation/search and writing/search test domain heterogeneity under a matched
+100k protocol. The secondary datasets test whether feedback behavior transfers,
+whether a biomedical evidence-retrieval transfer row remains discriminative,
+or where corpus duplication and sparse labels limit inference.
 
 The supplementary protocol registry records the dataset/query scope, route-feedback
 protocol, context-budget endpoint, and evidentiary role for each result family.
@@ -315,6 +322,14 @@ analysis are mechanism, robustness, or boundary analyses. We report their
 paired statistics where available, but do not pool heterogeneous conditions or
 use an unadjusted cross-condition $p$-value to assert a global superiority
 claim. They are interpreted conditionally and labeled accordingly.
+
+The preregistered domain expansion applies the normalized five-fold protocol to all
+924 recreation/search and 1,071 writing/search positive-qrel queries. Each
+domain uses the same MiniLM backbone, $K=32$, route seeds 13/17/19, eight
+prequential epochs, fixed top-10 endpoint, predefined budget grid, zero-drop
+eligibility gate, Dense fallback, paired bootstrap, McNemar analysis, and 1pp
+seed-level non-inferiority guardrail. The domains are calibrated and reported
+separately; no cross-domain pooled effect is computed.
 
 Two additional audits test selection robustness. First, Dense and IntentRoute
 independently select actions on the same 100k calibration split over a fine

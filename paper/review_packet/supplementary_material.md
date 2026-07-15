@@ -396,6 +396,24 @@ The held-out effect is small and domain-dependent. Feedback should therefore be
 used as a controlled fallback trigger rather than as unconditional global
 reranking.
 
+### S9.1 Frozen Unseen-Query Policy Audit
+
+The formal frozen-policy audit trains learned route state on four disjoint canonical folds for eight
+prequential epochs, freezes policy matrices, feedback memory, route statistics,
+and reward history, then ranks the fifth fold once with zero held-out feedback
+updates. This retrieval-only audit covers 596 queries per domain, five folds,
+and seeds 13/17/19.
+
+On technology/search 100k, learned full routing reaches
+$\mathrm{Hit@10}=0.8792$ versus 0.8674 for Dense, but is 0.11pp below cold
+no-feedback full routing and has no significant paired advantage over
+static-nearest full routing. On science/search 100k, learned full routing
+reaches 0.9004 versus 0.8926 for Dense, but is 0.39pp below cold no-feedback
+full and 0.56pp below static-nearest full. Learned gated routing is significantly
+below Dense in all seeds in both domains (-4.08pp and -5.59pp mean deltas).
+The audit therefore supports transfer of the full Dense/BM25-rescued route
+surface, not a universal first-pass advantage of learned simulated feedback.
+
 ## S10. Strong Post-Retrieval Baselines
 
 These baselines test whether simpler post-retrieval operations explain the
@@ -613,10 +631,49 @@ The following rules apply when migrating the draft into a submission template:
 | LoTTE technology/search scale anchor | 100k--638k nested corpora; 596 canonical queries (417 in the original frozen split; 596 in OOF) | MiniLM, top-10, K=32, seeds 13/17/19; frozen scale-route artifacts | Original 30/70 calibration/test plus normalized five-fold OOF; paired bootstrap, McNemar, and 1pp NI | Main scale evidence; original and OOF results are reported separately |
 | LoTTE science/search diagnostic | 20k/q200; 200 sampled queries | Historical MiniLM fixed-split route study | Fixed 30/70 calibration/test | Legacy cross-domain ranking and budget diagnostic; not pooled with OOF rows |
 | LoTTE science/search common rows | 100k, 200k, 400k; 596 queries per scale | MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused simulated feedback with no-feedback control | Five-fold OOF zero-drop budget selection, Dense fallback, paired bootstrap, McNemar, 1pp NI, and recovery replay | Cross-domain evidence; 400k is a weak scale boundary (1/5 eligible folds) |
+| LoTTE recreation/search and writing/search expansion | 100,714/924 and 100,696/1,071 corpus/query pairs | MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; trust-weighted and no-feedback controls | Five-fold OOF zero-drop budget selection, Dense fallback, paired bootstrap, McNemar, 1pp NI, geometry diagnostics, and post-failure recovery | Preregistered 100k external-validity test; writing is a useful no-feedback frontier, recreation is a weaker boundary, and trust-weighted calibration falls back in both; no pooling |
+| Frozen-policy unseen-query audit | LoTTE technology/search and science/search 100k; 596 queries each | Five history/test folds; seeds 13/17/19; eight history epochs; policy and feedback state frozen on the held-out fold | Query-paired bootstrap and McNemar on retrieval metrics; no held-out feedback update or budget endpoint | Boundary evidence: full rescue surface transfers, but learned feedback does not beat matched static/cold full routing and frozen gating is unsafe |
 | PubMedQA, CovidQA-RAG, eManual deduplicated | Native full: 4,348/1,000; 32,392/1,726; 1,729/130 corpus/query pairs | MiniLM, top-10, K=32, seeds 13/17/19; 8 prequential epochs; final-fused trust/no-feedback controls | Five-fold OOF zero-drop budget selection and paired statistics | Transfer and corrected-boundary rows; not a shared scale curve |
 | Banking77 and CUAD | Banking77 native 10,003/3,080; CUAD GT-anchored 10k/79 evaluated | Historical route-learning proxy and sparse-GT smoke protocols | No common OOF token endpoint | Mechanism and boundary evidence only; excluded from pooled evidence-retrieval conclusions |
+
+Table~\ref{tab:s29} is the canonical registry for the matched protocol
+definitions used in the cross-dataset comparisons.
 
 The registry describes the paper-facing result families rather than retroactively
 equating their tasks. Detailed artifact hashes, historical protocol labels, and
 all route parameters remain in the reproducibility audit under
 `paper/experiments/`.
+
+## S13. Preregistered LoTTE Domain Expansion
+
+The domain-expansion protocol selected recreation/search and writing/search before downloading or
+inspecting their outcomes, then retained both after the preregistered lexicality
+ordering was contradicted. Recreation/search has lower query-positive token
+coverage than writing/search (0.6755 versus 0.7478) and lower maximum Jaccard
+overlap (0.0787 versus 0.1003). The corresponding recreation-minus-writing
+bootstrap intervals are [-0.0901, -0.0543] and [-0.0268, -0.0165]. The
+original lexicality premise is therefore not used to explain the budget result.
+Table~\ref{tab:s30} reports the matched route and budget outcomes.
+
+**Supplementary Table S30. Preregistered LoTTE 100k domain expansion. Full-route
+Hit precedes independent five-fold context-budget calibration; trust rows with
+zero eligible folds use Dense top-10 fallback.**
+
+| Domain / control | Lexical coverage | Dense Hit | Full-route Hit | Nearest-cluster Hit@3 | Eligible folds | Budget Hit delta | Token saving | Strict NI seeds |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| recreation / trust | 0.6755 | 0.8496 | 0.8597 | 0.8366 | 0/5 | +0.00 pp | 0.00% | n/a (fallback) |
+| recreation / no feedback | 0.6755 | 0.8496 | 0.8546 | 0.8366 | 4/5 | -0.76 pp | 5.42% | 0/3 |
+| writing / trust | 0.7478 | 0.8739 | 0.8842 | 0.8655 | 0/5 | +0.00 pp | 0.00% | n/a (fallback) |
+| writing / no feedback | 0.7478 | 0.8739 | 0.8842 | 0.8655 | 5/5 | +0.12 pp | 10.09% | 2/3 |
+
+Both domains contain usable cluster-local route signal, but their calibrated
+frontiers and strict seed-level stability differ. The result supports bounded
+external validity and domain-specific calibration. It does not establish that
+geometry or trust-weighted feedback directly predicts compression safety, and
+it does not convert Dense fallback into a positive token-saving result.
+
+The post-failure replay remains supporting evidence only. Across seed-level
+compression-only failures, arm boost recovers 12/40 events on
+recreation/search and 28/29 on writing/search. Because the retry observes the
+same query's simulated failure feedback, it is not first-pass unseen-query
+generalization.

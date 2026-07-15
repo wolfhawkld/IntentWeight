@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-07-13
+Updated: 2026-07-16
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -33,6 +33,7 @@ accidentally promoted into paper-facing claims.
 | `task69_3_science_100k_checkpoint_summary.md` | Main/supporting cross-domain evidence | Common-protocol LoTTE science/search 100k baselines, matched feedback control, and five-fold context-budget result; report the `-0.11pp` Hit delta and `16.88%` saving together with `0/3` strict NI and the EvidenceRecall boundary. |
 | `task69_3_science_200k_checkpoint_summary.md` | Main/supporting cross-domain evidence | Common-protocol LoTTE science/search 200k scale extension; report the `-0.67pp` Hit delta and `10.75%` saving together with `0/3` strict NI and the EvidenceRecall boundary. |
 | `task70_formal_frozen_policy_summary.md` | Boundary evidence | Formal frozen unseen-query results for technology/search 100k and science/search 100k, including paired inference and the feedback-transfer boundary. | Use to bound feedback to repeated-query adaptation/hard-case recovery; do not claim a first-pass learned-feedback advantage on unseen queries. |
+| `task73_lotte_domain_expansion_summary.md` | Main/supporting external-validity evidence | Preregistered recreation/search and writing/search 100k common-protocol study. Report writing's `+0.12pp`/`10.09%` useful frontier and recreation's `-0.76pp`/`5.42%` boundary together with strict NI (`2/3` and `0/3`), trust-weighted Dense fallback, and the reversed lexicality premise. Do not pool domains or attribute compression directly to geometry. |
 
 ## Supporting Evidence
 
@@ -84,6 +85,8 @@ accidentally promoted into paper-facing claims.
 | `task36_10_review_packet.md` | Supporting writing revision | Adds a regenerable venue-neutral independent-review packet with manuscript, references, figure index, checklist, validation report, and file manifest; no new experiment. |
 | `task36_11_literature_gap_expansion.md` | Supporting writing revision | Adds direct adaptive-retrieval, bandit-routing, and context-compression prior art; explicitly distinguishes IntentRoute from MBA-RAG and avoids first-use overclaiming; no new experiment. |
 | `task69_cross_dataset_consistency_plan.md` | Supporting protocol guardrail | Defines the cross-dataset common endpoint set, separates evidence retrieval from intent-routing and sparse-GT boundary evidence, and records deferred post-Task69 expansion candidates. |
+| `task74_task73_manuscript_integration_plan.md` | Supporting writing revision | Defines the source-derived Task73 integration boundary, benchmark-count update, and submission-validation gate; no new experiment. |
+| `task74_task73_manuscript_integration_summary.md` | Supporting writing revision | Records the completed Task73 manuscript integration, source-derived S30 table, synchronized packages, and final author-owned submission items; no new experiment. |
 | `task36_12_acl_latex_migration.md` | Supporting writing revision | Adds a modular ACL-style LaTeX migration, official ACL style files, PDF figure assets, and static validation; the subsequent PDF compile audit is recorded in `task36_13_pdf_compile_audit.md`. |
 | `task36_13_pdf_compile_audit.md` | Supporting writing revision | Installs lightweight TinyTeX, resolves real ACL compile issues, adds PDF rendering audit, and records the 19-page complete-draft layout; the next pass must produce a shorter submission cut. |
 | `task49_strong_baseline_reframing_summary.md` | Supporting writing revision | Integrates Task46/47/48 strong baselines into the manuscript framing; use for the route-and-budget controller plus shared compressor/reranker decomposition. |

@@ -7,7 +7,7 @@ geometry defines reproducible cluster-local routes, trust-weighted LinUCB
 updates route confidence, dense and BM25 provide rescue paths, and a calibrated
 policy separately controls the final evidence-context budget.
 
-The evaluation spans seven dataset settings with different evidentiary roles.
+The evaluation spans nine dataset settings with different evidentiary roles.
 The main full-stack evidence comes from LoTTE technology/search at 100k to 638k
 corpus chunks. Under calibration/test budget selection, calibration-eligible operating
 points at 100k, 200k, and 638k reduce final LLM evidence-context input tokens
@@ -30,7 +30,14 @@ tunability. A 300-query evaluation with three LLM judges finds approximately
 change, while exposing method-dependent faithfulness effects and retaining the
 lack of strict answer-level non-inferiority.
 LoTTE science/search provides cross-domain ranking support with a clear
-compression-calibration boundary. Hard-case recovery experiments further show
+compression-calibration boundary. A preregistered recreation/search and
+writing/search expansion finds usable cluster-local route signal in both
+domains but different calibrated frontiers: writing/search saves 10.09% tokens
+with a +0.12pp mean Hit change and 2/3 strict non-inferiority seeds, whereas
+recreation/search saves 5.42% at -0.76pp and 0/3 strict seeds; trust-weighted
+calibration falls back to Dense in both. This supports domain-dependent
+external validity without turning geometry into a direct compression guarantee
+or claiming universal strict non-inferiority. Hard-case recovery experiments further show
 that simulated feedback can repair part of the tail failures caused by
 aggressive context compression. A formal frozen-policy audit separates this
 result from first-pass unseen-query transfer: learned full routing remains near

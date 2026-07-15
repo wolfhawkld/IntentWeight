@@ -1,0 +1,1131 @@
+{
+  "audit": {
+    "checks": [
+      {
+        "check": "recreation:unique_corpus",
+        "detail": "rows=100714",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:unique_queries",
+        "detail": "rows=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:gt_coverage",
+        "detail": "gt_refs=1991",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:dense_protocol",
+        "detail": "top_k=10 corpus=100714 queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:dense:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:dense:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:bm25_protocol",
+        "detail": "top_k=10 corpus=100714 queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:bm25:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:bm25:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:hybrid_protocol",
+        "detail": "top_k=10 corpus=100714 queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:hybrid:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:hybrid:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:dense_backbone",
+        "detail": "sentence-transformers/all-MiniLM-L6-v2",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:hybrid_backbone",
+        "detail": "sentence-transformers/all-MiniLM-L6-v2",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust_route_rows",
+        "detail": "rows=2",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route:seed13:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route:seed17:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route:seed19:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:full_multi_route:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware:seed13:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware:seed17:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware:seed19:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust:gated_cost_aware:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none_route_rows",
+        "detail": "rows=2",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route:seed13:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route:seed17:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route:seed19:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:full_multi_route:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware:seed13:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware:seed17:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware:seed19:query_coverage",
+        "detail": "queries=924",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none:gated_cost_aware:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:trust_crossfit_protocol",
+        "detail": "folds=5 paired_seeds=3",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:none_crossfit_protocol",
+        "detail": "folds=5 paired_seeds=3",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:geometry_protocol",
+        "detail": "matched scale store, K=32, seed=13",
+        "status": "PASS"
+      },
+      {
+        "check": "recreation:recovery_crossfit",
+        "detail": "per-query cross-fitted policies, 3 seeds",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:unique_corpus",
+        "detail": "rows=100696",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:unique_queries",
+        "detail": "rows=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:gt_coverage",
+        "detail": "gt_refs=3546",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:dense_protocol",
+        "detail": "top_k=10 corpus=100696 queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:dense:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:dense:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:bm25_protocol",
+        "detail": "top_k=10 corpus=100696 queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:bm25:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:bm25:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:hybrid_protocol",
+        "detail": "top_k=10 corpus=100696 queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:hybrid:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:hybrid:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:dense_backbone",
+        "detail": "sentence-transformers/all-MiniLM-L6-v2",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:hybrid_backbone",
+        "detail": "sentence-transformers/all-MiniLM-L6-v2",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust_route_rows",
+        "detail": "rows=2",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route:seed13:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route:seed17:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route:seed19:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:full_multi_route:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware:seed13:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware:seed17:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware:seed19:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust:gated_cost_aware:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none_route_rows",
+        "detail": "rows=2",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route:seed13:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route:seed17:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route:seed19:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:full_multi_route:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware_protocol",
+        "detail": "3 seeds, 8 epochs, K=32, checkpoint v2, fresh computation",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware_seeds",
+        "detail": "seeds=['13', '17', '19']",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware:seed13:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware:seed13:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware:seed17:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware:seed17:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware:seed19:query_coverage",
+        "detail": "queries=1071",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none:gated_cost_aware:seed19:top10_integrity",
+        "detail": "invalid_queries=0",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:trust_crossfit_protocol",
+        "detail": "folds=5 paired_seeds=3",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:none_crossfit_protocol",
+        "detail": "folds=5 paired_seeds=3",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:geometry_protocol",
+        "detail": "matched scale store, K=32, seed=13",
+        "status": "PASS"
+      },
+      {
+        "check": "writing:recovery_crossfit",
+        "detail": "per-query cross-fitted policies, 3 seeds",
+        "status": "PASS"
+      }
+    ],
+    "fail_count": 0,
+    "pass_count": 104
+  },
+  "domains": [
+    {
+      "artifacts": [
+        {
+          "bytes": 90806896,
+          "path": "paper/experiments/data/processed/lotte_recreation_search_100k_corpus.json",
+          "sha256": "3e841b5574c37c3bcf1ed0dd3b6d04b622a399d4fba3ed37ff3b697c0e5f3797"
+        },
+        {
+          "bytes": 301842,
+          "path": "paper/experiments/data/processed/lotte_recreation_search_100k_queries.json",
+          "sha256": "9082e882275a4a3e2a4709cd6832b719510aa79b98f7dda77560f9020ce55d5c"
+        },
+        {
+          "bytes": 1705,
+          "path": "paper/experiments/results/task73_recreation_100k_bm25/bm25_lotte_recreation_search_100k_metrics.json",
+          "sha256": "e0cf8697f74b1e7bef33a250b8b62456fda57e5068e81fb12c5fa036558de685"
+        },
+        {
+          "bytes": 396854,
+          "path": "paper/experiments/results/task73_recreation_100k_bm25/bm25_lotte_recreation_search_100k_rankings.json",
+          "sha256": "231429f55fec59473dfd80ef2c3093be2a4946c6208ab86eca428507adea7dc0"
+        },
+        {
+          "bytes": 3010,
+          "path": "paper/experiments/results/task73_recreation_100k_dense/dense_lotte_recreation_search_100k_metrics.json",
+          "sha256": "d6a85acc5a0123dc9c4f343b4f301ac8f5fca14ca80e489ab85ac222784c16cd"
+        },
+        {
+          "bytes": 396851,
+          "path": "paper/experiments/results/task73_recreation_100k_dense/dense_lotte_recreation_search_100k_rankings.json",
+          "sha256": "cda43e749d5bd8a4b5fe978cb5d6e192c0b3e3f756f08d58aac2e2da2ef07cba"
+        },
+        {
+          "bytes": 35474,
+          "path": "paper/experiments/results/task73_recreation_100k_feedback_recovery.json",
+          "sha256": "da66ec8f00b9a2b797e7aca4ec91464b1804b156b258725fe79c4075158593e9"
+        },
+        {
+          "bytes": 4316,
+          "path": "paper/experiments/results/task73_recreation_100k_geometry/manifold_diagnostics_lotte_recreation_search_100k.json",
+          "sha256": "ba10230e76888f8860ce17471e11e63b2d73ac01ce3cd08a68606f2d78a826c3"
+        },
+        {
+          "bytes": 3233,
+          "path": "paper/experiments/results/task73_recreation_100k_hybrid/hybrid_lotte_recreation_search_100k_metrics.json",
+          "sha256": "74683c41ff7af63168998156f3bf0c286562983c48d65fc3698bddddb8c6888e"
+        },
+        {
+          "bytes": 396978,
+          "path": "paper/experiments/results/task73_recreation_100k_hybrid/hybrid_lotte_recreation_search_100k_rankings.json",
+          "sha256": "d55a195c86120747994a0e8c18feb85dde1186a902a878a27d86e34759f96517"
+        },
+        {
+          "bytes": 75182,
+          "path": "paper/experiments/results/task73_recreation_100k_none/linucb_cost_lotte-recreation-search-100k_heldout-test_test_corpus-full_q924_cluster-cached-exact-scores_prequential_metrics.json",
+          "sha256": "49008e14e7fc19fd70fedf652ed5aa3b7c8d7c9f45c8579f6eeb9ac52133dd94"
+        },
+        {
+          "bytes": 2902851,
+          "path": "paper/experiments/results/task73_recreation_100k_none/linucb_cost_lotte-recreation-search-100k_heldout-test_test_corpus-full_q924_cluster-cached-exact-scores_prequential_rankings.json",
+          "sha256": "ef106e5c141886487e0f8bc9936e229c7f98d2b4d70ac5af38feff5a70e5813f"
+        },
+        {
+          "bytes": 11051,
+          "path": "paper/experiments/results/task73_recreation_100k_none_cross_fitted_budget.json",
+          "sha256": "0e58df513973a397813082717e3839fdadd2916ed8b379e108bb71fb880c41ad"
+        },
+        {
+          "bytes": 2758,
+          "path": "paper/experiments/results/task73_recreation_100k_none_cross_fitted_budget.paired.csv",
+          "sha256": "5a73539f2568fc8f04a9f63f655c931b2161c2a282cecb7748da3e6177249922"
+        },
+        {
+          "bytes": 1530399,
+          "path": "paper/experiments/results/task73_recreation_100k_none_cross_fitted_budget.rankings.json",
+          "sha256": "93ad3e989413fd32caf503c9ea3f9c24594b454c1404bf573d2e973a57ebdbdd"
+        },
+        {
+          "bytes": 78342,
+          "path": "paper/experiments/results/task73_recreation_100k_trust/linucb_cost_lotte-recreation-search-100k_heldout-test_test_corpus-full_q924_cluster-cached-exact-scores_prequential_metrics.json",
+          "sha256": "c8b0044f034a2d61b0256de8bfdc267d9cf75f0277ddf8a8dd66cd89c56d1c35"
+        },
+        {
+          "bytes": 2902689,
+          "path": "paper/experiments/results/task73_recreation_100k_trust/linucb_cost_lotte-recreation-search-100k_heldout-test_test_corpus-full_q924_cluster-cached-exact-scores_prequential_rankings.json",
+          "sha256": "c2e2aadc2ea073510f811a91a6d17a15b0866657c982037643b80f3510c584bb"
+        },
+        {
+          "bytes": 9948,
+          "path": "paper/experiments/results/task73_recreation_100k_trust_cross_fitted_budget.json",
+          "sha256": "d1f102ad8c97b9be964fe315a71fdc9deab4182bc8128f2e052d3e798548f073"
+        },
+        {
+          "bytes": 1836,
+          "path": "paper/experiments/results/task73_recreation_100k_trust_cross_fitted_budget.paired.csv",
+          "sha256": "d785cb0b3e3f3912bee03d2c5a5a48ad687356dca123aef8bb4e20282781605a"
+        },
+        {
+          "bytes": 1624347,
+          "path": "paper/experiments/results/task73_recreation_100k_trust_cross_fitted_budget.rankings.json",
+          "sha256": "5ae5008e964c1b454d0ea84efa3e6c52607e50d1a2a94657131940f294c36605"
+        }
+      ],
+      "baseline": {
+        "bm25": {
+          "evidence_recall@10": 0.5546924876470333,
+          "hit@10": 0.6937229437229437,
+          "mrr@10": 0.5233375420875417,
+          "ndcg@10": 0.4793446221081842
+        },
+        "dense": {
+          "evidence_recall@10": 0.7108722896872247,
+          "hit@10": 0.8495670995670995,
+          "mrr@10": 0.6641770597127739,
+          "ndcg@10": 0.620968030778293
+        },
+        "hybrid": {
+          "evidence_recall@10": 0.6710556008445617,
+          "hit@10": 0.8170995670995671,
+          "mrr@10": 0.6310898096612383,
+          "ndcg@10": 0.5818806223777279
+        }
+      },
+      "calibration": {
+        "none": {
+          "eligible_folds": 4,
+          "hit_delta_mean_pp": -0.7575757575757576,
+          "per_seed": [
+            {
+              "hit_delta_ci_high_pp": 0.10822510822510822,
+              "hit_delta_ci_low_pp": -2.0562770562770565,
+              "hit_delta_pp": -0.974025974025974,
+              "mcnemar_p_two_sided": 0.10775214433670044,
+              "noninferior_by_ci": false,
+              "seed": "13",
+              "token_saving_pct": 4.880695444124495
+            },
+            {
+              "hit_delta_ci_high_pp": 0.8658008658008658,
+              "hit_delta_ci_low_pp": -1.406926406926407,
+              "hit_delta_pp": -0.3246753246753247,
+              "mcnemar_p_two_sided": 0.711071103811264,
+              "noninferior_by_ci": false,
+              "seed": "17",
+              "token_saving_pct": 5.288999383465853
+            },
+            {
+              "hit_delta_ci_high_pp": 0.0,
+              "hit_delta_ci_low_pp": -2.0562770562770565,
+              "hit_delta_pp": -0.974025974025974,
+              "mcnemar_p_two_sided": 0.10775214433670044,
+              "noninferior_by_ci": false,
+              "seed": "19",
+              "token_saving_pct": 6.082417261676765
+            }
+          ],
+          "policy_counts": {
+            "dense_top10_fallback": 1,
+            "token_budget_r0.95_m4": 4
+          },
+          "strict_ni_seeds_1pp": 0,
+          "token_saving_mean_pct": 5.417370696422371
+        },
+        "trust": {
+          "eligible_folds": 0,
+          "hit_delta_mean_pp": 0.0,
+          "per_seed": [
+            {
+              "hit_delta_ci_high_pp": 0.0,
+              "hit_delta_ci_low_pp": 0.0,
+              "hit_delta_pp": 0.0,
+              "mcnemar_p_two_sided": 1.0,
+              "noninferior_by_ci": true,
+              "seed": "13",
+              "token_saving_pct": 0.0
+            },
+            {
+              "hit_delta_ci_high_pp": 0.0,
+              "hit_delta_ci_low_pp": 0.0,
+              "hit_delta_pp": 0.0,
+              "mcnemar_p_two_sided": 1.0,
+              "noninferior_by_ci": true,
+              "seed": "17",
+              "token_saving_pct": 0.0
+            },
+            {
+              "hit_delta_ci_high_pp": 0.0,
+              "hit_delta_ci_low_pp": 0.0,
+              "hit_delta_pp": 0.0,
+              "mcnemar_p_two_sided": 1.0,
+              "noninferior_by_ci": true,
+              "seed": "19",
+              "token_saving_pct": 0.0
+            }
+          ],
+          "policy_counts": {
+            "dense_top10_fallback": 5
+          },
+          "strict_ni_seeds_1pp": 3,
+          "token_saving_mean_pct": 0.0
+        }
+      },
+      "corpus_chunks": 100714,
+      "dataset": "lotte_recreation_search_100k",
+      "display_name": "LoTTE recreation/search",
+      "domain": "recreation",
+      "feedback_recovery": {
+        "all_query_arm_boost_hit_delta_vs_before_pp": 0.1443001443001431,
+        "all_query_arm_boost_saving_pct": 5.349959764016428,
+        "all_query_conservative_hit_delta_vs_before_pp": 0.1443001443001431,
+        "all_query_conservative_saving_pct": 5.319732797884228,
+        "compression_only_affected_seed_total": 40,
+        "compression_only_arm_boost_recovered_seed_total": 12,
+        "compression_only_conservative_recovered_seed_total": 12
+      },
+      "geometry": {
+        "cluster_silhouette_sample": 0.03287982568144798,
+        "context_gt_recall@10": 0.7316017316017316,
+        "dense_gt_recall@10": 0.8495670995670995,
+        "nearest_cluster_hit@1": 0.604978354978355,
+        "nearest_cluster_hit@3": 0.8365800865800865,
+        "nearest_cluster_hit@5": 0.8993506493506493,
+        "pca_dim_for_90pct": 196,
+        "pca_participation_ratio_dim": 114.23247782123953
+      },
+      "gt_refs": 1991,
+      "lexical": {
+        "bm25_minus_dense_hit_pp": -15.584415584415584,
+        "max_jaccard_ci": [
+          0.07512398738037669,
+          0.08240353127479261
+        ],
+        "max_jaccard_mean": 0.07868306598649184,
+        "max_query_token_coverage_ci": [
+          0.6610698389513324,
+          0.6896686183435372
+        ],
+        "max_query_token_coverage_mean": 0.6755135346856126,
+        "zero_overlap_rate": 0.007575757575757576
+      },
+      "queries": 924,
+      "route": {
+        "none_full_multi_route": {
+          "dense_query_rate": 1.0,
+          "evidence_recall@10": 0.7131285020895411,
+          "hit@10": 0.8546176046176046,
+          "last_epoch_true_reward": 0.10642135642135642,
+          "mrr@10": 0.6648906869144963,
+          "ndcg@10": 0.6219209512780676
+        },
+        "none_gated_cost_aware": {
+          "dense_query_rate": 1.0,
+          "evidence_recall@10": 0.7131285020895411,
+          "hit@10": 0.8546176046176046,
+          "last_epoch_true_reward": 0.10642135642135642,
+          "mrr@10": 0.6648906869144963,
+          "ndcg@10": 0.6219209512780676
+        },
+        "trust_full_multi_route": {
+          "dense_query_rate": 1.0,
+          "evidence_recall@10": 0.7239289930848373,
+          "hit@10": 0.8596681096681097,
+          "last_epoch_true_reward": 0.6944444444444443,
+          "mrr@10": 0.66561905907144,
+          "ndcg@10": 0.6261747873668343
+        },
+        "trust_gated_cost_aware": {
+          "dense_query_rate": 0.6905663780663781,
+          "evidence_recall@10": 0.6796434766131737,
+          "hit@10": 0.8394660894660895,
+          "last_epoch_true_reward": 0.7081529581529581,
+          "mrr@10": 0.6615136627041388,
+          "ndcg@10": 0.6023378795790028
+        }
+      },
+      "unique_gt_chunks": 1563
+    },
+    {
+      "artifacts": [
+        {
+          "bytes": 84605480,
+          "path": "paper/experiments/data/processed/lotte_writing_search_100k_corpus.json",
+          "sha256": "d17f52afa7175701e631800b80c0e87fee23e3436c27dba589cbb8084d259375"
+        },
+        {
+          "bytes": 381948,
+          "path": "paper/experiments/data/processed/lotte_writing_search_100k_queries.json",
+          "sha256": "4a6bfbf12c26d4d533661a96d82ff196a8b802a3e6d964d31369558536c69e3a"
+        },
+        {
+          "bytes": 1697,
+          "path": "paper/experiments/results/task73_writing_100k_bm25/bm25_lotte_writing_search_100k_metrics.json",
+          "sha256": "0521c00c08bd965fc79538b16a1cabd2406871e19d4bdabe1be786e54ffb4039"
+        },
+        {
+          "bytes": 423315,
+          "path": "paper/experiments/results/task73_writing_100k_bm25/bm25_lotte_writing_search_100k_rankings.json",
+          "sha256": "7ac9533f550347b6fe2bf66c9803379a17f561ca1c8183bed0f78dd7af04bcbc"
+        },
+        {
+          "bytes": 2998,
+          "path": "paper/experiments/results/task73_writing_100k_dense/dense_lotte_writing_search_100k_metrics.json",
+          "sha256": "3cf241a2b33b48820ffb94958da2c66049fc119bf3642206836069d82ebadf3e"
+        },
+        {
+          "bytes": 423229,
+          "path": "paper/experiments/results/task73_writing_100k_dense/dense_lotte_writing_search_100k_rankings.json",
+          "sha256": "66c7f2410c0430fc84ef0414bf83ce3104f09ce6b5f0e3a31b3089c8dbc0a76b"
+        },
+        {
+          "bytes": 32672,
+          "path": "paper/experiments/results/task73_writing_100k_feedback_recovery.json",
+          "sha256": "643b28e18f54e8d6fa2af8ca28768b7f447bea5e5cd8d74b1bf7cfdf2b016b82"
+        },
+        {
+          "bytes": 4301,
+          "path": "paper/experiments/results/task73_writing_100k_geometry/manifold_diagnostics_lotte_writing_search_100k.json",
+          "sha256": "81965208dbdafc07bd54f1e442f697e0c70ef529868b50edcb367de3ccb6a5fb"
+        },
+        {
+          "bytes": 3214,
+          "path": "paper/experiments/results/task73_writing_100k_hybrid/hybrid_lotte_writing_search_100k_metrics.json",
+          "sha256": "886b7ca984d377df006daf5b78ac9d4fd0145dd294bb8ef0e2a41bc11b78323b"
+        },
+        {
+          "bytes": 423301,
+          "path": "paper/experiments/results/task73_writing_100k_hybrid/hybrid_lotte_writing_search_100k_rankings.json",
+          "sha256": "d5a22a046d6bc61f7c31d2382ec8f1368170fa6e8947a86b3c29f602b7812907"
+        },
+        {
+          "bytes": 75206,
+          "path": "paper/experiments/results/task73_writing_100k_none/linucb_cost_lotte-writing-search-100k_heldout-test_test_corpus-full_q1071_cluster-cached-exact-scores_prequential_metrics.json",
+          "sha256": "d37930c8d3b0dde95a80f3351fa7a7f1c52858e1ff7ee02e10e0bbf9aafeb0c3"
+        },
+        {
+          "bytes": 3143797,
+          "path": "paper/experiments/results/task73_writing_100k_none/linucb_cost_lotte-writing-search-100k_heldout-test_test_corpus-full_q1071_cluster-cached-exact-scores_prequential_rankings.json",
+          "sha256": "e2713db286e2a68eac15825489d73ff58af7292b4346b86475eab1c685eaab86"
+        },
+        {
+          "bytes": 11077,
+          "path": "paper/experiments/results/task73_writing_100k_none_cross_fitted_budget.json",
+          "sha256": "03f00fb03c87a3f0e58102f86ec3d6f356ba8c9bf54a11d3949585f2cef76b20"
+        },
+        {
+          "bytes": 2788,
+          "path": "paper/experiments/results/task73_writing_100k_none_cross_fitted_budget.paired.csv",
+          "sha256": "ed5383df579bc49ce2970c40fa00d07e722953330c5fd3d3b32f0b9b10c52a54"
+        },
+        {
+          "bytes": 1556231,
+          "path": "paper/experiments/results/task73_writing_100k_none_cross_fitted_budget.rankings.json",
+          "sha256": "09fa59605f8010c5b1aaacba935b97f5a61f1d65def66109229089efc0819ac5"
+        },
+        {
+          "bytes": 78397,
+          "path": "paper/experiments/results/task73_writing_100k_trust/linucb_cost_lotte-writing-search-100k_heldout-test_test_corpus-full_q1071_cluster-cached-exact-scores_prequential_metrics.json",
+          "sha256": "686d02c598b11c6f00194b212d4e04f8ba7aea9a888b4bf1d839bc89b15306b8"
+        },
+        {
+          "bytes": 3143732,
+          "path": "paper/experiments/results/task73_writing_100k_trust/linucb_cost_lotte-writing-search-100k_heldout-test_test_corpus-full_q1071_cluster-cached-exact-scores_prequential_rankings.json",
+          "sha256": "cd6ea2d48da380a5e952a8fda8df533b6b1ebc793e3b44fff88a9fe8b45e5e50"
+        },
+        {
+          "bytes": 9908,
+          "path": "paper/experiments/results/task73_writing_100k_trust_cross_fitted_budget.json",
+          "sha256": "859cefc28ee5d168974469c2f470a20460c6eae08e59467563d383095bd7f3db"
+        },
+        {
+          "bytes": 1832,
+          "path": "paper/experiments/results/task73_writing_100k_trust_cross_fitted_budget.paired.csv",
+          "sha256": "99f64e06d0c9b394404351130a94981ab856e5a8b86b468632e0f7e672389a94"
+        },
+        {
+          "bytes": 1732597,
+          "path": "paper/experiments/results/task73_writing_100k_trust_cross_fitted_budget.rankings.json",
+          "sha256": "5080d47bb4e976157ccd0bbf0004ec65b0249a02d185efdf3129533177847dac"
+        }
+      ],
+      "baseline": {
+        "bm25": {
+          "evidence_recall@10": 0.5302819522007196,
+          "hit@10": 0.7282913165266106,
+          "mrr@10": 0.5611148162968892,
+          "ndcg@10": 0.48167009388900184
+        },
+        "dense": {
+          "evidence_recall@10": 0.6989829609495118,
+          "hit@10": 0.8739495798319328,
+          "mrr@10": 0.7009451928919719,
+          "ndcg@10": 0.6313160432459465
+        },
+        "hybrid": {
+          "evidence_recall@10": 0.6795581911787215,
+          "hit@10": 0.8758169934640523,
+          "mrr@10": 0.7029974952944144,
+          "ndcg@10": 0.6177626787204732
+        }
+      },
+      "calibration": {
+        "none": {
+          "eligible_folds": 5,
+          "hit_delta_mean_pp": 0.12449424214130098,
+          "per_seed": [
+            {
+              "hit_delta_ci_high_pp": 1.400560224089636,
+              "hit_delta_ci_low_pp": -0.8403361344537815,
+              "hit_delta_pp": 0.2801120448179272,
+              "mcnemar_p_two_sided": 0.7492586247608418,
+              "noninferior_by_ci": true,
+              "seed": "13",
+              "token_saving_pct": 10.531110995981141
+            },
+            {
+              "hit_delta_ci_high_pp": 1.4939309056956116,
+              "hit_delta_ci_low_pp": -0.7469654528478058,
+              "hit_delta_pp": 0.3734827264239029,
+              "mcnemar_p_two_sided": 0.617719317029696,
+              "noninferior_by_ci": true,
+              "seed": "17",
+              "token_saving_pct": 10.105171227046995
+            },
+            {
+              "hit_delta_ci_high_pp": 0.8403361344537815,
+              "hit_delta_ci_low_pp": -1.400560224089636,
+              "hit_delta_pp": -0.2801120448179272,
+              "mcnemar_p_two_sided": 0.7428293587290682,
+              "noninferior_by_ci": false,
+              "seed": "19",
+              "token_saving_pct": 9.644519772338722
+            }
+          ],
+          "policy_counts": {
+            "token_budget_r0.85_m8": 2,
+            "token_budget_r0.88_m8": 3
+          },
+          "strict_ni_seeds_1pp": 2,
+          "token_saving_mean_pct": 10.093600665122286
+        },
+        "trust": {
+          "eligible_folds": 0,
+          "hit_delta_mean_pp": 0.0,
+          "per_seed": [
+            {
+              "hit_delta_ci_high_pp": 0.0,
+              "hit_delta_ci_low_pp": 0.0,
+              "hit_delta_pp": 0.0,
+              "mcnemar_p_two_sided": 1.0,
+              "noninferior_by_ci": true,
+              "seed": "13",
+              "token_saving_pct": 0.0
+            },
+            {
+              "hit_delta_ci_high_pp": 0.0,
+              "hit_delta_ci_low_pp": 0.0,
+              "hit_delta_pp": 0.0,
+              "mcnemar_p_two_sided": 1.0,
+              "noninferior_by_ci": true,
+              "seed": "17",
+              "token_saving_pct": 0.0
+            },
+            {
+              "hit_delta_ci_high_pp": 0.0,
+              "hit_delta_ci_low_pp": 0.0,
+              "hit_delta_pp": 0.0,
+              "mcnemar_p_two_sided": 1.0,
+              "noninferior_by_ci": true,
+              "seed": "19",
+              "token_saving_pct": 0.0
+            }
+          ],
+          "policy_counts": {
+            "dense_top10_fallback": 5
+          },
+          "strict_ni_seeds_1pp": 3,
+          "token_saving_mean_pct": 0.0
+        }
+      },
+      "corpus_chunks": 100696,
+      "dataset": "lotte_writing_search_100k",
+      "display_name": "LoTTE writing/search",
+      "domain": "writing",
+      "feedback_recovery": {
+        "all_query_arm_boost_hit_delta_vs_before_pp": 0.4046062869592267,
+        "all_query_arm_boost_saving_pct": 10.092194434781756,
+        "all_query_conservative_hit_delta_vs_before_pp": 0.43572984749455185,
+        "all_query_conservative_saving_pct": 10.020920760153844,
+        "compression_only_affected_seed_total": 29,
+        "compression_only_arm_boost_recovered_seed_total": 28,
+        "compression_only_conservative_recovered_seed_total": 29
+      },
+      "geometry": {
+        "cluster_silhouette_sample": 0.024562492966651917,
+        "context_gt_recall@10": 0.7665732959850607,
+        "dense_gt_recall@10": 0.8739495798319328,
+        "nearest_cluster_hit@1": 0.6535947712418301,
+        "nearest_cluster_hit@3": 0.865546218487395,
+        "nearest_cluster_hit@5": 0.927170868347339,
+        "pca_dim_for_90pct": 202,
+        "pca_participation_ratio_dim": 129.71305181241868
+      },
+      "gt_refs": 3546,
+      "lexical": {
+        "bm25_minus_dense_hit_pp": -14.565826330532214,
+        "max_jaccard_ci": [
+          0.09659452543485735,
+          0.10412747631937762
+        ],
+        "max_jaccard_mean": 0.10027566146809971,
+        "max_query_token_coverage_ci": [
+          0.73654555787609,
+          0.7585675692836057
+        ],
+        "max_query_token_coverage_mean": 0.7477530457922614,
+        "zero_overlap_rate": 0.0028011204481792717
+      },
+      "queries": 1071,
+      "route": {
+        "none_full_multi_route": {
+          "dense_query_rate": 1.0,
+          "evidence_recall@10": 0.7128974529363111,
+          "hit@10": 0.8842203548085901,
+          "last_epoch_true_reward": 0.12978524743230627,
+          "mrr@10": 0.7026128970106565,
+          "ndcg@10": 0.6373525319800669
+        },
+        "none_gated_cost_aware": {
+          "dense_query_rate": 1.0,
+          "evidence_recall@10": 0.7128974529363111,
+          "hit@10": 0.8842203548085901,
+          "last_epoch_true_reward": 0.12978524743230627,
+          "mrr@10": 0.7026128970106565,
+          "ndcg@10": 0.6373525319800669
+        },
+        "trust_full_multi_route": {
+          "dense_query_rate": 1.0,
+          "evidence_recall@10": 0.7151470833825145,
+          "hit@10": 0.8842203548085901,
+          "last_epoch_true_reward": 0.7712418300653594,
+          "mrr@10": 0.7029309254566026,
+          "ndcg@10": 0.639310424829454
+        },
+        "trust_gated_cost_aware": {
+          "dense_query_rate": 0.6702458761282291,
+          "evidence_recall@10": 0.6573915923403755,
+          "hit@10": 0.8677248677248678,
+          "last_epoch_true_reward": 0.7684407096171801,
+          "mrr@10": 0.7100816869957862,
+          "ndcg@10": 0.611470429385587
+        }
+      },
+      "unique_gt_chunks": 2703
+    }
+  ],
+  "generated": "2026-07-15",
+  "hypothesis_outcomes": {
+    "H1_domain_property": "not_supported_direction_reversed",
+    "H2_frontier_heterogeneity": "supported_descriptively_not_pooled",
+    "H3_global_feedback_advantage": "not_supported; post-failure recovery remains domain-dependent"
+  },
+  "lexical_contrast_recreation_minus_writing": {
+    "bm25_relative_hit_ci_pp": [
+      -4.897716662422543,
+      2.828919446566501
+    ],
+    "bm25_relative_hit_difference_pp": -1.0185892538833703,
+    "h1_outcome": "not_supported_direction_reversed",
+    "jaccard_ci": [
+      -0.02681329242548506,
+      -0.016462472833481998
+    ],
+    "jaccard_difference": -0.02159259548160787,
+    "orientation": "recreation_minus_writing; positive would support preregistered H1",
+    "query_token_coverage_ci": [
+      -0.0901411458193035,
+      -0.05432436111202514
+    ],
+    "query_token_coverage_difference": -0.07223951110664883
+  },
+  "protocol": {
+    "backbone": "sentence-transformers/all-MiniLM-L6-v2",
+    "bootstrap_samples": 10000,
+    "budget": "five-fold cross-fitted Task38 locked grid",
+    "epochs": 8,
+    "feedback_modes": [
+      "none",
+      "trust_weighted"
+    ],
+    "n_clusters": 32,
+    "pooling": "none",
+    "seeds": [
+      "13",
+      "17",
+      "19"
+    ],
+    "source_dataset": "mteb/LoTTE",
+    "source_revision": "a9006514d20ec3353082b4272bf46a20dd96a195",
+    "tokenizer": "cl100k_base",
+    "top_k": 10
+  },
+  "task": "Task73 hypothesis-driven LoTTE domain expansion"
+}

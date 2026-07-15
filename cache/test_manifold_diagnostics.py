@@ -226,6 +226,81 @@ class ManifoldDiagnosticsTests(unittest.TestCase):
             self.assertTrue(second["corpus_embedding_cache_hit"])
             self.assertTrue(second["query_embedding_cache_hit"])
 
+    def test_run_dataset_can_load_corpus_embeddings_from_scale_store(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            data_dir = tmpdir / "processed"
+            out_dir = tmpdir / "results"
+            store_dir = tmpdir / "scale_store"
+            data_dir.mkdir()
+            store_dir.mkdir()
+            corpus = [
+                {
+                    "chunk_id": "toy_100k_c0",
+                    "text": "alpha document",
+                    "metadata": {"original_corpus_id": "0"},
+                },
+                {
+                    "chunk_id": "toy_100k_c1",
+                    "text": "beta document",
+                    "metadata": {"original_corpus_id": "1"},
+                },
+                {
+                    "chunk_id": "toy_100k_c2",
+                    "text": "gamma document",
+                    "metadata": {"original_corpus_id": "2"},
+                },
+            ]
+            queries = [
+                {
+                    "query_id": "q_alpha",
+                    "text": "alpha query",
+                    "ground_truth_chunk_ids": ["toy_100k_c0"],
+                    "split": "test",
+                }
+            ]
+            (data_dir / "toy_100k_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / "toy_100k_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+            np.save(
+                store_dir / "canonical_corpus_embeddings.npy",
+                np.asarray([[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0]], dtype=np.float32),
+            )
+            (store_dir / "canonical_corpus_ids.json").write_text(
+                json.dumps({
+                    "canonical_ids": ["toy_orig_0", "toy_orig_1", "toy_orig_2"],
+                    "text_sha256": ["unused", "unused", "unused"],
+                    "source_datasets": [["toy_100k"], ["toy_100k"], ["toy_100k"]],
+                }),
+                encoding="utf-8",
+            )
+            encoder = FakeEncoder({"alpha query": [1.0, 0.0]})
+
+            metrics = manifold_diagnostics.run_dataset(
+                "toy_100k",
+                data_dir,
+                out_dir,
+                encoder,
+                model_name="fake-model",
+                batch_size=1,
+                n_clusters=2,
+                context_dim=2,
+                seed=13,
+                sample_size=3,
+                neighbor_k=1,
+                cluster_hit_ks=(1, 2),
+                recall_ks=(1,),
+                query_split="test",
+                use_scale_store=True,
+                scale_store_dir=store_dir,
+                scale_store_canonical_name="toy",
+            )
+
+            self.assertTrue(metrics["scale_store_enabled"])
+            self.assertEqual(metrics["scale_store_selected_rows"], 3)
+            self.assertEqual(metrics["scale_store_canonical_count"], 3)
+            self.assertTrue(metrics["corpus_embedding_cache_hit"])
+            self.assertAlmostEqual(metrics["dense_gt_recall@1"], 1.0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

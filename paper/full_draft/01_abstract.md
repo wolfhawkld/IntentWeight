@@ -1,32 +1,31 @@
 # Abstract
 
 Retrieval-augmented systems must balance evidence coverage, noise, and
-language-model context cost. IntentRoute separates this problem into
-feedback-adaptive route control and calibrated context budgeting. Dense, BM25,
-and geometry-defined cluster-local routes generate complementary evidence;
-trust-weighted LinUCB estimates route confidence; and an independently
-calibrated policy sets the final context size. Dense retrieval remains a recall
-floor. A bounded piecewise relevance-manifold hypothesis motivates local route
-construction, with geometry evaluated diagnostically rather than treated as
-proof of relevance.
+language-model context cost. IntentRoute separates feedback-adaptive route
+control from calibrated context budgeting. Dense, BM25, and geometry-defined
+cluster-local routes produce evidence; trust-weighted LinUCB estimates route
+confidence; independent calibration sets final context size; and Dense remains
+a recall floor. A piecewise
+relevance-manifold hypothesis motivates local routes, with geometry treated as
+diagnostic rather than proof of relevance.
 
-We evaluate IntentRoute across seven dataset settings spanning six domain
-areas. The primary scale study uses LoTTE technology/search from 100k to 638k
-chunks. A separate LoTTE science/search study tests cross-domain transfer at
-20k, 100k, and 200k corpus scales; PubMedQA and CovidQA-RAG test biomedical
-transfer under different dense ceilings; Banking77 examines feedback
-adaptation as an intent-routing proxy; and eManual and CUAD expose
-duplicate-text and sparse-ground-truth boundaries. At
-calibration-eligible technology/search operating
-points, IntentRoute reduces final evidence-context tokens by 6-18% while
-preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger
-quality losses of dense-only adaptive truncation. Under controlled
-repeated-query trajectories, simulated feedback improves route confidence or
-recovers a meaningful subset of affected queries; it is not evaluated as a
-first-pass feedback advantage for unseen queries. In a frozen 300-query
-technology/search evaluation, matched variants reduce language-model input
+We evaluate nine dataset settings across eight domain areas. LoTTE
+technology/search supplies 100k-638k scale evidence; science/search tests
+domain and scale transfer; preregistered recreation/search and writing/search
+100k studies test domain heterogeneity; and biomedical, banking, manual, and
+legal settings provide transfer, mechanism, and boundary checks. At
+calibration-eligible technology/search points, IntentRoute reduces final
+evidence-context tokens by 6-18% while preserving near-dense query-level
+$\mathrm{Hit@10}$ and avoiding the larger losses of dense-only adaptive
+truncation. On 300 frozen queries, matched variants reduce
 context by 6-12% with no statistically detectable correctness difference
-across three judges, although faithfulness preservation is not uniform across
-embedding backbones. These results support geometry-guided,
-feedback-adaptive route control as a bounded quality-efficiency mechanism, not
-a universal replacement for dense retrieval.
+across three judges, although faithfulness is not uniformly preserved. In the
+preregistered expansion, no-feedback routes save 10.09% with a +0.12pp mean Hit
+change on writing/search, but 5.42% with -0.76pp and 0/3 strict
+non-inferiority seeds on recreation/search; trust-weighted calibration falls
+back to Dense in both. Both retain cluster-local signal, showing domain
+heterogeneity rather than a direct geometry-to-compression guarantee.
+Controlled feedback supports repeated-interaction adaptation and conditional
+recovery, not a universal first-pass gain on unseen queries. These results
+support a bounded quality-efficiency controller, not a universal dense
+replacement.

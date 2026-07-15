@@ -248,6 +248,24 @@ def current_result_snapshot() -> list[dict[str, Any]]:
             artifact_status="legacy fixed-split diagnostic",
         )
     )
+
+    for domain, status in (
+        ("recreation", "complete Task73 external-validity boundary"),
+        ("writing", "complete Task73 useful-frontier row"),
+    ):
+        rows.append(
+            paired_snapshot(
+                dataset=f"LoTTE {domain}/search",
+                scale="100k",
+                path=RESULTS / f"task73_{domain}_100k_none_cross_fitted_budget.paired.csv",
+                role="post-Task69 hypothesis-driven external validity",
+                source=f"paper/experiments/results/task73_{domain}_100k_none_cross_fitted_budget.paired.csv",
+                method_label="intentroute_crossfit",
+                scale_filter=f"lotte_{domain}_search_100k",
+                protocol="five-fold cross-fitted calibration; domains not pooled",
+                artifact_status=status,
+            )
+        )
     rows.append(
         paired_snapshot(
             dataset="LoTTE science/search",
@@ -469,7 +487,7 @@ def build_markdown(
         "",
         "## Interpretation Guardrail",
         "",
-        "LoTTE technology/search, LoTTE science/search 100k/200k/400k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full provide complete rows under the common endpoint set. Science/search 400k is a weak boundary row: only one of five folds is budget eligible, its OOF mean Hit@10 delta is -0.67pp with 3.15% saving, and recovery has only 3-6 affected queries per seed. The deferred lifestyle/recreation/writing rows are post-Task69 expansion candidates, not missing Task69 endpoints. Technology reuses verified Task38/65 artifacts; science uses Task69.3 standalone baselines and frozen budget evaluation; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
+        "LoTTE technology/search, LoTTE science/search 100k/200k/400k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full provide complete rows under the common endpoint set. Science/search 400k is a weak boundary row: only one of five folds is budget eligible, its OOF mean Hit@10 delta is -0.67pp with 3.15% saving, and recovery has only 3-6 affected queries per seed. Task73 adds complete recreation/search and writing/search 100k rows without pooling them: recreation is a weaker no-feedback boundary, writing provides a useful no-feedback frontier, and trust-weighted calibration falls back in both. Lifestyle remains a deferred post-Task69 candidate rather than a missing endpoint. Technology reuses verified Task38/65 artifacts; science uses Task69.3 standalone baselines and frozen budget evaluation; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.",
         "",
     ]
     return "\n".join(lines)
@@ -505,10 +523,19 @@ def main() -> None:
             "dataset_count": len(datasets),
             "common_evidence_count": sum(item["protocol_group"] == "common_evidence" for item in datasets),
             "deferred_post_task69_expansion_count": sum(
-                not item.get("required_for_task69", True) for item in datasets
+                item["protocol_group"] == "post_task69_expansion"
+                and str(item["status"]).startswith("deferred")
+                for item in datasets
             ),
             "complete_common_evidence_count": sum(
-                str(item["status"]).startswith("complete") for item in datasets
+                item["protocol_group"] == "common_evidence"
+                and str(item["status"]).startswith("complete")
+                for item in datasets
+            ),
+            "complete_post_task69_expansion_count": sum(
+                item["protocol_group"] == "post_task69_expansion"
+                and str(item["status"]).startswith("complete")
+                for item in datasets
             ),
             "inventory": inventory,
             "coverage": coverage,
@@ -525,7 +552,7 @@ def main() -> None:
     print(f"missing_batches={len(missing)}")
     print(
         "deferred_post_task69_expansions="
-        f"{sum(not item.get('required_for_task69', True) for item in datasets)}"
+        f"{sum(item['protocol_group'] == 'post_task69_expansion' and str(item['status']).startswith('deferred') for item in datasets)}"
     )
     print(output.with_suffix('.md').relative_to(ROOT))
 

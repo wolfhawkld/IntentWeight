@@ -1,0 +1,24 @@
+{
+  "checks": [
+    {
+      "item": "supplementary_table_s30",
+      "rows": 4,
+      "status": "PASS"
+    },
+    {
+      "files": 10,
+      "item": "canonical_manuscript",
+      "status": "PASS"
+    },
+    {
+      "files": 6,
+      "item": "generated_packages",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "status": "PASS",
+  "task": "Task74",
+  "task73_source": "paper/experiments/results/task73_lotte_domain_expansion.json",
+  "task73_source_sha256": "d80c27656b1ac06f93ec57b1776780192feaed0459f6bbd222aa2af3396dc9f0"
+}

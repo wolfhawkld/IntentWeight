@@ -1,6 +1,6 @@
 # Table and Figure Placement Plan
 
-Updated: 2026-07-01 (Task65.7)
+Updated: 2026-07-16 (Task74)
 
 This plan aligns the displays with the revised route-control and calibrated-budget
 claim. It introduces no new experiment or claim. The journal-facing main text
@@ -72,7 +72,10 @@ theorem-level manifold proof.
 - Supplementary Section S6: complete downstream answer, faithfulness, and citation results;
 - Supplementary Sections S8/S9: cross-domain and feedback-recovery details;
 - Supplementary Section S10: Sentence-MMR, Selective Context-lite, and cross-encoder controls;
-- Supplementary Section S11: full geometry/random, feedback, and arm-count control tables.
+- Supplementary Section S11: full geometry/random, feedback, and arm-count control tables;
+- Supplementary Section S13: preregistered recreation/search and
+  writing/search domain properties, route diagnostics, cross-fitted budgets,
+  and strict seed-level non-inferiority.
 
 The older clean component table, geometry scale table, cross-domain table, and
 feedback-recovery table are represented in the main text as bounded prose and

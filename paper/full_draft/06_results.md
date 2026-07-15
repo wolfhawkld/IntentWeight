@@ -191,6 +191,24 @@ does not overturn the scale-boundary interpretation. The supplementary protocol
 registry records the matched protocol and evidence roles without pooling these rows into
 the technology/search headline.
 
+The preregistered recreation/search and writing/search 100k expansion tests
+whether this heterogeneity persists under a matched protocol. Both domains
+show usable static cluster-local signal: $\mathrm{NearestClusterHit@3}$ is
+0.8366 on recreation/search and 0.8655 on writing/search. Their independently
+calibrated no-feedback frontiers differ. Recreation/search selects compression
+in four of five folds, with a -0.76pp mean $\mathrm{Hit@10}$ change, 5.42%
+token saving, and strict 1pp non-inferiority in 0/3 seeds. Writing/search
+selects compression in all five folds, with a +0.12pp mean Hit change, 10.09%
+saving, and strict non-inferiority in 2/3 seeds. Trust-weighted calibration
+selects no compressed fold in either domain and therefore uses Dense fallback.
+The preregistered assumption that recreation/search was more lexical is
+directionally reversed by measured query-positive overlap, so it is not used
+to explain the frontier contrast. Supplementary Table S30 reports the matched
+domain and controller rows. The result extends the geometry and
+quality-context evidence beyond technology/science while establishing domain
+heterogeneity, not universal strict non-inferiority or a direct
+geometry-to-compression causal link.
+
 The supporting transfer checks cover different retrieval abstractions and dense
 ceilings. On PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while
 the trust-weighted policy reaches $0.9940$ with selected-cluster hit $0.8860$.

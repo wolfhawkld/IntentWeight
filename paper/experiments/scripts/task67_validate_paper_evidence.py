@@ -287,6 +287,7 @@ def validate_supplementary_numeric_provenance() -> tuple[list[str], int]:
         26: [RESULTS / "task59_feedback_control_summary.csv"],
         27: [RESULTS / "task60_arm_count_sensitivity_summary.csv"],
         28: [RESULTS / "task65_3_dynamic_route_mediation.json", RESULTS / "task65_3_dynamic_route_mediation.fixed_action.csv"],
+        30: [RESULTS / "task73_lotte_domain_expansion.json", RESULTS / "task73_lotte_domain_expansion.csv"],
     }
     errors = []
     checked = 0
@@ -332,7 +333,7 @@ def main() -> int:
     checks.append({
         "item": "supplementary_numeric_provenance",
         "status": "PASS" if not supplement_errors else "ERROR",
-        "tables": 17,
+        "tables": 18,
         "numeric_values": supplement_values,
     })
     errors.extend(supplement_errors)

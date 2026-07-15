@@ -332,6 +332,33 @@ cross-fitted budget selection, paired statistics, and explicit non-pooling.
 The objective is to estimate heterogeneity of the bounded operating frontier,
 not to obtain a single pooled p-value or force every domain to save tokens.
 
+Completed 2026-07-15. The preregistered contrast selected recreation/search
+and writing/search before outcome inspection. Both domains completed the full
+common protocol, including matched baselines, trust/no-feedback routes,
+five-fold budgets, paired statistics, geometry, and cross-fitted post-failure
+recovery. The assumed lexicality ordering was reversed by the measured
+query-positive overlap and therefore is not used to explain the result.
+Writing/no-feedback provides a useful 10.09% saving frontier with a +0.12pp
+mean Hit@10 change but only 2/3 strict NI seeds; recreation/no-feedback is a
+weaker 5.42%/-0.76pp boundary with 0/3 strict NI seeds. Trust-weighted routes
+fall back to Dense in all folds in both domains. See
+`task73_lotte_domain_expansion_summary.md`.
+
+### Task74: Task73 Evidence Integration And Submission Audit
+
+Priority: P0 manuscript synchronization after Task73. Completed 2026-07-16;
+see `task74_task73_manuscript_integration_plan.md` and
+`task74_task73_manuscript_integration_summary.md`.
+
+Task74 updates the canonical manuscript from seven settings/six domain areas to
+nine settings/eight domain areas, integrates the preregistered Task73
+heterogeneity result without changing the method or experiment, adds a
+source-derived supplementary table, and regenerates all review and journal
+packages. It must preserve the writing useful-frontier result, the recreation
+strict-NI boundary, trust-weighted Dense fallback in both domains, the reversed
+lexicality premise, and the separation between geometry-defined route signal
+and independently calibrated context budgeting.
+
 ## Optional GPU / Overnight Expansion Queue
 
 None of these closes the current paper. Do not start them before Phases 1-3

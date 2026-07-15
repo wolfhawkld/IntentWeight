@@ -1,0 +1,1011 @@
+{
+  "rows": [
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1123.1176470588234,
+      "hit_rate": 0.0,
+      "method": "budgeted_before_feedback",
+      "protocol": "same_query_retry",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 1.062374805252615,
+      "token_saving_percent_vs_dense": -6.237480525261496
+    },
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1200.5882352941176,
+      "hit_rate": 0.11764705882352941,
+      "method": "same_arm_boost",
+      "protocol": "same_query_retry",
+      "recovered_count": 2,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 1.1356554640551968,
+      "token_saving_percent_vs_dense": -13.56554640551968
+    },
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1230,
+      "hit_rate": 0.11764705882352941,
+      "method": "same_arm_boost_conservative",
+      "protocol": "same_query_retry",
+      "recovered_count": 2,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 1.1634765190296015,
+      "token_saving_percent_vs_dense": -16.34765190296015
+    },
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1371.764705882353,
+      "hit_rate": 0.11764705882352941,
+      "method": "same_full_context",
+      "protocol": "same_query_retry",
+      "recovered_count": 2,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 1.2975740040062318,
+      "token_saving_percent_vs_dense": -29.75740040062318
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1502.923076923077,
+      "hit_rate": 0.0,
+      "method": "budgeted_before_feedback",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9454633438180499,
+      "token_saving_percent_vs_dense": 5.453665618195014
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1617.7692307692307,
+      "hit_rate": 0.3076923076923077,
+      "method": "same_arm_boost",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 4,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 1.0177111057343335,
+      "token_saving_percent_vs_dense": -1.7711105734333543
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1647.923076923077,
+      "hit_rate": 0.3076923076923077,
+      "method": "same_arm_boost_conservative",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 4,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 1.0366803774497944,
+      "token_saving_percent_vs_dense": -3.6680377449794355
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1685.4615384615386,
+      "hit_rate": 0.38461538461538464,
+      "method": "same_full_context",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 5,
+      "regressed_count": 0,
+      "seed": "13",
+      "token_ratio_vs_dense": 1.0602951850955724,
+      "token_saving_percent_vs_dense": -6.029518509557241
+    },
+    {
+      "avg_context_tokens": 1287.3419913419914,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.009740259740259716,
+      "hit_rate": 0.8398268398268398,
+      "learned_arm_count": 0,
+      "method": "budgeted_before_feedback",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9511930455587551,
+      "token_saving_percent_vs_dense": 4.880695444124495
+    },
+    {
+      "avg_context_tokens": 1288.767316017316,
+      "hit_delta_vs_before": 0.0021645021645021467,
+      "hit_delta_vs_dense": -0.007575757575757569,
+      "hit_rate": 0.841991341991342,
+      "learned_arm_count": 0,
+      "method": "same_arm_boost",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9522461914422501,
+      "token_saving_percent_vs_dense": 4.775380855774991
+    },
+    {
+      "avg_context_tokens": 1289.3084415584415,
+      "hit_delta_vs_before": 0.0021645021645021467,
+      "hit_delta_vs_dense": -0.007575757575757569,
+      "hit_rate": 0.841991341991342,
+      "learned_arm_count": 0,
+      "method": "same_arm_boost_conservative",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9526460190365913,
+      "token_saving_percent_vs_dense": 4.73539809634087
+    },
+    {
+      "avg_context_tokens": 1291.9166666666667,
+      "hit_delta_vs_before": 0.0021645021645021467,
+      "hit_delta_vs_dense": -0.007575757575757569,
+      "hit_rate": 0.841991341991342,
+      "learned_arm_count": 0,
+      "method": "same_full_context",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9545731880413166,
+      "token_saving_percent_vs_dense": 4.542681195868337
+    },
+    {
+      "avg_context_tokens": 1303.5347758887171,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.007727975270479082,
+      "hit_rate": 0.8377125193199382,
+      "learned_arm_count": 5,
+      "method": "budgeted_before_feedback",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9473927202182834,
+      "token_saving_percent_vs_dense": 5.260727978171664
+    },
+    {
+      "avg_context_tokens": 1302.5054095826893,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.007727975270479082,
+      "hit_rate": 0.8377125193199382,
+      "learned_arm_count": 5,
+      "method": "generalized_arm_boost",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9466445897020844,
+      "token_saving_percent_vs_dense": 5.335541029791557
+    },
+    {
+      "avg_context_tokens": 1311.4157650695518,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.007727975270479082,
+      "hit_rate": 0.8377125193199382,
+      "learned_arm_count": 5,
+      "method": "generalized_arm_boost_conservative",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9531205242754872,
+      "token_saving_percent_vs_dense": 4.687947572451279
+    },
+    {
+      "avg_context_tokens": 1312.7326120556413,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.007727975270479082,
+      "hit_rate": 0.8377125193199382,
+      "learned_arm_count": 5,
+      "method": "generalized_conservative_budget",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9540775921430569,
+      "token_saving_percent_vs_dense": 4.592240785694313
+    },
+    {
+      "avg_context_tokens": 1326.9335394126738,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.007727975270479082,
+      "hit_rate": 0.8377125193199382,
+      "learned_arm_count": 5,
+      "method": "generalized_full_context",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "13",
+      "token_ratio_vs_dense": 0.9643986479731391,
+      "token_saving_percent_vs_dense": 3.5601352026860877
+    },
+    {
+      "affected_count": 16,
+      "avg_context_tokens": 947.875,
+      "hit_rate": 0.0,
+      "method": "budgeted_before_feedback",
+      "protocol": "same_query_retry",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9388386777268788,
+      "token_saving_percent_vs_dense": 6.1161322273121215
+    },
+    {
+      "affected_count": 16,
+      "avg_context_tokens": 969.625,
+      "hit_rate": 0.0,
+      "method": "same_arm_boost",
+      "protocol": "same_query_retry",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9603813297016219,
+      "token_saving_percent_vs_dense": 3.9618670298378067
+    },
+    {
+      "affected_count": 16,
+      "avg_context_tokens": 987,
+      "hit_rate": 0.0,
+      "method": "same_arm_boost_conservative",
+      "protocol": "same_query_retry",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9775906896124799,
+      "token_saving_percent_vs_dense": 2.2409310387520143
+    },
+    {
+      "affected_count": 16,
+      "avg_context_tokens": 1175.75,
+      "hit_rate": 0.0,
+      "method": "same_full_context",
+      "protocol": "same_query_retry",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 1.1645412900829515,
+      "token_saving_percent_vs_dense": -16.454129008295148
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1274,
+      "hit_rate": 0.0,
+      "method": "budgeted_before_feedback",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9652077626901334,
+      "token_saving_percent_vs_dense": 3.479223730986658
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1301.8461538461538,
+      "hit_rate": 0.23076923076923078,
+      "method": "same_arm_boost",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 3,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9863045632029839,
+      "token_saving_percent_vs_dense": 1.3695436797016125
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1308,
+      "hit_rate": 0.23076923076923078,
+      "method": "same_arm_boost_conservative",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 3,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9909668395594149,
+      "token_saving_percent_vs_dense": 0.9033160440585108
+    },
+    {
+      "affected_count": 13,
+      "avg_context_tokens": 1421.2307692307693,
+      "hit_rate": 0.38461538461538464,
+      "method": "same_full_context",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 5,
+      "regressed_count": 0,
+      "seed": "17",
+      "token_ratio_vs_dense": 1.076752724517746,
+      "token_saving_percent_vs_dense": -7.675272451774595
+    },
+    {
+      "avg_context_tokens": 1281.8160173160172,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0032467532467531646,
+      "hit_rate": 0.8463203463203464,
+      "learned_arm_count": 0,
+      "method": "budgeted_before_feedback",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9471100061653415,
+      "token_saving_percent_vs_dense": 5.288999383465853
+    },
+    {
+      "avg_context_tokens": 1282.1926406926407,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0032467532467531646,
+      "hit_rate": 0.8463203463203464,
+      "learned_arm_count": 0,
+      "method": "same_arm_boost",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.947388286171003,
+      "token_saving_percent_vs_dense": 5.261171382899699
+    },
+    {
+      "avg_context_tokens": 1282.4935064935064,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0032467532467531646,
+      "hit_rate": 0.8463203463203464,
+      "learned_arm_count": 0,
+      "method": "same_arm_boost_conservative",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9476105903134567,
+      "token_saving_percent_vs_dense": 5.238940968654326
+    },
+    {
+      "avg_context_tokens": 1285.7619047619048,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0032467532467531646,
+      "hit_rate": 0.8463203463203464,
+      "learned_arm_count": 0,
+      "method": "same_full_context",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9500255489832784,
+      "token_saving_percent_vs_dense": 4.9974451016721595
+    },
+    {
+      "avg_context_tokens": 1288.8485316846986,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0030911901081915882,
+      "hit_rate": 0.8423493044822257,
+      "learned_arm_count": 4,
+      "method": "budgeted_before_feedback",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9367189421928761,
+      "token_saving_percent_vs_dense": 6.32810578071239
+    },
+    {
+      "avg_context_tokens": 1288.7867078825348,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0030911901081915882,
+      "hit_rate": 0.8423493044822257,
+      "learned_arm_count": 4,
+      "method": "generalized_arm_boost",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9366740094291405,
+      "token_saving_percent_vs_dense": 6.332599057085952
+    },
+    {
+      "avg_context_tokens": 1292.6027820710974,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0030911901081915882,
+      "hit_rate": 0.8423493044822257,
+      "learned_arm_count": 4,
+      "method": "generalized_arm_boost_conservative",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9394474842707244,
+      "token_saving_percent_vs_dense": 6.055251572927556
+    },
+    {
+      "avg_context_tokens": 1292.6646058732613,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.0030911901081915882,
+      "hit_rate": 0.8423493044822257,
+      "learned_arm_count": 4,
+      "method": "generalized_conservative_budget",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9394924170344601,
+      "token_saving_percent_vs_dense": 6.050758296553993
+    },
+    {
+      "avg_context_tokens": 1309.1823802163833,
+      "hit_delta_vs_before": 0.0015455950540957941,
+      "hit_delta_vs_dense": -0.0015455950540957941,
+      "hit_rate": 0.8438948995363215,
+      "learned_arm_count": 4,
+      "method": "generalized_full_context",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "17",
+      "token_ratio_vs_dense": 0.9514973281855363,
+      "token_saving_percent_vs_dense": 4.850267181446366
+    },
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1012.5294117647059,
+      "hit_rate": 0.0,
+      "method": "budgeted_before_feedback",
+      "protocol": "same_query_retry",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.0134832783796515,
+      "token_saving_percent_vs_dense": -1.3483278379651464
+    },
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1063.3529411764705,
+      "hit_rate": 0.11764705882352941,
+      "method": "same_arm_boost",
+      "protocol": "same_query_retry",
+      "recovered_count": 2,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.0643546867640132,
+      "token_saving_percent_vs_dense": -6.435468676401324
+    },
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1084.2941176470588,
+      "hit_rate": 0.11764705882352941,
+      "method": "same_arm_boost_conservative",
+      "protocol": "same_query_retry",
+      "recovered_count": 2,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.0853155911446066,
+      "token_saving_percent_vs_dense": -8.531559114460663
+    },
+    {
+      "affected_count": 17,
+      "avg_context_tokens": 1211.7058823529412,
+      "hit_rate": 0.11764705882352941,
+      "method": "same_full_context",
+      "protocol": "same_query_retry",
+      "recovered_count": 2,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.212847385774847,
+      "token_saving_percent_vs_dense": -21.284738577484696
+    },
+    {
+      "affected_count": 14,
+      "avg_context_tokens": 1397.2857142857142,
+      "hit_rate": 0.0,
+      "method": "budgeted_before_feedback",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 0,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.0016897946643453,
+      "token_saving_percent_vs_dense": -0.16897946643452677
+    },
+    {
+      "affected_count": 14,
+      "avg_context_tokens": 1398.5,
+      "hit_rate": 0.35714285714285715,
+      "method": "same_arm_boost",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 5,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.0025602949459778,
+      "token_saving_percent_vs_dense": -0.2560294945977759
+    },
+    {
+      "affected_count": 14,
+      "avg_context_tokens": 1404.2142857142858,
+      "hit_rate": 0.35714285714285715,
+      "method": "same_arm_boost_conservative",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 5,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.0066567668595423,
+      "token_saving_percent_vs_dense": -0.6656766859542307
+    },
+    {
+      "affected_count": 14,
+      "avg_context_tokens": 1461.0714285714287,
+      "hit_rate": 0.35714285714285715,
+      "method": "same_full_context",
+      "protocol": "same_query_retry_compression_only",
+      "recovered_count": 5,
+      "regressed_count": 0,
+      "seed": "19",
+      "token_ratio_vs_dense": 1.0474166623995085,
+      "token_saving_percent_vs_dense": -4.741666239950848
+    },
+    {
+      "avg_context_tokens": 1271.077922077922,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.009740259740259716,
+      "hit_rate": 0.8398268398268398,
+      "learned_arm_count": 0,
+      "method": "budgeted_before_feedback",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.9391758273832324,
+      "token_saving_percent_vs_dense": 6.082417261676765
+    },
+    {
+      "avg_context_tokens": 1272.012987012987,
+      "hit_delta_vs_before": 0.0021645021645021467,
+      "hit_delta_vs_dense": -0.007575757575757569,
+      "hit_rate": 0.841991341991342,
+      "learned_arm_count": 0,
+      "method": "same_arm_boost",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.939866729466254,
+      "token_saving_percent_vs_dense": 6.013327053374596
+    },
+    {
+      "avg_context_tokens": 1272.3982683982683,
+      "hit_delta_vs_before": 0.0021645021645021467,
+      "hit_delta_vs_dense": -0.007575757575757569,
+      "hit_rate": 0.841991341991342,
+      "learned_arm_count": 0,
+      "method": "same_arm_boost_conservative",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.9401514067134251,
+      "token_saving_percent_vs_dense": 5.984859328657488
+    },
+    {
+      "avg_context_tokens": 1274.7424242424242,
+      "hit_delta_vs_before": 0.0021645021645021467,
+      "hit_delta_vs_dense": -0.007575757575757569,
+      "hit_rate": 0.841991341991342,
+      "learned_arm_count": 0,
+      "method": "same_full_context",
+      "num_queries": 924,
+      "protocol": "same_query_retry_all_queries",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.9418834598521117,
+      "token_saving_percent_vs_dense": 5.811654014788825
+    },
+    {
+      "avg_context_tokens": 1287.7357032457496,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.009273570324574876,
+      "hit_rate": 0.8361669242658424,
+      "learned_arm_count": 4,
+      "method": "budgeted_before_feedback",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.9359101524456341,
+      "token_saving_percent_vs_dense": 6.408984755436586
+    },
+    {
+      "avg_context_tokens": 1288.0772797527047,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.009273570324574876,
+      "hit_rate": 0.8361669242658424,
+      "learned_arm_count": 4,
+      "method": "generalized_arm_boost",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.9361584059652737,
+      "token_saving_percent_vs_dense": 6.384159403472633
+    },
+    {
+      "avg_context_tokens": 1289.8701700154559,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.009273570324574876,
+      "hit_rate": 0.8361669242658424,
+      "learned_arm_count": 4,
+      "method": "generalized_arm_boost_conservative",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.937461456113608,
+      "token_saving_percent_vs_dense": 6.253854388639201
+    },
+    {
+      "avg_context_tokens": 1289.2380216383308,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.009273570324574876,
+      "hit_rate": 0.8361669242658424,
+      "learned_arm_count": 4,
+      "method": "generalized_conservative_budget",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.9370020186044108,
+      "token_saving_percent_vs_dense": 6.299798139558921
+    },
+    {
+      "avg_context_tokens": 1298.5208655332303,
+      "hit_delta_vs_before": 0.0,
+      "hit_delta_vs_dense": -0.009273570324574876,
+      "hit_rate": 0.8361669242658424,
+      "learned_arm_count": 4,
+      "method": "generalized_full_context",
+      "num_queries": 647,
+      "protocol": "calibration_to_test",
+      "seed": "19",
+      "token_ratio_vs_dense": 0.943748673079321,
+      "token_saving_percent_vs_dense": 5.625132692067902
+    }
+  ],
+  "summary": {
+    "budget_ratio": 0.95,
+    "calibration_count": 277,
+    "conservative_ratio": 0.98,
+    "cross_fitted_budget": {
+      "fold_policy_labels": {
+        "0": "dense_top10_fallback",
+        "1": "token_budget_r0.95_m4",
+        "2": "token_budget_r0.95_m4",
+        "3": "token_budget_r0.95_m4",
+        "4": "token_budget_r0.95_m4"
+      },
+      "fold_query_counts": {
+        "0": 185,
+        "1": 185,
+        "2": 185,
+        "3": 185,
+        "4": 184
+      },
+      "fold_salt": "task65_6_cross_scale_crossfit_v1",
+      "num_folds": 5,
+      "path": "paper/experiments/results/task73_recreation_100k_none_cross_fitted_budget.json"
+    },
+    "dataset": "lotte_recreation_search_100k",
+    "generalization": {
+      "13": {
+        "learned": {
+          "16": [
+            19
+          ],
+          "28": [
+            28
+          ],
+          "30": [
+            16
+          ],
+          "4": [
+            1
+          ],
+          "9": [
+            16
+          ]
+        },
+        "test_compression_affected": [
+          "lotte_recreation_search_100k_q158",
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q551",
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q194",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q899",
+          "lotte_recreation_search_100k_q173"
+        ],
+        "test_dense_affected": [
+          "lotte_recreation_search_100k_q649",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q194",
+          "lotte_recreation_search_100k_q284"
+        ]
+      },
+      "17": {
+        "learned": {
+          "0": [
+            2
+          ],
+          "13": [
+            13
+          ],
+          "14": [
+            31
+          ],
+          "3": [
+            10
+          ]
+        },
+        "test_compression_affected": [
+          "lotte_recreation_search_100k_q158",
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q373",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q542",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q899",
+          "lotte_recreation_search_100k_q534"
+        ],
+        "test_dense_affected": [
+          "lotte_recreation_search_100k_q649",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q284",
+          "lotte_recreation_search_100k_q596"
+        ]
+      },
+      "19": {
+        "learned": {
+          "18": [
+            4
+          ],
+          "24": [
+            24
+          ],
+          "4": [
+            8
+          ],
+          "6": [
+            11,
+            6
+          ]
+        },
+        "test_compression_affected": [
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q164",
+          "lotte_recreation_search_100k_q373",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q899",
+          "lotte_recreation_search_100k_q596",
+          "lotte_recreation_search_100k_q173"
+        ],
+        "test_dense_affected": [
+          "lotte_recreation_search_100k_q649",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q164",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q284",
+          "lotte_recreation_search_100k_q596"
+        ]
+      }
+    },
+    "min_keep": 4,
+    "same_query": {
+      "13": {
+        "compression_affected_all": [
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q158",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q173",
+          "lotte_recreation_search_100k_q194",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q551",
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q899"
+        ],
+        "compression_affected_test": [
+          "lotte_recreation_search_100k_q158",
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q551",
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q194",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q899",
+          "lotte_recreation_search_100k_q173"
+        ],
+        "dense_affected_all": [
+          "lotte_recreation_search_100k_q34",
+          "lotte_recreation_search_100k_q98",
+          "lotte_recreation_search_100k_q194",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q284",
+          "lotte_recreation_search_100k_q318",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q420",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q590",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q649"
+        ],
+        "dense_affected_test": [
+          "lotte_recreation_search_100k_q649",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q194",
+          "lotte_recreation_search_100k_q284"
+        ]
+      },
+      "17": {
+        "compression_affected_all": [
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q158",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q353",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q373",
+          "lotte_recreation_search_100k_q534",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q542",
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q899"
+        ],
+        "compression_affected_test": [
+          "lotte_recreation_search_100k_q158",
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q373",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q542",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q899",
+          "lotte_recreation_search_100k_q534"
+        ],
+        "dense_affected_all": [
+          "lotte_recreation_search_100k_q34",
+          "lotte_recreation_search_100k_q98",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q284",
+          "lotte_recreation_search_100k_q318",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q420",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q596",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q649"
+        ],
+        "dense_affected_test": [
+          "lotte_recreation_search_100k_q649",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q284",
+          "lotte_recreation_search_100k_q596"
+        ]
+      },
+      "19": {
+        "compression_affected_all": [
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q164",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q173",
+          "lotte_recreation_search_100k_q234",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q373",
+          "lotte_recreation_search_100k_q520",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q596",
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q899"
+        ],
+        "compression_affected_test": [
+          "lotte_recreation_search_100k_q633",
+          "lotte_recreation_search_100k_q866",
+          "lotte_recreation_search_100k_q164",
+          "lotte_recreation_search_100k_q373",
+          "lotte_recreation_search_100k_q171",
+          "lotte_recreation_search_100k_q359",
+          "lotte_recreation_search_100k_q52",
+          "lotte_recreation_search_100k_q541",
+          "lotte_recreation_search_100k_q329",
+          "lotte_recreation_search_100k_q899",
+          "lotte_recreation_search_100k_q596",
+          "lotte_recreation_search_100k_q173"
+        ],
+        "dense_affected_all": [
+          "lotte_recreation_search_100k_q98",
+          "lotte_recreation_search_100k_q164",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q284",
+          "lotte_recreation_search_100k_q318",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q420",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q590",
+          "lotte_recreation_search_100k_q596",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q649"
+        ],
+        "dense_affected_test": [
+          "lotte_recreation_search_100k_q649",
+          "lotte_recreation_search_100k_q539",
+          "lotte_recreation_search_100k_q636",
+          "lotte_recreation_search_100k_q443",
+          "lotte_recreation_search_100k_q275",
+          "lotte_recreation_search_100k_q627",
+          "lotte_recreation_search_100k_q271",
+          "lotte_recreation_search_100k_q320",
+          "lotte_recreation_search_100k_q164",
+          "lotte_recreation_search_100k_q352",
+          "lotte_recreation_search_100k_q375",
+          "lotte_recreation_search_100k_q284",
+          "lotte_recreation_search_100k_q596"
+        ]
+      }
+    },
+    "seeds": [
+      "13",
+      "17",
+      "19"
+    ],
+    "test_count": 647
+  }
+}

@@ -32,9 +32,9 @@
     },
     {
       "item": "supplementary_numeric_provenance",
-      "numeric_values": 446,
+      "numeric_values": 482,
       "status": "PASS",
-      "tables": 17
+      "tables": 18
     }
   ],
   "errors": [],

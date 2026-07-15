@@ -21,8 +21,8 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE science/search | 200k | evidence_retrieval | 201098 | 596 | 596 | passage_qrels | cross_domain_scale | complete_reusable_anchor |
 | LoTTE science/search | 400k | evidence_retrieval | 400902 | 596 | 596 | passage_qrels | cross_domain_scale_boundary | complete_scale_boundary |
 | LoTTE lifestyle/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | deferred_hypothesis_driven_expansion | deferred_post_task69 |
-| LoTTE recreation/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | deferred_hypothesis_driven_expansion | deferred_post_task69 |
-| LoTTE writing/search | 100k | evidence_retrieval | pending | pending | pending | passage_qrels | deferred_hypothesis_driven_expansion | deferred_post_task69 |
+| LoTTE recreation/search | 100k | evidence_retrieval | 100714 | 924 | 924 | passage_qrels | task73_external_validity_boundary | complete_task73_boundary |
+| LoTTE writing/search | 100k | evidence_retrieval | 100696 | 1071 | 1071 | passage_qrels | task73_external_validity_useful_frontier | complete_task73_useful_frontier |
 | PubMedQA | native full | evidence_retrieval | 4348 | 1000 | 1000 | abstract_context_section | mechanism_transfer | complete_native_full |
 | CovidQA-RAG | native full | evidence_retrieval | 32392 | 1765 | 1726 | ragbench_relevant_sentence_keys | biomedical_discriminative_transfer | complete_native_full |
 | eManual deduplicated | native full | evidence_retrieval | 1729 | 132 | 130 | text_equivalent_after_deduplication | corrected_boundary | complete_corrected_boundary |
@@ -38,8 +38,8 @@ Generated from `task69_common_protocol.json` and traceable result artifacts.
 | LoTTE science/search | 200k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | LoTTE science/search | 400k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | LoTTE lifestyle/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
-| LoTTE recreation/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
-| LoTTE writing/search | 100k | no | no | no | no | no | no | no | no | no | no | 0/10 |
+| LoTTE recreation/search | 100k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
+| LoTTE writing/search | 100k | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | PubMedQA | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | CovidQA-RAG | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
 | eManual deduplicated | native full | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | 10/10 |
@@ -57,6 +57,8 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 | LoTTE technology/search | 400k | 0.7718 | 0.7718 | 0.00 | 14.50 | 0/3 | -- | reusable complete anchor |
 | LoTTE technology/search | 638k full | 0.7282 | 0.7310 | 0.28 | 15.23 | 0/3 | -- | reusable complete anchor |
 | LoTTE science/search | 20k/q200 | 0.8929 | 0.9095 | 1.67 | 13.80 | 1/3 | -- | legacy fixed-split diagnostic |
+| LoTTE recreation/search | 100k | 0.8496 | 0.8420 | -0.76 | 5.42 | 0/3 | -- | complete Task73 external-validity boundary |
+| LoTTE writing/search | 100k | 0.8739 | 0.8752 | 0.12 | 10.09 | 2/3 | -- | complete Task73 useful-frontier row |
 | LoTTE science/search | 100k | 0.8926 | 0.8915 | -0.11 | 16.88 | 0/3 | -- | reusable complete cross-domain row |
 | LoTTE science/search | 200k | 0.8574 | 0.8507 | -0.67 | 10.75 | 0/3 | -- | reusable complete cross-domain scale row |
 | LoTTE science/search | 400k | 0.8238 | 0.8171 | -0.67 | 3.15 | 0/3 | -- | complete boundary; recovery has 3-6 affected queries/seed |
@@ -73,4 +75,4 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 
 ## Interpretation Guardrail
 
-LoTTE technology/search, LoTTE science/search 100k/200k/400k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full provide complete rows under the common endpoint set. Science/search 400k is a weak boundary row: only one of five folds is budget eligible, its OOF mean Hit@10 delta is -0.67pp with 3.15% saving, and recovery has only 3-6 affected queries per seed. The deferred lifestyle/recreation/writing rows are post-Task69 expansion candidates, not missing Task69 endpoints. Technology reuses verified Task38/65 artifacts; science uses Task69.3 standalone baselines and frozen budget evaluation; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.
+LoTTE technology/search, LoTTE science/search 100k/200k/400k, PubMedQA native full, CovidQA-RAG native full, and corrected eManual native full provide complete rows under the common endpoint set. Science/search 400k is a weak boundary row: only one of five folds is budget eligible, its OOF mean Hit@10 delta is -0.67pp with 3.15% saving, and recovery has only 3-6 affected queries per seed. Task73 adds complete recreation/search and writing/search 100k rows without pooling them: recreation is a weaker no-feedback boundary, writing provides a useful no-feedback frontier, and trust-weighted calibration falls back in both. Lifestyle remains a deferred post-Task69 candidate rather than a missing endpoint. Technology reuses verified Task38/65 artifacts; science uses Task69.3 standalone baselines and frozen budget evaluation; PubMedQA is a native-full transfer row whose selector safely falls back to Dense; CovidQA-RAG is a more discriminative biomedical transfer row; eManual is a corrected-boundary row on the deduplicated text corpus. Banking77 remains an intent-routing mechanism test, and CUAD remains a sparse-GT boundary case.

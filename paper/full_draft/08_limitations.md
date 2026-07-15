@@ -80,6 +80,14 @@ remain heterogeneous and the selected policy changes in every 400k fold. It
 therefore reduces the missing-calibration concern without establishing
 split-invariant deployment behavior.
 
+The preregistered 100k domain expansion confirms that this is not only a scale
+effect. Writing/search yields a useful no-feedback frontier at 10.09% mean
+saving and +0.12pp mean Hit change, but strict non-inferiority holds in only
+2/3 seeds. Recreation/search yields 5.42% saving at -0.76pp and 0/3 strict
+non-inferiority seeds. Trust-weighted calibration falls back to Dense in every
+fold in both domains. These rows support domain-dependent calibrated operating
+points, not a universal quality-preserving token-saving guarantee.
+
 The route stability checks use the fixed seeds 13, 17, and 19 as engineering
 replicates; query-level paired tests provide the main inferential evidence. The
 400k seed-level saving interval remains wider than at other scales, and the
@@ -98,8 +106,10 @@ superiority conclusion or mechanically aggregated into one claim.
 The piecewise relevance-manifold framing is supported by diagnostics such as
 $\mathrm{NearestClusterHit@3}$, PCA spectrum, and context retention. These
 diagnostics do not prove a mathematical manifold theorem. They show that local
-geometry is informative for routing on LoTTE, while dense retrieval remains
-necessary.
+geometry is informative for routing across the tested LoTTE domains, while
+dense retrieval remains necessary. In particular, the strong cluster-local
+signals in recreation/search and writing/search coexist with different budget
+outcomes, so geometry is not a direct compression-safety predictor.
 
 KMeans/MiniBatchKMeans is used because LinUCB requires a fixed arm space and
 the experiments need reproducible, scalable arms. This is not a claim that
@@ -118,15 +128,17 @@ but it does not cover domain-specific encoders, late-interaction models, or
 proprietary embedding systems. The above-dense quality-first point is currently
 demonstrated for BGE only; E5 supports a near-dense token-saving point instead.
 
-The study spans seven dataset settings, but only LoTTE technology/search
+The study spans nine dataset settings, but only LoTTE technology/search
 receives the complete multi-scale, matched-baseline, calibration/test, and
 downstream-generation protocol. LoTTE science/search strengthens cross-domain
-validity; PubMedQA and CovidQA-RAG test biomedical evidence-retrieval transfer
+and scale validity; recreation/search and writing/search add complete 100k
+common-protocol retrieval and budget rows but no multi-scale or generated-answer
+evaluation. PubMedQA and CovidQA-RAG test biomedical evidence-retrieval transfer
 under different dense ceilings; Banking77 tests feedback adaptation as an
 intent-routing proxy; and eManual and CUAD expose benchmark boundaries. This
-breadth should not be interpreted as seven independent full-stack
-replications. More complete repeated evaluations on additional vertical
-corpora remain necessary.
+breadth should not be interpreted as nine independent full-stack replications.
+More complete repeated evaluations on additional vertical corpora remain
+necessary.
 
 ## 7.8 Future Work
 

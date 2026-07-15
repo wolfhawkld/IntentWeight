@@ -24,18 +24,26 @@ point estimates, and the three-judge majority detects a BGE faithfulness
 decrease, so the result does not establish uniform answer-quality
 non-inferiority. LoTTE science/search further supports ranking-side generalization, but
 also shows that compression strength must be calibrated per domain and scale.
+The preregistered recreation/search and writing/search expansion sharpens this
+boundary: both domains retain cluster-local route signal, but only
+writing/search supplies a useful 10.09% cross-fitted saving point with a
+slightly positive mean Hit change, and even that point passes the strict
+seed-level guardrail in only 2/3 seeds. Recreation/search is a weaker boundary,
+and trust-weighted calibration safely falls back to Dense in both domains.
 
-The broader seven-setting evaluation adds three distinct forms of external
-evidence. PubMedQA shows that trust-weighted route adaptation is observable in
-biomedical evidence retrieval near a dense ceiling, while CovidQA-RAG provides
-a more discriminative biomedical transfer row with measurable final-context
-savings and a small mean hit loss under the strict cross-fitted budget. Banking77
-shows analogous feedback behavior in an intent-routing proxy. eManual and CUAD
-expose how duplicated evidence, strict chunk identifiers, and sparse
-ground-truth anchors can dominate measured retrieval quality. These results do
-not form a pooled cross-dataset score. Instead, they separate the controller's
-full-stack LoTTE evidence from transfer, mechanism, and benchmark-boundary
-evidence.
+The broader nine-setting evaluation keeps external-validity, mechanism, and
+benchmark-boundary evidence separate. Recreation/search and writing/search map
+heterogeneity under the complete 100k common protocol. PubMedQA shows that
+trust-weighted route adaptation is observable in biomedical evidence retrieval
+near a dense ceiling, while CovidQA-RAG provides a more discriminative
+biomedical transfer row with measurable final-context savings and a small mean
+hit loss under the strict cross-fitted budget. Banking77 shows analogous
+feedback behavior in an intent-routing proxy. eManual and CUAD expose how
+duplicated evidence, strict chunk identifiers, and sparse ground-truth anchors
+can dominate measured retrieval quality. These results do not form a pooled
+cross-dataset score or nine equivalent replications. Instead, they separate the
+controller's full-stack LoTTE evidence from transfer, mechanism, and
+benchmark-boundary evidence.
 
 This result is not a claim that dense retrieval is weak. Dense retrieval remains
 the primary quality baseline and an important recall floor. IntentRoute's value
@@ -66,6 +74,13 @@ select a compressed action in any fold at any tested scale, whereas
 IntentRoute selects one in every 200k, 400k, and 638k fold. This is evidence of
 calibration headroom created by the routed evidence ranking, not evidence that
 all route policies or partitions are safe.
+
+The additional 100k domains make the same distinction operational. The
+no-feedback writing/search route admits compression in all folds, whereas
+recreation/search does so in four and the trust-weighted controller does so in
+none. A Dense fallback is therefore a valid calibrated outcome, not a missing
+result; route signal and a safe budget frontier must be established separately
+for each domain.
 
 ## 6.3 Reranking and Final-Context Control
 
@@ -126,9 +141,11 @@ budgeting.
 
 The geometry diagnostics support a piecewise relevance-manifold framing.
 $\mathrm{NearestClusterHit@3}$ remains high across LoTTE technology/search scales, and local
-geometry provides useful routing information. However, context retention
-declines with scale, and geometry alone is not a complete retrieval model. If a
-cluster route prunes too early, correct evidence can be lost.
+geometry provides useful routing information. The added recreation/search and
+writing/search domains likewise reach 0.8366 and 0.8655, respectively. However,
+context retention and calibrated savings vary by scale and domain, and geometry
+alone is not a complete retrieval model. If a cluster route prunes too early,
+correct evidence can be lost.
 
 IntentRoute therefore uses geometry as one signal in a controller. Dense
 retrieval remains a fallback, BM25 provides lexical anchors, and LinUCB learns

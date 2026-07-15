@@ -1,6 +1,6 @@
 # Journal Submission Checklist
 
-Updated: 2026-07-05
+Updated: 2026-07-16
 
 ## Venue Decision
 
@@ -26,7 +26,7 @@ Updated: 2026-07-05
 - [ ] Replace the non-final Figure 1 placeholder with the author-produced
   190 mm vector PDF and pass the strict artwork audit.
 - [x] Verify every table is editable LaTeX text, not an image.
-- [x] Verify all five main tables, 28 supplementary tables, and three figures
+- [x] Verify all five main tables, 30 supplementary tables, and three figures
   are cited in their respective documents.
 
 ## Double-Anonymized Review
@@ -67,7 +67,7 @@ Updated: 2026-07-05
   repository artifact.
 - [ ] Prepare public artifact release with machine-specific paths removed.
 - [x] Re-run manuscript and submission-package validation after CAS migration.
-- [x] Rebuild and visually inspect the 24-page main PDF, 12-page supplement,
+- [x] Rebuild and visually inspect the 28-page main PDF, 15-page supplement,
   and one-page title page.
 - [x] Pass 921 experiment-artifact checks with zero warnings and errors.
 - [x] Recompute and verify all five main tables and both plotted-data files.

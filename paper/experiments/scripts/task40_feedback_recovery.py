@@ -22,6 +22,8 @@ import csv
 import hashlib
 import importlib.util
 import json
+import os
+import re
 from collections import Counter, defaultdict
 from pathlib import Path
 from statistics import mean
@@ -32,6 +34,7 @@ import numpy as np
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_ARTIFACT_DIR = SCRIPT_DIR.parent / "data" / "retrieval_artifacts"
+DEFAULT_TIKTOKEN_CACHE_DIR = SCRIPT_DIR.parent / "data" / "tiktoken_cache"
 
 
 def _load_script_module(name: str, path: Path):
@@ -50,6 +53,14 @@ class SeedContext(NamedTuple):
     query_arm: Dict[str, int]
     chunk_arm: Dict[str, int]
     centroids: np.ndarray
+
+
+class BudgetPolicy(NamedTuple):
+    ratio: float
+    min_keep: int
+
+
+BUDGET_POLICY_RE = re.compile(r"^token_budget_r(?P<ratio>\d+(?:\.\d+)?)_m(?P<min_keep>\d+)$")
 
 
 def load_json_list(path: Path) -> List[Mapping]:
@@ -90,6 +101,87 @@ def deterministic_split(
     scored.sort(key=lambda item: item[0])
     split_at = max(1, min(len(scored) - 1, int(round(len(scored) * calibration_fraction))))
     return [query for _, query in scored[:split_at]], [query for _, query in scored[split_at:]]
+
+
+def canonical_query_id(query: Mapping) -> str:
+    metadata = query.get("metadata")
+    if isinstance(metadata, Mapping) and metadata.get("original_query_id") is not None:
+        return str(metadata["original_query_id"])
+    return qid(query)
+
+
+def parse_budget_policy(label: str) -> BudgetPolicy | None:
+    if label == "dense_top10_fallback":
+        return None
+    match = BUDGET_POLICY_RE.fullmatch(label)
+    if match is None:
+        raise ValueError(f"Unsupported cross-fitted budget policy: {label!r}")
+    return BudgetPolicy(float(match.group("ratio")), int(match.group("min_keep")))
+
+
+def load_crossfit_query_policies(
+    path: Path,
+    queries: Sequence[Mapping],
+) -> tuple[Dict[str, BudgetPolicy | None], Dict[str, object]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    protocol = payload.get("protocol", {})
+    selections = payload.get("fold_selections", [])
+    fold_salt = str(protocol.get("fold_salt", ""))
+    num_folds = int(protocol.get("num_folds", 0))
+    if not fold_salt or num_folds <= 1 or len(selections) != num_folds:
+        raise ValueError(f"Invalid cross-fitted calibration metadata: {path}")
+
+    fold_policies: Dict[int, BudgetPolicy | None] = {}
+    fold_labels: Dict[int, str] = {}
+    for selection in selections:
+        fold = int(selection["fold"])
+        label = str(selection["intentroute_policy"])
+        if fold in fold_policies:
+            raise ValueError(f"Duplicate fold {fold} in {path}")
+        fold_policies[fold] = parse_budget_policy(label)
+        fold_labels[fold] = label
+    if set(fold_policies) != set(range(num_folds)):
+        raise ValueError(f"Incomplete fold policies in {path}: {sorted(fold_policies)}")
+
+    scored = []
+    seen_canonical: set[str] = set()
+    for query in queries:
+        query_id = qid(query)
+        canonical_id = canonical_query_id(query)
+        if canonical_id in seen_canonical:
+            raise ValueError(f"Duplicate canonical query ID: {canonical_id}")
+        seen_canonical.add(canonical_id)
+        digest = hashlib.sha256(f"{fold_salt}:{canonical_id}".encode("utf-8")).hexdigest()
+        scored.append((digest, canonical_id, query_id))
+    scored.sort(key=lambda item: (item[0], item[1]))
+
+    query_policies: Dict[str, BudgetPolicy | None] = {}
+    fold_counts: Counter[int] = Counter()
+    for index, (_, _, query_id) in enumerate(scored):
+        fold = index % num_folds
+        query_policies[query_id] = fold_policies[fold]
+        fold_counts[fold] += 1
+    return query_policies, {
+        "path": str(path),
+        "fold_salt": fold_salt,
+        "num_folds": num_folds,
+        "fold_policy_labels": {str(key): fold_labels[key] for key in sorted(fold_labels)},
+        "fold_query_counts": {str(key): fold_counts[key] for key in sorted(fold_counts)},
+    }
+
+
+def query_budget_policy(
+    query_id: str,
+    query_policies: Mapping[str, BudgetPolicy | None] | None,
+    *,
+    budget_ratio: float,
+    min_keep: int,
+) -> BudgetPolicy | None:
+    if query_policies is None:
+        return BudgetPolicy(budget_ratio, min_keep)
+    if query_id not in query_policies:
+        raise ValueError(f"Missing cross-fitted budget policy for query {query_id}")
+    return query_policies[query_id]
 
 
 def load_flat_rankings(path: Path) -> Dict[str, List[str]]:
@@ -324,6 +416,8 @@ def same_query_recovery_rows(
     budget_ratio: float,
     min_keep: int,
     conservative_ratio: float,
+    query_policies: Mapping[str, BudgetPolicy | None] | None = None,
+    protocol: str = "same_query_retry",
 ) -> tuple[List[Dict[str, object]], Dict[str, Dict[str, List[str]]]]:
     retry_rankings: Dict[str, Dict[str, List[str]]] = {
         "same_arm_boost": {},
@@ -333,21 +427,32 @@ def same_query_recovery_rows(
     affected_ids = {qid(query) for query in affected}
     for query in affected:
         query_id = qid(query)
+        policy = query_budget_policy(
+            query_id,
+            query_policies,
+            budget_ratio=budget_ratio,
+            min_keep=min_keep,
+        )
+        if policy is None:
+            base = [str(item) for item in budget_rankings.get(query_id, [])]
+            for method in retry_rankings:
+                retry_rankings[method][query_id] = base
+            continue
         positive_arms = gt_arms(query, context.chunk_arm)
         boosted = boost_ranking_by_arms(fixed_rankings.get(query_id, []), context.chunk_arm, positive_arms)
         retry_rankings["same_arm_boost"][query_id] = token_budget(
             boosted,
             chunk_tokens,
             top_k=top_k,
-            budget_ratio=budget_ratio,
-            min_keep=min_keep,
+            budget_ratio=policy.ratio,
+            min_keep=policy.min_keep,
         )
         retry_rankings["same_arm_boost_conservative"][query_id] = token_budget(
             boosted,
             chunk_tokens,
             top_k=top_k,
-            budget_ratio=conservative_ratio,
-            min_keep=min_keep,
+            budget_ratio=max(conservative_ratio, policy.ratio),
+            min_keep=policy.min_keep,
         )
         retry_rankings["same_full_context"][query_id] = [str(item) for item in fixed_rankings.get(query_id, [])[:top_k]]
 
@@ -356,7 +461,7 @@ def same_query_recovery_rows(
     base_tokens = average_tokens(affected, budget_rankings, chunk_tokens, top_k=top_k)
     base_hit = evaluate_hit_rate(affected, budget_rankings, top_k=top_k)
     rows.append({
-        "protocol": "same_query_retry",
+        "protocol": protocol,
         "seed": seed,
         "method": "budgeted_before_feedback",
         "affected_count": len(affected),
@@ -381,7 +486,7 @@ def same_query_recovery_rows(
                 regressed += 1
         tokens = average_tokens(affected, rankings, chunk_tokens, top_k=top_k)
         rows.append({
-            "protocol": "same_query_retry",
+            "protocol": protocol,
             "seed": seed,
             "method": method,
             "affected_count": len(affected),
@@ -441,6 +546,7 @@ def generalized_rankings(
     budget_ratio: float,
     min_keep: int,
     conservative_ratio: float,
+    query_policies: Mapping[str, BudgetPolicy | None] | None = None,
 ) -> Dict[str, Dict[str, List[str]]]:
     output = {
         "generalized_arm_boost": {},
@@ -451,7 +557,13 @@ def generalized_rankings(
     for query in test_queries:
         query_id = qid(query)
         query_arm = context.query_arm.get(query_id)
-        if query_arm in learned:
+        policy = query_budget_policy(
+            query_id,
+            query_policies,
+            budget_ratio=budget_ratio,
+            min_keep=min_keep,
+        )
+        if query_arm in learned and policy is not None:
             boosted = boost_ranking_by_arms(
                 fixed_rankings.get(query_id, []),
                 context.chunk_arm,
@@ -461,22 +573,22 @@ def generalized_rankings(
                 boosted,
                 chunk_tokens,
                 top_k=top_k,
-                budget_ratio=budget_ratio,
-                min_keep=min_keep,
+                budget_ratio=policy.ratio,
+                min_keep=policy.min_keep,
             )
             output["generalized_arm_boost_conservative"][query_id] = token_budget(
                 boosted,
                 chunk_tokens,
                 top_k=top_k,
-                budget_ratio=conservative_ratio,
-                min_keep=min_keep,
+                budget_ratio=max(conservative_ratio, policy.ratio),
+                min_keep=policy.min_keep,
             )
             output["generalized_conservative_budget"][query_id] = token_budget(
                 fixed_rankings.get(query_id, []),
                 chunk_tokens,
                 top_k=top_k,
-                budget_ratio=conservative_ratio,
-                min_keep=min_keep,
+                budget_ratio=max(conservative_ratio, policy.ratio),
+                min_keep=policy.min_keep,
             )
             output["generalized_full_context"][query_id] = [
                 str(item) for item in fixed_rankings.get(query_id, [])[:top_k]
@@ -571,11 +683,15 @@ def write_csv(path: Path, rows: Sequence[Mapping[str, object]]) -> None:
 
 
 def write_markdown(path: Path, *, summary: Mapping[str, object], rows: Sequence[Mapping[str, object]]) -> None:
+    if summary.get("cross_fitted_budget"):
+        budget_line = f"- Budget policy: cross-fitted selections from `{summary['cross_fitted_budget']['path']}`"
+    else:
+        budget_line = f"- Budget policy: `r{summary['budget_ratio']:.2f}_m{summary['min_keep']}`"
     lines = [
         "# Task40 Feedback Recovery",
         "",
         f"- Dataset: `{summary['dataset']}`",
-        f"- Budget policy: `r{summary['budget_ratio']:.2f}_m{summary['min_keep']}`",
+        budget_line,
         f"- Conservative retry ratio: `{summary['conservative_ratio']:.2f}`",
         f"- Calibration queries: `{summary['calibration_count']}`",
         f"- Test queries: `{summary['test_count']}`",
@@ -637,6 +753,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--min-learned-arm-examples", type=int, default=1)
     parser.add_argument("--tokenizer", default="tiktoken", choices=("tiktoken", "simple"))
     parser.add_argument("--encoding", default="cl100k_base")
+    parser.add_argument(
+        "--cross-fitted-calibration",
+        type=Path,
+        default=None,
+        help="Optional calibration JSON supplying the exact per-fold budget policy for each query",
+    )
     args = parser.parse_args(argv)
 
     seeds = [part.strip() for part in args.seeds.split(",") if part.strip()]
@@ -647,8 +769,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         calibration_fraction=args.calibration_fraction,
         salt=args.split_salt,
     )
+    os.environ.setdefault("TIKTOKEN_CACHE_DIR", str(DEFAULT_TIKTOKEN_CACHE_DIR))
     count_tokens = context_token_cost.build_token_counter(args.tokenizer, args.encoding)
     chunk_tokens = {cid(chunk): count_tokens(str(chunk.get("text", ""))) for chunk in corpus}
+    query_policies = None
+    crossfit_metadata = None
+    if args.cross_fitted_calibration is not None:
+        query_policies, crossfit_metadata = load_crossfit_query_policies(
+            args.cross_fitted_calibration,
+            queries,
+        )
 
     dense_rankings = load_flat_rankings(args.dense_rankings)
     fixed_by_seed = load_seed_rankings(args.fixed_linucb_rankings, method=args.method)
@@ -665,6 +795,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "seeds": seeds,
         "same_query": {},
         "generalization": {},
+        "cross_fitted_budget": crossfit_metadata,
     }
 
     for seed in seeds:
@@ -717,8 +848,26 @@ def main(argv: Sequence[str] | None = None) -> int:
             budget_ratio=args.budget_ratio,
             min_keep=args.min_keep,
             conservative_ratio=args.conservative_ratio,
+            query_policies=query_policies,
         )
         rows.extend(same_rows)
+        compression_rows, _ = same_query_recovery_rows(
+            seed=seed,
+            queries=queries,
+            affected=compression_affected_all,
+            dense_rankings=dense_rankings,
+            fixed_rankings=fixed_rankings,
+            budget_rankings=budget_rankings,
+            context=context,
+            chunk_tokens=chunk_tokens,
+            top_k=args.top_k,
+            budget_ratio=args.budget_ratio,
+            min_keep=args.min_keep,
+            conservative_ratio=args.conservative_ratio,
+            query_policies=query_policies,
+            protocol="same_query_retry_compression_only",
+        )
+        rows.extend(compression_rows)
         rows.extend(all_query_rows(
             protocol="same_query_retry_all_queries",
             seed=seed,
@@ -749,6 +898,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             budget_ratio=args.budget_ratio,
             min_keep=args.min_keep,
             conservative_ratio=args.conservative_ratio,
+            query_policies=query_policies,
         )
         details["generalization"][seed] = {
             "learned": {str(key): value for key, value in learned.items()},

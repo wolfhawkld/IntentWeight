@@ -1,28 +1,27 @@
 # Task67 Submission Readiness Report
 
-Updated: 2026-07-05
+Updated: 2026-07-16 (Task74 refresh)
 
 ## Status
 
-The repository-controlled Task67 work and Task68 multi-dataset narrative
-alignment are complete. The IP&M package is scientifically and structurally
-validated. Final artwork still requires replacement of the non-final Figure 1
-placeholder and installation of vector text fonts in the current WSL build
-environment.
+The repository-controlled submission work through Task74 is complete. The
+Task73 recreation/search and writing/search evidence is integrated, and the
+IP&M package is scientifically, structurally, and technically validated. Final
+author work remains for Figure 1 and submission metadata.
 
 ## Package
 
-- anonymous CAS main manuscript: 25 pages, including references;
-- double-blind supplementary material: 13 pages and 28 tables in the current
-  WSL font-fallback build;
+- anonymous CAS main manuscript: 28 pages, including references;
+- double-blind supplementary material: 15 pages and 30 tables;
 - separate title page: 1 page;
-- abstract: 218 words; keywords: 7; highlights: 5;
+- abstract: within the 250-word IP&M limit; keywords: 7; highlights: 5;
 - main displays: five editable tables and three vector PDF figures.
 
 Moving the complete evidence appendix to a separate supplement reduces the
-review manuscript from 36 to 25 pages without deleting experimental evidence.
-The central geometry-guided, feedback-adaptive route-control thesis and all
-negative/boundary results remain present.
+complete 37-page ACL-style working draft to a 28-page CAS main manuscript
+without deleting experimental evidence. The central geometry-guided,
+feedback-adaptive route-control thesis and all negative/boundary results remain
+present.
 
 ## Evidence Validation
 
@@ -30,8 +29,10 @@ negative/boundary results remain present.
 - current Task43 source/display audit: 139/139 PASS;
 - Task67 main tables: 5/5 source-derived tables PASS;
 - Task67 plotted data: 2/2 files PASS;
-- remaining supplementary display provenance: 446 numeric values across 17
+- supplementary display provenance: 482 numeric values across 18
   tables PASS;
+- Task74 Task73 integration: S30, canonical source files, review packet, ACL
+  LaTeX, and CAS package PASS;
 - full-draft, LaTeX migration, citation/BibTeX, cross-reference, anonymity,
   and review-packet validation: PASS.
 
@@ -42,21 +43,11 @@ tracked source value, not `4.551`.
 ## Artwork
 
 Figures 2 and 3 are deterministic vector plots at 190 x 76 mm, contain no
-raster objects or Type 3 fonts, and use 7 pt minimum finished lettering.
-
-The strict validator currently reports four artwork/font errors:
-
-1. the current WSL main PDF contains Type 3 fonts from Figure 1 and the local
-   CMR fallback;
-2. the supplementary PDF contains Type 3 fonts from the same missing vector
-   text-font environment;
-3. Figure 1 contains Type 3 fonts;
-4. Figure 1 is 221.62 mm wide instead of 190 mm.
-
-Replace `paper/latex/figures/figure1_system_diagram.pdf` according to
-`paper/full_draft/figures/figure1_author_spec.md`, install the CAS-compatible
-vector text fonts, then run `make audit` from
-`paper/journal_submission/latex/`.
+raster objects or Type 3 fonts, and use 7 pt minimum finished lettering. The
+current Figure 1 placeholder also passes the repository's physical-size and
+font checks, but it is not the final author-produced architecture artwork.
+Replace it according to `paper/full_draft/figures/figure1_author_spec.md`, then
+rerun `make audit` from `paper/journal_submission/latex/`.
 
 ## Human Submission Fields
 
