@@ -1,7 +1,6 @@
 \documentclass[a4paper,fleqn,doubleblind]{cas-sc}
 
 \usepackage[authoryear,longnamesfirst]{natbib}
-\usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
@@ -22,7 +21,7 @@
 % TASK66_ABSTRACT_START
 Retrieval-augmented systems must balance evidence coverage, noise, and language-model context cost. IntentRoute separates feedback-adaptive route control from calibrated context budgeting. Dense, BM25, and geometry-defined cluster-local routes produce evidence; trust-weighted LinUCB estimates route confidence; independent calibration sets final context size; and Dense remains a recall floor. A piecewise relevance-manifold hypothesis motivates local routes, with geometry treated as diagnostic rather than proof of relevance.
 
-We evaluate nine dataset settings across eight domain areas. LoTTE technology/search supplies 100k-638k scale evidence; science/search tests domain and scale transfer; preregistered recreation/search and writing/search 100k studies test domain heterogeneity; and biomedical, banking, manual, and legal settings provide transfer, mechanism, and boundary checks. At calibration-eligible technology/search points, IntentRoute reduces final evidence-context tokens by 6-18\% while preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger losses of dense-only adaptive truncation. On 300 frozen queries, matched variants reduce context by 6-12\% with no statistically detectable correctness difference across three judges, although faithfulness is not uniformly preserved. In the preregistered expansion, no-feedback routes save 10.09\% with a +0.12pp mean Hit change on writing/search, but 5.42\% with -0.76pp and 0/3 strict non-inferiority seeds on recreation/search; trust-weighted calibration falls back to Dense in both. Both retain cluster-local signal, showing domain heterogeneity rather than a direct geometry-to-compression guarantee. Controlled feedback supports repeated-interaction adaptation and conditional recovery, not a universal first-pass gain on unseen queries. These results support a bounded quality-efficiency controller, not a universal dense replacement.
+We evaluate nine dataset settings across eight domain areas. LoTTE technology/search supplies 100k-638k scale evidence; science/search tests domain and scale transfer; prospectively specified recreation/search and writing/search 100k studies test domain heterogeneity; and biomedical, banking, manual, and legal settings provide transfer, mechanism, and boundary checks. At calibration-eligible technology/search points, IntentRoute reduces final evidence-context tokens by 6-18\% while preserving near-dense query-level $\mathrm{Hit@10}$ and avoiding the larger losses of dense-only adaptive truncation. On 300 frozen queries, matched variants reduce context by 6-12\% with no statistically detectable correctness difference across three judges, although faithfulness is not uniformly preserved. In the prospective expansion, no-feedback routes save 10.09\% with a +0.12pp mean Hit change on writing/search, but 5.42\% with -0.76pp and 0/3 strict non-inferiority seeds on recreation/search; trust-weighted calibration falls back to Dense in both. Both retain cluster-local signal, showing domain heterogeneity rather than a direct geometry-to-compression guarantee. Controlled feedback supports repeated-interaction adaptation and conditional recovery, not a universal first-pass gain on unseen queries. These results support a bounded quality-efficiency controller, not a universal dense replacement.
 % TASK66_ABSTRACT_END
 \end{abstract}
 
@@ -63,10 +62,11 @@ science/search validation points.}
 \begin{figure}[pos=htbp]
 \centering
 \includegraphics[width=\textwidth]{figure3_geometry_to_control.pdf}
-\caption{Geometry-to-control diagnostic. Context retention helps identify
-where local routing can preserve quality and save context, but it does not
-deterministically predict either outcome; calibration, fusion, and dense
-rescue remain part of the controller.}
+\caption{From local geometry to route-control behavior. Panel A profiles local
+structure across corpus scales; Panel B separates route-level geometry/random
+differences from Dense/BM25-rescued final quality; Panel C relates arm
+granularity to gated Dense fallback and Hit loss. Geometry supports route
+construction, not a direct token-saving law.}
 \label{fig:geometry-control}
 \end{figure}
 

@@ -10,12 +10,12 @@ Table~\ref{tab:1} reports the resulting scale-wise operating points.
 
 **Table 1. Calibrated token-quality frontier on LoTTE technology/search.**
 
-| Scale | Frozen policy | Calib. eligible | IntentRoute hit delta | NI seeds | IntentRoute token saving | Dense-trunc hit delta | Dense-trunc token saving |
+| Scale | Frozen context action | Calibration status | IntentRoute hit delta | NI seeds | IntentRoute token saving | Dense-trunc hit delta | Dense-trunc token saving |
 |---|---|---:|---:|---:|---:|---:|---:|
-| 100k | `token_budget_r0.95_m4` | True | +0.00 pp | 0/3 | 6.18% | -1.44 pp | 13.83% |
-| 200k | `token_budget_r0.85_m4` | True | +1.20 pp | 1/3 | 16.00% | -2.40 pp | 21.95% |
-| 400k | `token_budget_r0.98_m4` | False / diagnostic | +2.32 pp | 3/3 | 6.57% | -0.24 pp | 11.44% |
-| 638k | `token_budget_r0.85_m4` | True | -0.08 pp | 0/3 | 17.53% | -3.84 pp | 21.90% |
+| 100k | 95% budget; minimum 4 chunks | Eligible | +0.00 pp | 0/3 | 6.18% | -1.44 pp | 13.83% |
+| 200k | 85% budget; minimum 4 chunks | Eligible | +1.20 pp | 1/3 | 16.00% | -2.40 pp | 21.95% |
+| 400k | 98% budget; minimum 4 chunks | Diagnostic only | +2.32 pp | 3/3 | 6.57% | -0.24 pp | 11.44% |
+| 638k | 85% budget; minimum 4 chunks | Eligible | -0.08 pp | 0/3 | 17.53% | -3.84 pp | 21.90% |
 
 The calibration-eligible 100k, 200k, and 638k operating points save 6-18%
 final context tokens. The 400k row is retained as a diagnostic point because
@@ -24,6 +24,11 @@ frozen-test result is positive. Dense-only adaptive truncation saves more
 tokens but loses $\mathrm{Hit@10}$ at every scale. IntentRoute therefore
 targets a more quality-preserving bounded frontier rather than maximum
 compression.
+
+The artifact identifiers for these four actions are, respectively,
+`token_budget_r0.95_m4`, `token_budget_r0.85_m4`,
+`token_budget_r0.98_m4`, and `token_budget_r0.85_m4`; the journal-facing labels
+state the same ratio and mandatory-prefix parameters directly.
 
 An independently calibrated 100k audit gives Dense and IntentRoute the same
 fine budget grid but lets each select its own action. Under the zero observed
@@ -53,7 +58,7 @@ savings are respectively `-1.06pp/4.16%`, `+1.40pp/16.07%`,
 calibrated Dense finds no eligible compressed action in any fold and therefore
 uses top-10 fallback. At 400k, all five IntentRoute folds are eligible, closing
 the missing normalized follow-up, but they select five different policies and
-strict non-inferiority remains `0/3` seeds. Supplementary Table S16 reports the fold-level
+strict non-inferiority remains `0/3` seeds. Supplementary Table S12 reports the fold-level
 results. This supports the average 400k trade-off without erasing the original
 split failure or claiming stable policy selection.
 
@@ -143,97 +148,65 @@ route/fallback assignment signal, not as a direct compression-safety score.
 
 ## 5.4 Arm Granularity And Geometry-To-Control Analysis
 
-Arm-count sensitivity tests whether the fixed $K=32$ clustering choice is a
-hidden optimum. Full multi-route quality remains stable over a 16-fold range,
-whereas aggressive gated behavior changes substantially with arm granularity.
-Table~\ref{tab:4} reports the tested arm-count grid.
+Arm-count sensitivity tests whether the fixed $K=32$ choice is a hidden
+optimum. Figure 3 combines three evidence layers. Panel A shows that
+nearest-cluster hit remains high across the measured technology/search and
+science/search scales while context retention and PCA concentration vary.
+Panel B shows the large static-geometry advantage over uniform-random arms in
+route reward and selected-cluster hit, alongside their much smaller difference
+in rescued final fused Hit. Panel C shows that gated Dense use rises from
+0.4083 to 0.9502 over $K=8$--$128$, while every gated point loses Hit.
 
-**Table 4. Arm-count sensitivity on LoTTE technology/search 100k.**
-
-| $K$ | Static route reward | Full hit delta | Full token saving | Gated dense rate | Gated hit delta |
-|---:|---:|---:|---:|---:|---:|
-| 8 | 0.9128 | +1.44 pp | 6.23% | 0.4083 | -1.84 pp |
-| 16 | 0.8826 | +0.80 pp | 10.49% | 0.6089 | -1.68 pp |
-| 32 | 0.8563 | +0.56 pp | 4.68% | 0.7377 | -4.48 pp |
-| 64 | 0.8272 | +0.40 pp | 11.19% | 0.8986 | -3.76 pp |
-| 128 | 0.8479 | +1.20 pp | 10.23% | 0.9502 | -3.12 pp |
-
-The full route surface stays above its paired dense baseline throughout the
-grid, while gated dense use rises from 0.4083 to 0.9502 as $K$ grows. This
-supports $K$ as an engineering parameter governing feedback sparsity and
-fallback behavior, not a geometrically privileged constant.
-
-Across LoTTE technology/search scales, nearest-cluster hit remains high while context retention
-and PCA concentration vary. Figure 3 relates context retention to observed hit
-delta and token saving. The small cross-scale sample does not show a
-deterministic geometry-to-gain law: geometry identifies plausible local route
-structure, while calibration, fusion, and dense rescue determine the final
-operating point. Full diagnostics are retained in Supplementary Section S11.
+The complete arm-count grid is retained in Supplementary Table S20. Full
+multi-route quality remains stable across that grid, so $K=32$ is a reproducible
+engineering point governing route granularity, feedback sparsity, and fallback,
+not a geometrically privileged optimum. The composite figure supports local
+structure as a route-control surface; it does not posit a deterministic
+geometry-to-token-saving law.
 
 ## 5.5 Cross-Domain, Mechanism, And Boundary Evidence
 
-On LoTTE science/search, fixed top-10 IntentRoute reaches
-$\mathrm{Hit@10}=0.9267$ versus 0.8950 for dense at 20k/q200 and 0.9077 versus
-0.8926 at 100k. Frozen budget policies save 13-14% tokens at 20k/q200 while
-remaining above dense. At 100k, the more aggressive policy saves 17-21% but
-can introduce small hit losses. The ranking signal transfers, but compression
-strength requires domain- and scale-specific calibration. Supplementary Section S8 reports
-the complete seed-level table.
+Table~\ref{tab:4} puts every completed dataset-scale endpoint in one evidence
+matrix. The rows remain separate because they differ in query population,
+ground-truth semantics, protocol, and evidentiary role; no pooled effect is
+computed.
 
-The matched five-fold protocol makes this boundary explicit on the
-shared 596-query science/search population. At 100k, 200k, and 400k, the mean
-IntentRoute $\mathrm{Hit@10}$ deltas are -0.11pp, -0.67pp, and -0.67pp, with
-16.88%, 10.75%, and 3.15% final-context token saving, respectively; strict
-1pp non-inferiority is `0/3` seeds at every scale. At 400k, only one of five
-folds selects a compressed policy. Its recovery replay has only 3-6
-budget-induced affected queries per seed, so it closes a protocol endpoint but
-does not overturn the scale-boundary interpretation. The supplementary protocol
-registry records the matched protocol and evidence roles without pooling these rows into
-the technology/search headline.
+**Table 4. Cross-dataset and cross-domain evidence matrix. Five-fold rows use independently calibrated frozen budgets; the science 20k row is a legacy fixed-split diagnostic. Dashes denote no common final-context endpoint, and no rows are pooled.**
 
-The preregistered recreation/search and writing/search 100k expansion tests
-whether this heterogeneity persists under a matched protocol. Both domains
-show usable static cluster-local signal: $\mathrm{NearestClusterHit@3}$ is
-0.8366 on recreation/search and 0.8655 on writing/search. Their independently
-calibrated no-feedback frontiers differ. Recreation/search selects compression
-in four of five folds, with a -0.76pp mean $\mathrm{Hit@10}$ change, 5.42%
-token saving, and strict 1pp non-inferiority in 0/3 seeds. Writing/search
-selects compression in all five folds, with a +0.12pp mean Hit change, 10.09%
-saving, and strict non-inferiority in 2/3 seeds. Trust-weighted calibration
-selects no compressed fold in either domain and therefore uses Dense fallback.
-The preregistered assumption that recreation/search was more lexical is
-directionally reversed by measured query-positive overlap, so it is not used
-to explain the frontier contrast. Supplementary Table S30 reports the matched
-domain and controller rows. The result extends the geometry and
-quality-context evidence beyond technology/science while establishing domain
-heterogeneity, not universal strict non-inferiority or a direct
-geometry-to-compression causal link.
+| Dataset | Scale | Dense Hit@10 | IntentRoute Hit@10 | Hit delta | Token saving | Strict NI seeds | Evidentiary role |
+|---|---|---:|---:|---:|---:|---:|---|
+| LoTTE technology/search | 100k | 0.8674 | 0.8568 | -1.06 pp | 4.16% | 0/3 | Full-stack scale |
+| LoTTE technology/search | 200k | 0.7970 | 0.8110 | +1.40 pp | 16.07% | 2/3 | Full-stack scale |
+| LoTTE technology/search | 400k | 0.7718 | 0.7718 | +0.00 pp | 14.50% | 0/3 | Split-sensitive scale |
+| LoTTE technology/search | 638k | 0.7282 | 0.7310 | +0.28 pp | 15.23% | 0/3 | Full-stack scale |
+| LoTTE science/search | 20k/q200 | 0.8929 | 0.9095 | +1.67 pp | 13.80% | 1/3 | Legacy cross-domain diagnostic |
+| LoTTE science/search | 100k | 0.8926 | 0.8915 | -0.11 pp | 16.88% | 0/3 | Cross-domain |
+| LoTTE science/search | 200k | 0.8574 | 0.8507 | -0.67 pp | 10.75% | 0/3 | Cross-domain scale |
+| LoTTE science/search | 400k | 0.8238 | 0.8171 | -0.67 pp | 3.15% | 0/3 | Scale boundary |
+| LoTTE recreation/search | 100k | 0.8496 | 0.8420 | -0.76 pp | 5.42% | 0/3 | External-validity boundary |
+| LoTTE writing/search | 100k | 0.8739 | 0.8752 | +0.12 pp | 10.09% | 2/3 | External-validity frontier |
+| PubMedQA | Native full | 0.9930 | 0.9930 | +0.00 pp | 0.00% | 3/3 | Dense-ceiling transfer |
+| CovidQA-RAG | Native full | 0.6095 | 0.6074 | -0.21 pp | 8.34% | 0/3 | Biomedical transfer |
+| eManual deduplicated | Native full | 0.8615 | 0.8590 | -0.26 pp | 16.20% | 0/3 | Corrected boundary |
+| Banking77 | Native full | 0.9805 | 0.9844 | +0.39 pp | -- | -- | Intent-routing mechanism |
+| CUAD GT-anchored | 10k sample | 0.0759 | 0.0886 | +1.27 pp | -- | -- | Sparse-GT boundary |
 
-The supporting transfer checks cover different retrieval abstractions and dense
-ceilings. On PubMedQA, dense retrieval reaches $\mathrm{Hit@10}=0.9930$, while
-the trust-weighted policy reaches $0.9940$ with selected-cluster hit $0.8860$.
-CovidQA-RAG is more discriminative: dense reaches $\mathrm{Hit@10}=0.6095$,
-trust-weighted fixed top-10 IntentRoute reaches $0.6300$, and a five-fold
-budgeted evaluation saves 8.34% final-context tokens with a -0.21 percentage
-point mean hit delta versus dense. The strict 1pp non-inferiority rule remains
-unmet on CovidQA-RAG, so this row supports transfer of the quality-efficiency
-trade-off rather than a guaranteed non-inferior result. On the Banking77
-intent-routing proxy, the corresponding dense and trust-weighted scores are
-$0.9805$ and $0.9844$, and selected-cluster hit reaches $0.9983$. The
-near-ceiling PubMedQA and Banking77 final scores limit claims about aggregate
-improvement, but the route diagnostics support feedback adaptation beyond the
-LoTTE task format.
+The common five-fold rows expose domain heterogeneity rather than a universal
+no-loss rule. Science/search saving falls from 16.88% at 100k to 3.15% at 400k,
+where only one fold compresses. Recreation/search yields 5.42% saving at
+-0.76pp, whereas writing/search yields 10.09% at +0.12pp; trust-weighted
+calibration selects Dense fallback in every fold of both domains. Their
+$\mathrm{NearestClusterHit@3}$ values of 0.8366 and 0.8655 nevertheless show
+that useful local-route structure can coexist with different safe budget
+frontiers. Supplementary Table S23 retains their complete route and calibration
+controls.
 
-The two boundary datasets explain why benchmark construction matters. eManual
-contains 18,812 chunks but only 1,729 unique text strings: dense
-$\mathrm{Hit@10}$ increases from $0.3231$ under strict chunk identity to
-$0.5615$ under text-equivalent matching and $0.8615$ after corpus
-deduplication. On the GT-anchored CUAD sample, dense reaches $0.0759$ and the
-trust-weighted smoke run reaches $0.0886$; sparse evidence anchors prevent this
-sample from serving as full-corpus positive evidence. Supplementary Sections
-S4 and S8 retain the complete tables. These datasets support mechanism,
-transfer, and boundary analysis rather than replacing the LoTTE token-saving
-headline or establishing universal dense-retrieval dominance.
+PubMedQA is a Dense-ceiling transfer row rather than evidence of additional
+compression. CovidQA-RAG and deduplicated eManual provide non-ceiling transfer
+and corrected-boundary results, while Banking77 and CUAD have no comparable
+final-context endpoint. The latter two therefore support route mechanism or
+benchmark-boundary analysis only. Supplementary Sections S4, S8, and S12 retain
+the corresponding dataset, seed, and protocol details.
 
 ## 5.6 Strong Post-Retrieval Baselines
 
@@ -241,10 +214,9 @@ Dense+Sentence-MMR preserves dense chunk-support
 $\mathrm{Hit@10}=0.8705$ while saving 11.4-13.1% selected-sentence tokens.
 When the same compressor is applied to both source pools,
 IntentRoute+Sentence-MMR reaches 10.1-21.2% total saving because it starts from
-a smaller evidence pool. SelectiveContext-lite similarly adds prompt pruning
-after either source pool and reaches up to 30.57% total saving over dense for
-the tested IntentRoute variants. These controls show that downstream
-compression is complementary, not unique to IntentRoute.
+a smaller evidence pool. This matched control shows that downstream compression
+is complementary rather than unique to IntentRoute; an official LLMLingua-2
+comparison remains untested.
 
 A cross-encoder reranker improves dense full-top-10 support from
 $\mathrm{Hit@10}=0.8705$ to 0.8777 and evidence recall from 0.7081 to 0.7332,

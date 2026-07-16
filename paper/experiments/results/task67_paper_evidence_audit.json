@@ -17,7 +17,7 @@
     },
     {
       "item": "main_table_4",
-      "rows": 5,
+      "rows": 15,
       "status": "PASS"
     },
     {
@@ -32,9 +32,9 @@
     },
     {
       "item": "supplementary_numeric_provenance",
-      "numeric_values": 482,
+      "numeric_values": 392,
       "status": "PASS",
-      "tables": 18
+      "tables": 15
     }
   ],
   "errors": [],

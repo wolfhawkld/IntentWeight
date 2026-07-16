@@ -1,10 +1,10 @@
 # Draft Figure Assets
 
-Updated: 2026-06-28
+Updated: 2026-07-17
 
-These assets are draft paper figures generated from existing experiment
-artifacts. They are intended for writing and review, not as final camera-ready
-venue artwork.
+These assets are paper figures generated from tracked experiment artifacts.
+Figure 1 remains an author-owned structural placeholder; Figures 2 and 3 are
+deterministic vector data figures.
 
 ## Files
 
@@ -14,8 +14,10 @@ venue artwork.
   science/search Hit@10 and final context-token frontier plotted by corpus
   chunk count.
 - `figure2_token_quality_frontier_data.csv`: source data for Figure 2.
-- `figure3_geometry_to_control.svg`: main-paper geometry-to-control diagnostic.
-- `figure3_geometry_to_control_data.csv`: source data for Figure 3.
+- `figure3_geometry_to_control.svg`: three-panel main-paper geometry-to-control
+  figure covering scale diagnostics, random-route attribution, and arm
+  granularity/fallback.
+- `figure3_geometry_to_control_data.csv`: panel-keyed source data for Figure 3.
 
 The geometry scale trend and feedback-adaptation assets are retained as
 supplementary review material:

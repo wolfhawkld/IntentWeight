@@ -2,7 +2,7 @@
 
 ## Protocol
 
-Two preregistered LoTTE search domains use the frozen Task69 common protocol: GT-anchored 100k corpora, all positive-qrel queries, MiniLM, top-10, K=32, seeds 13/17/19, eight prequential epochs, matched feedback/no-feedback controls, and five-fold cross-fitted context budgets. Domains are reported separately; no pooled p-value is used.
+Two predeclared LoTTE search domains use the frozen Task69 common protocol: GT-anchored 100k corpora, all positive-qrel queries, MiniLM, top-10, K=32, seeds 13/17/19, eight prequential epochs, matched feedback/no-feedback controls, and five-fold cross-fitted context budgets. Domains are reported separately; no pooled p-value is used.
 
 ## Domain Property Check
 
@@ -11,7 +11,7 @@ Two preregistered LoTTE search domains use the frozen Task69 common protocol: GT
 | LoTTE recreation/search | 100,714 | 924 | 0.6755 | 0.0787 | 0.6937 | 0.8496 | -15.58pp |
 | LoTTE writing/search | 100,696 | 1,071 | 0.7478 | 0.1003 | 0.7283 | 0.8739 | -14.57pp |
 
-The preregistered H1 characterization is not supported and is directionally reversed: writing has higher query-positive lexical overlap and a slightly smaller Dense advantage. Recreation-minus-writing differences are -0.0722 (95% CI -0.0901 to -0.0543) for coverage, -0.0216 (95% CI -0.0268 to -0.0165) for Jaccard, and -1.02pp (95% CI -4.90 to +2.83) for BM25-relative Hit. The domains are retained as preregistered; their frontier contrast cannot be attributed to the originally assumed lexicality ordering.
+The predeclared H1 characterization is not supported and is directionally reversed: writing has higher query-positive lexical overlap and a slightly smaller Dense advantage. Recreation-minus-writing differences are -0.0722 (95% CI -0.0901 to -0.0543) for coverage, -0.0216 (95% CI -0.0268 to -0.0165) for Jaccard, and -1.02pp (95% CI -4.90 to +2.83) for BM25-relative Hit. The domains are retained as predeclared; their frontier contrast cannot be attributed to the originally assumed lexicality ordering.
 
 ## Retrieval And Budget Results
 

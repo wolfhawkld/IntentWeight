@@ -38,7 +38,7 @@ adaptation while preserving one obvious reading direction.
 │                                 ├-> BM25: lexical anchors ------------------┼┤    │
 │                                 └-> LinUCB selects arms -> Cluster-local ---┤│    │
 │                                      │                                      ││    │
-│                         Route confidence + drift                            ││    │
+│                         Confidence + centroid mismatch                       ││    │
 │                         -> route gate / dense fallback -------------------->││    │
 │                                                                            v v    │
 │                         Weighted rank fusion -> Final-context budget -> LLM       │
@@ -100,7 +100,7 @@ Place the controller immediately above or below the three route cards, centered
 on the cluster-local route. It may be a two-part module:
 
 - **LinUCB arm policy** — `score and select local arms`
-- **Route confidence + drift** — `gate route use; keep dense fallback`
+- **Confidence + centroid mismatch** — `gate route use; keep dense fallback`
 
 Use control arrows from this module to:
 
@@ -145,14 +145,14 @@ copy is recommended.
 | Lexical | BM25 | lexical anchors |
 | Geometry | Fixed local arms | KMeans, K=32 |
 | Bandit | LinUCB arm policy | score and select local arms |
-| Confidence | Route confidence + drift | gate route use; keep dense fallback |
+| Confidence | Confidence + centroid mismatch | gate route use; keep dense fallback |
 | Local retrieval | Cluster-local dense | search selected arms |
 | Fusion | Weighted rank fusion | dense + BM25 + local |
 | Calibration | Frozen budget policy | selected on calibration queries |
 | Budget | Final-context budget | ordered budgeted subset under (r,m) |
 | Context | Budgeted evidence | generator input context |
 | Generator | LLM / downstream agent | evidence-grounded response |
-| Feedback | Simulated trust-weighted feedback | evidence reward; later-query updates |
+| Feedback | Simulated trust-weighted feedback | evidence reward; update q(t+1) route state |
 
 Avoid placing formulas inside the figure except for compact symbols such as
 `K=32`, `(r,m)`, and `τ`. Detailed equations belong in the method section.

@@ -34,7 +34,7 @@ def parse_supplementary_table(number: int) -> list[list[str]]:
     return rows[2:]
 
 
-def expected_s30(payload: dict[str, object]) -> list[list[str]]:
+def expected_domain_expansion_rows(payload: dict[str, object]) -> list[list[str]]:
     rows: list[list[str]] = []
     for domain in payload["domains"]:
         short_name = str(domain["domain"])
@@ -78,18 +78,18 @@ def run_validation() -> dict[str, object]:
     checks: list[dict[str, object]] = []
     errors: list[str] = []
 
-    actual_table = parse_supplementary_table(30)
-    expected_table = expected_s30(payload)
+    actual_table = parse_supplementary_table(23)
+    expected_table = expected_domain_expansion_rows(payload)
     table_ok = actual_table == expected_table
-    checks.append({"item": "supplementary_table_s30", "status": "PASS" if table_ok else "ERROR", "rows": len(actual_table)})
+    checks.append({"item": "supplementary_table_s23", "status": "PASS" if table_ok else "ERROR", "rows": len(actual_table)})
     if not table_ok:
-        errors.append("Supplementary Table S30 differs from Task73 source-derived values")
+        errors.append("Supplementary Table S23 differs from Task73 source-derived values")
 
     source_requirements = {
         "paper/full_draft/01_abstract.md": ["nine dataset settings", "eight domain", "10.09%", "5.42%"],
         "paper/full_draft/02_introduction.md": ["recreation/search and writing/search", "nine dataset settings"],
         "paper/full_draft/05_experimental_setup.md": ["924", "1,071", "no cross-domain pooled effect"],
-        "paper/full_draft/06_results.md": ["0.8366", "0.8655", "0/3 seeds", "2/3 seeds", "Supplementary Table S30"],
+        "paper/full_draft/06_results.md": ["0.8366", "0.8655", "0/3", "2/3", "Supplementary Table S23"],
         "paper/full_draft/07_discussion.md": ["trust-weighted calibration safely falls back to Dense"],
         "paper/full_draft/08_limitations.md": ["not a universal quality-preserving token-saving guarantee"],
         "paper/full_draft/09_conclusion.md": ["nine dataset settings", "10.09%", "5.42%"],
@@ -112,11 +112,11 @@ def run_validation() -> dict[str, object]:
 
     generated_requirements = {
         "paper/review_packet/manuscript.md": ["nine dataset settings", "recreation/search", "10.09%"],
-        "paper/review_packet/supplementary_material.md": ["Supplementary Table S30", "28/29"],
+        "paper/review_packet/supplementary_material.md": ["Supplementary Table S23", "28/29"],
         "paper/latex/sections/abstract.tex": ["nine dataset settings", "recreation/search", "10.09"],
-        "paper/latex/sections/appendix.tex": ["Preregistered LoTTE Domain Expansion", "28/29"],
+        "paper/latex/sections/appendix.tex": ["Prospectively Specified LoTTE Domain Expansion", "28/29"],
         "paper/journal_submission/latex/sections/abstract.tex": ["nine dataset settings", "recreation/search", "10.09"],
-        "paper/journal_submission/latex/sections/appendix.tex": ["Preregistered LoTTE Domain Expansion", "28/29"],
+        "paper/journal_submission/latex/sections/appendix.tex": ["Prospectively Specified LoTTE Domain Expansion", "28/29"],
     }
     generated_errors: list[str] = []
     for relative, fragments in generated_requirements.items():

@@ -29,6 +29,21 @@ FORBIDDEN_PATTERNS = {
     "internal task label": re.compile(r"\b[Tt]ask\d+(?:[._-]\d+)*\b"),
     "unfinished marker": re.compile(r"\b(?:TODO|FIXME|TBD)\b"),
     "overstrong manifold wording": re.compile(r"\bmanifold-structured\b", re.IGNORECASE),
+    "formal preregistration wording": re.compile(r"\bpre-?register\w*\b", re.IGNORECASE),
+    "total-cost equivalence wording": re.compile(
+        r"proportional per-query inference-cost reduction|most expensive recurring component",
+        re.IGNORECASE,
+    ),
+    "overstrong feedback heading": re.compile(
+        r"Feedback Improves the Policy Field", re.IGNORECASE
+    ),
+}
+
+REQUIRED_CURRENT_CITATIONS = {
+    "zhao2026r3ag",
+    "kim2026qudar",
+    "qureshi2026budget",
+    "guo2026routerag",
 }
 
 CITATION_RE = re.compile(r"(?<![\w/])@([A-Za-z0-9_:-]+)")
@@ -82,6 +97,9 @@ def validate_bib(citations: set[str]) -> list[str]:
 
 def main() -> None:
     errors, citations = validate_markdown()
+    missing_current = sorted(REQUIRED_CURRENT_CITATIONS - citations)
+    if missing_current:
+        errors.append(f"missing required 2026 citations: {missing_current}")
     errors.extend(validate_bib(citations))
 
     if errors:

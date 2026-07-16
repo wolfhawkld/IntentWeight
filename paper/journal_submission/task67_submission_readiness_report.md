@@ -1,25 +1,27 @@
 # Task67 Submission Readiness Report
 
-Updated: 2026-07-16 (Task74 refresh)
+Updated: 2026-07-16 (Task76 refresh)
 
 ## Status
 
-The repository-controlled submission work through Task74 is complete. The
-Task73 recreation/search and writing/search evidence is integrated, and the
-IP&M package is scientifically, structurally, and technically validated. Final
-author work remains for Figure 1 and submission metadata.
+The repository-controlled submission work through Task76 is complete. The
+Task73 recreation/search and writing/search evidence is integrated; terminology,
+cost scope, feedback framing, and current-literature positioning are closed;
+the 10.53% editorial compression pass is complete; and the IP&M package is
+scientifically, structurally, and technically validated. Final author work
+remains for Figure 1 and submission metadata.
 
 ## Package
 
-- anonymous CAS main manuscript: 28 pages, including references;
+- anonymous CAS main manuscript: 25 pages, including references;
 - double-blind supplementary material: 15 pages and 30 tables;
 - separate title page: 1 page;
 - abstract: within the 250-word IP&M limit; keywords: 7; highlights: 5;
 - main displays: five editable tables and three vector PDF figures.
 
-Moving the complete evidence appendix to a separate supplement reduces the
-complete 37-page ACL-style working draft to a 28-page CAS main manuscript
-without deleting experimental evidence. The central geometry-guided,
+Moving the complete evidence appendix to a separate supplement and consolidating
+repeated main-text wording reduces the complete 37-page ACL-style working draft
+to a 25-page CAS main manuscript without deleting experimental evidence. The central geometry-guided,
 feedback-adaptive route-control thesis and all negative/boundary results remain
 present.
 
@@ -33,12 +35,21 @@ present.
   tables PASS;
 - Task74 Task73 integration: S30, canonical source files, review packet, ACL
   LaTeX, and CAS package PASS;
+- Task75 final-text audit: 44 files and four required 2026 primary citations
+  PASS;
+- Task76 compression audit: 12,209 words, 10.53% reduction, six preserved
+  evidence-section hashes, and 52 required compressed-section details PASS;
 - full-draft, LaTeX migration, citation/BibTeX, cross-reference, anonymity,
   and review-packet validation: PASS.
 
 The audit identified and corrected one real presentation drift: the GLM-5.2
 correctness mean in Supplementary Table S10 is `4.550` when rounded from the
 tracked source value, not `4.551`.
+
+Task75 also corrected a CAS font-stack conflict in which loading `lmodern`
+after the class's STIX setup produced missing mathematical glyphs. The main and
+supplement PDFs now use the native STIX math stack, contain no missing-character
+log entries or Type 3 fonts, and preserve machine-readable mathematical symbols.
 
 ## Artwork
 

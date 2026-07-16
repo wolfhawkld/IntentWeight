@@ -4,7 +4,7 @@ Status: completed 2026-07-16
 
 ## Objective
 
-Integrate the preregistered Task73 LoTTE recreation/search and writing/search
+Integrate the predeclared Task73 LoTTE recreation/search and writing/search
 100k results into the canonical manuscript and generated submission packages
 without changing the tested method, rerunning the experiment, or broadening the
 claim beyond the source artifacts.
@@ -20,7 +20,7 @@ Task74 must preserve the following distinctions:
 - recreation/no-feedback is a boundary result: `-0.76pp` mean Hit@10 change
   with `5.42%` saving and strict non-inferiority in `0/3` seeds;
 - trust-weighted calibration falls back to Dense in all folds in both domains;
-- the preregistered lexicality ordering was reversed and cannot explain the
+- the predeclared lexicality ordering was reversed and cannot explain the
   frontier contrast;
 - geometry structures a route signal, feedback supports conditional
   post-failure recovery, and the final token budget is calibrated separately.

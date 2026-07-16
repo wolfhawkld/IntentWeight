@@ -9,6 +9,7 @@ plotting dependencies.
 from __future__ import annotations
 
 import csv
+import math
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
@@ -47,14 +48,19 @@ class GeometryRow:
 
 
 @dataclass(frozen=True)
-class GeometryGainRow:
-    domain: str
-    scale: str
-    corpus_chunks: int
-    cluster_hit3: float
-    context_retention10: float
-    policy_hit_delta_pp: float
-    policy_saving_pct: float
+class RouteControlRow:
+    setting: str
+    route_reward: float
+    selected_cluster_hit: float
+    final_fused_hit10: float
+
+
+@dataclass(frozen=True)
+class ArmControlRow:
+    arm_count: int
+    static_route_reward: float
+    gated_dense_rate: float
+    gated_hit_delta_pp: float
 
 
 @dataclass(frozen=True)
@@ -83,23 +89,39 @@ def read_token_rows() -> list[TokenRow]:
     return rows
 
 
-def read_geometry_gain_rows(token_rows: list[TokenRow], geometry_rows: list[GeometryRow]) -> list[GeometryGainRow]:
-    by_key = {(row.domain, row.scale): row for row in token_rows}
-    rows: list[GeometryGainRow] = []
-    for geometry in geometry_rows:
-        token = by_key[(geometry.domain, geometry.scale)]
-        rows.append(
-            GeometryGainRow(
-                domain=geometry.domain,
-                scale=geometry.scale,
-                corpus_chunks=geometry.corpus_chunks,
-                cluster_hit3=geometry.cluster_hit3,
-                context_retention10=geometry.context_retention10,
-                policy_hit_delta_pp=token.policy_hit_delta_pp,
-                policy_saving_pct=token.policy_saving_pct,
-            )
+def read_route_control_rows() -> list[RouteControlRow]:
+    path = RESULTS / "task58_geometry_random_ablation_summary.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        by_setting = {row["setting"]: row for row in csv.DictReader(handle)}
+    labels = [
+        ("static_nearest", "Static-nearest geometry"),
+        ("uniform_random", "Uniform-random arms"),
+    ]
+    return [
+        RouteControlRow(
+            setting=label,
+            route_reward=float(by_setting[key]["last_route_true_reward_mean"]),
+            selected_cluster_hit=float(by_setting[key]["selected_cluster_hit_rate_mean"]),
+            final_fused_hit10=float(by_setting[key]["full_top10_hit@10_mean"]),
         )
-    return rows
+        for key, label in labels
+    ]
+
+
+def read_arm_control_rows() -> list[ArmControlRow]:
+    path = RESULTS / "task60_arm_count_sensitivity_summary.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        source = list(csv.DictReader(handle))
+    by_key = {(int(row["arm_count"]), row["short_mode"]): row for row in source}
+    return [
+        ArmControlRow(
+            arm_count=arm_count,
+            static_route_reward=float(by_key[(arm_count, "static")]["last_route_true_reward_mean"]),
+            gated_dense_rate=float(by_key[(arm_count, "gated")]["dense_query_rate_mean"]),
+            gated_hit_delta_pp=float(by_key[(arm_count, "gated")]["test_hit_delta_pp_mean"]),
+        )
+        for arm_count in (8, 16, 32, 64, 128)
+    ]
 
 
 def read_feedback_rows() -> list[FeedbackRow]:
@@ -219,7 +241,12 @@ def write_csv(path: Path, fieldnames: list[str], rows: Iterable[dict[str, object
         writer.writerows(rows)
 
 
-def svg_header(width: int, height: int) -> list[str]:
+def svg_header(width: int, height: int, *, publication_scale: bool = False) -> list[str]:
+    sizes = (
+        {"title": 32, "subtitle": 21, "label": 20, "tick": 20, "legend": 20, "box_title": 22, "box_text": 20}
+        if publication_scale
+        else {"title": 22, "subtitle": 13, "label": 12, "tick": 11, "legend": 12, "box_title": 13, "box_text": 11}
+    )
     return [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img">',
@@ -230,15 +257,15 @@ def svg_header(width: int, height: int) -> list[str]:
         "</marker>",
         '<style><![CDATA[',
         "text { font-family: Arial, Helvetica, sans-serif; fill: #1f2933; }",
-        ".title { font-size: 22px; font-weight: 700; }",
-        ".subtitle { font-size: 13px; fill: #52606d; }",
+        f".title {{ font-size: {sizes['title']}px; font-weight: 700; }}",
+        f".subtitle {{ font-size: {sizes['subtitle']}px; fill: #52606d; }}",
         ".axis { stroke: #9aa5b1; stroke-width: 1; }",
         ".grid { stroke: #e4e7eb; stroke-width: 1; }",
-        ".label { font-size: 12px; fill: #52606d; }",
-        ".tick { font-size: 11px; fill: #616e7c; }",
-        ".legend { font-size: 12px; fill: #323f4b; }",
-        ".box-title { font-size: 13px; font-weight: 700; }",
-        ".box-text { font-size: 11px; fill: #52606d; }",
+        f".label {{ font-size: {sizes['label']}px; fill: #52606d; }}",
+        f".tick {{ font-size: {sizes['tick']}px; fill: #616e7c; }}",
+        f".legend {{ font-size: {sizes['legend']}px; fill: #323f4b; }}",
+        f".box-title {{ font-size: {sizes['box_title']}px; font-weight: 700; }}",
+        f".box-text {{ font-size: {sizes['box_text']}px; fill: #52606d; }}",
         "]]></style>",
         "</defs>",
         '<rect width="100%" height="100%" fill="#ffffff" />',
@@ -470,7 +497,7 @@ def draw_category_axes(
 def generate_system_diagram() -> None:
     parts = svg_header(1120, 520)
     parts.append(text(40, 42, "Figure 1. IntentRoute evidence-selection controller", "title"))
-    parts.append(text(40, 64, "Dense/BM25 are global recall routes; LinUCB selects cluster-local arms and budget confidence.", "subtitle"))
+    parts.append(text(40, 64, "Dense/BM25 rescue, adaptive local routing, and frozen context calibration remain separate control layers.", "subtitle"))
 
     boxes = [
         (40, 120, 150, 88, "#e8f4fd", "#1f5f8b", "Query", ["user/session", "context"]),
@@ -479,7 +506,7 @@ def generate_system_diagram() -> None:
         (455, 154, 175, 58, "#f5f7fa", "#425466", "BM25 global", ["lexical anchors"]),
         (455, 230, 175, 72, "#fff7e6", "#9a6b14", "LinUCB selector", ["fixed cluster arms", "confidence scores"]),
         (690, 230, 175, 72, "#fff7e6", "#9a6b14", "Cluster-local dense", ["search selected arms", "local evidence"]),
-        (690, 130, 175, 76, "#eefcf6", "#2f855a", "Rank fusion", ["merge route", "candidates"]),
+        (690, 130, 175, 76, "#eefcf6", "#2f855a", "Route gate + fusion", ["confidence / mismatch", "dense fallback"]),
         (905, 130, 175, 76, "#eefcf6", "#2f855a", "Context budget", ["LLM input context", "compact if safe"]),
         (905, 300, 175, 76, "#e8f4fd", "#1f5f8b", "Generator / agent", ["answer from selected", "evidence context"]),
         (455, 350, 190, 76, "#fff1f2", "#b42318", "Trust-weighted feedback", ["simulated feedback", "future updates only"]),
@@ -501,35 +528,38 @@ def generate_system_diagram() -> None:
         (630, 183, 690, 168),
         (865, 266, 735, 206),
         (865, 168, 905, 168),
-        (630, 266, 905, 206),
+        (630, 266, 690, 185),
         (992, 206, 992, 300),
         (905, 338, 645, 388),
         (550, 350, 550, 302),
     ]
-    for x1, y1, x2, y2 in arrows:
+    for index, (x1, y1, x2, y2) in enumerate(arrows):
+        dash = ' stroke-dasharray="6 5"' if index >= len(arrows) - 2 else ""
         parts.append(
             f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#425466" '
-            'stroke-width="1.8" marker-end="url(#arrow)" />'
+            f'stroke-width="1.8"{dash} marker-end="url(#arrow)" />'
         )
 
-    parts.append(text(40, 470, "Figure boundary: the current experiments evaluate retrieval/context tokens; broader agent-memory carriers remain future work.", "subtitle"))
+    parts.append(text(40, 470, "Feedback updates q(t+1) route state; only the independently frozen policy sets the final context budget.", "subtitle"))
     parts.append("</svg>")
     (FIGURES / "figure1_system_diagram.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
     mermaid = """flowchart LR
-    Q[Query and user/session context] --> F[Feature construction]
+    Q[Query and user/session context] --> F[PCA query controller context]
     F --> D[Dense global recall floor]
     F --> B[BM25 lexical recall]
     F --> P[LinUCB cluster-arm selector]
     P --> C[Cluster-local dense search]
+    P --> GATE[Confidence and centroid-mismatch gate]
     D --> R[Rank fusion]
     B --> R
     C --> R
-    P --> G[Confidence-based final context budget]
+    GATE --> R
+    K[Calibrated budget policy] --> G[Final context budget]
     R --> G
     G --> A[Generator or downstream agent response]
-    A --> T[Trust-weighted feedback]
-    T --> P
+    A -. observed outcome .-> T[Controlled trust-weighted simulated feedback]
+    T -. update route state for q(t+1) .-> P
 """
     (FIGURES / "figure1_system_diagram.mmd").write_text(mermaid, encoding="utf-8")
 
@@ -651,87 +681,184 @@ def generate_geometry_figure(rows: list[GeometryRow]) -> None:
     (FIGURES / "figure3_geometry_diagnostics.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
-def generate_geometry_gain_figure(rows: list[GeometryGainRow]) -> None:
-    write_csv(
-        FIGURES / "figure3_geometry_to_control_data.csv",
-        [
-            "domain",
-            "scale",
-            "corpus_chunks",
-            "nearest_cluster_hit_at_3",
-            "context_retention_at_10",
-            "policy_hit_delta_pp",
-            "policy_saving_pct",
-        ],
-        [
+def generate_geometry_control_figure(
+    geometry_rows: list[GeometryRow],
+    route_rows: list[RouteControlRow],
+    arm_rows: list[ArmControlRow],
+) -> None:
+    csv_rows: list[dict[str, object]] = []
+    for row in geometry_rows:
+        csv_rows.append(
             {
+                "panel": "A_geometry_profile",
                 "domain": row.domain,
                 "scale": row.scale,
                 "corpus_chunks": row.corpus_chunks,
+                "pca_var64": f"{row.pca_var64:.4f}",
                 "nearest_cluster_hit_at_3": f"{row.cluster_hit3:.4f}",
                 "context_retention_at_10": f"{row.context_retention10:.4f}",
-                "policy_hit_delta_pp": f"{row.policy_hit_delta_pp:.2f}",
-                "policy_saving_pct": f"{row.policy_saving_pct:.2f}",
             }
-            for row in rows
+        )
+    for row in route_rows:
+        csv_rows.append(
+            {
+                "panel": "B_geometry_random",
+                "setting": row.setting,
+                "route_reward": f"{row.route_reward:.4f}",
+                "selected_cluster_hit": f"{row.selected_cluster_hit:.4f}",
+                "final_fused_hit_at_10": f"{row.final_fused_hit10:.4f}",
+            }
+        )
+    for row in arm_rows:
+        csv_rows.append(
+            {
+                "panel": "C_arm_fallback",
+                "arm_count": row.arm_count,
+                "static_route_reward": f"{row.static_route_reward:.4f}",
+                "gated_dense_rate": f"{row.gated_dense_rate:.4f}",
+                "gated_hit_delta_pp": f"{row.gated_hit_delta_pp:.2f}",
+            }
+        )
+    write_csv(
+        FIGURES / "figure3_geometry_to_control_data.csv",
+        [
+            "panel",
+            "domain",
+            "scale",
+            "corpus_chunks",
+            "pca_var64",
+            "nearest_cluster_hit_at_3",
+            "context_retention_at_10",
+            "setting",
+            "route_reward",
+            "selected_cluster_hit",
+            "final_fused_hit_at_10",
+            "arm_count",
+            "static_route_reward",
+            "gated_dense_rate",
+            "gated_hit_delta_pp",
         ],
+        csv_rows,
     )
 
-    parts = svg_header(1120, 520)
-    parts.append(text(40, 42, "Figure 3. Geometry-to-control diagnostic", "title"))
-    parts.append(text(40, 64, "Local geometry informs calibration, but does not deterministically predict final quality-cost gains.", "subtitle"))
+    parts = svg_header(1500, 680, publication_scale=True)
+    parts.append(text(45, 44, "Figure 3. From local geometry to route-control behavior", "title"))
+    parts.append(text(45, 76, "Local structure supports routing; rescue and calibration remain separate determinants of final quality and context cost.", "subtitle"))
 
-    x0, y0, width, height = 95, 118, 395, 285
-    draw_scatter_axes(
-        parts,
-        x0,
-        y0,
-        width,
-        height,
-        0.84,
-        0.92,
-        -1.0,
-        3.5,
-        [0.84, 0.86, 0.88, 0.90, 0.92],
-        [-1.0, 0.0, 1.0, 2.0, 3.0],
-        "Hit delta vs context retention",
-        "ContextRetention@10",
-    )
-    points = scatter_points(rows, [row.context_retention10 for row in rows], [row.policy_hit_delta_pp for row in rows], x0, y0, width, height, 0.84, 0.92, -1.0, 3.5)
-    zero_y = y0 + height - ((0.0 - -1.0) / 4.5) * height
-    parts.append(line(x0, zero_y, x0 + width, zero_y, "#b8c2cc", 1.2))
-    for row, (x, y) in zip(rows, points):
-        color = "#2f855a" if row.domain == "technology/search" else "#1f5f8b"
-        parts.append(circle(x, y, color))
-        parts.append(text(x, y - 10, row.scale, "tick", "middle"))
+    panel_specs = [(45, 108, 445, 510), (525, 108, 430, 510), (990, 108, 465, 510)]
+    for x, y, width, height in panel_specs:
+        parts.append(f'<rect x="{x}" y="{y}" width="{width}" height="{height}" rx="10" fill="#fbfcfd" stroke="#d9e2ec" stroke-width="1.5" />')
 
-    x1, y1, w1, h1 = 630, 118, 395, 285
-    draw_scatter_axes(
-        parts,
-        x1,
-        y1,
-        w1,
-        h1,
-        0.84,
-        0.92,
-        0.0,
-        22.0,
-        [0.84, 0.86, 0.88, 0.90, 0.92],
-        [0.0, 5.0, 10.0, 15.0, 20.0],
-        "Token saving vs context retention",
-        "ContextRetention@10",
-    )
-    saving_points = scatter_points(rows, [row.context_retention10 for row in rows], [row.policy_saving_pct for row in rows], x1, y1, w1, h1, 0.84, 0.92, 0.0, 22.0)
-    for row, (x, y) in zip(rows, saving_points):
-        color = "#2f855a" if row.domain == "technology/search" else "#1f5f8b"
-        parts.append(circle(x, y, color))
-        parts.append(text(x, y - 10, f"{row.policy_saving_pct:.1f}%", "tick", "middle"))
+    # Panel A: shared-scale profile, with a common 0.55-0.95 y-axis to avoid
+    # exaggerating the six-point trends through metric-specific rescaling.
+    ax, ay, aw, ah = 105.0, 180.0, 345.0, 330.0
+    parts.append(text(65, 145, "A  Cross-scale geometry profile", "box-title"))
+    for tick_value in (0.6, 0.7, 0.8, 0.9):
+        y = ay + ah - ((tick_value - 0.55) / 0.40) * ah
+        parts.append(line(ax, y, ax + aw, y, "#e4e7eb", 1.0))
+        parts.append(text(ax - 12, y + 7, f"{tick_value:.1f}", "tick", "end"))
+    parts.append(line(ax, ay, ax, ay + ah, "#9aa5b1", 1.4))
+    parts.append(line(ax, ay + ah, ax + aw, ay + ah, "#9aa5b1", 1.4))
+    log_min, log_max = 4.25, 5.85
+    for chunks, label in ((20000, "20k"), (100000, "100k"), (200000, "200k"), (400000, "400k"), (640000, "640k")):
+        x = ax + ((math.log10(chunks) - log_min) / (log_max - log_min)) * aw
+        parts.append(line(x, ay + ah, x, ay + ah + 7, "#9aa5b1", 1.0))
+        parts.append(text(x, ay + ah + 30, label, "tick", "middle"))
+    parts.append(text(ax + aw / 2, ay + ah + 60, "Corpus chunks (log scale)", "label", "middle"))
+    metric_specs = [
+        ("Nearest-cluster Hit@3", "cluster_hit3", "#2f855a", "o"),
+        ("Context retention@10", "context_retention10", "#1f5f8b", "s"),
+        ("PCA variance@64", "pca_var64", "#9a6b14", "t"),
+    ]
+    for metric_label, attribute, color, marker in metric_specs:
+        for domain in ("technology/search", "science/search"):
+            domain_rows = [row for row in geometry_rows if row.domain == domain]
+            points: list[tuple[float, float]] = []
+            for row in domain_rows:
+                x = ax + ((math.log10(row.corpus_chunks) - log_min) / (log_max - log_min)) * aw
+                value = float(getattr(row, attribute))
+                y = ay + ah - ((value - 0.55) / 0.40) * ah
+                points.append((x, y))
+                if marker == "s":
+                    parts.append(f'<rect x="{x - 6:.1f}" y="{y - 6:.1f}" width="12" height="12" fill="{color}" stroke="#ffffff" stroke-width="1.5" />')
+                elif marker == "t":
+                    parts.append(f'<path d="M{x:.1f},{y - 7:.1f} L{x - 7:.1f},{y + 6:.1f} L{x + 7:.1f},{y + 6:.1f} Z" fill="{color}" stroke="#ffffff" stroke-width="1.5" />')
+                else:
+                    parts.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="6" fill="{color}" stroke="#ffffff" stroke-width="1.5" />')
+            parts.append(polyline(points, color, 2.6, "8 6" if domain == "science/search" else None))
+    for idx, (label, _, color, _) in enumerate(metric_specs):
+        y = 542 + idx * 25
+        parts.append(f'<rect x="70" y="{y - 13}" width="14" height="14" fill="{color}" />')
+        parts.append(text(93, y, label, "legend"))
+    parts.append(line(310, 548, 350, 548, "#52606d", 2.5))
+    parts.append(text(360, 555, "technology", "legend"))
+    parts.append(f'<line x1="310" y1="580" x2="350" y2="580" stroke="#52606d" stroke-width="2.5" stroke-dasharray="8 6" />')
+    parts.append(text(360, 587, "science", "legend"))
 
-    parts.append(f'<rect x="820" y="88" width="12" height="12" fill="#2f855a" />')
-    parts.append(text(838, 99, "technology/search", "legend"))
-    parts.append(f'<rect x="820" y="112" width="12" height="12" fill="#1f5f8b" />')
-    parts.append(text(838, 123, "science/search", "legend"))
-    parts.append(text(95, 468, "Caption boundary: diagnostics explain where adaptive routing is plausible; dense fallback remains necessary.", "subtitle"))
+    # Panel B: route-level separation is large even though Dense/BM25 rescue
+    # keeps the final fused endpoint high for both controls.
+    bx, by, bw, bh = 580.0, 190.0, 330.0, 330.0
+    parts.append(text(545, 145, "B  Geometry versus random routing", "box-title"))
+    for tick_value in (0.0, 0.25, 0.5, 0.75, 1.0):
+        y = by + bh - tick_value * bh
+        parts.append(line(bx, y, bx + bw, y, "#e4e7eb", 1.0))
+        parts.append(text(bx - 12, y + 7, f"{tick_value:.2f}", "tick", "end"))
+    parts.append(line(bx, by, bx, by + bh, "#9aa5b1", 1.4))
+    parts.append(line(bx, by + bh, bx + bw, by + bh, "#9aa5b1", 1.4))
+    bar_colors = ["#2f855a", "#9a6b14", "#1f5f8b"]
+    bar_labels = ["Route reward", "Cluster hit", "Final fused Hit@10"]
+    for group_index, row in enumerate(route_rows):
+        center = bx + 92 + group_index * 175
+        values = [row.route_reward, row.selected_cluster_hit, row.final_fused_hit10]
+        for metric_index, (value, color) in enumerate(zip(values, bar_colors)):
+            x = center - 50 + metric_index * 40
+            y = by + bh - value * bh
+            parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="30" height="{value * bh:.1f}" fill="{color}" opacity="0.90" />')
+            parts.append(text(x + 15, y - 9, f"{value:.2f}", "tick", "middle"))
+        parts.append(text(center - 10, by + bh + 31, "Static geometry" if group_index == 0 else "Uniform random", "tick", "middle"))
+    for idx, (label, color) in enumerate(zip(bar_labels, bar_colors)):
+        y = 560 + idx * 27
+        parts.append(f'<rect x="575" y="{y - 13}" width="15" height="15" fill="{color}" />')
+        parts.append(text(600, y, label, "legend"))
+
+    # Panel C: K changes route granularity and the fallback operating point.
+    cx, cy, cw, ch = 1050.0, 185.0, 350.0, 220.0
+    parts.append(text(1010, 145, "C  Arm granularity and fallback", "box-title"))
+    for tick_value in (0.0, 0.25, 0.5, 0.75, 1.0):
+        y = cy + ch - tick_value * ch
+        parts.append(line(cx, y, cx + cw, y, "#e4e7eb", 1.0))
+        parts.append(text(cx - 12, y + 7, f"{tick_value:.2f}", "tick", "end"))
+    parts.append(line(cx, cy, cx, cy + ch, "#9aa5b1", 1.4))
+    parts.append(line(cx, cy + ch, cx + cw, cy + ch, "#9aa5b1", 1.4))
+    reward_points: list[tuple[float, float]] = []
+    dense_points: list[tuple[float, float]] = []
+    for idx, row in enumerate(arm_rows):
+        x = cx + idx * (cw / 4)
+        reward_y = cy + ch - row.static_route_reward * ch
+        dense_y = cy + ch - row.gated_dense_rate * ch
+        reward_points.append((x, reward_y))
+        dense_points.append((x, dense_y))
+        parts.append(f'<circle cx="{x:.1f}" cy="{reward_y:.1f}" r="6" fill="#2f855a" stroke="#ffffff" stroke-width="1.5" />')
+        parts.append(f'<rect x="{x - 6:.1f}" y="{dense_y - 6:.1f}" width="12" height="12" fill="#1f5f8b" stroke="#ffffff" stroke-width="1.5" />')
+    parts.append(polyline(reward_points, "#2f855a", 2.8))
+    parts.append(polyline(dense_points, "#1f5f8b", 2.8))
+    parts.append(text(1060, 438, "Gated Hit@10 delta vs Dense (pp)", "label"))
+    delta_top, delta_height = 460.0, 85.0
+    parts.append(line(cx, delta_top, cx + cw, delta_top, "#9aa5b1", 1.2))
+    parts.append(line(cx, delta_top, cx, delta_top + delta_height, "#9aa5b1", 1.2))
+    for idx, row in enumerate(arm_rows):
+        x = cx + idx * (cw / 4)
+        height = abs(row.gated_hit_delta_pp) / 5.0 * delta_height
+        parts.append(f'<rect x="{x - 14:.1f}" y="{delta_top:.1f}" width="28" height="{height:.1f}" fill="#b42318" opacity="0.82" />')
+        parts.append(text(x, delta_top + height + 23, f"{row.gated_hit_delta_pp:.2f}", "tick", "middle"))
+        parts.append(text(x, 588, str(row.arm_count), "tick", "middle"))
+    parts.append(text(cx + cw / 2, 614, "Number of arms K (log2 steps)", "label", "middle"))
+    parts.append(f'<rect x="1050" y="158" width="14" height="14" fill="#2f855a" />')
+    parts.append(text(1073, 172, "Static route reward", "legend"))
+    parts.append(f'<rect x="1255" y="158" width="14" height="14" fill="#1f5f8b" />')
+    parts.append(text(1278, 172, "Gated Dense rate", "legend"))
+
+    parts.append(text(45, 655, "Panel B separates route quality from rescued final quality; Panel C treats K=32 as an engineering point, not a geometric optimum.", "subtitle"))
     parts.append("</svg>")
     (FIGURES / "figure3_geometry_to_control.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
@@ -812,11 +939,11 @@ def generate_feedback_adaptation_figure(rows: list[FeedbackRow]) -> None:
 def write_readme() -> None:
     readme = """# Draft Figure Assets
 
-Updated: 2026-06-27
+Updated: 2026-07-17
 
-These assets are draft paper figures generated from existing experiment
-artifacts. They are intended for writing and review, not as final camera-ready
-venue artwork.
+These assets are paper figures generated from tracked experiment artifacts.
+Figure 1 remains an author-owned structural placeholder; Figures 2 and 3 are
+deterministic vector data figures.
 
 ## Files
 
@@ -826,8 +953,10 @@ venue artwork.
   science/search Hit@10 and final context-token frontier plotted by corpus
   chunk count.
 - `figure2_token_quality_frontier_data.csv`: source data for Figure 2.
-- `figure3_geometry_to_control.svg`: main-paper geometry-to-control diagnostic.
-- `figure3_geometry_to_control_data.csv`: source data for Figure 3.
+- `figure3_geometry_to_control.svg`: three-panel main-paper geometry-to-control
+  figure covering scale diagnostics, random-route attribution, and arm
+  granularity/fallback.
+- `figure3_geometry_to_control_data.csv`: panel-keyed source data for Figure 3.
 
 The geometry scale trend and feedback-adaptation assets are retained as
 supplementary review material:
@@ -852,12 +981,17 @@ def main() -> None:
     FIGURES.mkdir(parents=True, exist_ok=True)
     token_rows = read_token_rows()
     geometry_rows = read_geometry_rows()
-    geometry_gain_rows = read_geometry_gain_rows(token_rows, geometry_rows)
+    route_control_rows = read_route_control_rows()
+    arm_control_rows = read_arm_control_rows()
     feedback_rows = read_feedback_rows()
     generate_system_diagram()
     generate_token_quality_figure(token_rows)
     generate_geometry_figure(geometry_rows)
-    generate_geometry_gain_figure(geometry_gain_rows)
+    generate_geometry_control_figure(
+        geometry_rows,
+        route_control_rows,
+        arm_control_rows,
+    )
     generate_feedback_adaptation_figure(feedback_rows)
     write_readme()
 

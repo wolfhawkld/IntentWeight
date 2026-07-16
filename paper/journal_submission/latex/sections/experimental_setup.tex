@@ -11,7 +11,7 @@ The experiments cover nine dataset settings across eight domain areas: technolog
 \begin{itemize}
 \item \textbf{LoTTE technology/search} is the main large-scale vertical-domain evidence benchmark. We evaluate nested corpus scales from 100k to 638k chunks with 596 test queries.
 \item \textbf{LoTTE science/search} is the cross-domain validation benchmark. It tests whether ranking and context-budget behavior transfer beyond technology/search at 20k/q200, 100k, 200k, and 400k scales. The 400k row is retained as a scale boundary rather than a lossless-compression replication.
-\item \textbf{LoTTE recreation/search and writing/search} are preregistered 100k external-validity tests with 924 and 1,071 positive-qrel queries, respectively. Both use the full common protocol and remain in the analysis after the preregistered lexicality ordering is contradicted by the measured query-positive overlap.
+\item \textbf{LoTTE recreation/search and writing/search} are prospectively specified 100k external-validity tests with 924 and 1,071 positive-qrel queries, respectively. Both use the full common protocol and remain in the analysis after the prospectively specified lexicality ordering is contradicted by the measured query-positive overlap.
 \item \textbf{PubMedQA and CovidQA-RAG} are biomedical transfer checks. PubMedQA is an evidence-retrieval proof-of-concept with abstract-level ground truth and a near-ceiling dense baseline; CovidQA-RAG is a more discriminative native-full RAGBench evidence-retrieval row.
 \item \textbf{Banking77} is a supporting feedback-adaptation check for intent routing rather than a strict evidence-retrieval benchmark.
 \item \textbf{eManual and CUAD} are boundary cases. eManual exposes duplicate-text and strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
@@ -35,7 +35,6 @@ The baseline family includes:
 \item Gated cost-aware IntentRoute.
 \item Conservative confidence-conditioned final-context baseline.
 \item Dense+Sentence-MMR final-context compression.
-\item Dense and IntentRoute plus SelectiveContext-lite prompt pruning.
 \item Cross-encoder reranking over dense top-50 candidates.
 \item Static geometry controls such as nearest-cluster routing.
 \item Naive controls such as random or epsilon-greedy arm selection.
@@ -43,7 +42,7 @@ The baseline family includes:
 \item Arm-count sensitivity over $K \in \{8,16,32,64,128\}$.
 \end{itemize}
 
-Dense-only retrieval is the primary quality baseline. The paper should avoid weak baseline framing: dense is strong and remains a required recall floor in the proposed method. Sentence-MMR, SelectiveContext-lite, and cross-encoder reranking are reported as strong post-retrieval baselines. Sentence-MMR and SelectiveContext-lite test whether downstream compression can explain the token saving, while the cross-encoder tests whether a heavier late-ranking layer can select a smaller context more simply. These are not mutually exclusive alternatives to IntentRoute; they occupy different stages in the retrieval-to-context pipeline.
+Dense-only retrieval is the primary quality baseline and remains a required recall floor in the proposed method. Sentence-MMR is the matched downstream compression baseline, while the cross-encoder tests whether a heavier late ranking layer can select a smaller context more simply. These components are not mutually exclusive alternatives to IntentRoute; they occupy different stages in the retrieval-to-context pipeline.
 
 \subsection{Metrics}
 \label{sec:05-experimental-setup:metrics}
@@ -171,13 +170,9 @@ If $\mathrm{DenseHit@K}=0$, we set $\mathrm{ContextRetention@K}=0$.
 \subsection{Prequential Simulated Feedback}
 \label{sec:05-experimental-setup:prequential-simulated-feedback}
 
-LinUCB experiments use a no-leakage prequential simulated-feedback protocol. For each query, the current policy state is frozen before retrieval. The system ranks candidates, constructs the final context, and is evaluated against the ground-truth evidence. Only after this evaluation is the ground-truth label converted into simulated feedback and used to update the LinUCB state for later queries.
+Following the update order in Section 3.8, ground truth becomes a controlled feedback proxy only after the current result is scored. Oracle feedback is a learning upper bound; equal-noisy and trust-weighted modes model imperfect signals with different reliability; no-feedback, static-nearest, and random-arm controls separate adaptation from fixed or uninformative routing. Trust changes update strength, never current-query label availability. This design tests whether route state responds coherently to a declared signal, not whether production feedback has already been collected or debiased.
 
-The feedback signal is controlled and ground-truth-derived. Oracle feedback is used only as an upper bound. Equal noisy and trust-weighted modes simulate imperfect user feedback with different reliability assumptions. Trust weighting changes how strongly a feedback event updates the route policy, but it does not give the current query access to its answer label before ranking.
-
-This setup validates the route-learning mechanism under controlled feedback quality. It does not claim that real user feedback has already been collected, nor that delayed, biased, or adversarial human feedback would have the same effect without additional deployment safeguards.
-
-Some experiments use multiple prequential epochs over the same query stream to simulate repeated interaction. These runs are useful for route-policy adaptation analysis. They are not IID held-out generalization results.
+Some experiments use multiple prequential epochs over the same query stream to simulate repeated interaction. Every epoch preserves rank-then-update order; these are route-adaptation studies, not IID held-out generalization.
 
 The formal frozen-policy audit makes the complementary first-pass boundary explicit. It trains route state on four disjoint query folds, freezes policy and feedback memory, and ranks the fifth fold once without held-out updates. Across LoTTE technology/search and science/search 100k, learned full routing remains near or above Dense but does not exceed matched static-nearest or cold no-feedback full routing; learned gating is significantly below Dense in all three route seeds. This audit is retrieval-only and does not evaluate final-context token saving or answer quality.
 
@@ -188,7 +183,7 @@ The main dense baseline uses Sentence Transformers \nolinkurl{all-MiniLM-L6-v2} 
 
 KMeans/MiniBatchKMeans uses 32 arms in the main scale experiments. A dedicated 100k sensitivity check evaluates 8, 16, 32, 64, and 128 arms. This supports LinUCB comparability and tests engineering sensitivity, but it is not claimed to identify a theoretically optimal clustering design.
 
-The Sentence-MMR baseline starts from dense or IntentRoute evidence pools, splits selected chunks into sentence-like units, and greedily selects query-relevant but diverse sentences under a target token ratio or per-query budget. SelectiveContext-lite is a deterministic Selective Context-style proxy that scores sentence-like units with query overlap, IDF salience, bigram overlap, source rank, and compactness; it is not presented as LLMLingua. The cross-encoder baseline reranks dense top-50 candidates with \nolinkurl{cross-encoder/ms-marco-MiniLM-L-6-v2}; it is evaluated both as a full reranked top-10 and as a same-budget variant constrained by the calibrated IntentRoute per-query token budgets. Reranker compute cost is not charged in final context tokens, so reranker results should be interpreted as retrieval-quality baselines rather than end-to-end latency measurements.
+The Sentence-MMR baseline starts from dense or IntentRoute evidence pools, splits selected chunks into sentence-like units, and greedily selects query-relevant but diverse sentences under a target token ratio or per-query budget. The cross-encoder baseline reranks dense top-50 candidates with \nolinkurl{cross-encoder/ms-marco-MiniLM-L-6-v2}; it is evaluated both as a full reranked top-10 and as a same-budget variant constrained by the calibrated IntentRoute per-query token budgets. Reranker compute cost is not charged in final context tokens, so reranker results should be interpreted as retrieval-quality baselines rather than end-to-end latency measurements.
 
 \subsection{Calibration and Paired Testing Protocol}
 \label{sec:05-experimental-setup:calibration-and-paired-testing-protocol}
@@ -203,7 +198,7 @@ Frozen test results are paired by query against dense top-10. We report bootstra
 
 The frozen calibration/test comparisons and the normalized five-fold scale results are the primary evidence families. Fine-grid action selection, overlapping-partition sensitivity, same-saving interpolation, arm-count and geometry controls, feedback recovery, transfer datasets, and multi-judge analysis are mechanism, robustness, or boundary analyses. We report their paired statistics where available, but do not pool heterogeneous conditions or use an unadjusted cross-condition $p$-value to assert a global superiority claim. They are interpreted conditionally and labeled accordingly.
 
-The preregistered domain expansion applies the normalized five-fold protocol to all 924 recreation/search and 1,071 writing/search positive-qrel queries. Each domain uses the same MiniLM backbone, $K=32$, route seeds 13/17/19, eight prequential epochs, fixed top-10 endpoint, predefined budget grid, zero-drop eligibility gate, Dense fallback, paired bootstrap, McNemar analysis, and 1pp seed-level non-inferiority guardrail. The domains are calibrated and reported separately; no cross-domain pooled effect is computed.
+The prospectively specified domain expansion applies the normalized five-fold protocol to all 924 recreation/search and 1,071 writing/search positive-qrel queries. Each domain uses the same MiniLM backbone, $K=32$, route seeds 13/17/19, eight prequential epochs, fixed top-10 endpoint, predefined budget grid, zero-drop eligibility gate, Dense fallback, paired bootstrap, McNemar analysis, and 1pp seed-level non-inferiority guardrail. The domains are calibrated and reported separately; no cross-domain pooled effect is computed.
 
 Two additional audits test selection robustness. First, Dense and IntentRoute independently select actions on the same 100k calibration split over a fine ratio grid from 1.00 to 0.80 in 0.01 increments, so the comparison does not force Dense to inherit the routed policy's nominal action. Second, the original calibration grid is repeated over 20 deterministic 30/70 query partitions at each scale. These overlapping partitions diagnose split sensitivity; they are not treated as additional training seeds or independent inferential samples.
 

@@ -20,11 +20,13 @@ The final diagram must preserve the following method semantics:
 5. rank fusion producing the evidence ranking;
 6. independently calibrated final-context budgeting after rank fusion;
 7. generator consumption of the budgeted evidence context;
-8. controlled trust-weighted simulated feedback updating the LinUCB route
-   policy for later queries;
+8. a dashed outcome-to-simulated-feedback path updating the LinUCB route state
+   for $q_{t+1}$ and later queries only;
 9. no arrow implying that route confidence directly predicts per-query
    compression safety;
-10. no arrow implying that LinUCB replaces the dense or BM25 recall routes.
+10. no arrow implying that LinUCB replaces the dense or BM25 recall routes;
+11. no use of "semantic drift" for the selected-arm centroid mismatch
+    safeguard.
 
 ## Artwork Requirements
 

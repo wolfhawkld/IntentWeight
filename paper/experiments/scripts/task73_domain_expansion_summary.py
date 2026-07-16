@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize and audit the preregistered Task73 LoTTE domain expansion."""
+"""Summarize and audit the predeclared Task73 LoTTE domain expansion."""
 from __future__ import annotations
 
 import argparse
@@ -503,7 +503,7 @@ def write_markdown(path: Path, payload: Mapping[str, Any]) -> None:
         "",
         "## Protocol",
         "",
-        "Two preregistered LoTTE search domains use the frozen Task69 common protocol: GT-anchored 100k corpora, all positive-qrel queries, MiniLM, top-10, K=32, seeds 13/17/19, eight prequential epochs, matched feedback/no-feedback controls, and five-fold cross-fitted context budgets. Domains are reported separately; no pooled p-value is used.",
+        "Two predeclared LoTTE search domains use the frozen Task69 common protocol: GT-anchored 100k corpora, all positive-qrel queries, MiniLM, top-10, K=32, seeds 13/17/19, eight prequential epochs, matched feedback/no-feedback controls, and five-fold cross-fitted context budgets. Domains are reported separately; no pooled p-value is used.",
         "",
         "## Domain Property Check",
         "",
@@ -520,10 +520,10 @@ def write_markdown(path: Path, payload: Mapping[str, Any]) -> None:
         )
     lines.extend([
         "",
-        "The preregistered H1 characterization is not supported and is directionally reversed: writing has higher query-positive lexical overlap and a slightly smaller Dense advantage. Recreation-minus-writing differences are "
+        "The predeclared H1 characterization is not supported and is directionally reversed: writing has higher query-positive lexical overlap and a slightly smaller Dense advantage. Recreation-minus-writing differences are "
         f"{contrast['query_token_coverage_difference']:+.4f} (95% CI {contrast['query_token_coverage_ci'][0]:+.4f} to {contrast['query_token_coverage_ci'][1]:+.4f}) for coverage, "
         f"{contrast['jaccard_difference']:+.4f} (95% CI {contrast['jaccard_ci'][0]:+.4f} to {contrast['jaccard_ci'][1]:+.4f}) for Jaccard, and "
-        f"{contrast['bm25_relative_hit_difference_pp']:+.2f}pp (95% CI {contrast['bm25_relative_hit_ci_pp'][0]:+.2f} to {contrast['bm25_relative_hit_ci_pp'][1]:+.2f}) for BM25-relative Hit. The domains are retained as preregistered; their frontier contrast cannot be attributed to the originally assumed lexicality ordering.",
+        f"{contrast['bm25_relative_hit_difference_pp']:+.2f}pp (95% CI {contrast['bm25_relative_hit_ci_pp'][0]:+.2f} to {contrast['bm25_relative_hit_ci_pp'][1]:+.2f}) for BM25-relative Hit. The domains are retained as predeclared; their frontier contrast cannot be attributed to the originally assumed lexicality ordering.",
         "",
         "## Retrieval And Budget Results",
         "",
@@ -609,7 +609,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         rec_values["bm25_relative_hit"], writing_values["bm25_relative_hit"], seed=7323
     )
     contrast = {
-        "orientation": "recreation_minus_writing; positive would support preregistered H1",
+        "orientation": "recreation_minus_writing; positive would support predeclared H1",
         "query_token_coverage_difference": mean(rec_values["query_token_coverage"])
         - mean(writing_values["query_token_coverage"]),
         "query_token_coverage_ci": coverage_ci,

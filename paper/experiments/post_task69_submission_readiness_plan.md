@@ -128,7 +128,7 @@ then update the manuscript, reproducibility notes, and regression checks:
   calibrated final-context budgeting control cost.
 - Budget operator: describe an order-preserving budgeted subset with a
   mandatory prefix, not a guaranteed longest contiguous ranked prefix.
-- Protocol versions: ensure Supplementary Table S29 and method prose
+- Protocol versions: ensure Supplementary Table S22 and method prose
   distinguish historical versus common protocols, reward attribution, epochs,
   seeds, Dense rescue, backbone, and budget policy.
 - Claim sweep: remove direct confidence-to-compression and unrestricted
@@ -332,7 +332,7 @@ cross-fitted budget selection, paired statistics, and explicit non-pooling.
 The objective is to estimate heterogeneity of the bounded operating frontier,
 not to obtain a single pooled p-value or force every domain to save tokens.
 
-Completed 2026-07-15. The preregistered contrast selected recreation/search
+Completed 2026-07-15. The predeclared contrast selected recreation/search
 and writing/search before outcome inspection. Both domains completed the full
 common protocol, including matched baselines, trust/no-feedback routes,
 five-fold budgets, paired statistics, geometry, and cross-fitted post-failure
@@ -351,13 +351,35 @@ see `task74_task73_manuscript_integration_plan.md` and
 `task74_task73_manuscript_integration_summary.md`.
 
 Task74 updates the canonical manuscript from seven settings/six domain areas to
-nine settings/eight domain areas, integrates the preregistered Task73
+nine settings/eight domain areas, integrates the predeclared Task73
 heterogeneity result without changing the method or experiment, adds a
 source-derived supplementary table, and regenerates all review and journal
 packages. It must preserve the writing useful-frontier result, the recreation
 strict-NI boundary, trust-weighted Dense fallback in both domains, the reversed
 lexicality premise, and the separation between geometry-defined route signal
 and independently calibrated context budgeting.
+
+### Task75: Final Text And Literature Closure
+
+Priority: P0 manuscript closure. Completed 2026-07-16; see
+`task75_final_text_and_literature_plan.md` and
+`task75_final_text_and_literature_summary.md`.
+
+Task75 closes preregistration terminology, generation-stage input-cost scope,
+feedback framing, direct 2026 literature positioning, conclusion length, and
+the CAS-native STIX math-font defect without changing experiment evidence.
+
+### Task76: Evidence-Preserving Editorial Compression
+
+Priority: P1 submission-quality improvement. Completed 2026-07-16; see
+`task76_manuscript_editorial_compression_plan.md` and
+`task76_manuscript_editorial_compression_summary.md`.
+
+Task76 removes 1,437 repeated words (10.53%) from Introduction, Discussion, and
+Limitations while preserving the Task75 technical sections, all numerical and
+negative evidence, the geometry/LinUCB/feedback thesis, and exact claim
+boundaries. The CAS main manuscript is 25 pages and passes the complete evidence
+and submission audit.
 
 ## Optional GPU / Overnight Expansion Queue
 

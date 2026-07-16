@@ -15,10 +15,10 @@ the main claim:
   whether ranking and context-budget behavior transfer beyond technology/search
   at 20k/q200, 100k, 200k, and 400k scales. The 400k row is retained as a
   scale boundary rather than a lossless-compression replication.
-- **LoTTE recreation/search and writing/search** are preregistered 100k
+- **LoTTE recreation/search and writing/search** are prospectively specified 100k
   external-validity tests with 924 and 1,071 positive-qrel queries,
   respectively. Both use the full common protocol and remain in the analysis
-  after the preregistered lexicality ordering is contradicted by the measured
+  after the prospectively specified lexicality ordering is contradicted by the measured
   query-positive overlap.
 - **PubMedQA and CovidQA-RAG** are biomedical transfer checks. PubMedQA is an
   evidence-retrieval proof-of-concept with abstract-level ground truth and a
@@ -56,22 +56,18 @@ The baseline family includes:
 - Gated cost-aware IntentRoute.
 - Conservative confidence-conditioned final-context baseline.
 - Dense+Sentence-MMR final-context compression.
-- Dense and IntentRoute plus SelectiveContext-lite prompt pruning.
 - Cross-encoder reranking over dense top-50 candidates.
 - Static geometry controls such as nearest-cluster routing.
 - Naive controls such as random or epsilon-greedy arm selection.
 - No-feedback and uniform-random route controls.
 - Arm-count sensitivity over $K \in \{8,16,32,64,128\}$.
 
-Dense-only retrieval is the primary quality baseline. The paper should avoid
-weak baseline framing: dense is strong and remains a required recall floor in
-the proposed method. Sentence-MMR, SelectiveContext-lite, and cross-encoder
-reranking are reported as strong post-retrieval baselines. Sentence-MMR and
-SelectiveContext-lite test whether downstream compression can explain the token
-saving, while the cross-encoder tests whether a heavier late-ranking layer can
-select a smaller context more simply. These are not mutually exclusive
-alternatives to IntentRoute; they occupy different stages in the
-retrieval-to-context pipeline.
+Dense-only retrieval is the primary quality baseline and remains a required
+recall floor in the proposed method. Sentence-MMR is the matched downstream
+compression baseline, while the cross-encoder tests whether a heavier late
+ranking layer can select a smaller context more simply. These components are
+not mutually exclusive alternatives to IntentRoute; they occupy different
+stages in the retrieval-to-context pipeline.
 
 ## 4.3 Metrics
 
@@ -220,27 +216,18 @@ If $\mathrm{DenseHit@K}=0$, we set $\mathrm{ContextRetention@K}=0$.
 
 ## 4.5 Prequential Simulated Feedback
 
-LinUCB experiments use a no-leakage prequential simulated-feedback protocol.
-For each query, the current policy state is frozen before retrieval. The system
-ranks candidates, constructs the final context, and is evaluated against the
-ground-truth evidence. Only after this evaluation is the ground-truth label
-converted into simulated feedback and used to update the LinUCB state for later
-queries.
-
-The feedback signal is controlled and ground-truth-derived. Oracle feedback is
-used only as an upper bound. Equal noisy and trust-weighted modes simulate
-imperfect user feedback with different reliability assumptions. Trust weighting
-changes how strongly a feedback event updates the route policy, but it does not
-give the current query access to its answer label before ranking.
-
-This setup validates the route-learning mechanism under controlled feedback
-quality. It does not claim that real user feedback has already been collected,
-nor that delayed, biased, or adversarial human feedback would have the same
-effect without additional deployment safeguards.
+Following the update order in Section 3.8, ground truth becomes a controlled
+feedback proxy only after the current result is scored. Oracle feedback is a
+learning upper bound; equal-noisy and trust-weighted modes model imperfect
+signals with different reliability; no-feedback, static-nearest, and random-arm
+controls separate adaptation from fixed or uninformative routing. Trust changes
+update strength, never current-query label availability. This design tests
+whether route state responds coherently to a declared signal, not whether
+production feedback has already been collected or debiased.
 
 Some experiments use multiple prequential epochs over the same query stream to
-simulate repeated interaction. These runs are useful for route-policy
-adaptation analysis. They are not IID held-out generalization results.
+simulate repeated interaction. Every epoch preserves rank-then-update order;
+these are route-adaptation studies, not IID held-out generalization.
 
 The formal frozen-policy audit makes the complementary first-pass boundary
 explicit. It trains route state on four disjoint query folds, freezes policy and
@@ -270,10 +257,7 @@ to identify a theoretically optimal clustering design.
 The Sentence-MMR baseline starts from dense or IntentRoute evidence pools,
 splits selected chunks into sentence-like units, and greedily selects
 query-relevant but diverse sentences under a target token ratio or per-query
-budget. SelectiveContext-lite is a deterministic Selective Context-style proxy
-that scores sentence-like units with query overlap, IDF salience, bigram
-overlap, source rank, and compactness; it is not presented as LLMLingua. The
-cross-encoder baseline reranks dense top-50 candidates with
+budget. The cross-encoder baseline reranks dense top-50 candidates with
 `cross-encoder/ms-marco-MiniLM-L-6-v2`; it is evaluated both as a full reranked
 top-10 and as a same-budget variant constrained by the calibrated IntentRoute
 per-query token budgets. Reranker compute cost is not charged in final context
@@ -323,7 +307,7 @@ paired statistics where available, but do not pool heterogeneous conditions or
 use an unadjusted cross-condition $p$-value to assert a global superiority
 claim. They are interpreted conditionally and labeled accordingly.
 
-The preregistered domain expansion applies the normalized five-fold protocol to all
+The prospectively specified domain expansion applies the normalized five-fold protocol to all
 924 recreation/search and 1,071 writing/search positive-qrel queries. Each
 domain uses the same MiniLM backbone, $K=32$, route seeds 13/17/19, eight
 prequential epochs, fixed top-10 endpoint, predefined budget grid, zero-drop

@@ -203,41 +203,88 @@ def geometry() -> None:
 
 def geometry_to_control() -> None:
     rows = read_csv("figure3_geometry_to_control_data.csv")
-    retention = [float(row["context_retention_at_10"]) for row in rows]
-    hit_delta = [float(row["policy_hit_delta_pp"]) for row in rows]
-    saving = [float(row["policy_saving_pct"]) for row in rows]
-    colors = ["#2f855a" if row["domain"] == "technology/search" else "#1f5f8b" for row in rows]
+    geometry_rows = [row for row in rows if row["panel"] == "A_geometry_profile"]
+    route_rows = [row for row in rows if row["panel"] == "B_geometry_random"]
+    arm_rows = [row for row in rows if row["panel"] == "C_arm_fallback"]
 
-    fig, axes = plt.subplots(1, 2, figsize=(FULL_WIDTH_INCH, 76.0 * MM_TO_INCH))
-    axes[0].axhline(0.0, color="#52606d", linestyle="--", linewidth=1)
-    axes[0].scatter(retention, hit_delta, c=colors, s=42, edgecolors="white", linewidths=0.8)
-    for row, x, y in zip(rows, retention, hit_delta):
-        axes[0].annotate(row["scale"], (x, y), textcoords="offset points", xytext=(0, 6), ha="center", fontsize=7)
-    axes[0].set_xlabel("ContextRetention@10")
-    axes[0].set_ylabel("IntentRoute Hit@10 delta vs dense (pp)")
-    axes[0].margins(x=0.08, y=0.18)
-    axes[0].grid(alpha=0.3)
+    fig, axes = plt.subplots(1, 3, figsize=(FULL_WIDTH_INCH, 88.0 * MM_TO_INCH))
 
-    axes[1].scatter(retention, saving, c=colors, s=42, edgecolors="white", linewidths=0.8)
-    for row, x, y in zip(rows, retention, saving):
-        axes[1].annotate(row["scale"], (x, y), textcoords="offset points", xytext=(0, 6), ha="center", fontsize=7)
-    axes[1].set_xlabel("ContextRetention@10")
-    axes[1].set_ylabel("Final context token saving (%)")
-    axes[1].margins(x=0.08, y=0.16)
-    axes[1].grid(alpha=0.3)
-
-    handles = [
-        plt.Line2D([0], [0], marker="o", color="w", label="technology/search", markerfacecolor="#2f855a", markersize=7),
-        plt.Line2D([0], [0], marker="o", color="w", label="science/search", markerfacecolor="#1f5f8b", markersize=7),
+    metric_specs = [
+        ("nearest_cluster_hit_at_3", "Cluster Hit@3", "#2f855a", "o"),
+        ("context_retention_at_10", "Context retention", "#1f5f8b", "s"),
+        ("pca_var64", "PCA variance@64", "#9a6b14", "^"),
     ]
-    fig.legend(
-        handles=handles,
-        loc="upper center",
-        bbox_to_anchor=(0.5, 0.995),
-        ncol=2,
-        frameon=False,
-    )
-    fig.subplots_adjust(left=0.075, right=0.985, bottom=0.18, top=0.82, wspace=0.28)
+    for domain in ("technology/search", "science/search"):
+        selected = [row for row in geometry_rows if row["domain"] == domain]
+        linestyle = "-" if domain == "technology/search" else "--"
+        for field, label, color, marker in metric_specs:
+            axes[0].plot(
+                [float(row["corpus_chunks"]) for row in selected],
+                [float(row[field]) for row in selected],
+                color=color,
+                marker=marker,
+                linestyle=linestyle,
+                linewidth=1.4,
+                markersize=4.5,
+                label=label if domain == "technology/search" else None,
+            )
+    axes[0].set_xscale("log")
+    axes[0].set_ylim(0.55, 0.95)
+    axes[0].set_xticks([20000, 100000, 400000], ["20k", "100k", "400k"])
+    axes[0].set_xlabel("Corpus chunks (log)")
+    axes[0].set_ylabel("Diagnostic value")
+    axes[0].set_title("A  Cross-scale geometry")
+    domain_handles = [
+        plt.Line2D([0], [0], color="#52606d", linestyle="-", label="technology"),
+        plt.Line2D([0], [0], color="#52606d", linestyle="--", label="science"),
+    ]
+    metric_handles, metric_labels = axes[0].get_legend_handles_labels()
+    axes[0].legend(metric_handles + domain_handles, metric_labels + ["technology", "science"], loc="lower left", fontsize=7.0, frameon=False)
+    axes[0].grid(alpha=0.25)
+
+    labels = ["Static\ngeometry", "Uniform\nrandom"]
+    x_values = list(range(len(route_rows)))
+    width = 0.22
+    bar_specs = [
+        ("route_reward", "Route reward", "#2f855a"),
+        ("selected_cluster_hit", "Cluster hit", "#9a6b14"),
+        ("final_fused_hit_at_10", "Fused Hit@10", "#1f5f8b"),
+    ]
+    for offset, (field, label, color) in zip((-width, 0.0, width), bar_specs):
+        values = [float(row[field]) for row in route_rows]
+        bars = axes[1].bar([x + offset for x in x_values], values, width=width, color=color, label=label)
+        axes[1].bar_label(bars, fmt="%.2f", fontsize=7.0, padding=1)
+    axes[1].set_ylim(0.0, 1.05)
+    axes[1].set_xticks(x_values, labels)
+    axes[1].set_ylabel("Mean metric")
+    axes[1].set_title("B  Geometry vs random")
+    axes[1].legend(loc="lower left", fontsize=7.0, frameon=False)
+    axes[1].grid(axis="y", alpha=0.25)
+
+    arm_counts = [int(row["arm_count"]) for row in arm_rows]
+    reward = [float(row["static_route_reward"]) for row in arm_rows]
+    dense_rate = [float(row["gated_dense_rate"]) for row in arm_rows]
+    hit_delta = [float(row["gated_hit_delta_pp"]) for row in arm_rows]
+    axes[2].plot(arm_counts, reward, color="#2f855a", marker="o", label="Static route reward")
+    axes[2].plot(arm_counts, dense_rate, color="#1f5f8b", marker="s", label="Gated Dense rate")
+    axes[2].set_xscale("log", base=2)
+    axes[2].set_xticks(arm_counts, [str(value) for value in arm_counts])
+    axes[2].set_ylim(0.0, 1.05)
+    axes[2].set_xlabel("Number of arms K")
+    axes[2].set_ylabel("Route metric / rate")
+    axes[2].set_title("C  Granularity and fallback")
+    hit_axis = axes[2].twinx()
+    hit_axis.plot(arm_counts, hit_delta, color="#b42318", marker="^", linestyle=":", label="Gated Hit delta")
+    hit_axis.axhline(0.0, color="#b42318", linewidth=0.7, alpha=0.5)
+    hit_axis.set_ylim(-6.0, 0.5)
+    hit_axis.set_ylabel("Gated Hit delta (pp)", color="#b42318")
+    hit_axis.tick_params(axis="y", colors="#b42318")
+    handles, labels = axes[2].get_legend_handles_labels()
+    hit_handles, hit_labels = hit_axis.get_legend_handles_labels()
+    axes[2].legend(handles + hit_handles, labels + hit_labels, loc="lower right", fontsize=7.0, frameon=False)
+    axes[2].grid(alpha=0.25)
+
+    fig.subplots_adjust(left=0.062, right=0.952, bottom=0.18, top=0.90, wspace=0.38)
     save(fig, "figure3_geometry_to_control.pdf")
 
 

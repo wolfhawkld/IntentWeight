@@ -44,7 +44,7 @@ FIGURES = [
     ),
     (
         "Figure 3",
-        "Geometry-to-control diagnostic",
+        "Local geometry to route-control behavior",
         DRAFT / "figures" / "figure3_geometry_to_control.svg",
         DRAFT / "figures" / "figure3_geometry_to_control_data.csv",
     ),
@@ -88,7 +88,7 @@ def figure_index() -> str:
     rows = [
         "# Figure Index",
         "",
-        "Updated: 2026-07-05",
+        "Updated: 2026-07-17",
         "",
         "Data figures are generated deterministically from experiment artifacts.",
         "Figure 1 remains an author-owned placeholder and must be replaced from its specification.",
@@ -141,6 +141,8 @@ Updated: 2026-07-05
   `EvidenceRecall@10`.
 - [ ] Use final retrieved context tokens for the headline token-efficiency
   claim.
+- [ ] Do not equate evidence-input token reduction with total serving cost,
+  latency, memory, or energy reduction.
 - [ ] Label source candidate cost and dense invocation rate as retrieval-stage
   diagnostics.
 

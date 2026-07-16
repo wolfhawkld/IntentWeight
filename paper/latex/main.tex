@@ -69,10 +69,11 @@ science/search validation points.}
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figure3_geometry_to_control.pdf}
-\caption{Geometry-to-control diagnostic. Context retention helps identify
-where local routing can preserve quality and save context, but it does not
-deterministically predict either outcome; calibration, fusion, and dense
-rescue remain part of the controller.}
+\caption{From local geometry to route-control behavior. Panel A profiles local
+structure across corpus scales; Panel B separates route-level geometry/random
+differences from Dense/BM25-rescued final quality; Panel C relates arm
+granularity to gated Dense fallback and Hit loss. Geometry supports route
+construction, not a direct token-saving law.}
 \label{fig:geometry-control}
 \end{figure*}
 

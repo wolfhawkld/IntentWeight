@@ -1,15 +1,16 @@
 flowchart LR
-    Q[Query and user/session context] --> F[Feature construction]
+    Q[Query and user/session context] --> F[PCA query controller context]
     F --> D[Dense global recall floor]
     F --> B[BM25 lexical recall]
     F --> P[LinUCB cluster-arm selector]
     P --> C[Cluster-local dense search]
+    P --> GATE[Confidence and centroid-mismatch gate]
     D --> R[Rank fusion]
     B --> R
     C --> R
-    P --> R
+    GATE --> R
     K[Calibrated budget policy] --> G[Final context budget]
     R --> G
     G --> A[Generator or downstream agent response]
-    A --> T[Trust-weighted feedback]
-    T --> P
+    A -. observed outcome .-> T[Controlled trust-weighted simulated feedback]
+    T -. update route state for q(t+1) .-> P

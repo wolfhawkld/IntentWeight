@@ -1099,7 +1099,7 @@
       -0.016462472833481998
     ],
     "jaccard_difference": -0.02159259548160787,
-    "orientation": "recreation_minus_writing; positive would support preregistered H1",
+    "orientation": "recreation_minus_writing; positive would support predeclared H1",
     "query_token_coverage_ci": [
       -0.0901411458193035,
       -0.05432436111202514

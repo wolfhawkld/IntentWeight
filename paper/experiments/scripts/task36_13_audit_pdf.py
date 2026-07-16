@@ -17,7 +17,7 @@ LOG = ROOT / "paper" / "latex" / "main.log"
 OUTPUT = Path("/tmp/intentroute_pdf_audit")
 RENDER_SCALE = 1.1
 CRITICAL_LOG_RE = re.compile(
-    r"Overfull|undefined citations|undefined references|"
+    r"Overfull|undefined citations|undefined references|Missing character|"
     r"LaTeX Warning: Reference|Package natbib Warning: Citation|"
     r"Fatal error|Emergency stop|Illegal, another"
 )

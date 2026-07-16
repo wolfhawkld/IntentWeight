@@ -7,7 +7,7 @@ be a set of chunks $D = \{d_i\}_{i=1}^{N}$ and a query stream
 $Q = \{q_t\}_{t=1}^{T}$. For each query $q_t$, a retrieval system returns an
 ordered context $C_t = [d_{t,1}, \ldots, d_{t,k}]$ that will be passed to a
 downstream generator. The objective is to preserve retrieval quality while
-controlling both retrieval cost and final context cost.
+controlling route use and the final evidence-input context size.
 
 IntentRoute separates confidence-gated routing from final-context budgeting.
 For each query, the system estimates how much to rely on global dense retrieval,
@@ -113,16 +113,18 @@ uses corpus embeddings only, so query vectors and fixed KMeans arm centroids
 share one controller space.
 
 After LinUCB selects arms from this context, the implementation computes
-policy-derived confidence and centroid-based semantic drift as separate
-route-gating signals. These signals determine whether the system retains the
-full dense/BM25/cluster fusion surface or permits a lighter route with a Dense
-floor. Dense and BM25 rankings are then constructed and fused after the route
-decision; their score concentration, lexical strength, and route overlap are
-not inputs to the tested LinUCB vector. The main calibrated budget remains
-separate from these signals and does not map confidence to a per-query token
-ratio.
+policy-derived confidence and a selected-arm centroid mismatch safeguard as
+separate route-gating signals. With normalized query context $x_t$ and selected
+arm set $\mathcal{A}_t$, the latter is
+$1-\max_{a\in\mathcal{A}_t}\cos(x_t,\mu_a)$. It measures mismatch to the chosen
+centroids; it is not temporal or distribution drift. These signals determine
+whether the system retains the full dense/BM25/cluster fusion surface or permits
+a lighter route with a Dense floor. Dense and BM25 rankings are constructed and
+fused after the route decision; their score concentration, lexical strength,
+and route overlap are not inputs to the tested LinUCB vector. Neither signal
+sets the final token ratio, which remains a separately calibrated action.
 
-## 3.6 Trust-Weighted Feedback
+## 3.6 Trust-Weighted Route-State Updates
 
 IntentRoute models feedback as a noisy signal rather than a perfect oracle. In
 the trust-weighted mode, each simulated user feedback event is assigned a trust
@@ -161,7 +163,7 @@ selected cluster-local route and avoids crediting Dense/BM25 rescue to that arm.
 The common cross-dataset evidence rows and formal frozen-policy audit use
 `final_fused` attribution; `cluster_only` is retained for dedicated
 credit-assignment and mechanism diagnostics. Every result family reports its
-attribution mode in Supplementary Table S29.
+attribution mode in Supplementary Table S22.
 
 This distinction matters because final fused reward measures the system outcome,
 while cluster-only reward isolates the cluster-route component. Neither mode
@@ -169,31 +171,19 @@ allows Dense/BM25 rescue to be omitted from the interpretation of final quality.
 
 ## 3.8 Prequential Adaptation Protocol
 
-The evaluation uses a no-leakage prequential protocol. For each query $q_t$,
-the current policy state is frozen before retrieval. The system ranks
-candidates, constructs the final context, and is evaluated against ground-truth
-evidence. Only after this evaluation is the ground-truth label converted into
-simulated feedback and used to update the LinUCB state for later queries.
+For each query $q_t$, the policy state is frozen before retrieval. The system
+ranks candidates and evaluates the resulting evidence before converting the
+observed ground-truth outcome into simulated feedback. The update can therefore
+change only the route state used by $q_{t+1}$ and later interactions:
 
-This means feedback for $q_t$ cannot improve the ranking of $q_t$ itself.
-Earlier feedback can influence later queries, but future query feedback is not
-available to the current policy. The protocol should therefore be described as
-simulated test-time adaptation, not as offline IID held-out generalization.
+$$
+\text{rank}(q_t;\theta_t)\rightarrow o_t\rightarrow
+\theta_{t+1}=U(\theta_t,x_t,o_t,w_t).
+$$
 
-Several repeated-feedback experiments use multiple prequential epochs over the
-same query stream to simulate repeated interactions. Each epoch preserves the
-same discipline: rank and evaluate the current query before applying feedback
-from that query. Multi-epoch results are therefore controlled repeated
-interaction studies. They should not be over-interpreted as single-pass
-generalization results.
-
-The separate frozen-policy audit tests this boundary directly: it trains
-policy state on disjoint history folds and ranks held-out queries once with all
-updates frozen. It evaluates transferable route-policy behavior, not
-final-context budgeting. The audit does not establish a learned-feedback
-advantage over matched static-nearest or cold no-feedback full routing, and it
-finds that learned cost-aware gating is unsafe as a frozen first-pass policy in
-the tested domains.
+The current query never sees its own label before ranking. Experimental Setup
+specifies the oracle, noisy, trust-weighted, repeated-interaction, and frozen
+unseen-query controls used to test this order.
 
 ## 3.9 Final Context Budgeting and Conservative Confidence Baseline
 
@@ -224,8 +214,8 @@ token ratio.
 
 The conservative `confidence_topk` policy works as follows:
 
-1. If route confidence is low or semantic drift is high, keep dense fallback and
-   the normal top-10 context.
+1. If route confidence is low or selected-arm centroid mismatch is high, keep
+   dense fallback and the normal top-10 context.
 2. If LinUCB confidence is high, reduce final context size from the default
    top-10 to $k=8$.
 3. If confidence is mid-level, keep $k=10$ as a safety tier rather than calling
@@ -246,12 +236,12 @@ stable baseline: it reduces final context tokens by about 4.7-5.3% across LoTTE
 technology/search at 100k, 200k, 400k, and 638k while preserving dense-level
 query hit.
 
-For the conservative `confidence_topk` baseline only, semantic drift rarely
-exceeds the configured fallback threshold, so context-size decisions are
-primarily confidence-conditioned. The fixed-pool factorial audit does not show
-that this confidence predicts compression safety better than matched controls;
-the baseline is an empirical operating point rather than a validated causal
-mechanism.
+For the conservative `confidence_topk` baseline only, centroid mismatch triggers
+fallback in roughly 1--2% of interactions under the configured threshold, so
+context-size decisions are primarily confidence-conditioned. The fixed-pool
+factorial audit does not show that this confidence predicts compression safety
+better than matched controls; the baseline is an empirical operating point
+rather than a validated causal mechanism.
 
 ## 3.10 Feedback-Triggered Recovery
 
@@ -299,7 +289,7 @@ Output: final retrieved context $C_t$ and updated policy state.
 The common cross-dataset evidence protocol uses 32 fixed KMeans/MiniBatchKMeans arms,
 three candidate arms per query, a 64-dimensional context projection,
 $\alpha=1.0$, and eight prequential epochs. Earlier mechanism diagnostics may
-use other epoch counts and attribution modes; Supplementary Table S29 records
+use other epoch counts and attribution modes; Supplementary Table S22 records
 those result-family differences. The calibration grid covers
 $r \in \{0.85,0.88,0.90,0.92,0.95,0.98\}$ and
 $m \in \{4,\ldots,8\}$. Supplementary Section S12 reports the complete route

@@ -24,6 +24,8 @@ Updated: 2026-07-05
   `EvidenceRecall@10`.
 - [ ] Use final retrieved context tokens for the headline token-efficiency
   claim.
+- [ ] Do not equate evidence-input token reduction with total serving cost,
+  latency, memory, or energy reduction.
 - [ ] Label source candidate cost and dense invocation rate as retrieval-stage
   diagnostics.
 

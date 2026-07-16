@@ -172,6 +172,8 @@ def emit_table(rows: list[str], caption: tuple[str, str] | None) -> list[str]:
     identifier, title_text = caption or ("generated", "Migrated result table.")
     if identifier == "3" and columns == 10:
         return emit_component_ablation_table(cells, identifier, title_text)
+    if identifier == "4" and columns == 8:
+        return emit_cross_dataset_table(cells, identifier, title_text)
     numeric_columns = [
         all(NUMERIC_CELL_RE.fullmatch(row[index]) for row in body)
         for index in range(columns)
@@ -254,6 +256,38 @@ def emit_component_ablation_table(cells: list[list[str]], identifier: str, title
         result.append(r"\bottomrule")
         result.append(r"\end{tabularx}")
     result.extend([r"\end{table*}", ""])
+    return result
+
+
+def emit_cross_dataset_table(cells: list[list[str]], identifier: str, title_text: str) -> list[str]:
+    header = cells[0]
+    body = cells[2:]
+    column_spec = (
+        r">{\raggedright\arraybackslash}p{0.185\textwidth}"
+        r">{\raggedright\arraybackslash}p{0.085\textwidth}"
+        r">{\raggedleft\arraybackslash}p{0.075\textwidth}"
+        r">{\raggedleft\arraybackslash}p{0.100\textwidth}"
+        r">{\raggedright\arraybackslash}p{0.075\textwidth}"
+        r">{\raggedleft\arraybackslash}p{0.075\textwidth}"
+        r">{\raggedright\arraybackslash}p{0.060\textwidth}"
+        r">{\raggedright\arraybackslash}p{0.160\textwidth}"
+    )
+    result = [
+        r"\begin{table*}[tbp]",
+        r"\centering",
+        r"\begingroup",
+        r"\small",
+        r"\setlength{\tabcolsep}{3pt}",
+        r"\renewcommand{\arraystretch}{1.04}",
+        rf"\caption{{{inline(title_text.rstrip('.'))}}}",
+        rf"\label{{{table_label(identifier)}}}",
+        rf"\begin{{tabular}}{{{column_spec}}}",
+        r"\toprule",
+        " & ".join(table_display_cell(cell) for cell in header) + r" \\",
+        r"\midrule",
+    ]
+    result.extend(" & ".join(table_display_cell(cell) for cell in row) + r" \\" for row in body)
+    result.extend([r"\bottomrule", r"\end{tabular}", r"\endgroup", r"\end{table*}", ""])
     return result
 
 

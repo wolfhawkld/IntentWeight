@@ -4,11 +4,24 @@
 目标期刊：Information Processing & Management（IP&M）
 审计范围：当前主稿、Task70-Task74 证据边界、外部审阅闭环、CAS 投稿包、图表、人工交付项与 IP&M 当前投稿要求。
 
+## 0. Task75 完成更新
+
+Task75 已完成审计中仓库可控的四项 P0 文本工作：正式预注册措辞改为
+`prospectively specified/predeclared`，成本主张限定为 generation-stage
+evidence-input token 分量，feedback 标题与 Task70/72 边界对齐，并从 ACL
+Anthology 主来源补入 R3AG、QuDAR、Budget-Aware Routing 和 RouteRAG。
+
+同时发现并修复了 CAS 模板中 STIX 与后置 `lmodern` 冲突导致的数学符号
+缺失。当前 CAS 主稿为 26 页，补充材料 15 页，标题页 1 页；PDF 无
+missing-character、Type 3、未定义引用或非模板性 overfull 错误。剩余 P0
+主要是作者制作 Figure 1、作者声明与元数据、公开归档、人工语言/科学审阅
+以及最终 release freeze。
+
 ## 1. 总体判断
 
 项目已经从“继续堆实验”进入“最后一轮人工定稿与投稿冻结”阶段。
 
-科学证据、负面结果、边界条件、统计协议和可复现性基本闭环，当前版本已经适合提交给领域专家做正式投稿前审阅。它还不能直接进入投稿系统，主要剩余项是最终 Figure 1、关键措辞校正、2026 年最新相关工作、公开工件、作者声明和人工语言润色。
+科学证据、负面结果、边界条件、统计协议和可复现性基本闭环，当前版本已经适合提交给领域专家做正式投稿前审阅。Task75 已完成关键措辞和 2026 年相关工作校正；它还不能直接进入投稿系统，主要剩余项是最终 Figure 1、公开工件、作者声明和人工语言润色。
 
 核心主线不需要重做，也不需要删除 geometry、LinUCB 或 feedback。后续工作的目标是准确控制主张强度、提高阅读效率并完成投稿资产，而不是继续无边界增加实验。
 
@@ -106,13 +119,13 @@ Task73 的协议确实在下载和查看结果前冻结，但计划没有提交�
 
 当前 CAS 包状态：
 
-- anonymous main manuscript：28 页，含参考文献；
+- anonymous main manuscript：26 页，含参考文献；
 - supplementary material：15 页、30 张表；
 - title page：1 页；
 - abstract：244 词；
 - keywords：7 个；
 - main displays：5 张可编辑表、3 张矢量图；
-- 主稿正文约 1.58 万词。
+- 主稿正文约 1.4 万词。
 
 IP&M 当前 Guide for Authors 没有列出主稿总页数上限。现有摘要长度、关键词数量、双匿名主稿、独立 title page 和可编辑表格均符合公开要求。
 
@@ -126,7 +139,7 @@ IP&M 当前 Guide for Authors 没有列出主稿总页数上限。现有摘要�
 - supplement 首页空白过多；
 - 末页 Table S30 排在 S13 标题之前，虽不影响引用但应在终稿中调整。
 
-建议执行约 10% 的人工语言压缩，重点合并重复解释，不删除实验、关键数据、负面结果或主线论述。
+建议执行约 10% 的人工语言压缩，重点合并重复解释，不删除实验、关键数据、负面结果或主线论述。Task76 已完成该项：规范主稿由 13,646 词降至 12,209 词（-10.53%），CAS 主稿由 26 页降至 25 页，全部证据与投稿审计通过。
 
 ## 6. 图表判断
 
@@ -157,16 +170,16 @@ Figure 2/3 优化是高价值展示提升，但不是当前科学有效性的硬
 
 ## 7. 最新文献定位风险
 
-当前参考文献约 30 篇，Task71.3 主要刷新到 2025 年。2026 年 7 月已经出现数篇直接相邻工作，投稿前至少需要补充并明确区别：
+Task75 已将当前参考文献扩展为 34 篇，并补充以下 2026 年直接相邻工作：
 
 - R³AG：retriever capability 与 generation utility 的 query-specific routing；
 - QuDAR：基于 confidence 的 query-wise sparse/dense adaptive fusion；
 - Budget-Aware Routing for Long Clinical Text：严格 token budget 下的 evidence subset selection；
 - RouteRAG：RL 驱动的 text/graph adaptive retrieval，可作为较远但相关的端到端 routing 对比。
 
-这些工作不推翻 IntentRoute，但会增加新颖性定位压力。应明确本文的区别是 geometry-defined local arms、controlled repeated feedback、Dense/BM25 rescue、independent budget calibration，以及 route/fusion/final-context attribution，而不是宣称首先提出 adaptive RAG 或 retriever routing。
+这些工作不推翻 IntentRoute，但会增加新颖性定位压力。Task75 已明确本文的区别是 geometry-defined local arms、controlled repeated feedback、Dense/BM25 rescue、independent budget calibration，以及 route/fusion/final-context attribution，而不是宣称首先提出 adaptive RAG 或 retriever routing。
 
-该项只要求文献和叙事更新，不要求重跑实验。
+该项已完成，未重跑或改变实验。
 
 ## 8. 作者必须完成的事项
 
@@ -219,10 +232,10 @@ IP&M 虽承认 preprint 不属于重复发表，但因采用 double-anonymized r
 
 ### P0：提交前必须完成
 
-- 将 `preregistered` 校正为 `predeclared/prospectively specified`；
-- 收紧 input-token saving 与总推理成本之间的表述；
-- 校正 feedback 小节标题和少量结论措辞；
-- 刷新 2026 年直接相邻文献；
+- [x] 将 `preregistered` 校正为 `predeclared/prospectively specified`；
+- [x] 收紧 input-token saving 与总推理成本之间的表述；
+- [x] 校正 feedback 小节标题和少量结论措辞；
+- [x] 刷新 2026 年直接相邻文献；
 - 完成最终 Figure 1；
 - 完成作者、CRediT、funding、conflict、AI disclosure；
 - 准备公开数据/代码归档或无法共享说明；
@@ -232,7 +245,7 @@ IP&M 虽承认 preprint 不属于重复发表，但因采用 double-anonymized r
 
 ### P1：强烈建议优化
 
-- 将主稿压缩约 10%，重点去除防御性重复；
+- [x] 将主稿压缩约 10%，重点去除防御性重复；
 - 优化 Table 1、Table 5 和 supplement 浮动布局；
 - 采用更强的 Figure 2/3 视觉方案；
 - 完成许可证清单和公开工件使用说明。

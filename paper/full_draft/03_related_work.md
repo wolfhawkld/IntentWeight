@@ -74,6 +74,18 @@ single-query signal. IntentRoute instead keeps dense retrieval as a recall
 floor, routes among fixed corpus-local evidence paths, and updates route
 confidence from controlled feedback over repeated interactions.
 
+Work published in 2026 further separates adjacent routing objectives. R3AG
+learns query-specific retriever preferences from retrieval quality and
+generation utility, while QuDAR assigns query-specific weights across
+sparse/dense retrievers and original/expanded queries
+[@zhao2026r3ag; @kim2026qudar]. RouteRAG instead learns multi-turn text/graph
+retrieval and generation through an end-to-end reinforcement-learning policy
+[@guo2026routerag]. These systems adapt a retriever, source, or reasoning
+action. IntentRoute does not claim novelty for adaptive RAG itself: it retains
+global Dense/BM25 rescue, defines corpus-local arms from geometry, studies
+controlled repeated-feedback updates, and calibrates the final evidence budget
+independently so route, fusion, and context effects remain attributable.
+
 Contextual bandits provide a natural abstraction for adaptive route control. A
 policy observes a context, selects an action, receives feedback, and updates its
 future decisions. LinUCB is a simple and interpretable contextual bandit
@@ -139,6 +151,15 @@ compression component. They are complementary rather than direct replacements
 for IntentRoute's upstream evidence-route selection and independently
 calibrated chunk-budget policy.
 
+Budget-Aware Routing for Long Clinical Text directly studies subset selection
+under strict token budgets, using relevance, coverage, and diversity over units
+of long clinical documents [@qureshi2026budget]. It is closest to IntentRoute at
+the budget-control layer, but addresses within-document unit selection rather
+than geometry-defined multi-route retrieval with repeated feedback and a global
+Dense/BM25 rescue surface. Its domain-specific budget findings reinforce the
+need to report calibrated operating points rather than assume one universal
+compression policy.
+
 IntentRoute operates earlier in the pipeline. It selects evidence routes and
 sets final-context budgets before generation rather than compressing tokens
 inside already selected passages or tuning a retriever against language-model
@@ -151,21 +172,20 @@ dense candidate pool. The paper measures final context tokens because
 source-candidate counts, reranker scores, or retrieval depth alone do not
 establish downstream context savings.
 
-## 2.6 User Feedback, RLHF-Inspired Optimization, and Trust Weighting
+## 2.6 Relevance Feedback and Trust-Weighted Route Adaptation
 
 User feedback can improve retrieval systems, but real feedback is delayed,
 biased, sparse, and user-dependent. Earlier work on clickthrough and implicit
 feedback shows that user behavior can train ranking systems, while also
 requiring care because clicks and query reformulations are biased signals
-[@joachims2002clickthrough; @radlinski2005querychains]. In language-model
-systems, human-preference learning and RLHF-style optimization show how feedback
-can shape model behavior [@christiano2017preferences; @ouyang2022instructgpt].
+[@joachims2002clickthrough; @radlinski2005querychains]. This retrieval setting
+maps directly to contextual-bandit updates: an observed evidence outcome can
+adjust later route preferences, while its reliability determines update
+strength.
 
-IntentRoute is inspired by this feedback-optimization paradigm, but it is not a
-full RLHF pipeline. The current experiments use controlled simulated feedback
-to isolate whether a contextual-bandit retrieval controller can improve route
-selection under noisy and trust-weighted feedback. Trust weighting is used to
-scale feedback updates by simulated reliability, reflecting the deployment
-assumption that not all users or implicit signals should be trusted equally.
-The paper therefore claims mechanism validation under controlled feedback, not
-that real human-feedback deployment has already been solved.
+The current experiments use ground-truth-derived controlled feedback to isolate
+that route-state mechanism under oracle, noisy, trust-weighted, and no-feedback
+conditions. Ground truth is revealed only after the current ranking is scored,
+so it cannot improve that query. Trust weighting models unequal signal
+reliability; it is not evidence that production clicks, corrections, or user
+ratings have already been collected or debiased.

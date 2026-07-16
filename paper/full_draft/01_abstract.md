@@ -11,7 +11,7 @@ diagnostic rather than proof of relevance.
 
 We evaluate nine dataset settings across eight domain areas. LoTTE
 technology/search supplies 100k-638k scale evidence; science/search tests
-domain and scale transfer; preregistered recreation/search and writing/search
+domain and scale transfer; prospectively specified recreation/search and writing/search
 100k studies test domain heterogeneity; and biomedical, banking, manual, and
 legal settings provide transfer, mechanism, and boundary checks. At
 calibration-eligible technology/search points, IntentRoute reduces final
@@ -20,7 +20,7 @@ $\mathrm{Hit@10}$ and avoiding the larger losses of dense-only adaptive
 truncation. On 300 frozen queries, matched variants reduce
 context by 6-12% with no statistically detectable correctness difference
 across three judges, although faithfulness is not uniformly preserved. In the
-preregistered expansion, no-feedback routes save 10.09% with a +0.12pp mean Hit
+prospective expansion, no-feedback routes save 10.09% with a +0.12pp mean Hit
 change on writing/search, but 5.42% with -0.76pp and 0/3 strict
 non-inferiority seeds on recreation/search; trust-weighted calibration falls
 back to Dense in both. Both retain cluster-local signal, showing domain

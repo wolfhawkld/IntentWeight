@@ -3,11 +3,11 @@
 Status: **PASS**
 
 Task73 source: `paper/experiments/results/task73_lotte_domain_expansion.json`
-SHA-256: `d80c27656b1ac06f93ec57b1776780192feaed0459f6bbd222aa2af3396dc9f0`
+SHA-256: `43b94a0826ad1a2cdf71d1b743b4d35c23dd4e2260e5dbd938397b926e40f3bb`
 
 | Check | Status | Coverage |
 |---|---|---:|
-| supplementary_table_s30 | PASS | 4 |
+| supplementary_table_s23 | PASS | 4 |
 | canonical_manuscript | PASS | 10 |
 | generated_packages | PASS | 6 |
 

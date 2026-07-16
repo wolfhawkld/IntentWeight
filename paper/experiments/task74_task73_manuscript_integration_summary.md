@@ -4,7 +4,7 @@ Status: completed 2026-07-16
 
 ## What Changed
 
-Task74 integrates the preregistered Task73 recreation/search and writing/search
+Task74 integrates the predeclared Task73 recreation/search and writing/search
 100k results into the canonical manuscript and generated review/submission
 packages. It changes no experiment, ranking, budget selection, or method
 implementation.
@@ -25,7 +25,7 @@ implementation.
 - Trust-weighted calibration: Dense fallback in all folds in both domains.
 - Nearest-cluster Hit@3: `0.8366` and `0.8655`, supporting route signal but not
   a direct geometry-to-compression guarantee.
-- The preregistered lexicality ordering was reversed and is not used as a
+- The predeclared lexicality ordering was reversed and is not used as a
   post-hoc explanation.
 - Post-failure retry remains same-query simulated-feedback evidence, not
   first-pass unseen-query generalization.
@@ -45,6 +45,10 @@ implementation.
   title page; abstract within the 250-word limit.
 - Visual inspection: CAS abstract and Supplementary Table S30 are readable and
   unclipped.
+
+Task75 presentation note: the later final-text pass removed an incompatible
+post-class `lmodern` load, restored native STIX mathematical glyphs, and reduced
+the current CAS main manuscript to 26 pages without deleting evidence.
 
 ## Remaining Author-Owned Items
 

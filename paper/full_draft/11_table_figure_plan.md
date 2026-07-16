@@ -1,6 +1,6 @@
 # Table and Figure Placement Plan
 
-Updated: 2026-07-16 (Task74)
+Updated: 2026-07-17 (Task77)
 
 This plan aligns the displays with the revised route-control and calibrated-budget
 claim. It introduces no new experiment or claim. The journal-facing main text
@@ -32,11 +32,12 @@ Compact geometry/random and learned/static/no-feedback controls. The table
 separates route reward and selected-cluster hit from final fused hit and token
 cost, making dense/BM25 rescue visible.
 
-### Table 4: Arm-Count Sensitivity
+### Table 4: Cross-Dataset and Cross-Domain Evidence Matrix
 
-The $K=8$-$128$ grid. It shows that full multi-route quality is stable while
-gated dense use and quality are more sensitive to feedback sparsity and arm
-granularity.
+All completed LoTTE scales/domains, biomedical transfers, corrected eManual,
+and Banking77/CUAD mechanism-boundary rows in one non-pooled display. Protocol
+and GT differences remain explicit; missing common budget endpoints are marked
+rather than imputed.
 
 ### Table 5: Downstream Answer-Level Evaluation
 
@@ -57,11 +58,12 @@ separately calibrated context budgeting, and trust-weighted feedback.
 Shows hit delta and final context-token saving across LoTTE scales. The caption
 states that dense truncation compresses more aggressively but loses hit rate.
 
-### Figure 3: Geometry-To-Control Diagnostic
+### Figure 3: From Local Geometry to Route-Control Behavior
 
-Relates context retention to observed hit delta and token saving. It supports
-geometry as a diagnostic route-control signal, not a deterministic gain law or
-theorem-level manifold proof.
+Three panels show the cross-scale geometry profile, static geometry versus
+uniform-random route attribution, and arm granularity versus Dense fallback and
+gated quality. It supports geometry as a route-control surface while making
+rescue and calibration boundaries visible.
 
 ## Supplementary Placement
 
@@ -71,13 +73,13 @@ theorem-level manifold proof.
 - Supplementary Sections S4/S5: boundary datasets and encoder details;
 - Supplementary Section S6: complete downstream answer, faithfulness, and citation results;
 - Supplementary Sections S8/S9: cross-domain and feedback-recovery details;
-- Supplementary Section S10: Sentence-MMR, Selective Context-lite, and cross-encoder controls;
-- Supplementary Section S11: full geometry/random, feedback, and arm-count control tables;
-- Supplementary Section S13: preregistered recreation/search and
+- Supplementary Section S10: Sentence-MMR and cross-encoder controls;
+- Supplementary Section S11: arm-count and frozen-trajectory route controls;
+- Supplementary Section S13: prospectively specified recreation/search and
   writing/search domain properties, route diagnostics, cross-fitted budgets,
   and strict seed-level non-inferiority.
 
-The older clean component table, geometry scale table, cross-domain table, and
-feedback-recovery table are represented in the main text as bounded prose and
-retained in their experiment summaries or supplementary tables. They no longer
-compete with the evidence that directly supports the revised central claim.
+The arm-count table moves from the main text to Supplementary Table S20 after
+its trend is incorporated into Figure 3 Panel C. Exact duplicates, internal
+reporting guardrails, and historical correction displays are removed from the
+submission package while their experiment artifacts remain tracked.

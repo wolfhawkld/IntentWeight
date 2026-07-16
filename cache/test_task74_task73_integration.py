@@ -18,7 +18,7 @@ class Task74IntegrationTest(unittest.TestCase):
         cls.payload = json.loads(MODULE.SOURCE.read_text(encoding="utf-8"))
 
     def test_expected_table_covers_both_domains_and_controls(self):
-        rows = MODULE.expected_s30(self.payload)
+        rows = MODULE.expected_domain_expansion_rows(self.payload)
         self.assertEqual(4, len(rows))
         self.assertEqual(
             [
@@ -31,17 +31,20 @@ class Task74IntegrationTest(unittest.TestCase):
         )
 
     def test_dense_fallback_is_not_reported_as_strict_ni(self):
-        rows = MODULE.expected_s30(self.payload)
+        rows = MODULE.expected_domain_expansion_rows(self.payload)
         self.assertEqual("n/a (fallback)", rows[0][-1])
         self.assertEqual("n/a (fallback)", rows[2][-1])
 
     def test_source_derived_budget_values(self):
-        rows = MODULE.expected_s30(self.payload)
+        rows = MODULE.expected_domain_expansion_rows(self.payload)
         self.assertEqual(["4/5", "-0.76 pp", "5.42%", "0/3"], rows[1][5:])
         self.assertEqual(["5/5", "+0.12 pp", "10.09%", "2/3"], rows[3][5:])
 
     def test_markdown_table_matches_source(self):
-        self.assertEqual(MODULE.expected_s30(self.payload), MODULE.parse_supplementary_table(30))
+        self.assertEqual(
+            MODULE.expected_domain_expansion_rows(self.payload),
+            MODULE.parse_supplementary_table(23),
+        )
 
 
 if __name__ == "__main__":

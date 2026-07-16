@@ -2,217 +2,168 @@
 
 ## 6.1 Supported Claim
 
-IntentRoute supports a bounded confidence-gated-route plus calibrated-budget claim. It estimates
-confidence over dense, lexical, and geometry-defined local routes, adapts that
-confidence through trust-weighted feedback, uses it to gate route usage, and
-applies a separately frozen final-context policy. On LoTTE technology/search,
-calibration/test validation shows that calibration-eligible operating points at
-100k, 200k, and 638k save 6-18% final evidence-context tokens while avoiding
-the larger $\mathrm{Hit@10}$ losses of dense-only adaptive truncation. The 400k
-result is positive on frozen test but does not pass the original calibration
-eligibility gate. A subsequent normalized five-fold audit selects compressed
-IntentRoute policies in all 400k folds and yields 14.50% mean saving with no
-mean Hit change, but fold-specific policies vary and strict seed-level
-non-inferiority remains unestablished. A conservative
-confidence-only policy provides a stable baseline, reducing final retrieved
-context tokens by about 4.7-5.3% from 100k to 638k corpus chunks while
-preserving dense-level query hit. Matched BGE/E5 experiments extend the
-quality-cost pattern beyond MiniLM, and the 300-query, three-judge downstream
-evaluation finds positive context savings without a statistically detectable
-correctness change. The stricter judges produce negative BGE/E5 correctness
-point estimates, and the three-judge majority detects a BGE faithfulness
-decrease, so the result does not establish uniform answer-quality
-non-inferiority. LoTTE science/search further supports ranking-side generalization, but
-also shows that compression strength must be calibrated per domain and scale.
-The preregistered recreation/search and writing/search expansion sharpens this
-boundary: both domains retain cluster-local route signal, but only
-writing/search supplies a useful 10.09% cross-fitted saving point with a
-slightly positive mean Hit change, and even that point passes the strict
-seed-level guardrail in only 2/3 seeds. Recreation/search is a weaker boundary,
-and trust-weighted calibration safely falls back to Dense in both domains.
+IntentRoute supports a bounded confidence-gated-route plus calibrated-budget
+claim. It gates dense, lexical, and geometry-defined local routes using
+trust-weighted adaptive confidence, then applies a separately frozen
+final-context policy. On LoTTE technology/search, eligible 100k, 200k, and 638k
+points save 6--18% evidence-context tokens while avoiding the larger
+$\mathrm{Hit@10}$ losses of dense-only truncation. The original 400k point is
+calibration-ineligible despite a positive frozen-test result; a normalized
+five-fold audit yields 14.50% mean saving with no mean Hit change, but varying
+policies and no strict seed-level non-inferiority. The conservative
+confidence-only policy provides a stable 4.7--5.3% saving baseline.
 
-The broader nine-setting evaluation keeps external-validity, mechanism, and
-benchmark-boundary evidence separate. Recreation/search and writing/search map
-heterogeneity under the complete 100k common protocol. PubMedQA shows that
-trust-weighted route adaptation is observable in biomedical evidence retrieval
-near a dense ceiling, while CovidQA-RAG provides a more discriminative
-biomedical transfer row with measurable final-context savings and a small mean
-hit loss under the strict cross-fitted budget. Banking77 shows analogous
-feedback behavior in an intent-routing proxy. eManual and CUAD expose how
-duplicated evidence, strict chunk identifiers, and sparse ground-truth anchors
-can dominate measured retrieval quality. These results do not form a pooled
-cross-dataset score or nine equivalent replications. Instead, they separate the
-controller's full-stack LoTTE evidence from transfer, mechanism, and
-benchmark-boundary evidence.
+Matched BGE/E5 results extend the quality-cost pattern beyond MiniLM. The
+300-query, three-judge evaluation finds positive savings without a statistically
+detectable correctness change, but negative BGE/E5 point estimates from stricter
+judges and a majority-detected BGE faithfulness decrease preclude uniform
+answer-quality non-inferiority. Science/search supports ranking transfer while
+requiring domain- and scale-specific budget calibration. Recreation/search and
+writing/search retain local route signal, yet only writing/search provides a
+useful 10.09% cross-fitted saving point with a slightly positive mean Hit change
+and only 2/3 strict non-inferiority seeds; trust-weighted calibration safely falls back to Dense
+in both.
 
-This result is not a claim that dense retrieval is weak. Dense retrieval remains
-the primary quality baseline and an important recall floor. IntentRoute's value
-is the explicit separation of adaptive route control, dense rescue, and
-calibrated final-context compaction.
+The nine settings retain distinct evidentiary roles. PubMedQA shows biomedical
+route adaptation near a dense ceiling; CovidQA-RAG adds a discriminative
+transfer row with savings and a small mean hit loss; Banking77 supplies an
+intent-routing feedback proxy; and eManual/CUAD expose duplicate, identity, and
+sparse-label boundaries. They are transfer, mechanism, and boundary evidence,
+not a pooled score or nine equivalent full-stack replications.
+
+Dense retrieval remains the primary quality baseline and recall floor;
+IntentRoute's contribution is separating adaptive route control, dense rescue,
+and calibrated final-context compaction.
 
 ## 6.2 Role of Calibrated Context Budgeting
 
-A static combination of dense, BM25, and cluster-local retrieval can improve
-coverage, but it does not automatically reduce final context tokens. In fact,
-static dense+BM25 hybrid retrieval can use more context tokens than dense-only
-retrieval because it surfaces longer or noisier chunks. The token-saving
-mechanism is therefore not "more routes." It is the calibrated budget applied
-after confidence-gated route construction.
+A static dense, BM25, and cluster-local combination can improve coverage yet use
+more final-context tokens by surfacing longer or noisier chunks. Savings come
+from the calibrated budget after confidence-gated route construction, not from
+adding routes alone.
 
-The confidence-only policy is intentionally conservative. It compresses only
-high-confidence cases to $k=8$ and keeps mid-confidence cases at $k=10$. This is
-why the saving is modest but stable. The calibrated token-budget policies use a
-frozen calibration/test protocol to expose a stronger operating frontier, while
-dense-only adaptive truncation shows that saving more tokens by simply reducing
-dense top-$k$ can cause visible $\mathrm{Hit@10}$ loss. The conservative policy
-should therefore be interpreted as a stable empirical baseline, not the
-highest-compression configuration or a per-query safety guarantee.
+The conservative policy compresses only high-confidence cases to $k=8$ and
+keeps mid-confidence cases at $k=10$, producing modest but stable savings. Frozen
+calibrated budgets expose a stronger frontier, whereas simply truncating dense
+top-$k$ causes visible $\mathrm{Hit@10}$ loss. The conservative result is an
+empirical baseline, not a maximum-compression or per-query safety guarantee.
 
-The cross-fitted comparison also clarifies why route quality matters to budget
-control. Under the same zero-drop gate, prefix-only Dense truncation cannot
-select a compressed action in any fold at any tested scale, whereas
-IntentRoute selects one in every 200k, 400k, and 638k fold. This is evidence of
-calibration headroom created by the routed evidence ranking, not evidence that
-all route policies or partitions are safe.
+Under the same cross-fitted zero-drop gate, prefix-only Dense selects no
+compressed action at any scale, whereas IntentRoute selects one in every 200k,
+400k, and 638k fold. This indicates calibration headroom in the routed ranking,
+not safety for every route or partition.
 
-The additional 100k domains make the same distinction operational. The
-no-feedback writing/search route admits compression in all folds, whereas
-recreation/search does so in four and the trust-weighted controller does so in
-none. A Dense fallback is therefore a valid calibrated outcome, not a missing
-result; route signal and a safe budget frontier must be established separately
-for each domain.
+At 100k, no-feedback writing/search admits compression in all folds,
+recreation/search in four, and the trust-weighted controller in none. Dense
+fallback is therefore a valid calibrated outcome: route signal and a safe
+budget frontier must be established separately by domain.
 
 ## 6.3 Reranking and Final-Context Control
 
-A cross-encoder reranker is a natural stronger ranking baseline, but it solves
-a different subproblem from final-context budgeting. A reranker applied after
-dense or multi-route retrieval can reorder a candidate pool and improve the
-quality of the top-ranked evidence, but it does not expand recall beyond the
-candidate pool and it does not by itself control LLM input length. In the LoTTE
-technology/search 100k check, reranking dense top-50 candidates with a
-cross-encoder improves the full top-10 support metrics
-($\mathrm{Hit@10}=0.8777$ and $\mathrm{EvidenceRecall@10}=0.7332$, versus
-dense top-10 at $0.8705$ and $0.7081$). However, the reranked top-10 contains
-longer chunks on average, increasing selected evidence-context tokens by about
-21.9% relative to dense top-10.
+A cross-encoder reranker reorders a candidate pool but neither expands its
+recall nor controls LLM input length. On LoTTE technology/search 100k, reranking
+dense top-50 improves full top-10 $\mathrm{Hit@10}$ and
+$\mathrm{EvidenceRecall@10}$ from 0.8705/0.7081 to 0.8777/0.7332, while selecting
+21.9% more evidence-context tokens than dense top-10.
 
-This clarifies the intended system decomposition. Reranking is useful as a late
-ranking layer, SentMMR and SelectiveContext-lite are downstream prompt-context
-compression layers, and IntentRoute controls the upstream evidence pool and
-budget passed to them. When the cross-encoder output is
-forced under the same per-query token budgets used by IntentRoute, its
-$\mathrm{Hit@10}$ range does not uniformly dominate the calibrated
-IntentRoute policies. The appropriate comparison is therefore not
-"IntentRoute versus reranking" as mutually exclusive choices, but whether a
-pipeline can combine candidate generation, reranking, and budgeted context
-selection while keeping the quality-cost frontier explicit.
+Thus IntentRoute controls the upstream evidence pool and budget, reranking is a
+late ranking layer, and SentMMR compresses downstream.
+Under IntentRoute's per-query budgets, cross-encoder $\mathrm{Hit@10}$ does not
+uniformly dominate calibrated IntentRoute. The components should be evaluated
+as a composable pipeline with an explicit quality-cost frontier, not as mutually
+exclusive alternatives.
 
-## 6.4 Feedback Improves the Policy Field
+## 6.4 Feedback Updates Route State under Controlled Credit
 
-Dense and BM25 fallback can saturate final $\mathrm{Hit@10}$. This can hide the
-effect of feedback in final fused retrieval metrics. The clearer feedback
-signal appears in route-policy metrics such as selected-cluster hit and last
-true reward.
+Dense/BM25 fallback can saturate fused $\mathrm{Hit@10}$, so feedback is clearer
+in selected-cluster hit and last-true-reward metrics.
 
-Trust weighting improves these policy metrics under controlled simulated
-feedback. Dedicated controls place the learned route reward at $0.6790$, above
-the no-feedback/random level of about $0.15$ but below the $0.8563$ static
-nearest-geometry prior. This supports feedback as adaptive route-confidence
-estimation, not as the sole source of final fused quality. The
-simulated-feedback and deployment boundaries are consolidated in Section 7.1.
+Under controlled simulated feedback, route reward reaches 0.6790, above the
+no-feedback/random level near 0.15 but below the 0.8563 static-nearest prior.
+Cluster-credit controls show learnable oracle capacity and conditional noisy
+gains, but no stable trust-weighted advantage over static geometry. Feedback is
+therefore a controlled route-state update, not the sole source of fused quality
+or a universal gain (Section 7.1).
 
-The hard-case recovery experiment adds a more operational interpretation of
-feedback. When aggressive compression loses evidence, arm-level feedback can
-repair a meaningful fraction of affected queries through a safer retry or
-fallback policy. This should be treated as a controlled recovery mechanism. It
-does not mean that feedback should blindly boost the same arm for all future
+The supported ordering is deliberately limited: an observed outcome updates
+later LinUCB route state; that state and the geometry-defined arms influence
+route selection, confidence, and fallback; an independently calibrated budget
+then acts on the fused ranking. Neither feedback nor route confidence directly
+sets a per-query compression ratio, so the token-saving frontier belongs to the
+complete controller rather than to a single causal arrow.
+
+When aggressive compaction loses evidence, arm-level feedback can repair a
+meaningful fraction of affected queries through safer retry or fallback. This
+controlled recovery does not justify globally boosting the same arm for future
 queries.
 
-A frozen-trajectory counterfactual clarifies where route confidence acts.
-Shuffling confidence tiers while preserving their frequency lowers Hit@10 by
-4.80 percentage points, whereas the original assignment sends high-confidence
-queries to a cluster-primary route with mean source Hit@10 of 0.924 and retains
-full fallback for the low-confidence group, where forced cluster-primary Hit@10
-falls to 0.240. Confidence therefore has a supported controlled role in
-route-shape assignment. This role precedes and is distinct from final-context
-budgeting.
+A frozen-trajectory counterfactual locates this effect. Frequency-preserving
+confidence-tier shuffling lowers Hit@10 by 4.80pp. The original assignment sends
+high-confidence queries to a cluster-primary route with source Hit@10 0.924 and
+retains fallback for low-confidence queries, whose forced cluster-primary Hit@10
+is 0.240. Confidence supports route-shape assignment before, and separately
+from, final-context budgeting.
 
 ## 6.5 Geometry Is Useful but Not Sufficient
 
-The geometry diagnostics support a piecewise relevance-manifold framing.
-$\mathrm{NearestClusterHit@3}$ remains high across LoTTE technology/search scales, and local
-geometry provides useful routing information. The added recreation/search and
-writing/search domains likewise reach 0.8366 and 0.8655, respectively. However,
-context retention and calibrated savings vary by scale and domain, and geometry
-alone is not a complete retrieval model. If a cluster route prunes too early,
-correct evidence can be lost.
+Geometry diagnostics support the piecewise relevance-manifold framing:
+$\mathrm{NearestClusterHit@3}$ remains high across technology/search scales and
+reaches 0.8366/0.8655 in recreation/search and writing/search. Yet context
+retention and calibrated savings vary by scale and domain, and early cluster
+pruning can lose evidence.
 
-IntentRoute therefore uses geometry as one signal in a controller. Dense
-retrieval remains a fallback, BM25 provides lexical anchors, and LinUCB learns
-route confidence over repeated interactions.
+Geometry is therefore one controller signal alongside dense fallback, BM25
+lexical anchors, and LinUCB confidence adaptation.
 
-The random-route control is important to this interpretation. Static geometry
-strongly improves route reward and selected-cluster hit over random routing,
-but final fused hit remains protected in both cases by dense/BM25 rescue. Mixed
-small-sample correlations between geometry diagnostics and final token-quality
-gain further show that geometry guides route construction without fully
-determining the end result. The gain belongs to the complete calibrated
-controller, not geometry in isolation.
+Static geometry strongly improves route reward and cluster hit over random
+routing, while Dense/BM25 rescue protects fused hit in both. Mixed small-sample
+correlations with final token-quality gain confirm that geometry guides route
+construction but does not determine the calibrated controller's outcome.
 
-A factorial safe-compression audit holds the dense top-10 ranking, split,
-budget grid, and seeds fixed while crossing geometry versus a randomized
-partition with feedback versus no feedback. Geometry with feedback does not
-outperform random-partition feedback in held-out failure discrimination (mean
-AUROC $0.434$ versus $0.573$); at an approximately 10% saving target their
-Hit@10 difference is only $+0.08$ percentage points and every seed-level paired
-bootstrap interval includes zero. Safe-action labels are highly imbalanced
-($97.8\%$ safe), so this is boundary evidence rather than proof of inverse
-prediction. It prevents attributing the stronger 6--18% token frontier directly
-to per-query confidence precision.
+A factorial audit fixes dense top-10, split, budget grid, and seeds while
+crossing geometry/random partitions with feedback/no feedback. Geometry with
+feedback does not beat random-partition feedback in failure discrimination
+(mean AUROC 0.434 versus 0.573); near 10% saving, their Hit@10 differs by only
++0.08pp and every seed-level paired bootstrap interval includes zero. Because
+97.8% of actions are safe, this is boundary evidence, not inverse prediction;
+the 6--18% frontier cannot be attributed directly to per-query confidence
+precision.
 
-The same frozen replay finds mean Spearman correlation $-0.056$ between route
-confidence and oracle safe-token headroom, with every seed-level interval
-including zero. Dynamic routing also contains fewer relevant top-10 chunks than
-fixed full fusion (2.121 versus 2.315). These results rule out a simple account
-in which confidence gating improves compression by creating greater evidence
-redundancy. Its measured benefit is assigning route shapes without the severe
-quality loss of shuffled or unconditional cluster-primary routing.
+The replay also finds mean Spearman $-0.056$ between confidence and oracle
+safe-token headroom, with all seed intervals including zero; dynamic routing has
+fewer relevant top-10 chunks than fixed fusion (2.121 versus 2.315). Confidence
+therefore assigns route shapes without the severe loss of shuffled or
+unconditional cluster-primary routing, rather than creating redundancy that
+directly predicts safe compaction.
 
 ## 6.6 Evidence Completeness Versus Usable Evidence
 
-The main retrieval headline is query-level $\mathrm{Hit@10}$. This metric asks
-whether at least one relevant chunk appears in the final context. It is
-appropriate for many RAG settings where one good supporting chunk is enough to
-ground an answer. However, context compaction can reduce
-$\mathrm{EvidenceRecall@10}$, the fraction of all GT chunks retrieved.
-
-This is an expected trade-off. IntentRoute optimizes usable evidence under a
-smaller context budget, not exhaustive evidence collection. For legal review,
-medical synthesis, or compliance workflows where complete evidence coverage is
-required, the system should use a more conservative context policy or disable
-compaction.
+Query-level $\mathrm{Hit@10}$ asks whether the final context contains any
+relevant chunk; $\mathrm{EvidenceRecall@10}$ measures coverage of all GT chunks.
+Compaction can preserve the former while reducing the latter. IntentRoute thus
+targets usable, not exhaustive, evidence; legal, medical, or compliance tasks
+requiring completeness should use conservative budgets or disable compaction.
 
 ## 6.7 Production Interpretation
 
-The measured 6-18% calibrated evidence-context token reduction applies to the
-most expensive recurring component of a retrieval-augmented answer: LLM input
-tokens. At enterprise query volumes, even the conservative end of this range can
-compound into meaningful cumulative inference-cost reduction. The older
-4.7-5.3% confidence-only policy is best interpreted as a stable conservative
-baseline, while calibrated budgets show the stronger operating frontier. In
-production, repeated query patterns and richer post-fusion features may support
-a dedicated compression-safety estimator. Route confidence alone is not
-established as such an estimator by the current experiments. This remains a
-hypothesis for production evaluation rather than a current claim.
+The measured 6--18% reduction lowers generation-stage evidence input; at a
+declared provider input-token price, the same percentage applies only to that
+price component. Total serving cost also includes prompts, outputs, model
+execution, retrieval, routing, caching, and infrastructure; latency, memory, and
+energy were not measured. The 4.7--5.3% confidence-only policy is a stable
+input baseline, while calibrated budgets expose the stronger bounded frontier.
+Richer post-fusion features may support a future safety estimator, but route
+confidence alone is not one here.
 
 The correct deployment interpretation is therefore:
 
-- keep dense retrieval as a recall floor;
-- optionally add reranking as a late ranking layer before final context
-  selection;
-- use feedback and confidence for route control, and calibrate the final
+- keep dense retrieval as a recall floor and optionally rerank before final
+  context selection;
+- use feedback and confidence for route control, while calibrating the final
   context budget separately;
-- use negative feedback to trigger safer local fallback for risky regions;
-- monitor evidence quality and fallback rates;
-- avoid aggressive compaction for complete-evidence tasks;
-- treat token saving as a controllable frontier rather than a fixed guarantee.
+- use negative feedback for safer retry or fallback rather than as a direct
+  compression-ratio signal;
+- monitor evidence quality and fallback rates, and disable aggressive
+  compaction for complete-evidence tasks;
+- treat evidence-input saving as a controllable frontier and measure total
+  system cost separately.

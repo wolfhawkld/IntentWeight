@@ -1,7 +1,7 @@
 {
   "checks": [
     {
-      "item": "supplementary_table_s30",
+      "item": "supplementary_table_s23",
       "rows": 4,
       "status": "PASS"
     },
@@ -20,5 +20,5 @@
   "status": "PASS",
   "task": "Task74",
   "task73_source": "paper/experiments/results/task73_lotte_domain_expansion.json",
-  "task73_source_sha256": "d80c27656b1ac06f93ec57b1776780192feaed0459f6bbd222aa2af3396dc9f0"
+  "task73_source_sha256": "43b94a0826ad1a2cdf71d1b743b4d35c23dd4e2260e5dbd938397b926e40f3bb"
 }

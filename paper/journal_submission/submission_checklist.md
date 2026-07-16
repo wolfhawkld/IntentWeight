@@ -15,6 +15,8 @@ Updated: 2026-07-16
 
 - [x] Full draft exists under `paper/full_draft/`.
 - [x] Abstract shortened to 250 words or fewer.
+- [x] Complete the evidence-preserving main-text compression pass: 10.53%
+  reduction and 25-page CAS main manuscript.
 - [x] Candidate keywords prepared.
 - [x] Candidate highlights prepared.
 - [x] Convert the manuscript to the current Elsevier CAS single-column format.
@@ -67,7 +69,7 @@ Updated: 2026-07-16
   repository artifact.
 - [ ] Prepare public artifact release with machine-specific paths removed.
 - [x] Re-run manuscript and submission-package validation after CAS migration.
-- [x] Rebuild and visually inspect the 28-page main PDF, 15-page supplement,
+- [x] Rebuild and visually inspect the 26-page main PDF, 15-page supplement,
   and one-page title page.
 - [x] Pass 921 experiment-artifact checks with zero warnings and errors.
 - [x] Recompute and verify all five main tables and both plotted-data files.

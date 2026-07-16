@@ -1,6 +1,6 @@
 # IntentRoute Full Draft
 
-Updated: 2026-07-06
+Updated: 2026-07-16
 
 This directory contains the first complete paper draft assembled after the
 paper evidence package, pre-writing validation work, and review-defense
@@ -37,7 +37,7 @@ draft. The most important internal evidence groups are:
 - LoTTE geometry scale validation;
 - calibration/test context-budget validation;
 - LoTTE science/search cross-domain validation;
-- preregistered LoTTE recreation/search and writing/search 100k domain
+- prospectively specified LoTTE recreation/search and writing/search 100k domain
   expansion;
 - PubMedQA and CovidQA-RAG biomedical transfer evidence;
 - Banking77 feedback-adaptation evidence;
@@ -46,7 +46,7 @@ draft. The most important internal evidence groups are:
 - matched BGE/E5 backbone validation and BGE quality-first tunability;
 - geometry/random, feedback/no-feedback, and arm-count controls;
 - strong post-retrieval baselines: Dense+Sentence-MMR, compressor-normalized
-  SentMMR, SelectiveContext-lite, and cross-encoder reranking;
+  SentMMR, and cross-encoder reranking;
 - 300-query, three-judge downstream answer-level evaluation.
 - fixed-dense-pool factorial safe-compression attribution separating route
   confidence from the calibrated length budget.
@@ -77,9 +77,9 @@ The paper should keep the bounded claim:
 > support bounded backbone and correctness robustness without establishing
 > strict non-inferiority, uniform faithfulness preservation, or significant
 > answer improvement. Geometry is motivation and diagnostic support, not theorem-level
-> proof. SentMMR and SelectiveContext-lite are downstream compressors,
-> cross-encoder reranking is a late ranking layer, and IntentRoute can be
-> composed with all three. Broader agent-memory, graph, tree,
+> proof. SentMMR is a shared downstream compressor, cross-encoder reranking is
+> a late ranking layer, and both are composable with IntentRoute. Official
+> LLMLingua-2 compression remains untested. Broader agent-memory, graph, tree,
 > or tool-context applications should be framed as motivation and future work
 > unless separately evaluated.
 
@@ -88,7 +88,7 @@ while exposing domain-specific compression calibration, and simulated feedback
 can recover a meaningful fraction of budget-induced tail failures in
 post-feedback retry.
 
-The preregistered recreation/search and writing/search expansion adds matched
+The prospectively specified recreation/search and writing/search expansion adds matched
 100k evidence of usable cluster-local route signal and heterogeneous calibrated
 frontiers. Writing/search supplies a useful 10.09% saving point with a +0.12pp
 mean Hit change, while recreation/search is a 5.42%/-0.76pp boundary and
@@ -111,8 +111,9 @@ five tables and three figures. Detailed cross-domain, recovery, compressor,
 reranker, and control results remain in the separately compiled supplement.
 After Task74, the complete ACL-style working PDF is 37 pages including
 references and the evidence appendix, with zero critical LaTeX warnings. The
-IP&M package separates this into a 28-page anonymous main manuscript and a
-15-page supplement.
+IP&M package separates the evidence appendix into a 15-page supplement. Task76
+reduces the anonymous main manuscript from 26 to 25 pages by removing 10.53% of
+repeated main-text wording without deleting evidence.
 
 ## Journal Submission Pass
 
@@ -130,6 +131,13 @@ CovidQA-RAG native-full biomedical transfer row.
 Task74 integrates the Task73 recreation/search and writing/search
 external-validity evidence without changing the five-table, three-figure main
 display.
+Task75 closes the remaining repository-controlled terminology, cost-scope, and
+2026 literature issues, shortens the conclusion, and restores the CAS class's
+native STIX font stack so mathematical symbols render correctly.
+Task76 completes the full-manuscript editorial compression pass. It consolidates
+Introduction, Discussion, and Limitations while leaving the evidence-dense
+Abstract, Related Work, Method, Experimental Setup, Results, and Conclusion
+unchanged from Task75 and preserving all automated evidence checks.
 Human authors must still fill author identity, affiliations, CRediT roles,
 funding, competing interests, acknowledgements, public data/code URLs, and the
 final AI-use disclosure.

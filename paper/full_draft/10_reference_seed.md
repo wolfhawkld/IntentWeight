@@ -58,6 +58,16 @@ formatting before camera-ready submission.
   Adaptive Retrieval-Augmented Generation through Question Complexity. COLING
   2025.
   Source: https://aclanthology.org/2025.coling-main.218/
+- `zhao2026r3ag`: Tong Zhao et al. 2026. R3AG: Retriever Routing for
+  Retrieval-Augmented Generation. ACL 2026.
+  Source: https://aclanthology.org/2026.acl-long.939/
+- `kim2026qudar`: Joeun Kim et al. 2026. QuDAR: Query-Wise Dual-Perspective
+  Adaptive Retrieval. ACL 2026.
+  Source: https://aclanthology.org/2026.acl-long.1791/
+- `guo2026routerag`: Yucan Guo et al. 2026. RouteRAG: Efficient
+  Retrieval-Augmented Generation from Text and Graph via Reinforcement
+  Learning. Findings of ACL 2026.
+  Source: https://aclanthology.org/2026.findings-acl.1502/
 
 ## Geometry and Structured Retrieval
 
@@ -87,12 +97,6 @@ formatting before camera-ready submission.
 - `radlinski2005querychains`: Filip Radlinski and Thorsten Joachims. 2005.
   Query Chains: Learning to Rank from Implicit Feedback.
   Source: https://arxiv.org/abs/cs/0605035
-- `christiano2017preferences`: Paul Christiano et al. 2017. Deep Reinforcement
-  Learning from Human Preferences. arXiv:1706.03741.
-  Source: https://arxiv.org/abs/1706.03741
-- `ouyang2022instructgpt`: Long Ouyang et al. 2022. Training Language Models to
-  Follow Instructions with Human Feedback. arXiv:2203.02155.
-  Source: https://arxiv.org/abs/2203.02155
 
 ## Context Compression and Evidence Refinement
 
@@ -113,3 +117,6 @@ formatting before camera-ready submission.
 - `shi2024replug`: Weijia Shi et al. 2024. REPLUG: Retrieval-Augmented
   Black-Box Language Models. NAACL 2024.
   Source: https://aclanthology.org/2024.naacl-long.463/
+- `qureshi2026budget`: Khizar Qureshi et al. 2026. Budget-Aware Routing for
+  Long Clinical Text. Findings of ACL 2026.
+  Source: https://aclanthology.org/2026.findings-acl.2114/

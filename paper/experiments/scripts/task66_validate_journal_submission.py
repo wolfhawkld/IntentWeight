@@ -89,6 +89,7 @@ def validate_compile_log(path: Path, *, label: str) -> None:
         r"Overfull \\hbox",
         r"LaTeX Warning:",
         r"Package \S+ Warning:",
+        r"Missing character:",
         r"undefined citations?",
         r"undefined references?",
     )
@@ -246,9 +247,10 @@ def main() -> int:
         require(figure.exists(), f"submission figure missing: {figure.name}")
     if figure1.exists():
         validate_figure_pdf(figure1, expected_width_mm=190.0)
-    for figure in (figure2, figure3):
-        if figure.exists():
-            validate_figure_pdf(figure, expected_width_mm=190.0, expected_height_mm=76.0)
+    if figure2.exists():
+        validate_figure_pdf(figure2, expected_width_mm=190.0, expected_height_mm=76.0)
+    if figure3.exists():
+        validate_figure_pdf(figure3, expected_width_mm=190.0, expected_height_mm=88.0)
 
     print(f"abstract_words={abstract_words}")
     print(f"keywords={len(keywords)}")

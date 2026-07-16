@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+import re
 from pathlib import Path
 from statistics import mean, stdev
 from typing import Any
@@ -152,22 +153,18 @@ def audit_table_1_and_g1(audit: Audit, manuscript: str) -> None:
         dense_delta = float(dense_row["hit_delta_mean"])
         dense_saving = float(dense_row["token_saving_percent"])
         policies[scale] = bool(meta["selected_policy"]["eligible"])
-        eligibility_label = str(policies[scale])
-        main_eligibility_label = "False / diagnostic" if scale == "400k" else eligibility_label
-        supplement_eligibility_label = "False / original split" if scale == "400k" else eligibility_label
+        ratio_match = re.fullmatch(r"token_budget_r(\d+\.\d+)_m(\d+)", policy)
+        if ratio_match is None:
+            raise AssertionError(f"unexpected policy label: {policy}")
+        action = f"{int(round(float(ratio_match.group(1)) * 100))}% budget; minimum {int(ratio_match.group(2))} chunks"
+        main_eligibility_label = "Diagnostic only" if scale == "400k" else "Eligible"
         ni_seeds = sum(1 for row in policy_rows if row.get("noninferior_by_ci") == "True")
         row = (
-            f"| {scale} | `{policy}` | {main_eligibility_label} | "
+            f"| {scale} | {action} | {main_eligibility_label} | "
             f"{pp_from_fraction(policy_delta)} | {ni_seeds}/{len(policy_rows)} | "
             f"{pct(policy_saving)} | {pp_from_fraction(dense_delta)} | {pct(dense_saving)} |"
         )
         audit.contains(f"Table 1 row {scale}", rel, row, manuscript)
-        g1_row = (
-            f"| {scale} | `{policy}` | {supplement_eligibility_label} | "
-            f"{pp_from_fraction(policy_delta)} | {pct(policy_saving)} | "
-            f"{pp_from_fraction(dense_delta)} | {pct(dense_saving)} |"
-        )
-        audit.contains(f"Appendix G1 row {scale}", rel, g1_row, manuscript)
 
 
 def audit_table_2_and_h(audit: Audit, manuscript: str) -> None:
@@ -427,57 +424,6 @@ def audit_appendix_b_c(audit: Audit, manuscript: str) -> None:
         )
         audit.contains(f"Appendix B1 row {row['scale']}", "paper/experiments/results/task23_lotte_scaleup_summary.csv", b1, manuscript)
 
-    rows = read_csv("paper/experiments/results/task28_1_context_token_backfill_aggregated.csv")
-    c_specs = [
-        ("banking77", "gated_cost_aware", "Banking77", "Gated cost-aware routing"),
-        ("emanual", "gated_cost_aware", "eManual", "Gated cost-aware routing"),
-        ("lotte_technology_search_100k", "quality_first", "LoTTE 100k", "Quality-first routing"),
-        ("lotte_technology_search_100k", "conditional_fallback", "LoTTE 100k", "Conditional fallback routing"),
-        ("lotte_technology_search_100k", "cluster_credit", "LoTTE 100k", "Cluster-credit routing"),
-        ("lotte_technology_search_200k", "initial_gated", "LoTTE 200k", "Initial gated routing"),
-        ("lotte_technology_search_400k", "initial_gated", "LoTTE 400k", "Initial gated routing"),
-        ("lotte_technology_search_638k", "initial_gated", "LoTTE 638k", "Initial gated routing"),
-    ]
-    method_alias = {
-        "quality_first": ("task19_ablation_D", "gated_cost_aware"),
-        "conditional_fallback": ("task20_conditional_S", "gated_cost_aware"),
-        "cluster_credit": ("task25_100k_cluster_credit_formal", "gated_cost_aware"),
-        "initial_gated": (None, "gated_cost_aware"),
-    }
-    for dataset, method_key, label, setting in c_specs:
-        if method_key in {"gated_cost_aware"}:
-            matches = [row for row in rows if row["dataset"] == dataset and row["method"] == method_key]
-        elif method_key == "initial_gated":
-            task_by_dataset = {
-                "lotte_technology_search_200k": "task22_200k_formal",
-                "lotte_technology_search_400k": "task22_5_lotte_400k_linucb_formal",
-                "lotte_technology_search_638k": "task22_9_lotte_638k_linucb_formal",
-            }
-            matches = [
-                row
-                for row in rows
-                if row["dataset"] == dataset
-                and row["method"] == "gated_cost_aware"
-                and row["task"] == task_by_dataset[dataset]
-            ]
-        else:
-            task, method = method_alias[method_key]
-            matches = [
-                row
-                for row in rows
-                if row["dataset"] == dataset and row["method"] == method and row["task"] == task
-            ]
-        if len(matches) != 1:
-            raise AssertionError(f"Appendix C match failed for {(dataset, method_key)}: {len(matches)}")
-        row = matches[0]
-        c1 = (
-            f"| {label} | {setting} | {f4(row['hit@10_mean'])} | "
-            f"{float(row['avg_context_tokens@10_mean']):.2f} | "
-            f"{ratio(row['context_token_ratio_vs_baseline@10_mean'])} | "
-            f"{float(row['avg_source_candidate_cost_mean']):.2f} |"
-        )
-        audit.contains(f"Appendix C1 row {label} {setting}", "paper/experiments/results/task28_1_context_token_backfill_aggregated.csv", c1, manuscript)
-
 
 def audit_secondary_and_robustness(audit: Audit, manuscript: str) -> None:
     dense_pubmedqa = read_json("paper/experiments/results/dense_pubmedqa_metrics.json")
@@ -521,23 +467,6 @@ def audit_secondary_and_robustness(audit: Audit, manuscript: str) -> None:
         )
         audit.contains(f"Appendix D1 row {label} {mode_label}", "paper/experiments/results/emanual_failure_analysis_tables.csv", table_row, manuscript)
 
-    e_rows = read_csv("paper/experiments/results/task33_1a_multiqa_100k_context_tokens.csv")
-    dense = find_one(e_rows, run_id="dense")
-    policies = [row for row in e_rows if row["run_id"] != "dense"]
-    e_dense = (
-        f"| Dense-only | {f4(dense['hit@10'])} | {f4(dense['mrr@10'])} | "
-        f"{f4(dense['ndcg@10'])} | {f4(dense['evidence_recall@10'])} | "
-        f"{float(dense['avg_context_tokens@10']):.2f} | {ratio(dense['context_token_ratio_vs_baseline@10'])} |"
-    )
-    e_policy = (
-        f"| Conservative policy | {f4(mean_float(policies, 'hit@10'))} | "
-        f"{f4(mean_float(policies, 'mrr@10'))} | {f4(mean_float(policies, 'ndcg@10'))} | "
-        f"{f4(mean_float(policies, 'evidence_recall@10'))} | "
-        f"{mean_float(policies, 'avg_context_tokens@10'):.2f} | "
-        f"{ratio(mean_float(policies, 'context_token_ratio_vs_baseline@10'))} |"
-    )
-    audit.contains("Appendix E1 dense row", "paper/experiments/results/task33_1a_multiqa_100k_context_tokens.csv", e_dense, manuscript)
-    audit.contains("Appendix E1 conservative row", "paper/experiments/results/task33_1a_multiqa_100k_context_tokens.csv", e_policy, manuscript)
 
 
 
@@ -548,6 +477,8 @@ def audit_assets(audit: Audit) -> None:
         "paper/full_draft/figures/figure2_token_quality_frontier_data.csv",
         "paper/full_draft/figures/figure3_geometry_diagnostics.svg",
         "paper/full_draft/figures/figure3_geometry_diagnostics_data.csv",
+        "paper/full_draft/figures/figure3_geometry_to_control.svg",
+        "paper/full_draft/figures/figure3_geometry_to_control_data.csv",
         "paper/full_draft/figures/figure4_geometry_to_gain.svg",
         "paper/full_draft/figures/figure4_geometry_to_gain_data.csv",
         "paper/full_draft/figures/figure5_feedback_adaptation.svg",
@@ -555,6 +486,7 @@ def audit_assets(audit: Audit) -> None:
         "paper/latex/figures/figure1_system_diagram.pdf",
         "paper/latex/figures/figure2_token_quality_frontier.pdf",
         "paper/latex/figures/figure3_geometry_diagnostics.pdf",
+        "paper/latex/figures/figure3_geometry_to_control.pdf",
         "paper/latex/figures/figure4_geometry_to_gain.pdf",
         "paper/latex/figures/figure5_feedback_adaptation.pdf",
     ]

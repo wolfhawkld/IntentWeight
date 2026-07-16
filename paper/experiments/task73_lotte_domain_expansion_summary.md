@@ -5,7 +5,7 @@ Completed: 2026-07-15
 ## Objective And Frozen Design
 
 Task73 tests whether IntentRoute's bounded quality-context frontier is stable
-across two preregistered LoTTE search domains. Recreation/search and
+across two predeclared LoTTE search domains. Recreation/search and
 writing/search were selected before downloading or inspecting their outcomes.
 Both use the Task69 common protocol: GT-anchored 100k corpora, all positive-qrel
 test queries, MiniLM, top-10, K=32, seeds 13/17/19, eight no-leakage
@@ -32,7 +32,7 @@ All corpus/query IDs are unique and every positive-qrel chunk is present. The
 realized corpora exceed 100,000 only because GT anchoring retains positives
 encountered beyond the first 100,000 distractors.
 
-## Preregistered Domain-Property Check
+## Predeclared Domain-Property Check
 
 The H1 premise that recreation would be the relatively more lexical condition
 is not supported. It is directionally reversed:
@@ -43,7 +43,7 @@ is not supported. It is directionally reversed:
 | Max query-positive Jaccard | 0.0787 | 0.1003 | -0.0216 | [-0.0268, -0.0165] |
 | BM25 minus Dense Hit@10 | -15.58pp | -14.57pp | -1.02pp | [-4.90pp, +2.83pp] |
 
-The two selected domains are retained exactly as preregistered. Their frontier
+The two selected domains are retained exactly as predeclared. Their frontier
 difference cannot be attributed to the originally assumed lexicality ordering.
 
 ## Route And Cross-Fitted Budget Results

@@ -1,6 +1,6 @@
 # Task73 Hypothesis-Driven LoTTE Domain Expansion Plan
 
-Date preregistered: 2026-07-15
+Protocol frozen: 2026-07-15, before data download and outcome inspection
 
 Status: completed 2026-07-15; protocol was frozen before downloading or inspecting either selected domain
 
@@ -23,9 +23,9 @@ estimands.
 
 The selected domains are:
 
-1. `LoTTE recreation/search`: preregistered as the relatively more
+1. `LoTTE recreation/search`: predeclared as the relatively more
    entity/term-matching-oriented condition.
-2. `LoTTE writing/search`: preregistered as the relatively more
+2. `LoTTE writing/search`: predeclared as the relatively more
    paraphrastic/advice-oriented condition.
 
 `LoTTE lifestyle/search` is deferred. Its mixed topical composition gives a
@@ -42,12 +42,12 @@ budget outcome using query-to-positive lexical overlap and the matched
 BM25-versus-Dense retrieval gap. A reversed or weak contrast will be reported
 as such; it will not trigger replacement of either domain.
 
-## Preregistered Questions and Hypotheses
+## Predeclared Questions and Hypotheses
 
 ### Q1: Does the retrieval regime differ across the two domains?
 
 H1 predicts that recreation/search will show stronger lexical alignment than
-writing/search, measured by preregistered query-positive token overlap and by a
+writing/search, measured by predeclared query-positive token overlap and by a
 smaller Dense advantage, or a larger BM25 advantage, at Hit@10. This hypothesis
 describes the selected contrast and is evaluated before interpreting budget
 results.
@@ -163,7 +163,7 @@ unfavorable result is not a stop condition.
 
 ## Completion Outcome
 
-The preregistered H1 domain-property ordering was not supported and was
+The predeclared H1 domain-property ordering was not supported and was
 directionally reversed. The selected domains were retained without replacement.
 The full result supports a heterogeneous bounded frontier rather than universal
 savings: writing/no-feedback yields the useful operating point, recreation is
