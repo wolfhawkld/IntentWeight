@@ -1,0 +1,73 @@
+{
+  "environment": "cpu",
+  "git_commit": "c382c06b88ce307c1e25672df4064c8db33fd683",
+  "git_dirty": true,
+  "gpu": {
+    "available": false,
+    "count": 0,
+    "device": ""
+  },
+  "kernel": "Linux Sugarbox 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+  "lock_file": "paper/experiments/reproducibility/task78/requirements-cpu-lock.txt",
+  "lock_sha256": "342668e2fc8124e312ca1ecf561104757560bb507444a53330b648997519a5a7",
+  "machine": "x86_64",
+  "numpy_config": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.10.15/lib/python3.10/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.10.15/lib/python3.10/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.29  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.29\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.10.15/lib/python3.10/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.10.15/lib/python3.10/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.29  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.29\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 10.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 10.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.1.0\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-a8ncef9o/bin/python\n  version: '3.10'\nSIMD Extensions:\n  baseline:\n  - SSE\n  - SSE2\n  - SSE3\n  found:\n  - SSSE3\n  - SSE41\n  - POPCNT\n  - SSE42\n  - AVX\n  - F16C\n  - FMA3\n  - AVX2\n  not found:\n  - AVX512F\n  - AVX512CD\n  - AVX512_KNL\n  - AVX512_KNM\n  - AVX512_SKX\n  - AVX512_CLX\n  - AVX512_CNL\n  - AVX512_ICL\n\n",
+  "packages": {
+    "numpy": "2.2.6",
+    "scikit_learn": "1.7.2",
+    "scipy": "1.15.3",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.9.1+cpu",
+    "torch_hip": null,
+    "transformers": "5.10.1"
+  },
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "python_executable": "$HOME/.openclaw/workspace/IntentWeight/.venv/bin/python",
+  "rocm": {
+    "activation_sha256": "3ade478bdd6f3f8fa207a1273e35784f65a28d7ad1911637601fad5322be08f5",
+    "dxg_visible": false,
+    "hsa_enable_dxg_detection": "",
+    "ld_library_path": "",
+    "rocdxg_sha256": "39b7664e917b06bb0e56ef51d4f13b67a1861cf638f84db119c48de8f160a81f",
+    "rocm_path": ""
+  },
+  "threadpools": [
+    {
+      "architecture": "Haswell",
+      "filepath": "$HOME/.openclaw/workspace/IntentWeight/.venv/lib/python3.10/site-packages/numpy.libs/libscipy_openblas64_-56d6093b.so",
+      "internal_api": "openblas",
+      "num_threads": 12,
+      "prefix": "libscipy_openblas",
+      "threading_layer": "pthreads",
+      "user_api": "blas",
+      "version": "0.3.29"
+    },
+    {
+      "architecture": "Haswell",
+      "filepath": "$HOME/.openclaw/workspace/IntentWeight/.venv/lib/python3.10/site-packages/scipy.libs/libscipy_openblas-68440149.so",
+      "internal_api": "openblas",
+      "num_threads": 12,
+      "prefix": "libscipy_openblas",
+      "threading_layer": "pthreads",
+      "user_api": "blas",
+      "version": "0.3.28"
+    },
+    {
+      "filepath": "$HOME/.openclaw/workspace/IntentWeight/.venv/lib/python3.10/site-packages/scikit_learn.libs/libgomp-a34b3233.so.1.0.0",
+      "internal_api": "openmp",
+      "num_threads": 12,
+      "prefix": "libgomp",
+      "user_api": "openmp",
+      "version": null
+    },
+    {
+      "filepath": "$HOME/.openclaw/workspace/IntentWeight/.venv/lib/python3.10/site-packages/torch/lib/libgomp.so.1",
+      "internal_api": "openmp",
+      "num_threads": 6,
+      "prefix": "libgomp",
+      "user_api": "openmp",
+      "version": null
+    }
+  ]
+}

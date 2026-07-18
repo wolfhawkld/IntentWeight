@@ -419,6 +419,7 @@ def run_dataset(
     scale_store_dir: Path | None = None,
     use_scale_store: bool = False,
     scale_store_canonical_name: str = "lotte_technology_search",
+    model_revision: str | None = None,
 ) -> Dict[str, object]:
     corpus_all = global_linucb.load_json_list(data_dir / f"{dataset}_corpus.json")
     queries_all = global_linucb.load_json_list(data_dir / f"{dataset}_queries.json")
@@ -443,6 +444,8 @@ def run_dataset(
             corpus,
             canonical_name=scale_store_canonical_name,
             scale_store_dir=scale_store_dir or DEFAULT_SCALE_STORE_DIR,
+            model_name=model_name,
+            model_revision=model_revision,
         )
         corpus_cache = {
             "cache_hit": True,
@@ -460,6 +463,7 @@ def run_dataset(
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=use_embedding_cache,
             force_embedding_cache=force_embedding_cache,
+            model_revision=model_revision,
         )
     query_embeddings, query_cache = dense_baseline.encode_records_with_optional_cache(
         queries,
@@ -471,6 +475,7 @@ def run_dataset(
         embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
         use_embedding_cache=use_embedding_cache,
         force_embedding_cache=force_embedding_cache,
+        model_revision=model_revision,
     )
 
     shared_context_artifacts = None
@@ -510,6 +515,7 @@ def run_dataset(
         "dataset": dataset,
         "method": "manifold_diagnostics",
         "model": model_name,
+        "model_revision": str(model_revision or ""),
         "batch_size": batch_size,
         "n_clusters_requested": n_clusters,
         "context_dim_requested": context_dim,
@@ -574,19 +580,34 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
     new_rows = list(rows)
     if not new_rows:
         return
-    existing: Dict[tuple[str, str, str], Mapping] = {}
+    existing: Dict[tuple[str, str, str, str], Mapping] = {}
     if summary_path.exists():
         with summary_path.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                existing[(row.get("dataset", ""), row.get("method", ""), row.get("model", ""))] = row
+                existing[
+                    (
+                        row.get("dataset", ""),
+                        row.get("method", ""),
+                        row.get("model", ""),
+                        row.get("model_revision", ""),
+                    )
+                ] = row
     for row in new_rows:
-        existing[(str(row["dataset"]), str(row["method"]), str(row.get("model", "")))] = row
+        existing[
+            (
+                str(row["dataset"]),
+                str(row["method"]),
+                str(row.get("model", "")),
+                str(row.get("model_revision", "")),
+            )
+        ] = row
 
     base_fieldnames = [
         "dataset",
         "method",
         "model",
+        "model_revision",
         "task_type",
         "scope",
         "query_split",
@@ -643,8 +664,19 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
             })
 
 
-def load_sentence_transformer(model_name: str, *, device: str | None = None, local_files_only: bool = False):
-    return dense_baseline.load_sentence_transformer(model_name, device=device, local_files_only=local_files_only)
+def load_sentence_transformer(
+    model_name: str,
+    *,
+    device: str | None = None,
+    local_files_only: bool = False,
+    revision: str | None = None,
+):
+    return dense_baseline.load_sentence_transformer(
+        model_name,
+        device=device,
+        local_files_only=local_files_only,
+        revision=revision,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -653,6 +685,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--model-revision", default=None, help="Pinned Hugging Face model revision")
     parser.add_argument("--device", default=None)
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--batch-size", type=int, default=64)
@@ -687,7 +720,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     datasets = parse_datasets(args.dataset)
     cluster_hit_ks = parse_ints(args.cluster_hit_ks)
     recall_ks = parse_ints(args.recall_ks)
-    encoder = load_sentence_transformer(args.model, device=args.device, local_files_only=args.local_files_only)
+    encoder = load_sentence_transformer(
+        args.model,
+        device=args.device,
+        local_files_only=args.local_files_only,
+        revision=args.model_revision,
+    )
 
     rows = []
     for dataset in datasets:
@@ -720,6 +758,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             scale_store_dir=args.scale_store_dir,
             use_scale_store=args.use_scale_store,
             scale_store_canonical_name=args.scale_store_canonical_name,
+            model_revision=args.model_revision,
         )
         rows.append(metrics)
         print(

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Tests for reusable experiment embedding cache."""
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -76,6 +77,120 @@ class EmbeddingCacheTests(unittest.TestCase):
             embedding_cache.records_fingerprint(first, "queries"),
             embedding_cache.records_fingerprint(second, "queries"),
         )
+
+    def test_model_revision_invalidates_same_named_cache(self):
+        records = [{"chunk_id": "c1", "text": "alpha document"}]
+        encoder = FakeEncoder()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache_dir = Path(tmp)
+            _, first = embedding_cache.load_or_compute_embeddings(
+                records,
+                dataset="toy",
+                model_name="fake-model",
+                model_revision="revision-a",
+                record_kind="corpus",
+                encoder=encoder,
+                batch_size=1,
+                cache_dir=cache_dir,
+            )
+            _, second = embedding_cache.load_or_compute_embeddings(
+                records,
+                dataset="toy",
+                model_name="fake-model",
+                model_revision="revision-a",
+                record_kind="corpus",
+                encoder=encoder,
+                batch_size=1,
+                cache_dir=cache_dir,
+            )
+            _, third = embedding_cache.load_or_compute_embeddings(
+                records,
+                dataset="toy",
+                model_name="fake-model",
+                model_revision="revision-b",
+                record_kind="corpus",
+                encoder=encoder,
+                batch_size=1,
+                cache_dir=cache_dir,
+            )
+
+            self.assertFalse(first["cache_hit"])
+            self.assertTrue(second["cache_hit"])
+            self.assertFalse(third["cache_hit"])
+            self.assertEqual(third["model_revision"], "revision-b")
+            self.assertEqual(encoder.calls, 2)
+
+    def test_corrupted_embedding_content_is_recomputed(self):
+        records = [{"chunk_id": "c1", "text": "alpha document"}]
+        encoder = FakeEncoder()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache_dir = Path(tmp)
+            expected, first = embedding_cache.load_or_compute_embeddings(
+                records,
+                dataset="toy",
+                model_name="fake-model",
+                model_revision="revision-a",
+                record_kind="corpus",
+                encoder=encoder,
+                batch_size=1,
+                cache_dir=cache_dir,
+            )
+            corrupted = np.load(first["embedding_path"], mmap_mode="r+")
+            corrupted[0, 0] = np.float32(0.25)
+            corrupted.flush()
+            del corrupted
+
+            repaired, repaired_info = embedding_cache.load_or_compute_embeddings(
+                records,
+                dataset="toy",
+                model_name="fake-model",
+                model_revision="revision-a",
+                record_kind="corpus",
+                encoder=encoder,
+                batch_size=1,
+                cache_dir=cache_dir,
+            )
+
+            self.assertFalse(repaired_info["cache_hit"])
+            self.assertEqual(encoder.calls, 2)
+            np.testing.assert_array_equal(repaired, expected)
+            metadata = json.loads(Path(repaired_info["metadata_path"]).read_text(encoding="utf-8"))
+            self.assertEqual(len(metadata["embedding_content_fingerprint"]), 64)
+
+    def test_truncated_embedding_file_is_recomputed(self):
+        records = [{"chunk_id": "c1", "text": "alpha document"}]
+        encoder = FakeEncoder()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache_dir = Path(tmp)
+            expected, first = embedding_cache.load_or_compute_embeddings(
+                records,
+                dataset="toy",
+                model_name="fake-model",
+                model_revision="revision-a",
+                record_kind="corpus",
+                encoder=encoder,
+                batch_size=1,
+                cache_dir=cache_dir,
+            )
+            Path(first["embedding_path"]).write_bytes(b"truncated")
+
+            repaired, repaired_info = embedding_cache.load_or_compute_embeddings(
+                records,
+                dataset="toy",
+                model_name="fake-model",
+                model_revision="revision-a",
+                record_kind="corpus",
+                encoder=encoder,
+                batch_size=1,
+                cache_dir=cache_dir,
+            )
+
+            self.assertFalse(repaired_info["cache_hit"])
+            self.assertEqual(encoder.calls, 2)
+            np.testing.assert_array_equal(repaired, expected)
 
 
 if __name__ == "__main__":

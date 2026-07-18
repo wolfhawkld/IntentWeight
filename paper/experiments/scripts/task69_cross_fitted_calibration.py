@@ -57,6 +57,15 @@ def only_file(directory: Path, pattern: str) -> Path:
     return matches[0]
 
 
+def resolve_recorded_artifact_path(value: object, *, fallback_dir: Path) -> Path:
+    """Resolve both portable project-relative paths and historical absolute paths."""
+    recorded = Path(str(value))
+    candidate = recorded if recorded.is_absolute() else (ROOT / recorded).resolve()
+    if candidate.exists():
+        return candidate
+    return (fallback_dir / recorded.name).resolve()
+
+
 def write_csv(path: Path, rows: Sequence[Mapping[str, object]]) -> None:
     if not rows:
         return
@@ -115,9 +124,10 @@ def load_sources(source_dir: Path):
     if len(method_sources) != 3:
         raise ValueError(f"Expected three route seeds, found {len(method_sources)}")
 
-    dense_path = Path(str(metrics["dense_ranking_artifact_path"]))
-    if not dense_path.exists():
-        dense_path = DATA / "retrieval_artifacts" / dense_path.name
+    dense_path = resolve_recorded_artifact_path(
+        metrics["dense_ranking_artifact_path"],
+        fallback_dir=DATA / "retrieval_artifacts",
+    )
     dense_sources = cost.load_ranking_variants("dense", dense_path)
     if len(dense_sources) != 1:
         raise ValueError(f"Expected one Dense ranking variant, found {len(dense_sources)}")

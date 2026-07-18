@@ -1,10 +1,11 @@
 # Task69.5 CovidQA-RAG Native-Full Checkpoint
 
-Updated: 2026-07-07
+Updated: 2026-07-18
 
 ## Status
 
-Complete for the native-full CovidQA-RAG common-protocol checkpoint. This row
+Complete for the provenance-pinned native-full CovidQA-RAG common-protocol
+checkpoint. This row
 was added as the biomedical discriminative supplement to PubMedQA: unlike
 PubMedQA, Dense is not near ceiling, so the dataset can expose retrieval and
 budget-control differences.
@@ -20,13 +21,13 @@ All rows use MiniLM embeddings and top-10 evaluation.
 | Method | Hit@10 | EvidenceRecall@10 | MRR@10 | nDCG@10 |
 |---|---:|---:|---:|---:|
 | BM25 | 0.4884 | 0.2037 | 0.2702 | 0.1789 |
-| Dense | 0.6095 | 0.2598 | 0.3327 | 0.2259 |
-| Hybrid RRF | 0.6037 | 0.2586 | 0.3312 | 0.2256 |
-| IntentRoute, no feedback | 0.6294 | 0.2696 | 0.3358 | 0.2302 |
-| IntentRoute, trust weighted | 0.6300 | 0.2677 | 0.3414 | 0.2320 |
+| Dense | 0.6112 | 0.2601 | 0.3333 | 0.2253 |
+| Hybrid RRF | 0.6049 | 0.2586 | 0.3322 | 0.2248 |
+| IntentRoute, no feedback | 0.6333 | 0.2714 | 0.3365 | 0.2300 |
+| IntentRoute, trust weighted | 0.6304 | 0.2664 | 0.3418 | 0.2304 |
 
-Trust-weighted feedback activates the LinUCB-primary route on 12.41% of
-interactions and lowers the Dense invocation rate to 0.8759. The no-feedback
+Trust-weighted feedback activates the LinUCB-primary route on 12.43% of
+interactions and lowers the Dense invocation rate to 0.8757. The no-feedback
 control keeps Dense fallback active for every interaction, with a Dense
 invocation rate of 1.0000.
 
@@ -36,7 +37,7 @@ invocation rate of 1.0000.
 |---|---:|
 | Eligible IntentRoute folds | 4/5 |
 | Mean Hit@10 delta vs Dense | -0.21pp |
-| Mean final-context token saving | 8.34% |
+| Mean final-context token saving | 9.00% |
 | Strict 1pp NI seeds | 0/3 |
 | Mean EvidenceRecall@10 delta | -0.49pp |
 | Independently calibrated Dense saving | 0.00% |
@@ -56,6 +57,22 @@ generalization is mixed, which matches the existing feedback framing: simulated
 feedback is mechanism evidence for adaptive correction, not production user
 behavior validation.
 
+## Canonical Refresh And Numerical Boundary
+
+The original Task69 embedding cache was unavailable. The replacement branch
+pins MiniLM revision `c9745ed1d9f207416be6d2e6f8de32d1f16199bf`, rebuilds
+embeddings on the RX 9070 XT ROCm path, and regenerates every downstream
+CovidQA result in one isolated generation. A second ROCm run reproduces the
+embeddings and cached-exact Dense rankings byte for byte.
+
+Historical-versus-canonical paired Hit@10 changes are non-significant. All 584
+Dense top-10 member-set changes replace chunk IDs with identical normalized
+text, with canonical score spans no larger than `4.77e-7`. The paper retains
+the official chunk-ID metric rather than relabeling after inspection. Exact
+cross-machine reproduction starts from the fixed canonical rankings and score
+cache because CPU BLAS can select different IDs among these tied duplicate
+sentences. See `results/task78_covidqa_canonical/comparison.md`.
+
 ## Implementation Note
 
 The cost-aware LinUCB runner now writes per-routing-mode/per-seed checkpoints.
@@ -70,10 +87,11 @@ matches.
 - `data/raw/covidqa_test.parquet`
 - `data/processed/covidqa_corpus.json`
 - `data/processed/covidqa_queries.json`
-- `results/task69_5_covidqa_dense/`
-- `results/task69_5_covidqa_bm25/`
-- `results/task69_5_covidqa_hybrid/`
-- `results/task69_5_covidqa_linucb/`
-- `results/task69_5_covidqa_feedback_none/`
-- `results/task69_5_covidqa_cross_fitted_calibration.*`
-- `results/task69_5_covidqa_feedback_recovery.*`
+- `results/task78_covidqa_canonical/dense/`
+- `results/task78_covidqa_canonical/bm25/`
+- `results/task78_covidqa_canonical/hybrid/`
+- `results/task78_covidqa_canonical/linucb_trust/`
+- `results/task78_covidqa_canonical/linucb_none/`
+- `results/task78_covidqa_canonical/cross_fitted_calibration.*`
+- `results/task78_covidqa_canonical/feedback_recovery.*`
+- `results/task78_covidqa_canonical/comparison.{json,csv,md}`

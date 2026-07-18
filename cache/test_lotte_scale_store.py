@@ -25,6 +25,9 @@ lotte_scale_store = load_module("lotte_scale_store", SCRIPT_DIR / "lotte_scale_s
 
 
 class FakeEncoder:
+    def get_sentence_embedding_dimension(self):
+        return 2
+
     def encode(self, texts, **kwargs):
         vectors = []
         for text in texts:
@@ -203,6 +206,142 @@ class LotteScaleStoreTests(unittest.TestCase):
             self.assertEqual(manifest["encoded_missing_rows"], 1)
             rows_400 = np.load(store_dir / "lotte_technology_search_400k__row_indices.npy")
             np.testing.assert_array_equal(rows_400, [0, 1, 2])
+
+    def test_append_rejects_model_revision_mismatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_dir = root / "processed"
+            store_dir = root / "scale_store"
+            data_dir.mkdir()
+            dataset = "lotte_technology_search_100k"
+            corpus = [
+                {"chunk_id": "c0", "text": "alpha", "metadata": {"original_corpus_id": "0"}},
+            ]
+            queries = [
+                {"query_id": "q0", "text": "alpha", "ground_truth_chunk_ids": ["c0"]},
+            ]
+            (data_dir / f"{dataset}_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / f"{dataset}_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+
+            lotte_scale_store.append_scale_store_streaming(
+                dataset,
+                canonical_name="lotte_technology_search",
+                model_name="fake-model",
+                model_revision="revision-a",
+                data_dir=data_dir,
+                store_dir=store_dir,
+                encoder=FakeEncoder(),
+                batch_size=1,
+                encode_chunk_size=1,
+            )
+
+            with self.assertRaisesRegex(ValueError, "model revision mismatch"):
+                lotte_scale_store.append_scale_store_streaming(
+                    dataset,
+                    canonical_name="lotte_technology_search",
+                    model_name="fake-model",
+                    model_revision="revision-b",
+                    data_dir=data_dir,
+                    store_dir=store_dir,
+                    encoder=FakeEncoder(),
+                    batch_size=1,
+                    encode_chunk_size=1,
+                )
+
+    def test_streaming_append_with_no_new_rows_only_adds_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_dir = root / "processed"
+            store_dir = root / "scale_store"
+            data_dir.mkdir()
+            datasets = ("lotte_technology_search_100k", "lotte_technology_search_200k")
+            corpus = [
+                {"chunk_id": "c0", "text": "alpha", "metadata": {"original_corpus_id": "0"}},
+            ]
+            queries = [
+                {"query_id": "q0", "text": "alpha", "ground_truth_chunk_ids": ["c0"]},
+            ]
+            for dataset in datasets:
+                (data_dir / f"{dataset}_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+                (data_dir / f"{dataset}_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+
+            lotte_scale_store.append_scale_store_streaming(
+                datasets[0],
+                canonical_name="lotte_technology_search",
+                model_name="fake-model",
+                model_revision="revision-a",
+                data_dir=data_dir,
+                store_dir=store_dir,
+                encoder=FakeEncoder(),
+                batch_size=1,
+                encode_chunk_size=1,
+            )
+            embedding_path = store_dir / "canonical_corpus_embeddings.npy"
+            before = embedding_path.read_bytes()
+            summary = lotte_scale_store.append_scale_store_streaming(
+                datasets[1],
+                canonical_name="lotte_technology_search",
+                model_name="fake-model",
+                model_revision="revision-a",
+                data_dir=data_dir,
+                store_dir=store_dir,
+                encoder=FakeEncoder(),
+                batch_size=1,
+                encode_chunk_size=1,
+            )
+
+            self.assertEqual(summary["new_canonical_rows"], 0)
+            self.assertEqual(embedding_path.read_bytes(), before)
+            self.assertTrue((store_dir / f"{datasets[1]}__manifest.json").exists())
+            np.testing.assert_array_equal(
+                np.load(store_dir / f"{datasets[1]}__row_indices.npy"),
+                [0],
+            )
+
+    def test_append_rejects_corrupted_canonical_embeddings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_dir = root / "processed"
+            store_dir = root / "scale_store"
+            data_dir.mkdir()
+            dataset = "lotte_technology_search_100k"
+            corpus = [
+                {"chunk_id": "c0", "text": "alpha", "metadata": {"original_corpus_id": "0"}},
+            ]
+            queries = [
+                {"query_id": "q0", "text": "alpha", "ground_truth_chunk_ids": ["c0"]},
+            ]
+            (data_dir / f"{dataset}_corpus.json").write_text(json.dumps(corpus), encoding="utf-8")
+            (data_dir / f"{dataset}_queries.json").write_text(json.dumps(queries), encoding="utf-8")
+
+            lotte_scale_store.append_scale_store_streaming(
+                dataset,
+                canonical_name="lotte_technology_search",
+                model_name="fake-model",
+                model_revision="revision-a",
+                data_dir=data_dir,
+                store_dir=store_dir,
+                encoder=FakeEncoder(),
+                batch_size=1,
+                encode_chunk_size=1,
+            )
+            embeddings = np.load(store_dir / "canonical_corpus_embeddings.npy", mmap_mode="r+")
+            embeddings[0, 0] = np.float32(0.25)
+            embeddings.flush()
+            del embeddings
+
+            with self.assertRaisesRegex(ValueError, "content fingerprint mismatch"):
+                lotte_scale_store.append_scale_store_streaming(
+                    dataset,
+                    canonical_name="lotte_technology_search",
+                    model_name="fake-model",
+                    model_revision="revision-a",
+                    data_dir=data_dir,
+                    store_dir=store_dir,
+                    encoder=FakeEncoder(),
+                    batch_size=1,
+                    encode_chunk_size=1,
+                )
 
 
 if __name__ == "__main__":

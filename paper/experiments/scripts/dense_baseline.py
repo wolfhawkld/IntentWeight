@@ -137,6 +137,7 @@ def encode_records_with_optional_cache(
     embedding_cache_dir: Path | None = None,
     use_embedding_cache: bool = False,
     force_embedding_cache: bool = False,
+    model_revision: str | None = None,
 ) -> tuple[np.ndarray, Dict[str, object]]:
     """Encode records, optionally using the shared on-disk embedding cache."""
     encoding_records = records_with_text_prefix(records, text_prefix)
@@ -152,6 +153,7 @@ def encode_records_with_optional_cache(
             batch_size=batch_size,
             cache_dir=embedding_cache_dir,
             force=force_embedding_cache,
+            model_revision=model_revision,
         )
     embeddings = encode_texts(
         encoder,
@@ -171,6 +173,8 @@ def load_corpus_embeddings_from_scale_store(
     *,
     canonical_name: str,
     scale_store_dir: Path,
+    model_name: str | None = None,
+    model_revision: str | None = None,
 ) -> tuple[np.ndarray, Dict[str, object]]:
     """Load corpus embeddings from a canonical LoTTE scale store."""
     scale_store_dir = Path(scale_store_dir)
@@ -178,6 +182,11 @@ def load_corpus_embeddings_from_scale_store(
     embeddings_path = scale_store_dir / "canonical_corpus_embeddings.npy"
     if not ids_path.exists() or not embeddings_path.exists():
         raise FileNotFoundError(f"Missing canonical scale store under {scale_store_dir}")
+    lotte_scale_store.validate_store_provenance(
+        scale_store_dir,
+        model_name=model_name,
+        model_revision=model_revision,
+    )
     with ids_path.open("r", encoding="utf-8") as f:
         ids_data = json.load(f)
     canonical_ids = [str(item) for item in ids_data.get("canonical_ids", [])]
@@ -334,6 +343,7 @@ def run_dataset(
     scale_store_canonical_name: str = "lotte_technology_search",
     query_prefix: str = "",
     corpus_prefix: str = "",
+    model_revision: str | None = None,
 ) -> Dict[str, object]:
     corpus_path = data_dir / f"{dataset}_corpus.json"
     queries_path = data_dir / f"{dataset}_queries.json"
@@ -366,6 +376,8 @@ def run_dataset(
             selected_corpus,
             canonical_name=scale_store_canonical_name,
             scale_store_dir=scale_store_dir or DEFAULT_SCALE_STORE_DIR,
+            model_name=model_name,
+            model_revision=model_revision,
         )
         corpus_cache = {
             "cache_hit": True,
@@ -383,6 +395,7 @@ def run_dataset(
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=use_embedding_cache,
             force_embedding_cache=force_embedding_cache,
+            model_revision=model_revision,
         )
         if use_artifact_cache:
             artifact_depth = max(top_k, 100)
@@ -423,6 +436,7 @@ def run_dataset(
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=True,
             force_embedding_cache=force_embedding_cache,
+            model_revision=model_revision,
         )
         query_embeddings, query_cache = encode_records_with_optional_cache(
             selected_queries,
@@ -435,6 +449,7 @@ def run_dataset(
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=True,
             force_embedding_cache=force_embedding_cache,
+            model_revision=model_revision,
         )
         if use_artifact_cache:
             artifact_depth = max(top_k, 100)
@@ -486,6 +501,7 @@ def run_dataset(
         "dataset": dataset,
         "method": "dense",
         "model": model_name,
+        "model_revision": str(model_revision or ""),
         "query_prefix": query_prefix,
         "corpus_prefix": corpus_prefix,
         "top_k": top_k,
@@ -542,7 +558,7 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
     if not rows:
         return
 
-    existing: Dict[tuple[str, str, str, str, str], Mapping] = {}
+    existing: Dict[tuple[str, str, str, str, str, str], Mapping] = {}
     if summary_path.exists():
         with summary_path.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
@@ -552,6 +568,7 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
                         row.get("dataset", ""),
                         row.get("method", ""),
                         row.get("model", ""),
+                        row.get("model_revision", ""),
                         row.get("query_prefix", ""),
                         row.get("corpus_prefix", ""),
                     )
@@ -563,6 +580,7 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
                 str(row["dataset"]),
                 str(row["method"]),
                 str(row.get("model", "")),
+                str(row.get("model_revision", "")),
                 str(row.get("query_prefix", "")),
                 str(row.get("corpus_prefix", "")),
             )
@@ -573,6 +591,7 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
         "dataset",
         "method",
         "model",
+        "model_revision",
         "query_prefix",
         "corpus_prefix",
         "num_queries",
@@ -623,7 +642,13 @@ def update_summary(summary_path: Path, metrics_rows: Iterable[Mapping]) -> None:
             })
 
 
-def load_sentence_transformer(model_name: str, *, device: str | None = None, local_files_only: bool = False):
+def load_sentence_transformer(
+    model_name: str,
+    *,
+    device: str | None = None,
+    local_files_only: bool = False,
+    revision: str | None = None,
+):
     from sentence_transformers import SentenceTransformer
 
     kwargs = {}
@@ -631,6 +656,8 @@ def load_sentence_transformer(model_name: str, *, device: str | None = None, loc
         kwargs["device"] = device
     if local_files_only:
         kwargs["local_files_only"] = True
+    if revision:
+        kwargs["revision"] = revision
     return SentenceTransformer(model_name, **kwargs)
 
 
@@ -640,6 +667,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--model-revision", default=None, help="Pinned Hugging Face model revision")
     parser.add_argument("--device", default=None, help="SentenceTransformer device, e.g. cpu/cuda")
     parser.add_argument("--local-files-only", action="store_true", help="Load model from local HF cache only")
     parser.add_argument("--query-prefix", default="", help="Optional prefix applied only to query text before encoding")
@@ -670,7 +698,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     datasets = parse_datasets(args.dataset)
     ks = parse_ks(args.ks)
-    encoder = load_sentence_transformer(args.model, device=args.device, local_files_only=args.local_files_only)
+    encoder = load_sentence_transformer(
+        args.model,
+        device=args.device,
+        local_files_only=args.local_files_only,
+        revision=args.model_revision,
+    )
 
     metrics_rows = []
     for dataset in datasets:
@@ -700,6 +733,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             scale_store_canonical_name=args.scale_store_canonical_name,
             query_prefix=args.query_prefix,
             corpus_prefix=args.corpus_prefix,
+            model_revision=args.model_revision,
         )
         metrics_rows.append(metrics)
         metric_text = ", ".join(f"{key}={metrics[key]:.4f}" for key in sorted(metrics) if "@" in key)

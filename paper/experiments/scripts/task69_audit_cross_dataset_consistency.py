@@ -323,13 +323,13 @@ def current_result_snapshot() -> list[dict[str, Any]]:
         paired_snapshot(
             dataset="CovidQA-RAG",
             scale="native full",
-            path=RESULTS / "task69_5_covidqa_cross_fitted_calibration.paired.csv",
+            path=RESULTS / "task78_covidqa_canonical" / "cross_fitted_calibration.paired.csv",
             role="biomedical discriminative transfer",
-            source="paper/experiments/results/task69_5_covidqa_cross_fitted_calibration.paired.csv",
+            source="paper/experiments/results/task78_covidqa_canonical/cross_fitted_calibration.paired.csv",
             method_label="intentroute_crossfit",
             scale_filter="covidqa",
             protocol="five-fold cross-fitted calibration",
-            artifact_status="complete native-full discriminative transfer row",
+            artifact_status="complete provenance-pinned canonical native-full transfer row",
         )
     )
     rows.append(

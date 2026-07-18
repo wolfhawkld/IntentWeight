@@ -1,0 +1,854 @@
+{
+  "cases": [
+    {
+      "candidate_metrics": "paper/experiments/data/task78_handoff/external_dense_results/pubmedqa_cpu/dense_pubmedqa_metrics.json",
+      "candidate_rankings": "paper/experiments/data/task78_handoff/external_dense_results/pubmedqa_cpu/dense_pubmedqa_rankings.json",
+      "candidate_rankings_sha256": "be7b1e54b0611f5b74d3a1b1968798ac29a4c6f0653921b7ec902a27ed19ed2c",
+      "changed_member_diagnostics": [],
+      "changed_member_query_count": 0,
+      "checkpoint_embedding_paths": {
+        "corpus": "paper/experiments/data/task78_handoff/embeddings/pubmedqa__sentence-transformers-all-MiniLM-L6-v2__corpus__n4348__6aca231e256fa577.npy",
+        "queries": "paper/experiments/data/task78_handoff/embeddings/pubmedqa__sentence-transformers-all-MiniLM-L6-v2__queries__n1000__dcadd3c7eafe1267.npy"
+      },
+      "dataset": "pubmedqa",
+      "metric_deltas": {
+        "evidence_recall@1": 0.0,
+        "evidence_recall@10": 0.0,
+        "evidence_recall@5": 0.0,
+        "hit@1": 0.0,
+        "hit@10": 0.0,
+        "hit@5": 0.0,
+        "mrr@1": 0.0,
+        "mrr@10": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@1": 0.0,
+        "ndcg@10": 0.0,
+        "ndcg@5": 0.0,
+        "recall@1": 0.0,
+        "recall@10": 0.0,
+        "recall@5": 0.0
+      },
+      "metrics_exact": true,
+      "query_count": 1000,
+      "reference_metrics": "paper/experiments/results/task69_4_pubmedqa_dense/dense_pubmedqa_metrics.json",
+      "reference_rankings": "paper/experiments/results/task69_4_pubmedqa_dense/dense_pubmedqa_rankings.json",
+      "reference_rankings_sha256": "be7b1e54b0611f5b74d3a1b1968798ac29a4c6f0653921b7ec902a27ed19ed2c",
+      "status": "EXACT",
+      "top10_member_matches": 1000,
+      "top10_ordered_matches": 1000
+    },
+    {
+      "candidate_metrics": "paper/experiments/data/task78_handoff/external_dense_results/emanual_cpu/dense_emanual_deduplicated_metrics.json",
+      "candidate_rankings": "paper/experiments/data/task78_handoff/external_dense_results/emanual_cpu/dense_emanual_deduplicated_rankings.json",
+      "candidate_rankings_sha256": "606aca44ae33a6a903faedd135e4f140497ac5e99cffc7ed6e31c4cc094a78f4",
+      "changed_member_diagnostics": [],
+      "changed_member_query_count": 0,
+      "checkpoint_embedding_paths": {
+        "corpus": "paper/experiments/data/task78_handoff/embeddings/emanual_deduplicated__sentence-transformers-all-MiniLM-L6-v2__corpus__n1729__d470c33b1d846be6.npy",
+        "queries": "paper/experiments/data/task78_handoff/embeddings/emanual_deduplicated__sentence-transformers-all-MiniLM-L6-v2__queries__n132__313656864856ffd6.npy"
+      },
+      "dataset": "emanual_deduplicated",
+      "metric_deltas": {
+        "evidence_recall@1": 0.0,
+        "evidence_recall@10": 0.0,
+        "evidence_recall@5": 0.0,
+        "hit@1": 0.0,
+        "hit@10": 0.0,
+        "hit@5": 0.0,
+        "mrr@1": 0.0,
+        "mrr@10": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@1": 0.0,
+        "ndcg@10": 0.0,
+        "ndcg@5": 0.0,
+        "recall@1": 0.0,
+        "recall@10": 0.0,
+        "recall@5": 0.0
+      },
+      "metrics_exact": true,
+      "query_count": 132,
+      "reference_metrics": "paper/experiments/results/task69_4_emanual_dedup_dense/dense_emanual_deduplicated_metrics.json",
+      "reference_rankings": "paper/experiments/results/task69_4_emanual_dedup_dense/dense_emanual_deduplicated_rankings.json",
+      "reference_rankings_sha256": "606aca44ae33a6a903faedd135e4f140497ac5e99cffc7ed6e31c4cc094a78f4",
+      "status": "EXACT",
+      "top10_member_matches": 132,
+      "top10_ordered_matches": 132
+    },
+    {
+      "candidate_metrics": "paper/experiments/data/task78_handoff/external_dense_results/covidqa_cpu64/dense_covidqa_metrics.json",
+      "candidate_rankings": "paper/experiments/data/task78_handoff/external_dense_results/covidqa_cpu64/dense_covidqa_rankings.json",
+      "candidate_rankings_sha256": "a70b810c70e94c178fa9ea6402c1936c805325622597379aa8b56abb73d58255",
+      "changed_member_diagnostics": [
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_577_2a",
+            "covidqa_631_2a",
+            "covidqa_641_0a",
+            "covidqa_641_2a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_577_2a": 0.8543517589569092,
+            "covidqa_581_0a": 0.8543517589569092,
+            "covidqa_581_1a": 0.8543517589569092,
+            "covidqa_581_2a": 0.8543517589569092,
+            "covidqa_581_3a": 0.8543517589569092,
+            "covidqa_631_2a": 0.8543517589569092,
+            "covidqa_641_0a": 0.8543517589569092,
+            "covidqa_641_2a": 0.8543517589569092
+          },
+          "query": "When did Hantavirus infections became a concern in the Americas?",
+          "query_id": "covidqa_q000038",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_581_0a",
+            "covidqa_581_1a",
+            "covidqa_581_2a",
+            "covidqa_581_3a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_627_0c"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 1.1920928955078125e-07,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_626_0c": 0.5939277410507202,
+            "covidqa_627_0c": 0.5939278602600098
+          },
+          "query": "What does the microscopic examination of the lung reveal, as with human HCPS?",
+          "query_id": "covidqa_q000071",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_626_0c"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_462_3b"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_462_3b": 0.6250656843185425,
+            "covidqa_465_0b": 0.6250656843185425
+          },
+          "query": "What  is the FPA optimization algorithm inspired by?",
+          "query_id": "covidqa_q000082",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_465_0b"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_1692_0d"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1155_2d": 0.6296974420547485,
+            "covidqa_1692_0d": 0.6296975016593933
+          },
+          "query": "What other tests should be considered for 2019-nCOV epidemiology?",
+          "query_id": "covidqa_q000087",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_1155_2d"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_354_2f"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_354_2f": 0.6037958860397339,
+            "covidqa_355_1f": 0.6037958264350891
+          },
+          "query": "What  samples  returned the highest MERS viral load values?",
+          "query_id": "covidqa_q000155",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_355_1f"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_1170_3a",
+            "covidqa_1213_0a",
+            "covidqa_1213_1a",
+            "covidqa_1213_2a",
+            "covidqa_1225_1a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1170_0a": 0.7284424901008606,
+            "covidqa_1170_3a": 0.7284424304962158,
+            "covidqa_1172_0a": 0.7284424901008606,
+            "covidqa_1172_1a": 0.7284424901008606,
+            "covidqa_1172_2a": 0.7284424901008606,
+            "covidqa_1172_3a": 0.7284424901008606,
+            "covidqa_1213_0a": 0.7284424304962158,
+            "covidqa_1213_1a": 0.7284424304962158,
+            "covidqa_1213_2a": 0.7284424304962158,
+            "covidqa_1225_1a": 0.7284424304962158
+          },
+          "query": "What are coronaviruses?",
+          "query_id": "covidqa_q000207",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_1170_0a",
+            "covidqa_1172_0a",
+            "covidqa_1172_1a",
+            "covidqa_1172_2a",
+            "covidqa_1172_3a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_577_2a",
+            "covidqa_597_2a",
+            "covidqa_631_2a",
+            "covidqa_641_0a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_577_2a": 0.8484916687011719,
+            "covidqa_581_0a": 0.8484917283058167,
+            "covidqa_581_1a": 0.8484917283058167,
+            "covidqa_581_2a": 0.8484917283058167,
+            "covidqa_581_3a": 0.8484917283058167,
+            "covidqa_597_2a": 0.8484916687011719,
+            "covidqa_631_2a": 0.8484916687011719,
+            "covidqa_641_0a": 0.8484916687011719
+          },
+          "query": "What have hantaviruses been identified in potentiating?",
+          "query_id": "covidqa_q000227",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_581_0a",
+            "covidqa_581_1a",
+            "covidqa_581_2a",
+            "covidqa_581_3a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_407_2a",
+            "covidqa_407_3a",
+            "covidqa_408_0a",
+            "covidqa_408_1a",
+            "covidqa_408_2a",
+            "covidqa_408_3a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_406_0a": 0.75606769323349,
+            "covidqa_406_1a": 0.75606769323349,
+            "covidqa_406_2a": 0.75606769323349,
+            "covidqa_406_3a": 0.75606769323349,
+            "covidqa_407_0a": 0.75606769323349,
+            "covidqa_407_2a": 0.75606769323349,
+            "covidqa_407_3a": 0.75606769323349,
+            "covidqa_408_0a": 0.75606769323349,
+            "covidqa_408_1a": 0.75606769323349,
+            "covidqa_408_2a": 0.75606769323349,
+            "covidqa_408_3a": 0.75606769323349,
+            "covidqa_409_3a": 0.75606769323349
+          },
+          "query": "Evidence of Hydroxychloroquine(HCQ) being anti inflammatory in SARS-CoV-2 critically ill patients with elevated plasma cytokines?",
+          "query_id": "covidqa_q000233",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_406_0a",
+            "covidqa_406_1a",
+            "covidqa_406_2a",
+            "covidqa_406_3a",
+            "covidqa_407_0a",
+            "covidqa_409_3a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_1661_1a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1661_1a": 0.6836545467376709,
+            "covidqa_1661_3a": 0.6836545467376709
+          },
+          "query": "What is the estimated number of people in Italy infected with coronavirus by March 28th?",
+          "query_id": "covidqa_q000253",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_1661_3a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_1351_0a",
+            "covidqa_1661_3a",
+            "covidqa_1669_1a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1171_3a": 0.6771177053451538,
+            "covidqa_1351_0a": 0.6771177053451538,
+            "covidqa_1351_2a": 0.6771177053451538,
+            "covidqa_1488_3a": 0.6771177053451538,
+            "covidqa_1661_3a": 0.6771177053451538,
+            "covidqa_1669_1a": 0.6771177053451538
+          },
+          "query": "How many laboratory-confirmed cases of SARS coronavirus infections were reported between November 2002 and July 2003?",
+          "query_id": "covidqa_q000273",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_1171_3a",
+            "covidqa_1351_2a",
+            "covidqa_1488_3a"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_1179_0b",
+            "covidqa_1235_3b",
+            "covidqa_1237_3b",
+            "covidqa_1238_3b"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1179_0b": 0.6433535814285278,
+            "covidqa_1185_0b": 0.6433535814285278,
+            "covidqa_1234_0b": 0.6433535814285278,
+            "covidqa_1235_3b": 0.6433535814285278,
+            "covidqa_1237_3b": 0.6433535814285278,
+            "covidqa_1238_3b": 0.6433535814285278,
+            "covidqa_1243_3b": 0.6433535814285278,
+            "covidqa_1252_0b": 0.6433535814285278
+          },
+          "query": "What was the first known MERS human-to-human transmission event was one characterized by?",
+          "query_id": "covidqa_q000298",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_1185_0b",
+            "covidqa_1234_0b",
+            "covidqa_1243_3b",
+            "covidqa_1252_0b"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_1316_1d"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 1.1920928955078125e-07,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1316_1d": 0.7057573199272156,
+            "covidqa_693_2d": 0.705757200717926
+          },
+          "query": "What was  the R0 of SARS?",
+          "query_id": "covidqa_q000299",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_693_2d"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_180_0a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 1.1920928955078125e-07,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_180_0a": 0.5414062738418579,
+            "covidqa_182_0a": 0.5414061546325684
+          },
+          "query": "What are the salient findings in Acute hemorrhagic encephalomyelitis?",
+          "query_id": "covidqa_q000394",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_182_0a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_421_1a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_421_1a": 0.4521336555480957,
+            "covidqa_422_1a": 0.4521335959434509
+          },
+          "query": "What genetic mutation is associated with hereditary spastic paraplegia?",
+          "query_id": "covidqa_q000472",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_422_1a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_407_2a",
+            "covidqa_407_3a",
+            "covidqa_408_0a",
+            "covidqa_408_1a",
+            "covidqa_408_2a",
+            "covidqa_408_3a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_406_0a": 0.6969667077064514,
+            "covidqa_406_1a": 0.6969667077064514,
+            "covidqa_406_2a": 0.6969667077064514,
+            "covidqa_406_3a": 0.6969667077064514,
+            "covidqa_407_0a": 0.6969667077064514,
+            "covidqa_407_2a": 0.6969666481018066,
+            "covidqa_407_3a": 0.6969666481018066,
+            "covidqa_408_0a": 0.6969666481018066,
+            "covidqa_408_1a": 0.6969666481018066,
+            "covidqa_408_2a": 0.6969666481018066,
+            "covidqa_408_3a": 0.6969666481018066,
+            "covidqa_409_3a": 0.6969667077064514
+          },
+          "query": "Mechanism of action of Chloroquine(CQ) and Hydroxychloroquine(HCQ) against COVID-19?",
+          "query_id": "covidqa_q000541",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_406_0a",
+            "covidqa_406_1a",
+            "covidqa_406_2a",
+            "covidqa_406_3a",
+            "covidqa_407_0a",
+            "covidqa_409_3a"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_482_0a",
+            "covidqa_482_1a",
+            "covidqa_482_2a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_481_0a": 0.6340979933738708,
+            "covidqa_481_1a": 0.6340979933738708,
+            "covidqa_481_2a": 0.6340979933738708,
+            "covidqa_482_0a": 0.6340979337692261,
+            "covidqa_482_1a": 0.6340979337692261,
+            "covidqa_482_2a": 0.6340979337692261
+          },
+          "query": "What determines the whether the spread of Vesicular stomatitis virus is monosynaptic or polysynaptic?",
+          "query_id": "covidqa_q000602",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_481_0a",
+            "covidqa_481_1a",
+            "covidqa_481_2a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_1088_1b"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1088_1b": 0.43702465295791626,
+            "covidqa_1090_2b": 0.4370245933532715
+          },
+          "query": "What has the E1-A226V enabled?",
+          "query_id": "covidqa_q000668",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_1090_2b"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_1700_1d",
+            "covidqa_1703_1d"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1700_1d": 0.43476223945617676,
+            "covidqa_1703_1d": 0.43476223945617676,
+            "covidqa_544_2d": 0.43476223945617676,
+            "covidqa_828_1d": 0.43476223945617676
+          },
+          "query": "What are the ancient lineage of NCLDVs?",
+          "query_id": "covidqa_q000773",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_544_2d",
+            "covidqa_828_1d"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_1170_3a",
+            "covidqa_1213_0a",
+            "covidqa_1213_1a",
+            "covidqa_1213_2a",
+            "covidqa_1225_1a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1170_0a": 0.7284424901008606,
+            "covidqa_1170_3a": 0.7284424304962158,
+            "covidqa_1172_0a": 0.7284424901008606,
+            "covidqa_1172_1a": 0.7284424901008606,
+            "covidqa_1172_2a": 0.7284424901008606,
+            "covidqa_1172_3a": 0.7284424901008606,
+            "covidqa_1213_0a": 0.7284424304962158,
+            "covidqa_1213_1a": 0.7284424304962158,
+            "covidqa_1213_2a": 0.7284424304962158,
+            "covidqa_1225_1a": 0.7284424304962158
+          },
+          "query": "What are Coronaviruses?",
+          "query_id": "covidqa_q000885",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_1170_0a",
+            "covidqa_1172_0a",
+            "covidqa_1172_1a",
+            "covidqa_1172_2a",
+            "covidqa_1172_3a"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_716_3d"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_715_1d": 0.5963464975357056,
+            "covidqa_716_3d": 0.5963464975357056
+          },
+          "query": "What kind of model best describes the pharmacokinetic profiles of AP3 and AP2?",
+          "query_id": "covidqa_q000890",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_715_1d"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_598_2a",
+            "covidqa_598_3a",
+            "covidqa_605_0a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_596_1a": 0.7509878873825073,
+            "covidqa_597_0a": 0.7509878873825073,
+            "covidqa_597_1a": 0.7509878873825073,
+            "covidqa_598_2a": 0.7509878873825073,
+            "covidqa_598_3a": 0.7509878873825073,
+            "covidqa_605_0a": 0.7509878873825073
+          },
+          "query": "Which was  the first hantavirus to be isolated?",
+          "query_id": "covidqa_q000930",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_596_1a",
+            "covidqa_597_0a",
+            "covidqa_597_1a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_1709_1d"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1709_1d": 0.6091004610061646,
+            "covidqa_247_1d": 0.6091004610061646
+          },
+          "query": "What  is it most similar to?",
+          "query_id": "covidqa_q001224",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_247_1d"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_459_0d"
+          ],
+          "changed_ground_truth_ids": [
+            "covidqa_459_0d"
+          ],
+          "changed_score_span": 1.1920928955078125e-07,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_458_1d": 0.527809739112854,
+            "covidqa_459_0d": 0.5278098583221436
+          },
+          "query": "What may be a problem with individual SI algorithm?",
+          "query_id": "covidqa_q001279",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_458_1d"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_1163_0c"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_1162_3c": 0.6994789838790894,
+            "covidqa_1163_0c": 0.6994790434837341
+          },
+          "query": "Which are the preferred method for MERS-CoV detection?",
+          "query_id": "covidqa_q001467",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_1162_3c"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_141_0d"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 2.9802322387695312e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_141_0d": 0.4964320659637451,
+            "covidqa_796_0d": 0.49643203616142273
+          },
+          "query": "What animal models exist for both the asymptomatic carriage of PUUV and SNV?",
+          "query_id": "covidqa_q001527",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_796_0d"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_417_0a",
+            "covidqa_417_1a",
+            "covidqa_419_1a",
+            "covidqa_419_2a",
+            "covidqa_419_3a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_417_0a": 0.6810823678970337,
+            "covidqa_417_1a": 0.6810823678970337,
+            "covidqa_419_1a": 0.6810823678970337,
+            "covidqa_419_2a": 0.6810823678970337,
+            "covidqa_419_3a": 0.6810823678970337,
+            "covidqa_421_1a": 0.6810823678970337,
+            "covidqa_421_2a": 0.6810823678970337,
+            "covidqa_421_3a": 0.6810823678970337,
+            "covidqa_423_0a": 0.6810823678970337,
+            "covidqa_423_1a": 0.6810823678970337
+          },
+          "query": "What CNS functions are changed by mutations in the KATNAL1 gene?",
+          "query_id": "covidqa_q001545",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_421_1a",
+            "covidqa_421_2a",
+            "covidqa_421_3a",
+            "covidqa_423_0a",
+            "covidqa_423_1a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_219_1b"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_218_0b": 0.6872537136077881,
+            "covidqa_219_1b": 0.6872537136077881
+          },
+          "query": "What causes Q fever?",
+          "query_id": "covidqa_q001586",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_218_0b"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_462_2d"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 5.960464477539063e-08,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_462_2d": 0.48311275243759155,
+            "covidqa_463_3d": 0.4831126928329468
+          },
+          "query": "When is SSA generally employed?",
+          "query_id": "covidqa_q001646",
+          "reference_hit": true,
+          "reference_only": [
+            "covidqa_463_3d"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_596_1a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_581_0a": 0.7550914883613586,
+            "covidqa_596_1a": 0.7550914883613586
+          },
+          "query": "What does hantavirus human disease  manifest as?",
+          "query_id": "covidqa_q001672",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_581_0a"
+          ]
+        },
+        {
+          "candidate_hit": false,
+          "candidate_only": [
+            "covidqa_482_0a",
+            "covidqa_482_1a",
+            "covidqa_482_2a"
+          ],
+          "changed_ground_truth_ids": [],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_479_0a": 0.6786917448043823,
+            "covidqa_479_1a": 0.6786917448043823,
+            "covidqa_479_2a": 0.6786917448043823,
+            "covidqa_482_0a": 0.6786917448043823,
+            "covidqa_482_1a": 0.6786917448043823,
+            "covidqa_482_2a": 0.6786917448043823
+          },
+          "query": "In what direction does the Vesicular stomatitis virus spread through the nervous system?",
+          "query_id": "covidqa_q001715",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_479_0a",
+            "covidqa_479_1a",
+            "covidqa_479_2a"
+          ]
+        },
+        {
+          "candidate_hit": true,
+          "candidate_only": [
+            "covidqa_406_0a",
+            "covidqa_406_1a",
+            "covidqa_406_2a",
+            "covidqa_406_3a"
+          ],
+          "changed_ground_truth_ids": [
+            "covidqa_406_0a",
+            "covidqa_406_1a",
+            "covidqa_406_2a",
+            "covidqa_406_3a"
+          ],
+          "changed_score_span": 0.0,
+          "changed_scores_under_candidate_embeddings": {
+            "covidqa_406_0a": 0.7459710836410522,
+            "covidqa_406_1a": 0.7459710836410522,
+            "covidqa_406_2a": 0.7459710836410522,
+            "covidqa_406_3a": 0.7459710836410522,
+            "covidqa_407_2a": 0.7459710836410522,
+            "covidqa_407_3a": 0.7459710836410522,
+            "covidqa_408_0a": 0.7459710836410522,
+            "covidqa_408_1a": 0.7459710836410522
+          },
+          "query": "In vitro comparison of antiviral activity of Chloroquine(CQ) and Hydroxychloroquine(HCQ) against COVID-19?",
+          "query_id": "covidqa_q001759",
+          "reference_hit": false,
+          "reference_only": [
+            "covidqa_407_2a",
+            "covidqa_407_3a",
+            "covidqa_408_0a",
+            "covidqa_408_1a"
+          ]
+        }
+      ],
+      "changed_member_query_count": 31,
+      "checkpoint_embedding_paths": {
+        "corpus": "paper/experiments/data/task78_handoff/embeddings/covidqa__sentence-transformers-all-MiniLM-L6-v2__corpus__n32392__413282454dde909d.npy",
+        "queries": "paper/experiments/data/task78_handoff/embeddings/covidqa__sentence-transformers-all-MiniLM-L6-v2__queries__n1765__cec391b8609f5ff6.npy"
+      },
+      "dataset": "covidqa",
+      "metric_deltas": {
+        "evidence_recall@1": -0.000646967941290072,
+        "evidence_recall@10": 0.0004038063134239045,
+        "evidence_recall@5": 3.8200501699892087e-05,
+        "hit@1": -0.0017381228273464777,
+        "hit@10": 0.0005793742757821407,
+        "hit@5": 0.0,
+        "mrr@1": -0.0017381228273464777,
+        "mrr@10": -0.0015636208133312235,
+        "mrr@5": -0.0016705291618385187,
+        "ndcg@1": -0.0017381228273464777,
+        "ndcg@10": -0.0002261373491220242,
+        "ndcg@5": -0.0005563519280643581,
+        "recall@1": -0.0017381228273464777,
+        "recall@10": 0.0005793742757821407,
+        "recall@5": 0.0
+      },
+      "metrics_exact": false,
+      "query_count": 1765,
+      "reference_metrics": "paper/experiments/results/task69_5_covidqa_dense/dense_covidqa_metrics.json",
+      "reference_rankings": "paper/experiments/results/task69_5_covidqa_dense/dense_covidqa_rankings.json",
+      "reference_rankings_sha256": "4aa567881df88558f9c4f9fbe9580c4d18d012afc13741fbbb904119be5432b6",
+      "status": "HISTORICAL_RANKINGS_REQUIRED",
+      "top10_member_matches": 1734,
+      "top10_ordered_matches": 1652
+    }
+  ],
+  "status": "PASS_WITH_HISTORICAL_BOUNDARY"
+}

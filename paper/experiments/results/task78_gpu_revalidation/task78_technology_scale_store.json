@@ -1,0 +1,240 @@
+{
+  "batch_contract": {
+    "corpus_encoding": 256,
+    "dense_ranking": 16,
+    "query_encoding": 16
+  },
+  "build_elapsed_sec": 0.023,
+  "canonical_count": 638509,
+  "canonical_embedding_fingerprint": "45b6c9adb2debf7eb5de5f5005dda5873af65030666b56639107debf3770ca89",
+  "canonical_shape": [
+    638509,
+    384
+  ],
+  "checks": {
+    "all_scale_manifests": true,
+    "embedding_equivalence_100k": true,
+    "metric_equivalence_638k": true,
+    "model_revision": true,
+    "ranking_equivalence_638k": true,
+    "strict_ranking_membership_equivalence_638k": false
+  },
+  "comparisons": {
+    "embeddings_100k": {
+      "candidate_dtype": "float32",
+      "candidate_nonfinite_values": 0,
+      "candidate_norm_max": 1.0000001192092896,
+      "candidate_norm_min": 0.9999998807907104,
+      "candidate_shape": [
+        101311,
+        384
+      ],
+      "exact_row_count": 30278,
+      "exact_row_fraction": 0.29886192022583924,
+      "max_abs_difference": 4.3958425521850586e-07,
+      "mean_cosine_similarity": 1.0000000313269883,
+      "min_cosine_similarity": 0.9999997615814209,
+      "pass": true,
+      "reference_dtype": "float32",
+      "reference_nonfinite_values": 0,
+      "reference_norm_max": 1.0000001192092896,
+      "reference_norm_min": 0.9999998807907104,
+      "reference_shape": [
+        101311,
+        384
+      ],
+      "row_count": 101311
+    },
+    "membership_boundary_diagnostics": [
+      {
+        "candidate_score_span": 1.1920928955078125e-07,
+        "candidate_top10": [
+          "lotte_technology_search_638k_c5128",
+          "lotte_technology_search_638k_c91594",
+          "lotte_technology_search_638k_c5120",
+          "lotte_technology_search_638k_c96143",
+          "lotte_technology_search_638k_c81973",
+          "lotte_technology_search_638k_c127624",
+          "lotte_technology_search_638k_c61122",
+          "lotte_technology_search_638k_c156684",
+          "lotte_technology_search_638k_c96954",
+          "lotte_technology_search_638k_c138328"
+        ],
+        "changed_chunks": [
+          {
+            "candidate_embedding_score": 0.6447768211364746,
+            "candidate_position": 10,
+            "chunk_id": "lotte_technology_search_638k_c138328",
+            "reference_position": null,
+            "text_preview": "AFAIK, bluetooth connections can occur simultaneously as long as their operational bounds do not overlap. In other words, you cannot connect two bluetooth headsets at the same time, but you can connect a bluetooth keyboard and bluetooth mou",
+            "text_sha256": "16803ce771fce64da8da3ba03ea10cf9560a7795467e1078343747ffa8d02061"
+          },
+          {
+            "candidate_embedding_score": 0.6447767019271851,
+            "candidate_position": null,
+            "chunk_id": "lotte_technology_search_638k_c166278",
+            "reference_position": 10,
+            "text_preview": "i have tried and tried, never works, either use 2 wired earphones or use 2 wireless Bluetooth earphones",
+            "text_sha256": "303234b31dc854de616d395405d2b0eb139b32048f398814f19ab85b77770dd9"
+          }
+        ],
+        "changed_ground_truth_chunk_ids": [],
+        "numerical_non_gt_boundary": true,
+        "query_id": "lotte_technology_search_638k_q45",
+        "query_text": "can you pair two bluetooth headphones to one device?",
+        "reference_top10": [
+          "lotte_technology_search_638k_c5128",
+          "lotte_technology_search_638k_c91594",
+          "lotte_technology_search_638k_c5120",
+          "lotte_technology_search_638k_c96143",
+          "lotte_technology_search_638k_c81973",
+          "lotte_technology_search_638k_c127624",
+          "lotte_technology_search_638k_c61122",
+          "lotte_technology_search_638k_c156684",
+          "lotte_technology_search_638k_c96954",
+          "lotte_technology_search_638k_c166278"
+        ],
+        "score_tolerance": 1e-06
+      }
+    ],
+    "metrics_638k": {
+      "candidate": {
+        "evidence_recall@1": 0.19176458521806822,
+        "evidence_recall@10": 0.5040782855416331,
+        "evidence_recall@5": 0.3849749008833999,
+        "hit@1": 0.41946308724832215,
+        "hit@10": 0.7281879194630873,
+        "hit@5": 0.6258389261744967,
+        "mrr@1": 0.41946308724832215,
+        "mrr@10": 0.5102269095557684,
+        "mrr@5": 0.49644854586129744,
+        "ndcg@1": 0.41946308724832215,
+        "ndcg@10": 0.43032490854493166,
+        "ndcg@5": 0.391653021120072,
+        "recall@1": 0.41946308724832215,
+        "recall@10": 0.7281879194630873,
+        "recall@5": 0.6258389261744967
+      },
+      "differences": {
+        "evidence_recall@1": 0.0,
+        "evidence_recall@10": 0.0,
+        "evidence_recall@5": 0.0,
+        "hit@1": 0.0,
+        "hit@10": 0.0,
+        "hit@5": 0.0,
+        "mrr@1": 0.0,
+        "mrr@10": 0.0,
+        "mrr@5": 0.0,
+        "ndcg@1": 0.0,
+        "ndcg@10": 0.0,
+        "ndcg@5": 0.0,
+        "recall@1": 0.0,
+        "recall@10": 0.0,
+        "recall@5": 0.0
+      },
+      "pass": true,
+      "reference": {
+        "evidence_recall@1": 0.19176458521806822,
+        "evidence_recall@10": 0.5040782855416331,
+        "evidence_recall@5": 0.3849749008833999,
+        "hit@1": 0.41946308724832215,
+        "hit@10": 0.7281879194630873,
+        "hit@5": 0.6258389261744967,
+        "mrr@1": 0.41946308724832215,
+        "mrr@10": 0.5102269095557684,
+        "mrr@5": 0.49644854586129744,
+        "ndcg@1": 0.41946308724832215,
+        "ndcg@10": 0.43032490854493166,
+        "ndcg@5": 0.391653021120072,
+        "recall@1": 0.41946308724832215,
+        "recall@10": 0.7281879194630873,
+        "recall@5": 0.6258389261744967
+      }
+    },
+    "rankings_638k": {
+      "candidate_query_count": 596,
+      "pass": false,
+      "query_sets_equal": true,
+      "reference_depth": 10,
+      "reference_depth_membership_equal_fraction": 0.9983221476510067,
+      "reference_depth_membership_equal_queries": 595,
+      "reference_depth_ordered_equal_fraction": 0.9966442953020134,
+      "reference_depth_ordered_equal_queries": 594,
+      "reference_query_count": 596,
+      "strict_order_pass": false,
+      "top10_membership_equal_fraction": 0.9983221476510067,
+      "top10_membership_equal_queries": 595,
+      "top10_ordered_equal_fraction": 0.9966442953020134,
+      "top10_ordered_equal_queries": 594
+    }
+  },
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+  "ranking_artifact": "paper/experiments/data/task78_handoff/retrieval_artifacts/lotte_technology_search_638k__dense_rankings__d56a71ed38fbec8c.json",
+  "runtime": {
+    "dxg_visible": true,
+    "gpu_available": true,
+    "gpu_count": 1,
+    "gpu_device": "AMD Radeon RX 9070 XT",
+    "hsa_enable_dxg_detection": "1",
+    "numpy": "1.26.4",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "rocdxg_library_visible": true,
+    "rocm_path": "$HOME/.local/rocm-7.2.3-root/opt/rocm-7.2.3",
+    "scikit_learn": "1.7.2",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.9.1+rocm7.2.3.gitebc02d69",
+    "torch_hip": "7.2.53211-c2d9476115",
+    "transformers": "5.9.0"
+  },
+  "scale_summaries": [
+    {
+      "canonical_row_count": 101311,
+      "corpus_count": 101311,
+      "dataset": "lotte_technology_search_100k",
+      "encoded_missing_rows": 101311,
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "new_canonical_rows": 101311,
+      "query_count": 596,
+      "reused_canonical_rows": 0
+    },
+    {
+      "canonical_row_count": 201010,
+      "corpus_count": 201010,
+      "dataset": "lotte_technology_search_200k",
+      "encoded_missing_rows": 99699,
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "new_canonical_rows": 99699,
+      "query_count": 596,
+      "reused_canonical_rows": 101311
+    },
+    {
+      "canonical_row_count": 400674,
+      "corpus_count": 400674,
+      "dataset": "lotte_technology_search_400k",
+      "encoded_missing_rows": 199664,
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "new_canonical_rows": 199664,
+      "query_count": 596,
+      "reused_canonical_rows": 201010
+    },
+    {
+      "canonical_row_count": 638509,
+      "corpus_count": 638509,
+      "dataset": "lotte_technology_search_638k",
+      "encoded_missing_rows": 237835,
+      "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "new_canonical_rows": 237835,
+      "query_count": 596,
+      "reused_canonical_rows": 400674
+    }
+  ],
+  "status": "PASS_WITH_NUMERICAL_BOUNDARY",
+  "store_dir": "paper/experiments/data/task78_handoff/scale_store/lotte_technology_search",
+  "task": "Task78"
+}

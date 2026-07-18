@@ -80,6 +80,7 @@ def load_cached_corpus_embeddings(
     *,
     model_name: str,
     cache_dir: Path,
+    model_revision: str | None = None,
 ) -> tuple[np.ndarray, Mapping]:
     fingerprint = embedding_cache.records_fingerprint(corpus, "corpus")
     embedding_path, metadata_path = embedding_cache.cache_paths(
@@ -96,16 +97,35 @@ def load_cached_corpus_embeddings(
         )
     with metadata_path.open("r", encoding="utf-8") as f:
         metadata = json.load(f)
-    embeddings = np.load(embedding_path)
+    if model_revision is not None and metadata.get("model_revision") != str(model_revision):
+        raise FileNotFoundError(
+            f"Embedding cache revision mismatch for {dataset}: expected {model_revision}"
+        )
+    embeddings = np.load(embedding_path, mmap_mode="r", allow_pickle=False)
     if embeddings.shape[0] != len(corpus):
         raise ValueError(
             f"Embedding row mismatch for {dataset}: {embeddings.shape[0]} rows "
             f"for {len(corpus)} corpus records"
         )
-    return embeddings.astype(np.float32, copy=False), metadata
+    stored_fingerprint = metadata.get("embedding_content_fingerprint")
+    if stored_fingerprint is not None:
+        actual_fingerprint = embedding_cache.embedding_array_fingerprint(embeddings)
+        if (
+            metadata.get("embedding_content_fingerprint_version")
+            != embedding_cache.EMBEDDING_FINGERPRINT_VERSION
+            or stored_fingerprint != actual_fingerprint
+        ):
+            raise ValueError(f"Embedding content fingerprint mismatch for {dataset}")
+    return np.asarray(embeddings, dtype=np.float32), metadata
 
 
-def load_sentence_transformer(model_name: str, *, device: str | None = None, local_files_only: bool = False):
+def load_sentence_transformer(
+    model_name: str,
+    *,
+    device: str | None = None,
+    local_files_only: bool = False,
+    revision: str | None = None,
+):
     from sentence_transformers import SentenceTransformer
 
     kwargs = {}
@@ -113,14 +133,61 @@ def load_sentence_transformer(model_name: str, *, device: str | None = None, loc
         kwargs["device"] = device
     if local_files_only:
         kwargs["local_files_only"] = True
+    if revision:
+        kwargs["revision"] = revision
     return SentenceTransformer(model_name, **kwargs)
 
 
-def load_existing_canonical_store(store_dir: Path) -> tuple[List[str], List[str], List[List[str]], List[np.ndarray]]:
+def validate_store_provenance(
+    store_dir: Path,
+    *,
+    model_name: str | None = None,
+    model_revision: str | None,
+) -> None:
+    metadata_path = store_dir / "canonical_metadata.json"
+    if not metadata_path.exists():
+        return
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if model_name is not None and metadata.get("model_name") != model_name:
+        raise ValueError(
+            f"Canonical store model mismatch: {metadata.get('model_name')!r} != {model_name!r}"
+        )
+    if model_revision is not None and metadata.get("model_revision") != str(model_revision):
+        raise ValueError(
+            "Canonical store model revision mismatch: "
+            f"{metadata.get('model_revision')!r} != {model_revision!r}"
+        )
+    stored_fingerprint = metadata.get("embedding_content_fingerprint")
+    if stored_fingerprint is None:
+        return
+    embeddings_path = store_dir / "canonical_corpus_embeddings.npy"
+    embeddings = np.load(embeddings_path, mmap_mode="r", allow_pickle=False)
+    if list(embeddings.shape) != list(metadata.get("embedding_shape", [])):
+        raise ValueError("Canonical store embedding shape mismatch")
+    actual_fingerprint = embedding_cache.embedding_array_fingerprint(embeddings)
+    if (
+        metadata.get("embedding_content_fingerprint_version")
+        != embedding_cache.EMBEDDING_FINGERPRINT_VERSION
+        or stored_fingerprint != actual_fingerprint
+    ):
+        raise ValueError("Canonical store embedding content fingerprint mismatch")
+
+
+def load_existing_canonical_store(
+    store_dir: Path,
+    *,
+    model_name: str,
+    model_revision: str | None = None,
+) -> tuple[List[str], List[str], List[List[str]], List[np.ndarray]]:
     ids_path = store_dir / "canonical_corpus_ids.json"
     embeddings_path = store_dir / "canonical_corpus_embeddings.npy"
     if not ids_path.exists() or not embeddings_path.exists():
         return [], [], [], []
+    validate_store_provenance(
+        store_dir,
+        model_name=model_name,
+        model_revision=model_revision,
+    )
 
     with ids_path.open("r", encoding="utf-8") as f:
         ids_data = json.load(f)
@@ -159,6 +226,7 @@ def append_scale_store_streaming(
     batch_size: int,
     encode_chunk_size: int,
     copy_chunk_size: int = 50000,
+    model_revision: str | None = None,
 ) -> Dict[str, object]:
     """Append one scale using mmap-backed arrays to keep memory bounded."""
     if batch_size <= 0:
@@ -173,6 +241,11 @@ def append_scale_store_streaming(
     ids_path = store_dir / "canonical_corpus_ids.json"
     embeddings_path = store_dir / "canonical_corpus_embeddings.npy"
     if ids_path.exists() and embeddings_path.exists():
+        validate_store_provenance(
+            store_dir,
+            model_name=model_name,
+            model_revision=model_revision,
+        )
         with ids_path.open("r", encoding="utf-8") as f:
             ids_data = json.load(f)
         canonical_ids = [str(item) for item in ids_data.get("canonical_ids", [])]
@@ -237,48 +310,51 @@ def append_scale_store_streaming(
     combined_tmp_path = store_dir / "canonical_corpus_embeddings.tmp.npy"
 
     start = time.perf_counter()
-    new_embeddings = np.lib.format.open_memmap(
-        new_embeddings_path,
-        mode="w+",
-        dtype=np.float32,
-        shape=(missing_count, dim),
-    )
-    for start_idx in range(0, missing_count, encode_chunk_size):
-        end_idx = min(start_idx + encode_chunk_size, missing_count)
-        print(
-            f"[{dataset}] encoding missing rows {start_idx + 1}-{end_idx} "
-            f"of {missing_count}",
-            flush=True,
+    new_embeddings = None
+    if missing_count:
+        new_embeddings = np.lib.format.open_memmap(
+            new_embeddings_path,
+            mode="w+",
+            dtype=np.float32,
+            shape=(missing_count, dim),
         )
-        texts = [
-            str(corpus[missing_local_indices[idx]].get("text", ""))
-            for idx in range(start_idx, end_idx)
-        ]
-        new_embeddings[start_idx:end_idx] = embedding_cache.encode_texts(
-            encoder,
-            texts,
-            batch_size=batch_size,
-        )
-        new_embeddings.flush()
+        for start_idx in range(0, missing_count, encode_chunk_size):
+            end_idx = min(start_idx + encode_chunk_size, missing_count)
+            print(
+                f"[{dataset}] encoding missing rows {start_idx + 1}-{end_idx} "
+                f"of {missing_count}",
+                flush=True,
+            )
+            texts = [
+                str(corpus[missing_local_indices[idx]].get("text", ""))
+                for idx in range(start_idx, end_idx)
+            ]
+            new_embeddings[start_idx:end_idx] = embedding_cache.encode_texts(
+                encoder,
+                texts,
+                batch_size=batch_size,
+            )
+            new_embeddings.flush()
     encode_elapsed_sec = time.perf_counter() - start
 
     final_count = len(canonical_ids)
-    combined = np.lib.format.open_memmap(
-        combined_tmp_path,
-        mode="w+",
-        dtype=np.float32,
-        shape=(final_count, dim),
-    )
-    if initial_count:
-        print(f"[{dataset}] copying existing canonical rows 1-{initial_count}", flush=True)
-        for start_idx in range(0, initial_count, copy_chunk_size):
-            end_idx = min(start_idx + copy_chunk_size, initial_count)
-            combined[start_idx:end_idx] = existing_embeddings[start_idx:end_idx]
-    print(f"[{dataset}] copying new canonical rows {initial_count + 1}-{final_count}", flush=True)
-    for start_idx in range(0, missing_count, copy_chunk_size):
-        end_idx = min(start_idx + copy_chunk_size, missing_count)
-        combined[initial_count + start_idx : initial_count + end_idx] = new_embeddings[start_idx:end_idx]
-    combined.flush()
+    if missing_count:
+        combined = np.lib.format.open_memmap(
+            combined_tmp_path,
+            mode="w+",
+            dtype=np.float32,
+            shape=(final_count, dim),
+        )
+        if initial_count:
+            print(f"[{dataset}] copying existing canonical rows 1-{initial_count}", flush=True)
+            for start_idx in range(0, initial_count, copy_chunk_size):
+                end_idx = min(start_idx + copy_chunk_size, initial_count)
+                combined[start_idx:end_idx] = existing_embeddings[start_idx:end_idx]
+        print(f"[{dataset}] copying new canonical rows {initial_count + 1}-{final_count}", flush=True)
+        for start_idx in range(0, missing_count, copy_chunk_size):
+            end_idx = min(start_idx + copy_chunk_size, missing_count)
+            combined[initial_count + start_idx : initial_count + end_idx] = new_embeddings[start_idx:end_idx]
+        combined.flush()
 
     row_index_path = store_dir / f"{dataset}__row_indices.npy"
     np.save(row_index_path, row_indices)
@@ -287,6 +363,7 @@ def append_scale_store_streaming(
         "dataset": dataset,
         "canonical_name": canonical_name,
         "model_name": model_name,
+        "model_revision": str(model_revision or ""),
         "corpus_count": len(corpus),
         "query_count": len(queries),
         "ground_truth_ref_count": dataset_gt_ref_count(queries),
@@ -308,9 +385,15 @@ def append_scale_store_streaming(
         "text_sha256": canonical_text_sha256,
         "source_datasets": canonical_source_datasets,
     }
+    if missing_count:
+        combined_tmp_path.replace(embeddings_path)
+    canonical_embedding_fingerprint = embedding_cache.embedding_array_fingerprint(
+        np.load(embeddings_path, mmap_mode="r", allow_pickle=False)
+    )
     canonical_metadata = {
         "canonical_name": canonical_name,
         "model_name": model_name,
+        "model_revision": str(model_revision or ""),
         "datasets": sorted({
             *(Path(path).name.split("__manifest.json")[0] for path in existing_manifest_paths),
             dataset,
@@ -318,6 +401,8 @@ def append_scale_store_streaming(
         "canonical_count": final_count,
         "embedding_shape": [final_count, dim],
         "normalized": True,
+        "embedding_content_fingerprint_version": embedding_cache.EMBEDDING_FINGERPRINT_VERSION,
+        "embedding_content_fingerprint": canonical_embedding_fingerprint,
         "canonical_embedding_path": str(embeddings_path),
         "canonical_ids_path": str(ids_path),
         "scale_manifests": sorted({*existing_manifest_paths, str(manifest_path)}),
@@ -325,6 +410,7 @@ def append_scale_store_streaming(
     summary = {
         "canonical_name": canonical_name,
         "model_name": model_name,
+        "model_revision": str(model_revision or ""),
         "store_dir": str(store_dir),
         "initial_canonical_count": initial_count,
         "canonical_count": final_count,
@@ -333,14 +419,14 @@ def append_scale_store_streaming(
         "datasets": [{**manifest, "manifest_path": str(manifest_path)}],
     }
 
-    combined_tmp_path.replace(embeddings_path)
     write_json_atomic(ids_path, canonical_ids_payload)
     write_json_atomic(store_dir / "canonical_metadata.json", canonical_metadata)
     write_json_atomic(store_dir / "store_summary.json", summary)
-    try:
-        new_embeddings_path.unlink()
-    except FileNotFoundError:
-        pass
+    if missing_count:
+        try:
+            new_embeddings_path.unlink()
+        except FileNotFoundError:
+            pass
     return summary
 
 
@@ -357,6 +443,7 @@ def build_scale_store(
     encoder=None,
     batch_size: int = 64,
     encode_chunk_size: int = 10000,
+    model_revision: str | None = None,
 ) -> Dict[str, object]:
     if not datasets:
         raise ValueError("At least one dataset is required")
@@ -372,7 +459,11 @@ def build_scale_store(
             canonical_text_sha256,
             canonical_source_datasets,
             canonical_vectors,
-        ) = load_existing_canonical_store(store_dir)
+        ) = load_existing_canonical_store(
+            store_dir,
+            model_name=model_name,
+            model_revision=model_revision,
+        )
     else:
         canonical_ids = []
         canonical_text_sha256 = []
@@ -398,6 +489,7 @@ def build_scale_store(
                 corpus,
                 model_name=model_name,
                 cache_dir=embedding_cache_dir,
+                model_revision=model_revision,
             )
             dataset_cache_hit = True
         except FileNotFoundError:
@@ -481,6 +573,7 @@ def build_scale_store(
             "dataset": dataset,
             "canonical_name": canonical_name,
             "model_name": model_name,
+            "model_revision": str(model_revision or ""),
             "corpus_count": len(corpus),
             "query_count": len(queries),
             "ground_truth_ref_count": dataset_gt_ref_count(queries),
@@ -506,6 +599,7 @@ def build_scale_store(
     canonical_metadata = {
         "canonical_name": canonical_name,
         "model_name": model_name,
+        "model_revision": str(model_revision or ""),
         "datasets": sorted({
             *datasets,
             *(Path(path).name.split("__manifest.json")[0] for path in existing_manifest_paths),
@@ -513,6 +607,8 @@ def build_scale_store(
         "canonical_count": len(canonical_ids),
         "embedding_shape": list(canonical_embeddings.shape),
         "normalized": True,
+        "embedding_content_fingerprint_version": embedding_cache.EMBEDDING_FINGERPRINT_VERSION,
+        "embedding_content_fingerprint": embedding_cache.embedding_array_fingerprint(canonical_embeddings),
         "canonical_embedding_path": str(canonical_embedding_path),
         "canonical_ids_path": str(store_dir / "canonical_corpus_ids.json"),
         "scale_manifests": sorted({
@@ -538,6 +634,7 @@ def build_scale_store(
     summary = {
         "canonical_name": canonical_name,
         "model_name": model_name,
+        "model_revision": str(model_revision or ""),
         "store_dir": str(store_dir),
         "initial_canonical_count": initial_canonical_count,
         "canonical_count": len(canonical_ids),
@@ -563,6 +660,7 @@ def main() -> int:
     )
     parser.add_argument("--canonical-name", default="lotte_technology_search")
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--model-revision", default=None, help="Pinned Hugging Face model revision")
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--embedding-cache-dir", type=Path, default=DEFAULT_EMBEDDING_CACHE_DIR)
     parser.add_argument("--store-dir", type=Path, default=DEFAULT_STORE_DIR)
@@ -581,6 +679,7 @@ def main() -> int:
             args.model,
             device=args.device,
             local_files_only=args.local_files_only,
+            revision=args.model_revision,
         )
 
     datasets = parse_datasets(args.datasets)
@@ -598,6 +697,7 @@ def main() -> int:
             encoder=encoder,
             batch_size=args.batch_size,
             encode_chunk_size=args.encode_chunk_size,
+            model_revision=args.model_revision,
         )
     else:
         summary = build_scale_store(
@@ -612,6 +712,7 @@ def main() -> int:
             encoder=encoder,
             batch_size=args.batch_size,
             encode_chunk_size=args.encode_chunk_size,
+            model_revision=args.model_revision,
         )
 
     print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True))

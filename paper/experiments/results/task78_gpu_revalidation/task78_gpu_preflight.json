@@ -1,0 +1,348 @@
+{
+  "cases": [
+    {
+      "case": "task47_minilm_technology_100k",
+      "corpus_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0,
+        "candidate_norm_min": 1.0,
+        "candidate_shape": [
+          32,
+          384
+        ],
+        "exact_row_count": 11,
+        "exact_row_fraction": 0.34375,
+        "max_abs_difference": 1.7881393432617188e-07,
+        "mean_cosine_similarity": 1.000000050291419,
+        "min_cosine_similarity": 0.9999999403953552,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0,
+        "reference_norm_min": 1.0,
+        "reference_shape": [
+          32,
+          384
+        ],
+        "row_count": 32
+      },
+      "dataset": "lotte_technology_search_100k",
+      "elapsed_sec": 1.124,
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "pass": true,
+      "query_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0000001192092896,
+        "candidate_norm_min": 1.0,
+        "candidate_shape": [
+          32,
+          384
+        ],
+        "exact_row_count": 0,
+        "exact_row_fraction": 0.0,
+        "max_abs_difference": 1.8067657947540283e-07,
+        "mean_cosine_similarity": 1.0000000223517418,
+        "min_cosine_similarity": 1.0,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0,
+        "reference_norm_min": 1.0,
+        "reference_shape": [
+          32,
+          384
+        ],
+        "row_count": 32
+      },
+      "sample_corpus": 32,
+      "sample_queries": 32
+    },
+    {
+      "case": "task52_bge_technology_100k",
+      "corpus_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0,
+        "candidate_norm_min": 0.9999999403953552,
+        "candidate_shape": [
+          32,
+          768
+        ],
+        "exact_row_count": 1,
+        "exact_row_fraction": 0.03125,
+        "max_abs_difference": 2.0116567611694336e-07,
+        "mean_cosine_similarity": 1.0000000391155481,
+        "min_cosine_similarity": 0.9999998807907104,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0000001192092896,
+        "reference_norm_min": 0.9999999403953552,
+        "reference_shape": [
+          32,
+          768
+        ],
+        "row_count": 32
+      },
+      "dataset": "lotte_technology_search_100k",
+      "elapsed_sec": 0.783,
+      "model": "BAAI/bge-base-en-v1.5",
+      "model_revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+      "pass": true,
+      "query_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0,
+        "candidate_norm_min": 0.9999999403953552,
+        "candidate_shape": [
+          32,
+          768
+        ],
+        "exact_row_count": 0,
+        "exact_row_fraction": 0.0,
+        "max_abs_difference": 3.3527612686157227e-07,
+        "mean_cosine_similarity": 1.0000000409781933,
+        "min_cosine_similarity": 1.0,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0,
+        "reference_norm_min": 1.0,
+        "reference_shape": [
+          32,
+          768
+        ],
+        "row_count": 32
+      },
+      "sample_corpus": 32,
+      "sample_queries": 32
+    },
+    {
+      "case": "task53_e5_technology_100k",
+      "corpus_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0,
+        "candidate_norm_min": 1.0,
+        "candidate_shape": [
+          32,
+          768
+        ],
+        "exact_row_count": 1,
+        "exact_row_fraction": 0.03125,
+        "max_abs_difference": 2.2724270820617676e-07,
+        "mean_cosine_similarity": 1.000000037252903,
+        "min_cosine_similarity": 1.0,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0,
+        "reference_norm_min": 1.0,
+        "reference_shape": [
+          32,
+          768
+        ],
+        "row_count": 32
+      },
+      "dataset": "lotte_technology_search_100k",
+      "elapsed_sec": 0.79,
+      "model": "intfloat/e5-base-v2",
+      "model_revision": "f52bf8ec8c7124536f0efb74aca902b2995e5bcd",
+      "pass": true,
+      "query_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0,
+        "candidate_norm_min": 1.0,
+        "candidate_shape": [
+          32,
+          768
+        ],
+        "exact_row_count": 0,
+        "exact_row_fraction": 0.0,
+        "max_abs_difference": 1.434236764907837e-07,
+        "mean_cosine_similarity": 1.0000000204890966,
+        "min_cosine_similarity": 0.9999999403953552,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0,
+        "reference_norm_min": 1.0,
+        "reference_shape": [
+          32,
+          768
+        ],
+        "row_count": 32
+      },
+      "sample_corpus": 32,
+      "sample_queries": 32
+    },
+    {
+      "case": "task73_minilm_recreation_100k",
+      "corpus_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0000001192092896,
+        "candidate_norm_min": 0.9999999403953552,
+        "candidate_shape": [
+          32,
+          384
+        ],
+        "exact_row_count": 7,
+        "exact_row_fraction": 0.21875,
+        "max_abs_difference": 1.9744038581848145e-07,
+        "mean_cosine_similarity": 1.0000000316649675,
+        "min_cosine_similarity": 0.9999998807907104,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0,
+        "reference_norm_min": 0.9999999403953552,
+        "reference_shape": [
+          32,
+          384
+        ],
+        "row_count": 32
+      },
+      "dataset": "lotte_recreation_search_100k",
+      "elapsed_sec": 0.13,
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "pass": true,
+      "query_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0,
+        "candidate_norm_min": 1.0,
+        "candidate_shape": [
+          32,
+          384
+        ],
+        "exact_row_count": 0,
+        "exact_row_fraction": 0.0,
+        "max_abs_difference": 1.862645149230957e-07,
+        "mean_cosine_similarity": 1.0000000204890966,
+        "min_cosine_similarity": 0.9999999403953552,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0000001192092896,
+        "reference_norm_min": 0.9999999403953552,
+        "reference_shape": [
+          32,
+          384
+        ],
+        "row_count": 32
+      },
+      "sample_corpus": 32,
+      "sample_queries": 32
+    },
+    {
+      "case": "task73_minilm_writing_100k",
+      "corpus_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0000001192092896,
+        "candidate_norm_min": 1.0,
+        "candidate_shape": [
+          32,
+          384
+        ],
+        "exact_row_count": 2,
+        "exact_row_fraction": 0.0625,
+        "max_abs_difference": 2.3655593395233154e-07,
+        "mean_cosine_similarity": 1.000000024214387,
+        "min_cosine_similarity": 0.9999998807907104,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0000001192092896,
+        "reference_norm_min": 0.9999999403953552,
+        "reference_shape": [
+          32,
+          384
+        ],
+        "row_count": 32
+      },
+      "dataset": "lotte_writing_search_100k",
+      "elapsed_sec": 0.131,
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "pass": true,
+      "query_comparison": {
+        "candidate_dtype": "float32",
+        "candidate_nonfinite_values": 0,
+        "candidate_norm_max": 1.0000001192092896,
+        "candidate_norm_min": 1.0,
+        "candidate_shape": [
+          32,
+          384
+        ],
+        "exact_row_count": 0,
+        "exact_row_fraction": 0.0,
+        "max_abs_difference": 2.384185791015625e-07,
+        "mean_cosine_similarity": 1.000000026077032,
+        "min_cosine_similarity": 0.9999998807907104,
+        "pass": true,
+        "reference_dtype": "float32",
+        "reference_nonfinite_values": 0,
+        "reference_norm_max": 1.0,
+        "reference_norm_min": 1.0,
+        "reference_shape": [
+          32,
+          384
+        ],
+        "row_count": 32
+      },
+      "sample_corpus": 32,
+      "sample_queries": 32
+    }
+  ],
+  "git": {
+    "commit": "c382c06b88ce307c1e25672df4064c8db33fd683",
+    "dirty": true,
+    "status": [
+      " M cache/test_embedding_cache.py",
+      " M cache/test_lotte_scale_store.py",
+      " M paper/experiments/scripts/dense_baseline.py",
+      " M paper/experiments/scripts/embedding_cache.py",
+      " M paper/experiments/scripts/lotte_scale_store.py",
+      "?? cache/task69_400k_cached_exact_check/",
+      "?? cache/task69_400k_legacy_check/",
+      "?? cache/task70_statistics_smoke.checkpoints/",
+      "?? cache/task70_statistics_smoke.folds.csv",
+      "?? cache/task70_statistics_smoke.json",
+      "?? cache/task70_statistics_smoke.md",
+      "?? cache/task70_statistics_smoke.paired.csv",
+      "?? cache/task70_statistics_smoke.paired_summary.csv",
+      "?? cache/task70_statistics_smoke.seeds.csv",
+      "?? cache/task70_statistics_smoke.summary.csv",
+      "?? paper/experiments/scripts/task78_gpu_revalidation.py",
+      "?? paper/experiments/task78_cross_machine_reproduction_and_gpu_revalidation_plan.md",
+      "?? paper/experiments/task79_post_task78_submission_completion_plan.md"
+    ]
+  },
+  "mode": "preflight",
+  "runtime": {
+    "dxg_visible": true,
+    "gpu_available": true,
+    "gpu_count": 1,
+    "gpu_device": "AMD Radeon RX 9070 XT",
+    "hsa_enable_dxg_detection": "1",
+    "numpy": "1.26.4",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "rocdxg_library_visible": true,
+    "rocm_path": "$HOME/.local/rocm-7.2.3-root/opt/rocm-7.2.3",
+    "scikit_learn": "1.7.2",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.9.1+rocm7.2.3.gitebc02d69",
+    "torch_hip": "7.2.53211-c2d9476115",
+    "transformers": "5.9.0"
+  },
+  "status": "PASS",
+  "task": "Task78"
+}

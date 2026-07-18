@@ -82,6 +82,7 @@ def checkpoint_signature(args) -> dict[str, object]:
         "version": 1,
         "dataset": args.dataset,
         "model": args.model,
+        "model_revision": str(args.model_revision or ""),
         "seeds": list(args.seeds),
         "history_epochs": args.history_epochs,
         "n_clusters": args.n_clusters,
@@ -436,6 +437,8 @@ def load_artifacts(args, corpus, queries, encoder):
             corpus,
             canonical_name=args.scale_store_canonical_name,
             scale_store_dir=args.scale_store_dir,
+            model_name=args.model,
+            model_revision=args.model_revision,
         )
     else:
         corpus_embeddings, _ = routing.dense_baseline.encode_records_with_optional_cache(
@@ -447,6 +450,7 @@ def load_artifacts(args, corpus, queries, encoder):
             batch_size=args.batch_size,
             embedding_cache_dir=args.embedding_cache_dir,
             use_embedding_cache=True,
+            model_revision=args.model_revision,
         )
         scale_store_info = {"enabled": False}
     query_embeddings, _ = routing.dense_baseline.encode_records_with_optional_cache(
@@ -458,6 +462,7 @@ def load_artifacts(args, corpus, queries, encoder):
         batch_size=args.batch_size,
         embedding_cache_dir=args.embedding_cache_dir,
         use_embedding_cache=True,
+        model_revision=args.model_revision,
     )
     corpus_embedding_fingerprint = routing.large_scale_artifacts.embedding_array_fingerprint(corpus_embeddings)
     query_embedding_fingerprint = routing.large_scale_artifacts.embedding_array_fingerprint(query_embeddings)
@@ -544,7 +549,12 @@ def run(args):
     corpus = routing.global_linucb.load_json_list(args.data_dir / f"{args.dataset}_corpus.json")
     queries = routing.global_linucb.load_json_list(args.data_dir / f"{args.dataset}_queries.json")
     print(f"[{args.dataset}] loading encoder and frozen protocol inputs", flush=True)
-    encoder = routing.load_sentence_transformer(args.model, device=args.device, local_files_only=args.local_files_only)
+    encoder = routing.load_sentence_transformer(
+        args.model,
+        device=args.device,
+        local_files_only=args.local_files_only,
+        revision=args.model_revision,
+    )
     loaded = load_artifacts(args, corpus, queries, encoder)
     args.dense_rankings_by_qid = loaded["dense_rankings"]
     args.bm25_rankings_by_qid = loaded["bm25_rankings"]
@@ -785,6 +795,8 @@ def run(args):
     paired_summaries = paired_summary(paired_rows)
     protocol = {
         "dataset": args.dataset,
+        "model": args.model,
+        "model_revision": str(args.model_revision or ""),
         "fold_salt": crossfit.FOLD_SALT,
         "folds": len(folds),
         "history_epochs": args.history_epochs,
@@ -878,6 +890,7 @@ def main() -> int:
     parser.add_argument("--data-dir", type=Path, default=DATA / "processed")
     parser.add_argument("--output-prefix", type=Path, default=RESULTS / "task70_frozen_policy_technology_100k")
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
+    parser.add_argument("--model-revision", default=None, help="Pinned Hugging Face model revision")
     parser.add_argument("--device", default=None)
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--embedding-cache-dir", type=Path, default=routing.DEFAULT_EMBEDDING_CACHE_DIR)

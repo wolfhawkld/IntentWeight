@@ -63,7 +63,7 @@ Rows below are intentionally not pooled. `--` means the current artifact does no
 | LoTTE science/search | 200k | 0.8574 | 0.8507 | -0.67 | 10.75 | 0/3 | -- | reusable complete cross-domain scale row |
 | LoTTE science/search | 400k | 0.8238 | 0.8171 | -0.67 | 3.15 | 0/3 | -- | complete boundary; recovery has 3-6 affected queries/seed |
 | PubMedQA | native full | 0.9930 | 0.9930 | 0.00 | 0.00 | 3/3 | -- | complete native-full transfer row |
-| CovidQA-RAG | native full | 0.6095 | 0.6074 | -0.21 | 8.34 | 0/3 | -- | complete native-full discriminative transfer row |
+| CovidQA-RAG | native full | 0.6112 | 0.6091 | -0.21 | 9.00 | 0/3 | -- | complete provenance-pinned canonical native-full transfer row |
 | Banking77 | native full | 0.9805 | 0.9844 | 0.39 | -- | -- | 0.9983 | mechanism/boundary only |
 | CUAD GT-anchored | 10k sample | 0.0759 | 0.0886 | 1.27 | -- | -- | 0.2900 | mechanism/boundary only |
 | eManual deduplicated | native full | 0.8615 | 0.8590 | -0.26 | 16.20 | 0/3 | -- | complete corrected-boundary row |

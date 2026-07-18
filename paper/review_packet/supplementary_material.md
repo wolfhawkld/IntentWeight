@@ -81,12 +81,15 @@ main LoTTE evidence claim.
 - **CovidQA-RAG** is the biomedical transfer row with a non-ceiling dense
   baseline. The native-full RAGBench checkpoint contains 32,392 chunks and
   1,726 evaluated queries after skipping 39 without usable ground truth. Dense
-  reaches $\mathrm{Hit@10}=0.6095$, BM25 reaches $0.4884$, hybrid RRF reaches
-  $0.6037$, no-feedback IntentRoute reaches $0.6294$, and trust-weighted
-  IntentRoute reaches $0.6300$ at fixed top-10. In the five-fold budgeted
+  reaches $\mathrm{Hit@10}=0.6112$, BM25 reaches $0.4884$, hybrid RRF reaches
+  $0.6049$, no-feedback IntentRoute reaches $0.6333$, and trust-weighted
+  IntentRoute reaches $0.6304$ at fixed top-10. In the five-fold budgeted
   protocol, four of five folds select a compressed route, mean hit delta is
   -0.21 percentage points versus dense, mean final-context token saving is
-  8.34%, and strict 1pp non-inferiority remains $0/3$ seeds.
+  9.00%, and strict 1pp non-inferiority remains $0/3$ seeds. This row uses the
+  provenance-pinned canonical checkpoint; paired historical comparisons find
+  no significant Hit@10 change. Duplicate-ID tie sensitivity is retained as a
+  documented evaluation boundary rather than resolved by post-hoc relabeling.
 - **Banking77** is an intent-routing proxy rather than an evidence-retrieval
   benchmark. Dense/reference $\mathrm{Hit@10}$ is $0.9805$; trust-weighted
   feedback reaches $\mathrm{Hit@10}=0.9844$, last reward $0.9805$, and

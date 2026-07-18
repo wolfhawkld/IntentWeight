@@ -1463,6 +1463,7 @@ def run_dataset(
     corpus_prefix: str = "",
     write_query_traces: bool = False,
     resume_checkpoints: bool = True,
+    model_revision: str | None = None,
 ) -> List[Dict[str, object]]:
     if reward_attribution not in REWARD_ATTRIBUTIONS:
         raise ValueError(f"Unsupported reward_attribution: {reward_attribution}")
@@ -1500,6 +1501,7 @@ def run_dataset(
         ),
         "num_queries": len(queries),
         "cluster_retrieval_engine": cluster_retrieval_engine,
+        "model_revision": str(model_revision or ""),
     }
     artifact_slug = build_artifact_slug(dataset, run_metadata)
 
@@ -1512,6 +1514,8 @@ def run_dataset(
             corpus,
             canonical_name=scale_store_canonical_name,
             scale_store_dir=scale_store_dir or DEFAULT_SCALE_STORE_DIR,
+            model_name=model_name,
+            model_revision=model_revision,
         )
         corpus_cache = {
             "cache_hit": True,
@@ -1530,6 +1534,7 @@ def run_dataset(
             embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
             use_embedding_cache=use_embedding_cache,
             force_embedding_cache=force_embedding_cache,
+            model_revision=model_revision,
         )
     query_embeddings, query_cache = dense_baseline.encode_records_with_optional_cache(
         queries,
@@ -1542,6 +1547,7 @@ def run_dataset(
         embedding_cache_dir=embedding_cache_dir or DEFAULT_EMBEDDING_CACHE_DIR,
         use_embedding_cache=use_embedding_cache,
         force_embedding_cache=force_embedding_cache,
+        model_revision=model_revision,
     )
     corpus_record_fingerprint = dense_baseline.embedding_cache.records_fingerprint(corpus, "corpus")
     query_record_fingerprint = dense_baseline.embedding_cache.records_fingerprint(queries, "queries")
@@ -1683,6 +1689,7 @@ def run_dataset(
         "dataset": dataset,
         "artifact_slug": artifact_slug,
         "model": model_name,
+        "model_revision": str(model_revision or ""),
         "corpus_record_fingerprint": corpus_record_fingerprint,
         "query_record_fingerprint": query_record_fingerprint,
         "corpus_embedding_fingerprint": corpus_embedding_fingerprint,
@@ -1912,6 +1919,7 @@ def run_dataset(
             "dataset": dataset,
             "method": f"linucb_cost_{routing_mode}",
             "model": model_name,
+            "model_revision": str(model_revision or ""),
             "query_prefix": query_prefix,
             "corpus_prefix": corpus_prefix,
             "protocol": "prequential_cost_aware_feedback",
@@ -2107,6 +2115,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
                     row.get("dataset", ""),
                     row.get("method", ""),
                     row.get("model", ""),
+                    row.get("model_revision", ""),
                     row.get("query_prefix", ""),
                     row.get("corpus_prefix", ""),
                     row.get("routing_mode", ""),
@@ -2123,6 +2132,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
             str(row["dataset"]),
             str(row["method"]),
             str(row.get("model", "")),
+            str(row.get("model_revision", "")),
             str(row.get("query_prefix", "")),
             str(row.get("corpus_prefix", "")),
             str(row.get("routing_mode", "")),
@@ -2145,6 +2155,7 @@ def update_summary(summary_path: Path, rows: Iterable[Mapping]) -> None:
         "confidence_mode",
         "final_context_policy",
         "model",
+        "model_revision",
         "query_prefix",
         "corpus_prefix",
         "protocol",
@@ -2311,8 +2322,19 @@ def write_markdown_table(summary_path: Path, markdown_path: Path) -> None:
     markdown_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def load_sentence_transformer(model_name: str, *, device: str | None = None, local_files_only: bool = False):
-    return dense_baseline.load_sentence_transformer(model_name, device=device, local_files_only=local_files_only)
+def load_sentence_transformer(
+    model_name: str,
+    *,
+    device: str | None = None,
+    local_files_only: bool = False,
+    revision: str | None = None,
+):
+    return dense_baseline.load_sentence_transformer(
+        model_name,
+        device=device,
+        local_files_only=local_files_only,
+        revision=revision,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -2321,6 +2343,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--model-revision", default=None, help="Pinned Hugging Face model revision")
     parser.add_argument("--device", default=None)
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--query-prefix", default="", help="Optional prefix applied only to query text before encoding")
@@ -2415,7 +2438,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     routing_modes = parse_list(args.routing_modes, ROUTING_MODES, label="routing modes")
     ks = parse_ints(args.ks)
     seeds = parse_ints(args.seeds)
-    encoder = load_sentence_transformer(args.model, device=args.device, local_files_only=args.local_files_only)
+    encoder = load_sentence_transformer(
+        args.model,
+        device=args.device,
+        local_files_only=args.local_files_only,
+        revision=args.model_revision,
+    )
 
     all_rows: List[Dict[str, object]] = []
     for dataset in datasets:
@@ -2495,6 +2523,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             corpus_prefix=args.corpus_prefix,
             write_query_traces=args.write_query_traces,
             resume_checkpoints=not args.no_resume_checkpoints,
+            model_revision=args.model_revision,
         )
         all_rows.extend(rows)
         for row in rows:

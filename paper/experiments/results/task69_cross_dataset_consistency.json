@@ -540,15 +540,15 @@
       "scale": "native full",
       "role": "biomedical discriminative transfer",
       "protocol": "five-fold cross-fitted calibration",
-      "dense_hit@10": "0.6095",
-      "intentroute_hit@10": "0.6074",
+      "dense_hit@10": "0.6112",
+      "intentroute_hit@10": "0.6091",
       "hit_delta_pp": "-0.21",
-      "evidence_recall_delta_pp": "-0.49",
-      "context_saving_percent": "8.34",
+      "evidence_recall_delta_pp": "-0.52",
+      "context_saving_percent": "9.00",
       "strict_ni_seeds": "0/3",
       "feedback_route_metric": "--",
-      "artifact_status": "complete native-full discriminative transfer row",
-      "source": "paper/experiments/results/task69_5_covidqa_cross_fitted_calibration.paired.csv"
+      "artifact_status": "complete provenance-pinned canonical native-full transfer row",
+      "source": "paper/experiments/results/task78_covidqa_canonical/cross_fitted_calibration.paired.csv"
     },
     {
       "dataset": "Banking77",
