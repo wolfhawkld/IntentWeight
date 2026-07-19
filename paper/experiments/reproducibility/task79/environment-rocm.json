@@ -1,0 +1,73 @@
+{
+  "environment": "rocm",
+  "git_commit": "5ab316ba61c62dea47ea6e939fbd3255a8601a3d",
+  "git_dirty": true,
+  "gpu": {
+    "available": true,
+    "count": 1,
+    "device": "AMD Radeon RX 9070 XT"
+  },
+  "kernel": "Linux Sugarbox 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+  "lock_file": "paper/experiments/reproducibility/task79/requirements-rocm-lock.txt",
+  "lock_sha256": "059c40cce6bdf037bf81f3d83d2ec5be8eaec796dc891aa67ee82b3a2bfdc316",
+  "machine": "x86_64",
+  "numpy_config": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /usr/local/include\n    lib directory: /usr/local/lib\n    name: openblas64\n    openblas configuration: USE_64BITINT=1 DYNAMIC_ARCH=1 DYNAMIC_OLDER= NO_CBLAS=\n      NO_LAPACK= NO_LAPACKE= NO_AFFINITY=1 USE_OPENMP= HASWELL MAX_THREADS=2\n    pc file directory: /usr/local/lib/pkgconfig\n    version: 0.3.23.dev\n  lapack:\n    detection method: internal\n    found: true\n    include directory: unknown\n    lib directory: unknown\n    name: dep139863411681952\n    openblas configuration: unknown\n    pc file directory: unknown\n    version: 1.26.4\nCompilers:\n  c:\n    args: -fno-strict-aliasing\n    commands: cc\n    linker: ld.bfd\n    linker args: -Wl,--strip-debug, -fno-strict-aliasing\n    name: gcc\n    version: 10.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    linker args: -Wl,--strip-debug\n    name: gcc\n    version: 10.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.0.8\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /opt/python/cp310-cp310/bin/python\n  version: '3.10'\nSIMD Extensions:\n  baseline:\n  - SSE\n  - SSE2\n  - SSE3\n  found:\n  - SSSE3\n  - SSE41\n  - POPCNT\n  - SSE42\n  - AVX\n  - F16C\n  - FMA3\n  - AVX2\n  not found:\n  - AVX512F\n  - AVX512CD\n  - AVX512_KNL\n  - AVX512_KNM\n  - AVX512_SKX\n  - AVX512_CLX\n  - AVX512_CNL\n  - AVX512_ICL\n\n",
+  "packages": {
+    "numpy": "1.26.4",
+    "scikit_learn": "1.7.2",
+    "scipy": "1.15.3",
+    "sentence_transformers": "5.5.1",
+    "torch": "2.9.1+rocm7.2.3.gitebc02d69",
+    "torch_hip": "7.2.53211-c2d9476115",
+    "transformers": "5.9.0"
+  },
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "python_executable": "$HOME/.openclaw/workspace/IntentWeight/.venv-rocm/bin/python",
+  "rocm": {
+    "activation_sha256": "3ade478bdd6f3f8fa207a1273e35784f65a28d7ad1911637601fad5322be08f5",
+    "dxg_visible": true,
+    "hsa_enable_dxg_detection": "1",
+    "ld_library_path": "$HOME/.local/rocm-7.2.3-root/opt/rocm-7.2.3/lib:$HOME/.local/rocdxg/lib:/usr/lib/wsl/lib",
+    "rocdxg_sha256": "39b7664e917b06bb0e56ef51d4f13b67a1861cf638f84db119c48de8f160a81f",
+    "rocm_path": "$HOME/.local/rocm-7.2.3-root/opt/rocm-7.2.3"
+  },
+  "threadpools": [
+    {
+      "architecture": "Zen",
+      "filepath": "$HOME/.openclaw/workspace/IntentWeight/.venv-rocm/lib/python3.10/site-packages/numpy.libs/libopenblas64_p-r0-0cf96a72.3.23.dev.so",
+      "internal_api": "openblas",
+      "num_threads": 12,
+      "prefix": "libopenblas",
+      "threading_layer": "pthreads",
+      "user_api": "blas",
+      "version": "0.3.23.dev"
+    },
+    {
+      "architecture": "Haswell",
+      "filepath": "$HOME/.openclaw/workspace/IntentWeight/.venv-rocm/lib/python3.10/site-packages/scipy.libs/libscipy_openblas-68440149.so",
+      "internal_api": "openblas",
+      "num_threads": 12,
+      "prefix": "libscipy_openblas",
+      "threading_layer": "pthreads",
+      "user_api": "blas",
+      "version": "0.3.28"
+    },
+    {
+      "filepath": "$HOME/.openclaw/workspace/IntentWeight/.venv-rocm/lib/python3.10/site-packages/scikit_learn.libs/libgomp-a34b3233.so.1.0.0",
+      "internal_api": "openmp",
+      "num_threads": 12,
+      "prefix": "libgomp",
+      "user_api": "openmp",
+      "version": null
+    },
+    {
+      "filepath": "/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0",
+      "internal_api": "openmp",
+      "num_threads": 6,
+      "prefix": "libgomp",
+      "user_api": "openmp",
+      "version": null
+    }
+  ]
+}

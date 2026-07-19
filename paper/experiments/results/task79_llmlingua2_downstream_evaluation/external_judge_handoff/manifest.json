@@ -1,0 +1,17 @@
+{
+  "expected_response_count": 1200,
+  "import_command": "python paper/experiments/scripts/task79_external_judge_handoff.py --responses <responses.jsonl>",
+  "input_sha256": {
+    "answers.jsonl": "e8d42b9c4a57e7c52fcda9afbcfe730ba0e55da995aa1e555923ecfd6abf2888",
+    "sample_records.jsonl": "f2be6e5a906ecc7fcc0e30bbb55e725af49c0c848bcf6659623211f8a6ac776b"
+  },
+  "missing_response_policy": "report provider failures; never impute",
+  "prompt_contract": "exact Task63 JUDGE_INSTRUCTIONS and judge_prompt",
+  "request_count": 600,
+  "requested_judges": [
+    "glm-5.2",
+    "minimax-m3"
+  ],
+  "requests_sha256": "044a423bf531414d604e9621ba277e8fcc37eab42246cef6c5ebe86b53edbdf1",
+  "status": "READY_FOR_TWO_EXTERNAL_JUDGES"
+}

@@ -1,0 +1,126 @@
+{
+  "checks": [
+    {
+      "detail": "PASS",
+      "name": "preflight_status",
+      "passed": true
+    },
+    {
+      "detail": "AMD Radeon RX 9070 XT",
+      "name": "preflight_device",
+      "passed": true
+    },
+    {
+      "detail": [
+        {
+          "bytes": 2235829648,
+          "path": "model.safetensors",
+          "sha256": "a33a153b2493bff6be06af6921e69de9c0d0bb6ff06fe5bbb68670ba8d980ae2"
+        }
+      ],
+      "name": "fixed_weight_hash",
+      "passed": true
+    },
+    {
+      "detail": "PASS",
+      "name": "segment_audit_status",
+      "passed": true
+    },
+    {
+      "detail": {
+        "dropped": 0,
+        "max_content_tokens": 511
+      },
+      "name": "segment_content_not_truncated",
+      "passed": true
+    },
+    {
+      "detail": {
+        "rows": 600,
+        "status": "COMPLETE"
+      },
+      "name": "formal_compression_complete",
+      "passed": true
+    },
+    {
+      "detail": {
+        "empty_outputs": 0,
+        "order_failures": 0
+      },
+      "name": "compression_structure",
+      "passed": true
+    },
+    {
+      "detail": {
+        "answers": 1200,
+        "counts": {
+          "dense_llmlingua2_matched_sent_mmr": 300,
+          "dense_sent_mmr_r0.85_l0.70": 300,
+          "intentroute_llmlingua2_matched_sent_mmr_seed19": 300,
+          "intentweight_sent_mmr_r0.85_l0.70_seed19": 300
+        },
+        "sample_rows": 300
+      },
+      "name": "fixed_sample_and_answers",
+      "passed": true
+    },
+    {
+      "detail": {
+        "unique": 2393,
+        "valid": 2393
+      },
+      "name": "judgment_keys_unique",
+      "passed": true
+    },
+    {
+      "detail": {
+        "deepseek-v4-flash": 1200,
+        "glm-5.2": 600,
+        "minimax-m3": 593
+      },
+      "name": "deepseek_complete",
+      "passed": true
+    },
+    {
+      "detail": "LOCAL_DEEPSEEK_COMPLETE_EXTERNAL_JUDGES_PENDING",
+      "name": "execution_manifest_matches",
+      "passed": true
+    },
+    {
+      "detail": {
+        "expected_responses": 1200,
+        "requests": 600
+      },
+      "name": "external_handoff_complete",
+      "passed": true
+    },
+    {
+      "detail": {
+        "analysis_status": "COMPLETE_ANSWERS_PARTIAL_JUDGE_COVERAGE",
+        "external_pending": 1200,
+        "new_external_coverage": {
+          "glm-5.2": 0,
+          "minimax-m3": 0
+        }
+      },
+      "name": "external_gap_explicit",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual_lock": "059c40cce6bdf037bf81f3d83d2ec5be8eaec796dc891aa67ee82b3a2bfdc316",
+        "recorded_lock": "059c40cce6bdf037bf81f3d83d2ec5be8eaec796dc891aa67ee82b3a2bfdc316"
+      },
+      "name": "rocm_environment_lock",
+      "passed": true
+    }
+  ],
+  "external_judgments_pending": 1200,
+  "failed": 0,
+  "new_external_coverage": {
+    "glm-5.2": 0,
+    "minimax-m3": 0
+  },
+  "passed": 14,
+  "status": "PASS_LOCAL_GATE_EXTERNAL_JUDGES_PENDING"
+}

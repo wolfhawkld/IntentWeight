@@ -1,0 +1,35 @@
+{
+  "chunk_end_tokens": [
+    ".",
+    "\n"
+  ],
+  "corpus_sha256": "afa07770d82815ef39c2a6702c53ce1196167207b9c360b079a59eca4b54ca9c",
+  "dense_reference_label": "dense_sent_mmr_r0.85_l0.70",
+  "dense_source_label": "minilm_dense_top10",
+  "drop_consecutive": true,
+  "encoding": "cl100k_base",
+  "endpoint_labels": [
+    "dense_llmlingua2_matched_sent_mmr",
+    "intentroute_llmlingua2_matched_sent_mmr_seed19"
+  ],
+  "force_reserve_digit": true,
+  "force_tokens": [
+    "\n",
+    ".",
+    "!",
+    "?",
+    ","
+  ],
+  "intent_reference_label": "intentweight_sent_mmr_r0.85_l0.70_seed19",
+  "model": "microsoft/llmlingua-2-xlm-roberta-large-meetingbank",
+  "model_aggregate_sha256": "bc8ffa30f061337d5de7b7b247bab67b2e9967cab786804dfe9f7e0104dae871",
+  "model_revision": "ebaba9b0e874dadd3003ffcff828e4397e568089",
+  "ranking_selector": "task37_source:gated_cost_aware:seed19:token_budget_r0.95_m4",
+  "rankings_sha256": "1bf6546c64dabe1bea437d46a219651f35ddbc25fbf41c0e25fe80571d6b61c3",
+  "repository_commit": "e0e9d99beb94098bbd924aa53c2c112eac41c758",
+  "sample_records_sha256": "4b172e38042839b21e623905833cc29eb3a5e967c30f26d0cc586883cde7b10d",
+  "target_policy": "per-query exact tracked Sentence-MMR context_tokens",
+  "task": "Task79",
+  "use_context_level_filter": false,
+  "use_token_level_filter": true
+}

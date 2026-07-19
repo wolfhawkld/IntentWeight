@@ -1,0 +1,51 @@
+{
+  "answer_counts_by_method": {
+    "dense_llmlingua2_matched_sent_mmr": 300,
+    "dense_sent_mmr_r0.85_l0.70": 300,
+    "intentroute_llmlingua2_matched_sent_mmr_seed19": 300,
+    "intentweight_sent_mmr_r0.85_l0.70_seed19": 300
+  },
+  "answers_staged": 1200,
+  "compressor_protocol_signature": "85b3461ed3c06e6b0cf7fe37f290d16e402cb1be64b83219fea6cd0fd084e23a",
+  "judgment_counts_by_method": {
+    "dense_llmlingua2_matched_sent_mmr": 300,
+    "dense_sent_mmr_r0.85_l0.70": 897,
+    "intentroute_llmlingua2_matched_sent_mmr_seed19": 300,
+    "intentweight_sent_mmr_r0.85_l0.70_seed19": 896
+  },
+  "judgment_counts_by_model": {
+    "deepseek-v4-flash": 1200,
+    "glm-5.2": 600,
+    "minimax-m3": 593
+  },
+  "judgment_failure_attempts_staged": 148,
+  "judgments_staged": 2393,
+  "method_labels": [
+    "dense_sent_mmr_r0.85_l0.70",
+    "intentweight_sent_mmr_r0.85_l0.70_seed19",
+    "dense_llmlingua2_matched_sent_mmr",
+    "intentroute_llmlingua2_matched_sent_mmr_seed19"
+  ],
+  "next_execution": {
+    "formal_summary": "use Task79 analyzer; skip legacy single-judge summary",
+    "new_answers_expected": 0,
+    "resume_llm_only": true,
+    "script": "paper/experiments/scripts/task63_downstream_llm_evaluation.py"
+  },
+  "pending_answers_by_method": {
+    "dense_llmlingua2_matched_sent_mmr": 0,
+    "dense_sent_mmr_r0.85_l0.70": 0,
+    "intentroute_llmlingua2_matched_sent_mmr_seed19": 0,
+    "intentweight_sent_mmr_r0.85_l0.70_seed19": 0
+  },
+  "query_count": 300,
+  "reuse_validation": {
+    "context_chunk_ids_exact": true,
+    "context_tokens_exact": true,
+    "frozen_answer_count": 600,
+    "frozen_judgment_count": 1793,
+    "frozen_judgment_failure_attempts": 135
+  },
+  "sample_records_sha256": "f2be6e5a906ecc7fcc0e30bbb55e725af49c0c848bcf6659623211f8a6ac776b",
+  "status": "STAGED_ANSWERS_COMPLETE_EXTERNAL_JUDGES_MAY_BE_PENDING"
+}

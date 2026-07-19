@@ -1,0 +1,139 @@
+{
+  "cases": [
+    {
+      "compressed_contexts": 10,
+      "compressed_sha256": "8fd04f96d23101de3c6bc3fb378085dc118bae9b6f66cd8ef18e9e45cf86d55a",
+      "compressed_tokens": 262,
+      "context_list_length_preserved": true,
+      "first_seconds": 2.454177162002452,
+      "official_reported_compressed_tokens": 262,
+      "query_id": "lotte_technology_search_100k_q113",
+      "repeat_exact": true,
+      "repeat_seconds": 1.331309055996826,
+      "saving_percent": 16.560509554140125,
+      "source_contexts": 10,
+      "source_tokens": 314,
+      "token_accounting_exact": true
+    },
+    {
+      "compressed_contexts": 10,
+      "compressed_sha256": "988c4066abec3a2c0105145e956ebd9347275bbbe572a760745e5d947d639fb3",
+      "compressed_tokens": 1185,
+      "context_list_length_preserved": true,
+      "first_seconds": 1.3612244500000088,
+      "official_reported_compressed_tokens": 1185,
+      "query_id": "lotte_technology_search_100k_q387",
+      "repeat_exact": true,
+      "repeat_seconds": 1.3494276070014166,
+      "saving_percent": 12.739322533136965,
+      "source_contexts": 10,
+      "source_tokens": 1358,
+      "token_accounting_exact": true
+    },
+    {
+      "compressed_contexts": 10,
+      "compressed_sha256": "1a4d0931a789f8fa604b61665c37787446272ee365dd7af165ef26b5feb88592",
+      "compressed_tokens": 3947,
+      "context_list_length_preserved": true,
+      "first_seconds": 2.336531217999436,
+      "official_reported_compressed_tokens": 3947,
+      "query_id": "lotte_technology_search_100k_q506",
+      "repeat_exact": true,
+      "repeat_seconds": 2.222117227000126,
+      "saving_percent": 14.10228509249184,
+      "source_contexts": 10,
+      "source_tokens": 4595,
+      "token_accounting_exact": true
+    }
+  ],
+  "environment": {
+    "accelerate_version": "1.14.0",
+    "device_name": "AMD Radeon RX 9070 XT",
+    "device_requested": "cuda",
+    "hip_version": "7.2.53211-c2d9476115",
+    "model_device": "cuda:0",
+    "nltk_version": "3.10.0",
+    "python": "3.10.12",
+    "tiktoken_version": "0.13.0",
+    "torch_version": "2.9.1+rocm7.2.3.gitebc02d69",
+    "transformers_version": "5.9.0"
+  },
+  "failures": [],
+  "model_load_seconds": 5.450241056998493,
+  "peak_allocated_vram_bytes": 2712184832,
+  "peak_reserved_vram_bytes": 2990538752,
+  "protocol": {
+    "chunk_end_tokens": [
+      ".",
+      "\n"
+    ],
+    "drop_consecutive": true,
+    "force_reserve_digit": true,
+    "force_tokens": [
+      "\n",
+      ".",
+      "!",
+      "?",
+      ","
+    ],
+    "pilot_case_selection": "source-token quantiles with query-id tie break",
+    "rate": 0.85,
+    "source_method": "minilm_dense_top10",
+    "source_sample_records": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task63_downstream_llm_evaluation/sample_records.jsonl",
+    "tiktoken_cache_files": [
+      {
+        "bytes": 1681126,
+        "path": "9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+        "sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7"
+      }
+    ]
+  },
+  "provenance": {
+    "code_license": "MIT",
+    "model": "microsoft/llmlingua-2-xlm-roberta-large-meetingbank",
+    "model_aggregate_sha256": "bc8ffa30f061337d5de7b7b247bab67b2e9967cab786804dfe9f7e0104dae871",
+    "model_license": "MIT",
+    "model_revision": "ebaba9b0e874dadd3003ffcff828e4397e568089",
+    "model_snapshot_files": [
+      {
+        "bytes": 1570,
+        "path": ".gitattributes",
+        "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"
+      },
+      {
+        "bytes": 3267,
+        "path": "README.md",
+        "sha256": "7c6765b0f7c43cd79dfdec165666d46b31bf72398e07332fb8aa999fcb06423a"
+      },
+      {
+        "bytes": 752,
+        "path": "config.json",
+        "sha256": "a3fdcf4e63057797101ecc84412bc654f9adb4e8d4ed3c91c5afb28eda327706"
+      },
+      {
+        "bytes": 2235829648,
+        "path": "model.safetensors",
+        "sha256": "a33a153b2493bff6be06af6921e69de9c0d0bb6ff06fe5bbb68670ba8d980ae2"
+      },
+      {
+        "bytes": 280,
+        "path": "special_tokens_map.json",
+        "sha256": "06e405a36dfe4b9604f484f6a1e619af1a7f7d09e34a8555eb0b77b66318067f"
+      },
+      {
+        "bytes": 17082756,
+        "path": "tokenizer.json",
+        "sha256": "f59925fcb90c92b894cb93e51bb9b4a6105c5c249fe54ce1c704420ac39b81af"
+      },
+      {
+        "bytes": 1147,
+        "path": "tokenizer_config.json",
+        "sha256": "f90024142df07163e5e6c5b9a6ad7c8c68b22a9112af11e3db4559a9ff90f737"
+      }
+    ],
+    "package_version": "0.2.2",
+    "repository": "https://github.com/microsoft/LLMLingua",
+    "repository_commit": "e0e9d99beb94098bbd924aa53c2c112eac41c758"
+  },
+  "status": "PASS"
+}

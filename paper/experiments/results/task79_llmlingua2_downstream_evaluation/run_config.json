@@ -1,0 +1,12 @@
+{
+  "compressor_summary": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task79_llmlingua2_matched_compressor/compression_summary.json",
+  "method_labels": [
+    "dense_sent_mmr_r0.85_l0.70",
+    "intentweight_sent_mmr_r0.85_l0.70_seed19",
+    "dense_llmlingua2_matched_sent_mmr",
+    "intentroute_llmlingua2_matched_sent_mmr_seed19"
+  ],
+  "source_task63_dir": "/home/damon/.openclaw/workspace/IntentWeight/paper/experiments/results/task63_downstream_llm_evaluation",
+  "staging_command_api_calls_made": false,
+  "task": "Task79"
+}

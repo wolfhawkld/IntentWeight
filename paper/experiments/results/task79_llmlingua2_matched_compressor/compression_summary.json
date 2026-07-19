@@ -1,0 +1,152 @@
+{
+  "completed_contexts": 600,
+  "endpoints": {
+    "dense_llmlingua2_matched_sent_mmr": {
+      "actual_context_tokens_total": 377766,
+      "actual_saving_percent_vs_source": 13.835858274828594,
+      "compression_seconds_total": 426.6032333770345,
+      "empty_compressed_contexts": 0,
+      "empty_outputs": 0,
+      "exact_target_matches": 8,
+      "max_absolute_target_error_percent": 9.71830985915493,
+      "max_absolute_target_error_tokens": 138,
+      "mean_absolute_target_error_percent": 1.5191165399310378,
+      "mean_absolute_target_error_tokens": 20.14666666666667,
+      "mean_actual_context_tokens": 1259.22,
+      "mean_compression_seconds": 1.4220107779234483,
+      "mean_source_context_tokens": 1461.42,
+      "mean_target_context_tokens": 1239.8,
+      "mean_target_error_tokens": 19.42,
+      "membership_order_preserved": true,
+      "queries": 300,
+      "source_context_tokens_total": 438426,
+      "target_context_tokens_total": 371940,
+      "target_saving_percent_vs_source": 15.164702823281463,
+      "within_1_percent_of_target": 131,
+      "within_5_percent_of_target": 293,
+      "within_5_tokens": 89
+    },
+    "intentroute_llmlingua2_matched_sent_mmr_seed19": {
+      "actual_context_tokens_total": 352506,
+      "actual_saving_percent_vs_source": 13.885353430480407,
+      "compression_seconds_total": 382.6031584779812,
+      "empty_compressed_contexts": 0,
+      "empty_outputs": 0,
+      "exact_target_matches": 18,
+      "max_absolute_target_error_percent": 9.41533788914199,
+      "max_absolute_target_error_tokens": 144,
+      "mean_absolute_target_error_percent": 1.4660534039573927,
+      "mean_absolute_target_error_tokens": 18.36,
+      "mean_actual_context_tokens": 1175.02,
+      "mean_compression_seconds": 1.2753438615932706,
+      "mean_source_context_tokens": 1364.4833333333333,
+      "mean_target_context_tokens": 1157.38,
+      "mean_target_error_tokens": 17.64,
+      "membership_order_preserved": true,
+      "queries": 300,
+      "source_context_tokens_total": 409345,
+      "target_context_tokens_total": 347214,
+      "target_saving_percent_vs_source": 15.178150459881035,
+      "within_1_percent_of_target": 144,
+      "within_5_percent_of_target": 293,
+      "within_5_tokens": 105
+    }
+  },
+  "environment": {
+    "device_name": "AMD Radeon RX 9070 XT",
+    "device_requested": "cuda",
+    "hip_version": "7.2.53211-c2d9476115",
+    "model_load_seconds_max_observed": 5.87555158199757,
+    "model_load_seconds_this_run": 0.0,
+    "peak_allocated_vram_bytes": 2712184832,
+    "peak_reserved_vram_bytes": 3649044480,
+    "python": "3.10.12",
+    "torch_version": "2.9.1+rocm7.2.3.gitebc02d69",
+    "transformers_version": "5.9.0"
+  },
+  "expected_contexts": 600,
+  "protocol": {
+    "chunk_end_tokens": [
+      ".",
+      "\n"
+    ],
+    "corpus_sha256": "afa07770d82815ef39c2a6702c53ce1196167207b9c360b079a59eca4b54ca9c",
+    "dense_reference_label": "dense_sent_mmr_r0.85_l0.70",
+    "dense_source_label": "minilm_dense_top10",
+    "drop_consecutive": true,
+    "encoding": "cl100k_base",
+    "endpoint_labels": [
+      "dense_llmlingua2_matched_sent_mmr",
+      "intentroute_llmlingua2_matched_sent_mmr_seed19"
+    ],
+    "force_reserve_digit": true,
+    "force_tokens": [
+      "\n",
+      ".",
+      "!",
+      "?",
+      ","
+    ],
+    "intent_reference_label": "intentweight_sent_mmr_r0.85_l0.70_seed19",
+    "model": "microsoft/llmlingua-2-xlm-roberta-large-meetingbank",
+    "model_aggregate_sha256": "bc8ffa30f061337d5de7b7b247bab67b2e9967cab786804dfe9f7e0104dae871",
+    "model_revision": "ebaba9b0e874dadd3003ffcff828e4397e568089",
+    "ranking_selector": "task37_source:gated_cost_aware:seed19:token_budget_r0.95_m4",
+    "rankings_sha256": "1bf6546c64dabe1bea437d46a219651f35ddbc25fbf41c0e25fe80571d6b61c3",
+    "repository_commit": "e0e9d99beb94098bbd924aa53c2c112eac41c758",
+    "sample_records_sha256": "4b172e38042839b21e623905833cc29eb3a5e967c30f26d0cc586883cde7b10d",
+    "target_policy": "per-query exact tracked Sentence-MMR context_tokens",
+    "task": "Task79",
+    "use_context_level_filter": false,
+    "use_token_level_filter": true
+  },
+  "protocol_signature": "85b3461ed3c06e6b0cf7fe37f290d16e402cb1be64b83219fea6cd0fd084e23a",
+  "provenance": {
+    "model": "microsoft/llmlingua-2-xlm-roberta-large-meetingbank",
+    "model_aggregate_sha256": "bc8ffa30f061337d5de7b7b247bab67b2e9967cab786804dfe9f7e0104dae871",
+    "model_license": "MIT",
+    "model_revision": "ebaba9b0e874dadd3003ffcff828e4397e568089",
+    "model_snapshot_files": [
+      {
+        "bytes": 1570,
+        "path": ".gitattributes",
+        "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"
+      },
+      {
+        "bytes": 3267,
+        "path": "README.md",
+        "sha256": "7c6765b0f7c43cd79dfdec165666d46b31bf72398e07332fb8aa999fcb06423a"
+      },
+      {
+        "bytes": 752,
+        "path": "config.json",
+        "sha256": "a3fdcf4e63057797101ecc84412bc654f9adb4e8d4ed3c91c5afb28eda327706"
+      },
+      {
+        "bytes": 2235829648,
+        "path": "model.safetensors",
+        "sha256": "a33a153b2493bff6be06af6921e69de9c0d0bb6ff06fe5bbb68670ba8d980ae2"
+      },
+      {
+        "bytes": 280,
+        "path": "special_tokens_map.json",
+        "sha256": "06e405a36dfe4b9604f484f6a1e619af1a7f7d09e34a8555eb0b77b66318067f"
+      },
+      {
+        "bytes": 17082756,
+        "path": "tokenizer.json",
+        "sha256": "f59925fcb90c92b894cb93e51bb9b4a6105c5c249fe54ce1c704420ac39b81af"
+      },
+      {
+        "bytes": 1147,
+        "path": "tokenizer_config.json",
+        "sha256": "f90024142df07163e5e6c5b9a6ad7c8c68b22a9112af11e3db4559a9ff90f737"
+      }
+    ],
+    "package_version": "0.2.2",
+    "repository": "https://github.com/microsoft/LLMLingua",
+    "repository_commit": "e0e9d99beb94098bbd924aa53c2c112eac41c758"
+  },
+  "query_count": 300,
+  "status": "COMPLETE"
+}

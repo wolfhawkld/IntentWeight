@@ -1,0 +1,111 @@
+{
+  "answer_count": 1200,
+  "answer_counts_by_method": {
+    "dense_llmlingua2_matched_sent_mmr": 300,
+    "dense_sent_mmr_r0.85_l0.70": 300,
+    "intentroute_llmlingua2_matched_sent_mmr_seed19": 300,
+    "intentweight_sent_mmr_r0.85_l0.70_seed19": 300
+  },
+  "artifact_origin": {
+    "existing_answers_regenerated": false,
+    "new_answer_calls_expected": 600,
+    "new_answer_methods": [
+      "dense_llmlingua2_matched_sent_mmr",
+      "intentroute_llmlingua2_matched_sent_mmr_seed19"
+    ],
+    "reused_answer_methods": [
+      "dense_sent_mmr_r0.85_l0.70",
+      "intentweight_sent_mmr_r0.85_l0.70_seed19"
+    ]
+  },
+  "execution_contract": {
+    "answer_output_cap": 900,
+    "answer_retries_per_invocation": 1,
+    "api_mode": "chat-completions",
+    "concurrency": 4,
+    "generation_instructions_sha256": "33fd946a44840200f846138f60cf8adc0abdc448e8a292c64761df571d977bb3",
+    "judge_instructions_sha256": "ab3b13010f161e8b6c23208a588a0a0863e4cc383fb3f7eadfced771b80fb10e",
+    "judge_output_caps_attempted": [
+      900,
+      1800,
+      3600
+    ],
+    "judge_retries_per_invocation": 1,
+    "prompt_implementation": "paper/experiments/scripts/task63_downstream_llm_evaluation.py",
+    "temperature": 0.0,
+    "thinking": "enabled"
+  },
+  "failure_attempt_count": 148,
+  "failure_codes": {
+    "SensitiveContentDetected": 9,
+    "invalid_or_empty_judge_output": 138,
+    "unknown_failure": 1
+  },
+  "failure_unique_key_count": 146,
+  "provider": {
+    "answer_and_local_judge": "DeepSeek OpenAI-compatible API",
+    "answer_model": "deepseek-v4-flash",
+    "base_url": "https://api.deepseek.com",
+    "credentials_recorded": false,
+    "external_judges": [
+      "glm-5.2",
+      "minimax-m3"
+    ],
+    "local_judge_model": "deepseek-v4-flash"
+  },
+  "recovered_failure_key_count": 139,
+  "sample_query_count": 300,
+  "secret_policy": ".env and API keys are excluded from every tracked artifact",
+  "source_sha256": {
+    "answers.jsonl": "e8d42b9c4a57e7c52fcda9afbcfe730ba0e55da995aa1e555923ecfd6abf2888",
+    "judgment_failures.jsonl": "0676f19024a78281dc6bdcbba639979cb170cdd4b76cc5bdfda601b45b908989",
+    "judgments.jsonl": "f741eae10c918c11ca0257d90167b2c1ee534ad346d4319256c084b0a9415af7",
+    "sample_records.jsonl": "f2be6e5a906ecc7fcc0e30bbb55e725af49c0c848bcf6659623211f8a6ac776b"
+  },
+  "status": "LOCAL_DEEPSEEK_COMPLETE_EXTERNAL_JUDGES_PENDING",
+  "usage_by_answer_method": {
+    "dense_llmlingua2_matched_sent_mmr": {
+      "input_tokens": 492092,
+      "output_tokens": 88686,
+      "total_tokens": 580778
+    },
+    "dense_sent_mmr_r0.85_l0.70": {
+      "input_tokens": 771634,
+      "output_tokens": 101321,
+      "total_tokens": 872955
+    },
+    "intentroute_llmlingua2_matched_sent_mmr_seed19": {
+      "input_tokens": 458797,
+      "output_tokens": 85669,
+      "total_tokens": 544466
+    },
+    "intentweight_sent_mmr_r0.85_l0.70_seed19": {
+      "input_tokens": 720824,
+      "output_tokens": 102947,
+      "total_tokens": 823771
+    }
+  },
+  "usage_by_judge": {
+    "deepseek-v4-flash": {
+      "input_tokens": 3385546,
+      "output_tokens": 879751,
+      "total_tokens": 4265297
+    },
+    "glm-5.2": {
+      "input_tokens": 2041391,
+      "output_tokens": 632313,
+      "total_tokens": 2673704
+    },
+    "minimax-m3": {
+      "input_tokens": 2008932,
+      "output_tokens": 558468,
+      "total_tokens": 2567400
+    }
+  },
+  "valid_judgment_count": 2393,
+  "valid_judgments_by_model": {
+    "deepseek-v4-flash": 1200,
+    "glm-5.2": 600,
+    "minimax-m3": 593
+  }
+}
