@@ -189,9 +189,20 @@ def run(args: argparse.Namespace) -> int:
 
     caps = parse_caps(args.judge_output_caps_attempted)
     deepseek_complete = judgment_counts.get("deepseek-v4-flash", 0) == 1200
+    new_external_coverage = {
+        judge: sum(
+            str(row.get("method_label")) in NEW_METHODS
+            and str(row.get("judge_model")) == judge
+            for row in valid_judgments
+        )
+        for judge in ("glm-5.2", "minimax-m3")
+    }
+    new_external_complete = all(count == 600 for count in new_external_coverage.values())
     payload = {
         "status": (
-            "LOCAL_DEEPSEEK_COMPLETE_EXTERNAL_JUDGES_PENDING"
+            "COMPLETE_TASK79_NEW_ENDPOINT_JUDGING_WITH_RECORDED_LEGACY_MISSINGNESS"
+            if deepseek_complete and new_external_complete
+            else "LOCAL_DEEPSEEK_COMPLETE_EXTERNAL_JUDGES_PENDING"
             if deepseek_complete
             else "LOCAL_DEEPSEEK_IN_PROGRESS"
         ),
@@ -200,6 +211,8 @@ def run(args: argparse.Namespace) -> int:
         "answer_counts_by_method": dict(sorted(answer_counts.items())),
         "valid_judgment_count": len(valid_judgments),
         "valid_judgments_by_model": dict(sorted(judgment_counts.items())),
+        "new_external_coverage": new_external_coverage,
+        "new_external_complete": new_external_complete,
         "provider": {
             "answer_and_local_judge": "DeepSeek OpenAI-compatible API",
             "base_url": "https://api.deepseek.com",
@@ -262,9 +275,12 @@ def run(args: argparse.Namespace) -> int:
         f"- DeepSeek judgments: `{judgment_counts.get('deepseek-v4-flash', 0)}/1200`",
         f"- GLM-5.2 judgments: `{judgment_counts.get('glm-5.2', 0)}/1200`",
         f"- MiniMax-M3 judgments: `{judgment_counts.get('minimax-m3', 0)}/1200`",
+        f"- New-endpoint GLM-5.2 coverage: `{new_external_coverage['glm-5.2']}/600`",
+        f"- New-endpoint MiniMax-M3 coverage: `{new_external_coverage['minimax-m3']}/600`",
         f"- Failure attempts retained: `{len(failures)}`; recovered keys: `{len(recovered)}`",
         "",
         "The 600 Sentence-MMR answers are reused. Only the 600 LLMLingua-2 answers are newly generated.",
+        "Both new LLMLingua-2 endpoints have complete three-judge coverage. Seven historical MiniMax Sentence-MMR judgments remain missing and are not imputed.",
         "Credentials and API keys are not recorded.",
         "",
     ]

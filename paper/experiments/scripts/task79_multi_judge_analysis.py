@@ -775,9 +775,14 @@ def run(args: argparse.Namespace) -> int:
             output["mean_compression_seconds"] = mean(float(value["compression_seconds"]) for value in values)
         context_rows.append(output)
 
+    missing_new_endpoint_judgments = [
+        key for key in missing_judgments if key[1] in (DENSE_LLMLINGUA, INTENT_LLMLINGUA)
+    ]
     status = (
         "COMPLETE_THREE_JUDGE_ANALYSIS"
         if not missing_judgments
+        else "COMPLETE_PRIMARY_THREE_JUDGE_WITH_RECORDED_LEGACY_MISSINGNESS"
+        if not missing_new_endpoint_judgments
         else "COMPLETE_ANSWERS_PARTIAL_JUDGE_COVERAGE"
     )
     result = {
@@ -786,6 +791,8 @@ def run(args: argparse.Namespace) -> int:
         "valid_judgment_count": len(valid),
         "expected_judgment_count": len(expected_judgment_keys),
         "missing_judgment_count": len(missing_judgments),
+        "missing_new_endpoint_judgment_count": len(missing_new_endpoint_judgments),
+        "primary_comparison_complete": not missing_new_endpoint_judgments,
         "coverage_by_judge": {
             judge: sum(key[2] == judge for key in judgments_by_key)
             for judge in JUDGES

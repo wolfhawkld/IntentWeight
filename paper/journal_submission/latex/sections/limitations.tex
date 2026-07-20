@@ -42,7 +42,7 @@ KMeans/MiniBatchKMeans supplies the fixed, reproducible, scalable arm space requ
 \subsection{Limited Baseline, Encoder, and Domain Coverage}
 \label{sec:08-limitations:limited-baseline-encoder-and-domain-coverage}
 
-Matched MiniLM, BGE-base, and E5-base backbones and a cross-encoder support robustness within LoTTE, but exclude domain-specific, late-interaction, and proprietary encoders. Only BGE has an above-dense quality-first point; E5 supplies a near-dense saving point. Sentence-MMR is the shared downstream compressor; the official open-source LLMLingua-2 compressor has not been run, so the paper does not claim parity with learned token-level prompt compression.
+Matched MiniLM, BGE-base, and E5-base backbones and a cross-encoder support robustness within LoTTE, but exclude domain-specific, late-interaction, and proprietary encoders. Only BGE has an above-dense quality-first point; E5 supplies a near-dense saving point. Sentence-MMR is the shared downstream compressor, and the official LLMLingua-2 follow-up supports the same Dense-versus-IntentRoute direction on one frozen 300-query setting. Its three-judge correctness intervals cross zero, so it is compressor-complementarity evidence rather than strict non-inferiority, human validation, or broad parity with learned token-level prompt compression.
 
 Of nine settings, only LoTTE technology/search receives the complete multi-scale, matched-baseline, calibration/test, and generation protocol. Science/search adds domain and scale transfer; recreation/search and writing/search add common-protocol 100k retrieval/budget rows without multi-scale or answer evaluation; biomedical datasets, Banking77, eManual, and CUAD test transfer, mechanism, or boundaries. They are not nine independent full-stack replications, and more repeated vertical-corpus evaluations remain necessary.
 
@@ -57,7 +57,7 @@ Future work should evaluate:
 \item real user feedback with trust scoring and delayed-feedback handling;
 \item multi-model and human-rated answer-quality and citation-faithfulness studies;
 \item stronger dense encoders, rerankers, and late-interaction retrieval models;
-\item matched Dense/IntentRoute evaluation with official LLMLingua-2 compression;
+\item additional domains, generators, and human raters for learned-compressor evaluation;
 \item graph or density-based dynamic clustering under bandit-compatible arm management;
 \item repeated evaluations on additional vertical-domain corpora;
 \item production policies that lower dense usage only after route confidence is demonstrably stable;

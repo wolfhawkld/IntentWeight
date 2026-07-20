@@ -1,7 +1,6 @@
 # Task79 Official LLMLingua-2 Matched-Compressor Summary
 
-Status: local compression and DeepSeek evaluation complete; independent GLM-5.2
-and MiniMax-M3 judgments pending
+Status: complete with full three-judge coverage for both new LLMLingua-2 endpoints
 
 Date: 2026-07-18
 
@@ -52,30 +51,33 @@ for IntentRoute. These occur at discrete word thresholds and are reported, not
 corrected. There are no empty outputs, dropped chunk IDs, reordered chunks, or
 token-accounting mismatches.
 
-## DeepSeek Interim Result
+## Three-Judge Result
 
-All 600 new answers are valid JSON. DeepSeek provides 1,200/1,200 Task79
-judgments after resumable technical retries; empty/truncated provider responses
-remain in the failure log and are not interpreted as negative judgments.
+All 600 new answers are valid JSON. DeepSeek, GLM-5.2, and MiniMax-M3 each
+provide 600/600 judgments for the two new LLMLingua-2 endpoints. Resumable
+technical retries recovered outputs whose reasoning exhausted the initial
+completion cap; failed attempts remain in the failure log and are not
+interpreted as negative judgments. Seven historical MiniMax-M3 Sentence-MMR
+judgments remain missing from Task65 and are not imputed, but the Task79 primary
+comparison has 300 complete query pairs for every judge.
 
-| Endpoint | Correct | Faithful | Citations supported | Context tokens | Prompt tokens |
-|---|---:|---:|---:|---:|---:|
-| Dense + LLMLingua-2 | 88.00% | 89.67% | 88.00% | 1,259.22 | 1,640.31 |
-| IntentRoute + LLMLingua-2 | 91.00% | 93.33% | 88.33% | 1,175.02 | 1,529.32 |
+| Judge | Correctness delta | 95% CI | Faithfulness delta | Context-token saving |
+|---|---:|---:|---:|---:|
+| DeepSeek | +3.00 pp | [-1.00, +7.00] pp | +3.67 pp | 6.69% |
+| GLM-5.2 | +0.67 pp | [-3.33, +4.67] pp | +0.33 pp | 6.69% |
+| MiniMax-M3 | +0.00 pp | [-3.67, +4.00] pp | -1.33 pp | 6.69% |
+| Three-judge majority | +0.67 pp | [-3.00, +4.33] pp | +0.00 pp | 6.69% |
 
-For the primary paired comparison, IntentRoute+LLMLingua-2 versus
-Dense+LLMLingua-2:
+For the primary paired comparison, IntentRoute+LLMLingua-2 uses 1,175.02 mean
+context tokens versus 1,259.22 for Dense+LLMLingua-2. The paired 6.69% saving
+has a 95% bootstrap interval of [4.32%, 9.03%]. Actual prompt-token saving is
+6.77%. Across the three judges, correctness point estimates range from 0.00 to
++3.00 pp and every confidence interval includes zero. The majority estimate is
++0.67 pp with exact McNemar p=0.8642.
 
-- context-token saving: 6.69%; actual prompt-token saving: 6.77%;
-- correctness delta: +3.00 pp, 95% bootstrap CI [-1.00, +7.00] pp,
-  exact McNemar p=0.1996;
-- faithfulness delta: +3.67 pp, 95% CI [-0.33, +7.67] pp,
-  exact McNemar p=0.1081;
-- citation-support delta: +0.33 pp.
-
-The point estimates follow the existing Sentence-MMR direction while using
-fewer final-context tokens, but the correctness interval includes both a small
-loss and a larger gain. This is not strict non-inferiority proof.
+The cross-judge result supports persistence of the lower-context relationship
+under an official learned compressor without a detected correctness loss. It
+does not establish strict non-inferiority or significant answer improvement.
 
 ## Cross-Compressor Boundary
 
@@ -94,28 +96,27 @@ footprint.
 
 ## Current Boundary
 
-- The completed DeepSeek result supports, but does not by itself finalize, the
-  claim that IntentRoute's token/quality relationship persists under an
-  official learned compressor.
+- The complete three-judge result supports the bounded claim that IntentRoute's
+  token/quality relationship persists under an official learned compressor in
+  this frozen 300-query setting.
 - Task79 does not establish a geometry-to-compression causal path, and
   LLMLingua-2 does not validate route geometry.
-- Independent GLM-5.2 and MiniMax-M3 judgments for the 600 new answers remain
-  required before manuscript integration. Missing provider responses will not
-  be imputed.
-- The fixed external handoff contains 600 prompts to run once with each model,
-  for 1,200 expected external responses.
+- The finding is one-domain, one-generator, automated-judge evidence. It is not
+  a human evaluation or a universal compressor result.
+- Seven historical MiniMax-M3 judgments remain missing only for reused
+  Sentence-MMR endpoints; primary new-endpoint coverage is complete.
 
 ## Validation
 
 - Task79 local gate: 14/14 checks pass; status
-  `PASS_LOCAL_GATE_EXTERNAL_JUDGES_PENDING`.
+  `PASS_COMPLETE_WITH_RECORDED_PROVIDER_MISSINGNESS`.
 - Core regression tests: 139 pytest cases plus two standalone download-script
   tests, 141/141 pass.
 - `.venv` and `.venv-rocm` both pass `pip check`.
 - All Task79 scripts compile, the staging path is idempotent, and no API key or
   `.env` content appears in Task79 artifacts.
-- The independent-judge gap is represented as 1,200 pending responses, not as
-  a failed local experiment or imputed evidence.
+- Both new endpoints have 600/600 GLM-5.2 and 600/600 MiniMax-M3 judgments;
+  credentials are absent from all tracked artifacts.
 
 ## Artifacts
 

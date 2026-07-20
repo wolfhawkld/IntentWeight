@@ -442,7 +442,9 @@ Cross-encoder same budget & 0.8633-0.8729 & 0.6975-0.7044 & 1360-1390 & 5.43-7.4
 \end{tabularx}
 \end{table}
 
-The cross-encoder reranker improves full top-10 support metrics, but that full reranked context is longer on average. Under the same per-query token budgets as IntentRoute, reranking does not uniformly dominate the calibrated controller. A learned token-level LLMLingua-2 baseline has not been run and is not represented by the historical local prompt-pruning proxy retained in the experiment archive.
+The cross-encoder reranker improves full top-10 support metrics, but that full reranked context is longer on average. Under the same per-query token budgets as IntentRoute, reranking does not uniformly dominate the calibrated controller.
+
+The official LLMLingua-2 matched follow-up freezes the same 300 queries and applies the learned compressor independently to Dense and IntentRoute source pools. Mean context falls from 1,259.22 to 1,175.02 tokens for IntentRoute, a 6.69\% paired saving. Correctness changes are +3.00 pp for DeepSeek, +0.67 pp for GLM-5.2, +0.00 pp for MiniMax-M3, and +0.67 pp for the three-judge majority; all correctness intervals include zero. Both new endpoints have complete three-judge coverage. Seven missing MiniMax judgments belong only to reused historical Sentence-MMR endpoints and are not imputed.
 
 \section{Route-Control Attribution and Arm Sensitivity}
 \label{sec:12-appendix:route-control-attribution-and-arm-sensitivity}

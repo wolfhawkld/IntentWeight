@@ -1,6 +1,7 @@
 # Task79 Official LLMLingua-2 Matched-Compressor Plan
 
-Status: local formal compression and DeepSeek evaluation complete; GLM/MiniMax external judging pending
+Status: complete; both new LLMLingua-2 endpoints have full DeepSeek, GLM-5.2,
+and MiniMax-M3 coverage
 
 Date: 2026-07-18
 

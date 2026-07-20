@@ -1,11 +1,11 @@
 # Task79 LLMLingua-2 Multi-Judge Analysis
 
-Status: **COMPLETE_ANSWERS_PARTIAL_JUDGE_COVERAGE**
+Status: **COMPLETE_PRIMARY_THREE_JUDGE_WITH_RECORDED_LEGACY_MISSINGNESS**
 
 - Answers: `1200/1200`
-- Valid judgments: `2393/3600`
-- Missing judgments (not imputed): `1207`
-- Logged failure attempts: `148`; recovered keys: `139`
+- Valid judgments: `3593/3600`
+- Missing judgments (not imputed): `7`
+- Logged failure attempts: `454`; recovered keys: `433`
 - Compressor peak allocated VRAM: `2.526 GiB`
 
 ## Context Endpoints
@@ -22,6 +22,9 @@ Status: **COMPLETE_ANSWERS_PARTIAL_JUDGE_COVERAGE**
 | judge_scope | paired_queries | is_correct_delta_pp | is_correct_delta_ci_low_pp | is_correct_delta_ci_high_pp | is_correct_mcnemar_exact_p | is_faithful_delta_pp | citations_supported_delta_pp | context_token_saving_percent | prompt_token_saving_percent |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | deepseek-v4-flash | 300 | 3.0000 | -1.0000 | 7.0000 | 0.1996 | 3.6667 | 0.3333 | 6.6867 | 6.7660 |
+| glm-5.2 | 300 | 0.6667 | -3.3333 | 4.6667 | 0.8679 | 0.3333 | -1.0000 | 6.6867 | 6.7660 |
+| minimax-m3 | 300 | 0.0000 | -3.6667 | 4.0000 | 1.0000 | -1.3333 | 0.0000 | 6.6867 | 6.7660 |
+| three_judge_majority | 300 | 0.6667 | -3.0000 | 4.3333 | 0.8642 | 0.0000 | 0.3333 | 6.6867 | 6.7660 |
 
 ## Boundaries
 

@@ -209,6 +209,25 @@ def expected_table5() -> list[list[str]]:
             f"[{pct(float(majority['context_token_saving_ci_low_percent']))}, "
             f"{pct(float(majority['context_token_saving_ci_high_percent']))}]",
         ])
+    task79_rows = csv_rows(RESULTS / "task79_llmlingua2_multi_judge_analysis.paired.csv")
+    task79_group = {
+        row["judge_scope"]: row
+        for row in task79_rows
+        if row["comparison"] == "IntentRoute+LLMLingua-2 vs Dense+LLMLingua-2"
+    }
+    task79_majority = task79_group["three_judge_majority"]
+    expected.append([
+        "IntentRoute + LLMLingua-2 vs Dense + LLMLingua-2",
+        f"{signed(float(task79_group['deepseek-v4-flash']['is_correct_delta_pp']))} pp",
+        f"{signed(float(task79_group['glm-5.2']['is_correct_delta_pp']))} pp",
+        f"{signed(float(task79_group['minimax-m3']['is_correct_delta_pp']))} pp",
+        f"{signed(float(task79_majority['is_correct_delta_pp']))} pp "
+        f"[{signed_ci(float(task79_majority['is_correct_delta_ci_low_pp']))}, "
+        f"{signed_ci(float(task79_majority['is_correct_delta_ci_high_pp']))}]",
+        f"{pct(float(task79_majority['context_token_saving_percent']))} "
+        f"[{pct(float(task79_majority['context_token_saving_ci_low_percent']))}, "
+        f"{pct(float(task79_majority['context_token_saving_ci_high_percent']))}]",
+    ])
     return expected
 
 

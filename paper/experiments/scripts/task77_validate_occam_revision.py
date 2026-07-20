@@ -96,7 +96,7 @@ def main() -> int:
         "feedback_update_order": "The update can therefore change only the route state used by $q_{t+1}$",
         "centroid_mismatch_definition": "selected-arm centroid mismatch safeguard",
         "independent_budget": "Neither feedback nor route confidence directly sets a per-query compression ratio",
-        "llmlingua_boundary": "official open-source LLMLingua-2 compressor has not been run",
+        "llmlingua_boundary": "official LLMLingua-2 follow-up supports the same Dense-versus-IntentRoute direction",
         "non_pooling": "no pooled effect is computed",
         "arm_table_moved": "Supplementary Table S20",
     }

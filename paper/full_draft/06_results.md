@@ -215,8 +215,13 @@ $\mathrm{Hit@10}=0.8705$ while saving 11.4-13.1% selected-sentence tokens.
 When the same compressor is applied to both source pools,
 IntentRoute+Sentence-MMR reaches 10.1-21.2% total saving because it starts from
 a smaller evidence pool. This matched control shows that downstream compression
-is complementary rather than unique to IntentRoute; an official LLMLingua-2
-comparison remains untested.
+is complementary rather than unique to IntentRoute. The official LLMLingua-2
+follow-up applies the same learned compressor to both frozen source pools. On
+300 queries, IntentRoute+LLMLingua-2 uses 1,175.0 mean context tokens versus
+1,259.2 for Dense+LLMLingua-2, a paired 6.69% saving (95% CI [4.32%, 9.03%]).
+The three-judge majority correctness change is +0.67 pp (95% CI [-3.00,
++4.33], $p=0.8642$), so the result supports compressor complementarity without
+strict non-inferiority or significant quality improvement.
 
 A cross-encoder reranker improves dense full-top-10 support from
 $\mathrm{Hit@10}=0.8705$ to 0.8777 and evidence recall from 0.7081 to 0.7332,
@@ -227,11 +232,14 @@ reranker tables.
 
 ## 5.7 Downstream Answer-Level Evaluation
 
-The frozen downstream evaluation contains 300 queries, seven methods, 2,100
+The primary frozen downstream evaluation contains 300 queries, seven methods, 2,100
 generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and
 MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all
 three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are
-not imputed.
+not imputed. The matched LLMLingua-2 extension adds 600 generated answers and
+complete three-judge coverage for both new endpoints; seven missing historical
+MiniMax Sentence-MMR judgments are retained as provider missingness rather than
+imputed.
 Table~\ref{tab:5} reports the matched correctness and context-token results.
 
 **Table 5. Matched downstream answer-quality and context-token comparisons.**
@@ -241,6 +249,7 @@ Table~\ref{tab:5} reports the matched correctness and context-token results.
 | BGE IntentRoute vs BGE dense | +0.00 pp | -3.00 pp | -2.42 pp | -3.46 pp [-6.92, 0.00] | 6.27% [4.22%, 8.26%] |
 | E5 IntentRoute vs E5 dense | +0.33 pp | -1.33 pp | -2.77 pp | -2.08 pp [-5.88, +1.73] | 11.97% [9.78%, 14.17%] |
 | IntentRoute+MMR vs Dense+MMR | +2.33 pp | +0.33 pp | +1.36 pp | +0.34 pp [-3.39, +4.07] | 6.75% [4.40%, 9.11%] |
+| IntentRoute + LLMLingua-2 vs Dense + LLMLingua-2 | +3.00 pp | +0.67 pp | +0.00 pp | +0.67 pp [-3.00, +4.33] | 6.69% [4.32%, 9.03%] |
 
 All context-saving intervals are positive. Every individual-judge and
 majority-vote correctness interval includes zero, and all correctness McNemar

@@ -27,21 +27,26 @@
     "judge_instructions_sha256": "ab3b13010f161e8b6c23208a588a0a0863e4cc383fb3f7eadfced771b80fb10e",
     "judge_output_caps_attempted": [
       900,
-      1800,
-      3600
+      2048,
+      4096
     ],
     "judge_retries_per_invocation": 1,
     "prompt_implementation": "paper/experiments/scripts/task63_downstream_llm_evaluation.py",
     "temperature": 0.0,
     "thinking": "enabled"
   },
-  "failure_attempt_count": 148,
+  "failure_attempt_count": 454,
   "failure_codes": {
     "SensitiveContentDetected": 9,
-    "invalid_or_empty_judge_output": 138,
+    "invalid_or_empty_judge_output": 444,
     "unknown_failure": 1
   },
-  "failure_unique_key_count": 146,
+  "failure_unique_key_count": 440,
+  "new_external_complete": true,
+  "new_external_coverage": {
+    "glm-5.2": 600,
+    "minimax-m3": 600
+  },
   "provider": {
     "answer_and_local_judge": "DeepSeek OpenAI-compatible API",
     "answer_model": "deepseek-v4-flash",
@@ -53,16 +58,17 @@
     ],
     "local_judge_model": "deepseek-v4-flash"
   },
-  "recovered_failure_key_count": 139,
+  "recovered_failure_key_count": 433,
   "sample_query_count": 300,
   "secret_policy": ".env and API keys are excluded from every tracked artifact",
   "source_sha256": {
     "answers.jsonl": "e8d42b9c4a57e7c52fcda9afbcfe730ba0e55da995aa1e555923ecfd6abf2888",
+    "external_judgment_failures.jsonl": "499526fb0719da1591f2a38f73a93a30c04b94a42d99033c8ddb1c5a164be60a",
     "judgment_failures.jsonl": "0676f19024a78281dc6bdcbba639979cb170cdd4b76cc5bdfda601b45b908989",
-    "judgments.jsonl": "f741eae10c918c11ca0257d90167b2c1ee534ad346d4319256c084b0a9415af7",
+    "judgments.jsonl": "aa5d2904bd9791b6d726d6dc659d790abbc9bfcb9fb9d4f30cc7b07fb427d943",
     "sample_records.jsonl": "f2be6e5a906ecc7fcc0e30bbb55e725af49c0c848bcf6659623211f8a6ac776b"
   },
-  "status": "LOCAL_DEEPSEEK_COMPLETE_EXTERNAL_JUDGES_PENDING",
+  "status": "COMPLETE_TASK79_NEW_ENDPOINT_JUDGING_WITH_RECORDED_LEGACY_MISSINGNESS",
   "usage_by_answer_method": {
     "dense_llmlingua2_matched_sent_mmr": {
       "input_tokens": 492092,
@@ -92,20 +98,20 @@
       "total_tokens": 4265297
     },
     "glm-5.2": {
-      "input_tokens": 2041391,
-      "output_tokens": 632313,
-      "total_tokens": 2673704
+      "input_tokens": 3443450,
+      "output_tokens": 1122433,
+      "total_tokens": 4565883
     },
     "minimax-m3": {
-      "input_tokens": 2008932,
-      "output_tokens": 558468,
-      "total_tokens": 2567400
+      "input_tokens": 3480784,
+      "output_tokens": 1018027,
+      "total_tokens": 4498811
     }
   },
-  "valid_judgment_count": 2393,
+  "valid_judgment_count": 3593,
   "valid_judgments_by_model": {
     "deepseek-v4-flash": 1200,
-    "glm-5.2": 600,
-    "minimax-m3": 593
+    "glm-5.2": 1200,
+    "minimax-m3": 1193
   }
 }

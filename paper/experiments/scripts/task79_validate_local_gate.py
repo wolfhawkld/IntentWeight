@@ -206,6 +206,7 @@ def run(args: argparse.Namespace) -> int:
         analysis_payload["status"]
         in {
             "COMPLETE_ANSWERS_PARTIAL_JUDGE_COVERAGE",
+            "COMPLETE_PRIMARY_THREE_JUDGE_WITH_RECORDED_LEGACY_MISSINGNESS",
             "COMPLETE_THREE_JUDGE_ANALYSIS",
         },
         {

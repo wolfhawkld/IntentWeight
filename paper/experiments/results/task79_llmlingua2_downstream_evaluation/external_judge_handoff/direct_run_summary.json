@@ -1,0 +1,15 @@
+{
+  "credential_material_recorded": false,
+  "failed_this_run": 0,
+  "frozen_request_count": 600,
+  "initial_pending": 12,
+  "judges": [
+    "glm-5.2"
+  ],
+  "remaining_by_judge": {
+    "glm-5.2": 0
+  },
+  "scheduled_this_run": 12,
+  "status": "COMPLETE",
+  "valid_this_run": 12
+}

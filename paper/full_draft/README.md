@@ -77,9 +77,10 @@ The paper should keep the bounded claim:
 > support bounded backbone and correctness robustness without establishing
 > strict non-inferiority, uniform faithfulness preservation, or significant
 > answer improvement. Geometry is motivation and diagnostic support, not theorem-level
-> proof. SentMMR is a shared downstream compressor, cross-encoder reranking is
-> a late ranking layer, and both are composable with IntentRoute. Official
-> LLMLingua-2 compression remains untested. Broader agent-memory, graph, tree,
+> proof. SentMMR and the official LLMLingua-2 evaluation are shared downstream
+> compressor controls, cross-encoder reranking is a late ranking layer, and all
+> are composable with IntentRoute. The LLMLingua-2 result supports bounded
+> complementarity on 300 frozen queries without strict non-inferiority. Broader agent-memory, graph, tree,
 > or tool-context applications should be framed as motivation and future work
 > unless separately evaluated.
 

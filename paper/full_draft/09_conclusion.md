@@ -34,8 +34,10 @@ route metrics over random routing but does not directly predict compression
 safety. Controlled feedback updates route state and can repair some same-query
 tail failures, yet it does not beat matched static or cold full routing on the
 formal frozen unseen-query audit. Sentence-MMR remains an effective shared
-downstream compressor, while cross-encoder reranking can improve
-evidence support but may increase context length. Route control, rescue,
+downstream compressor; the official LLMLingua-2 matched test retains a 6.69%
+IntentRoute context advantage without a detected majority-vote correctness
+difference. Cross-encoder reranking can improve evidence support but may
+increase context length. Route control, rescue,
 reranking, compression, and final-budget calibration are therefore composable
 system functions.
 

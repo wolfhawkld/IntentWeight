@@ -91,8 +91,11 @@ Matched MiniLM, BGE-base, and E5-base backbones and a cross-encoder support
 robustness within LoTTE, but exclude domain-specific, late-interaction, and
 proprietary encoders. Only BGE has an above-dense quality-first point; E5
 supplies a near-dense saving point. Sentence-MMR is the shared downstream
-compressor; the official open-source LLMLingua-2 compressor has not been run,
-so the paper does not claim parity with learned token-level prompt compression.
+compressor, and the official LLMLingua-2 follow-up supports the same
+Dense-versus-IntentRoute direction on one frozen 300-query setting. Its
+three-judge correctness intervals cross zero, so it is compressor-complementarity
+evidence rather than strict non-inferiority, human validation, or broad parity
+with learned token-level prompt compression.
 
 Of nine settings, only LoTTE technology/search receives the complete
 multi-scale, matched-baseline, calibration/test, and generation protocol.
@@ -112,7 +115,8 @@ Future work should evaluate:
 - real user feedback with trust scoring and delayed-feedback handling;
 - multi-model and human-rated answer-quality and citation-faithfulness studies;
 - stronger dense encoders, rerankers, and late-interaction retrieval models;
-- matched Dense/IntentRoute evaluation with official LLMLingua-2 compression;
+- additional domains, generators, and human raters for learned-compressor
+  evaluation;
 - graph or density-based dynamic clustering under bandit-compatible arm
   management;
 - repeated evaluations on additional vertical-domain corpora;
