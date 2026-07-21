@@ -22,7 +22,7 @@ means final evidence-context input tokens rather than total serving cost.
 - Cross-dataset display rows: `15`; no pooled effect.
 - Main displays: `5` tables and `3` figures.
 - Supplement: `23` tables.
-- Canonical main-text whitespace word count: `12070`.
+- Canonical main-text whitespace word count: `12177`.
 - CAS abstract: `245` words.
 
 ## Answer-Level State
@@ -43,8 +43,8 @@ means final evidence-context input tokens rather than total serving cost.
 
 | Package | Pages | Type 3 fonts |
 |---|---:|---:|
-| acl_complete_evidence | 34 | 0 |
-| cas_anonymous_manuscript | 26 | 0 |
+| acl_complete_evidence | 35 | 0 |
+| cas_anonymous_manuscript | 27 | 0 |
 | cas_supplement | 13 | 0 |
 | cas_title_page | 1 | 0 |
 

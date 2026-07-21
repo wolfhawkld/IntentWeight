@@ -1,6 +1,6 @@
 # Task Paper-Use Status
 
-Updated: 2026-07-21 (Task80 reconciliation)
+Updated: 2026-07-21 (Task80.3 citation provenance audit)
 
 This evidence-use registry is current through the Task79 recovery revision.
 Submission-state counts and remaining work are authoritative only in
@@ -96,6 +96,9 @@ accidentally promoted into paper-facing claims.
 | `task74_task73_manuscript_integration_summary.md` | Supporting writing revision | Records the completed Task73 manuscript integration, source-derived S30 table, synchronized packages, and final author-owned submission items; no new experiment. |
 | `task75_final_text_and_literature_summary.md` | Supporting writing revision | Records the final terminology, cost-scope, feedback-framing, 2026-literature, conclusion, and CAS font corrections; no new experiment. |
 | `task76_manuscript_editorial_compression_summary.md` | Supporting writing revision | Records the 10.53% evidence-preserving main-text compression, preservation guardrails, 25-page CAS result, and validation; no new experiment. |
+| `task80_1_figure2_pareto_redesign_summary.md` | Supporting writing/presentation revision | Re-expresses the unchanged six-row Figure 2 evidence as paired arrows in the quality-context plane. Use it to explain recovery relative to aggressive dense truncation while preserving the 400k diagnostic boundary and avoiding universal Pareto-dominance language. |
+| `task80_2_citation_and_figure3_layout_summary.md` | Supporting writing/presentation revision | Shortens first-use author-year citations and removes Figure 3 legend/data collisions without changing bibliography content, figure data, table emphasis, formula alignment, or scientific claims. |
+| `task80_3_citation_provenance_audit_summary.md` | Supporting writing/source-traceability revision | Adds primary or canonical citations where datasets, algorithms, encoders, baselines, and statistical procedures first enter Introduction, Method, and Experimental Setup. It changes no result or claim and deliberately avoids mechanical citations around this study's own findings. |
 | `task36_12_acl_latex_migration.md` | Supporting writing revision | Adds a modular ACL-style LaTeX migration, official ACL style files, PDF figure assets, and static validation; the subsequent PDF compile audit is recorded in `task36_13_pdf_compile_audit.md`. |
 | `task36_13_pdf_compile_audit.md` | Supporting writing revision | Installs lightweight TinyTeX, resolves real ACL compile issues, adds PDF rendering audit, and records the 19-page complete-draft layout; the next pass must produce a shorter submission cut. |
 | `task49_strong_baseline_reframing_summary.md` | Supporting writing revision | Integrates Task46/47/48 strong baselines into the manuscript framing; use for the route-and-budget controller plus shared compressor/reranker decomposition. |

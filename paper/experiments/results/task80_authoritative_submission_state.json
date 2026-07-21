@@ -37,33 +37,33 @@
   },
   "compiled_packages": {
     "acl_complete_evidence": {
-      "pages": 34,
+      "pages": 35,
       "path": "paper/latex/main.pdf",
-      "sha256": "bfd42ed6589811d74f6afe621ff7bd96f97a5d9dd86678fa667d8c084b881030",
+      "sha256": "dd1ceb1bc3135bf02b724bce495da01580ce7d78de0621ad34d93c5b992d0674",
       "type3_fonts": []
     },
     "cas_anonymous_manuscript": {
-      "pages": 26,
+      "pages": 27,
       "path": "paper/journal_submission/latex/anonymous_manuscript.pdf",
-      "sha256": "7ee45e3b76f97e66558ffec9026b6a9581ef24631246057060aa9a3c3b83baa1",
+      "sha256": "fb22899474d883211e09178bdbc0c057546bdc4f5aa7687df81327f768de6555",
       "type3_fonts": []
     },
     "cas_supplement": {
       "pages": 13,
       "path": "paper/journal_submission/latex/supplementary_material.pdf",
-      "sha256": "b741b838d023992ee406b11799ab5634ab4a394b9d33dd327948afb5f13124a4",
+      "sha256": "1b788c7c26b65a036e9f82cf8d46e555ea30aa3b1fe82b8858df077a69641cd3",
       "type3_fonts": []
     },
     "cas_title_page": {
       "pages": 1,
       "path": "paper/journal_submission/latex/title_page.pdf",
-      "sha256": "f3e87314cc85c4af92f547723adda6455eee37f3b03f0d6bf5aa94b4066e042b",
+      "sha256": "62022c4a9545f7a2d98c3a9b265b6238944b9561a02fc9c59070fd8f613c3d3a",
       "type3_fonts": []
     }
   },
   "evidence_surface": {
     "abstract_words_cas_validator_contract": 245,
-    "canonical_main_text_words_whitespace_count": 12070,
+    "canonical_main_text_words_whitespace_count": 12177,
     "cross_dataset_display_rows": 15,
     "dataset_domain_settings": 9,
     "domain_areas": 8,

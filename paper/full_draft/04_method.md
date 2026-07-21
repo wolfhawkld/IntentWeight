@@ -35,11 +35,11 @@ IntentRoute uses three retrieval routes.
 
 **Dense route.** The dense route performs global dense retrieval over the
 selected corpus using cosine similarity in embedding space. It is the primary
-quality baseline and the main recall floor.
+quality baseline and the main recall floor [@karpukhin2020dpr].
 
 **BM25 route.** The BM25 route performs global lexical retrieval. It supports
 exact-match and terminology-sensitive queries and provides a lexical alternative
-when dense similarity is insufficient.
+when dense similarity is insufficient [@robertson2009bm25].
 
 **Cluster-local route.** The cluster-local route performs dense retrieval within
 LinUCB-selected cluster arms. It allows the system to exploit local structure
@@ -60,8 +60,9 @@ to a separately calibrated final context-budget controller.
 
 ## 3.4 Routing Arm Construction
 
-Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a
-deliberate experimental choice. LinUCB requires a fixed number of arms, fixed
+Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans
+[@macqueen1967kmeans; @sculley2010minibatch]. This is a deliberate experimental
+choice. LinUCB requires a fixed number of arms, fixed
 arms improve reproducibility across seeds and scales, and KMeans is fast enough
 for large-scale LoTTE experiments. The same arm count is used across LoTTE
 technology/search scales to keep the LinUCB state space comparable, even though larger corpora
@@ -84,8 +85,9 @@ rescue cases where the cluster route misses relevant evidence.
 
 For each query $q_t$, IntentRoute computes a controller context vector
 $x_t \in \mathbb{R}^{p}$ by applying a corpus-fitted PCA projection to the
-query embedding and then L2-normalizing the projected vector. For each arm
-$a \in \mathcal{A}$, LinUCB maintains a linear value model:
+query embedding and then L2-normalizing the projected vector
+[@jolliffe2016pca]. For each arm $a \in \mathcal{A}$, LinUCB maintains a linear
+value model [@li2010linucb]:
 
 $$
 \begin{aligned}

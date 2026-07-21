@@ -145,8 +145,8 @@ def main() -> None:
     )
 
     expected_pages = {
-        "acl_complete_evidence": 34,
-        "cas_anonymous_manuscript": 26,
+        "acl_complete_evidence": 35,
+        "cas_anonymous_manuscript": 27,
         "cas_supplement": 13,
         "cas_title_page": 1,
     }

@@ -3,9 +3,9 @@
 \section{Introduction}
 \label{sec:02-introduction:introduction}
 
-Knowledge-augmented agents condition language-model responses on external evidence, commonly supplied by retrieval-augmented generation (RAG). The broader control problem is deciding which structured domain knowledge enters a limited context. Missing evidence is difficult for the generator to recover, whereas excess evidence increases latency, context cost, and distracting noise. Practical systems must therefore decide which route to trust and how much evidence is safe.
+Knowledge-augmented agents condition language-model responses on external evidence, commonly supplied by retrieval-augmented generation (RAG) \citep{lewis2020rag}. The broader control problem is deciding which structured domain knowledge enters a limited context. Missing evidence is difficult for the generator to recover, whereas excess evidence increases latency, context cost, and distracting noise. Practical systems must therefore decide which route to trust and how much evidence is safe.
 
-Dense retrieval is a strong baseline because it recovers semantically related passages despite surface-form mismatch. As a fixed route, however, it does not decide when lexical matching or local cluster structure is informative, when global dense retrieval should rescue a route, or when the final context can be compacted. These decisions matter in large, terminology-heavy vertical corpora shaped by recurring workflows, entities, and user intents.
+Dense retrieval is a strong baseline because it recovers semantically related passages despite surface-form mismatch \citep{karpukhin2020dpr}. As a fixed route, however, it does not decide when lexical matching or local cluster structure is informative, when global dense retrieval should rescue a route, or when the final context can be compacted. These decisions matter in large, terminology-heavy vertical corpora shaped by recurring workflows, entities, and user intents.
 
 We study a bounded hypothesis: vertical-domain evidence often has piecewise relevance structure, forming local regions induced by concepts, lexical anchors, workflows, and user behavior rather than being uniformly distributed in embedding space. Dense neighborhood search in one representation may miss lexical constraints, cluster-level routing, or user-specific relevance. Geometry alone is also insufficient: early cluster pruning can miss correct evidence, so dense retrieval remains a recall floor.
 
@@ -13,7 +13,7 @@ We propose IntentRoute, a feedback-adaptive route-confidence and context-budget 
 
 Although the control problem also appears in memory-, graph-, and tree-backed agents, our empirical claims remain tied to the evaluated retrieval-augmented QA setting.
 
-The design separates route construction, confidence estimation, and final context control: geometry supplies a local route prior, LinUCB feedback adapts route confidence over repeated interactions, Dense/BM25 protect recall, and calibration chooses final-budget parameters. Late rerankers and sentence or prompt compressors remain composable downstream components.
+The design separates route construction, confidence estimation, and final context control: geometry supplies a local route prior, LinUCB feedback adapts route confidence over repeated interactions, Dense/BM25 protect recall, and calibration chooses final-budget parameters. Late rerankers and sentence or prompt compressors remain composable downstream components \citep{hwang2024dslr,pan2024llmlingua2}.
 
 We likewise separate source candidates, global-dense invocation rate, and final retrieved context tokens. The efficiency claim uses only the last: candidate reductions are retrieval diagnostics unless the generator input also shrinks. At a declared provider input-token price, the measured percentage saving applies to the input-price component for that evidence, not total serving cost, latency, memory, energy, output tokens, or retrieval overhead.
 

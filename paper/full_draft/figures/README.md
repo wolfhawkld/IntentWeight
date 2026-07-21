@@ -10,9 +10,9 @@ deterministic vector data figures.
 
 - `figure1_system_diagram.svg`: method/system diagram.
 - `figure1_system_diagram.mmd`: Mermaid source for the system diagram.
-- `figure2_token_quality_frontier.svg`: LoTTE technology/search and
-  science/search Hit@10 and final context-token frontier plotted by corpus
-  chunk count.
+- `figure2_token_quality_frontier.svg`: paired Pareto-style quality-context map
+  connecting Dense adaptive truncation to IntentRoute for each displayed LoTTE
+  domain/scale point.
 - `figure2_token_quality_frontier_data.csv`: source data for Figure 2.
 - `figure3_geometry_to_control.svg`: three-panel main-paper geometry-to-control
   figure covering scale diagnostics, random-route attribution, and arm

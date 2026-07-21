@@ -10,7 +10,7 @@ the main claim:
 
 - **LoTTE technology/search** is the main large-scale vertical-domain evidence
   benchmark. We evaluate nested corpus scales from 100k to 638k chunks with
-  596 test queries.
+  596 test queries [@santhanam2022colbertv2].
 - **LoTTE science/search** is the cross-domain validation benchmark. It tests
   whether ranking and context-budget behavior transfer beyond technology/search
   at 20k/q200, 100k, 200k, and 400k scales. The 400k row is retained as a
@@ -23,11 +23,15 @@ the main claim:
 - **PubMedQA and CovidQA-RAG** are biomedical transfer checks. PubMedQA is an
   evidence-retrieval proof-of-concept with abstract-level ground truth and a
   near-ceiling dense baseline; CovidQA-RAG is a more discriminative native-full
-  RAGBench evidence-retrieval row.
+  RAGBench evidence-retrieval row [@jin2019pubmedqa; @friel2024ragbench].
 - **Banking77** is a supporting feedback-adaptation check for intent routing
-  rather than a strict evidence-retrieval benchmark.
+  rather than a strict evidence-retrieval benchmark
+  [@casanueva2020banking77].
 - **eManual and CUAD** are boundary cases. eManual exposes duplicate-text and
   strict chunk-id issues; CUAD is a sparse GT-anchored legal-domain smoke case.
+  Both evaluated rows use RAGBench-formatted evidence, while CUAD originates
+  from an expert-annotated legal-contract dataset
+  [@friel2024ragbench; @hendrycks2021cuad].
 
 This hierarchy separates full-stack evidence, cross-domain transfer, mechanism
 transfer, and boundary analysis. The complete quality-efficiency claim is
@@ -48,15 +52,19 @@ pooled replications.
 
 The baseline family includes:
 
-- BM25-only lexical retrieval.
-- Dense-only retrieval with `sentence-transformers/all-MiniLM-L6-v2`.
-- Matched dense and IntentRoute variants with BGE-base and E5-base embeddings.
-- BM25 + dense hybrid retrieval using reciprocal-rank fusion.
+- BM25-only lexical retrieval [@robertson2009bm25].
+- Dense-only retrieval with `sentence-transformers/all-MiniLM-L6-v2`
+  [@reimers2019sbert; @wang2020minilm].
+- Matched dense and IntentRoute variants with BGE-base and E5-base embeddings
+  [@xiao2024cpack; @wang2022e5].
+- BM25 + dense hybrid retrieval using reciprocal-rank fusion
+  [@cormack2009rrf].
 - Full multi-route IntentRoute.
 - Gated cost-aware IntentRoute.
 - Conservative confidence-conditioned final-context baseline.
-- Dense+Sentence-MMR final-context compression.
-- Cross-encoder reranking over dense top-50 candidates.
+- Dense+Sentence-MMR final-context compression [@carbonell1998mmr].
+- Cross-encoder reranking over dense top-50 candidates
+  [@nogueira2019reranking].
 - Static geometry controls such as nearest-cluster routing.
 - Naive controls such as random or epsilon-greedy arm selection.
 - No-feedback and uniform-random route controls.
@@ -76,7 +84,8 @@ Retrieval quality is measured with:
 - $\mathrm{Hit@K}$: whether any ground-truth chunk appears in the top $K$.
 - $\mathrm{EvidenceRecall@K}$: fraction of all ground-truth chunks retrieved.
 - $\mathrm{MRR@K}$: reciprocal rank of the first relevant chunk.
-- $\mathrm{nDCG@K}$: binary relevance ranking quality.
+- $\mathrm{nDCG@K}$: binary relevance ranking quality
+  [@jarvelin2002ndcg].
 
 For query $q_t$, let $G_t$ be the set of ground-truth chunks and let $R_t^K$
 be the top-$K$ retrieved chunks. The query-level hit metric is:
@@ -288,7 +297,7 @@ as a strict calibration-eligible main operating point.
 
 Frozen test results are paired by query against dense top-10. We report
 bootstrap confidence intervals for $\mathrm{Hit@10}$ deltas and final-context
-token savings where available, and use a 1 percentage-point non-inferiority
+token savings where available [@efron1979bootstrap], and use a 1 percentage-point non-inferiority
 margin as a strict seed-level engineering guardrail. On the original 417-query
 frozen test split, one percentage point corresponds to roughly four query-hit
 outcomes; on the 596-query out-of-fold population, it corresponds to roughly
@@ -312,7 +321,7 @@ The prospectively specified domain expansion applies the normalized five-fold pr
 domain uses the same MiniLM backbone, $K=32$, route seeds 13/17/19, eight
 prequential epochs, fixed top-10 endpoint, predefined budget grid, zero-drop
 eligibility gate, Dense fallback, paired bootstrap, McNemar analysis, and 1pp
-seed-level non-inferiority guardrail. The domains are calibrated and reported
+seed-level non-inferiority guardrail [@mcnemar1947]. The domains are calibrated and reported
 separately; no cross-domain pooled effect is computed.
 
 Two additional audits test selection robustness. First, Dense and IntentRoute
@@ -337,9 +346,10 @@ The run contains 2,100 generated answers and 6,272 schema-valid judgments:
 2,100 each from DeepSeek and GLM-5.2 and 2,072 from MiniMax-M3. Twenty-eight
 MiniMax-M3 inputs remain unavailable after provider-side content filtering and
 are not imputed. Cross-judge agreement uses the 2,072 query-method keys valid for all
-three judges. Correctness and faithfulness differences use paired query-level
-bootstrap intervals and exact McNemar tests within each judge and for the
-three-judge majority. Raw ordinal scores are not pooled across judges. The
+three judges. Pairwise judge agreement is summarized with Cohen's kappa
+[@cohen1960kappa]. Correctness and faithfulness differences use paired
+query-level bootstrap intervals and exact McNemar tests within each judge and
+for the three-judge majority. Raw ordinal scores are not pooled across judges. The
 under-specified `insufficient_context_appropriate` field is retained in raw
 artifacts but excluded from headline and agreement analyses. This protocol
 supports multi-judge answer-level robustness, not human-rated superiority.

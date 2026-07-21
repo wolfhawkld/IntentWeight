@@ -26,9 +26,9 @@ This does not mean that corpus geometry is sufficient by itself. Instead, Intent
 
 IntentRoute uses three retrieval routes.
 
-\textbf{Dense route.} The dense route performs global dense retrieval over the selected corpus using cosine similarity in embedding space. It is the primary quality baseline and the main recall floor.
+\textbf{Dense route.} The dense route performs global dense retrieval over the selected corpus using cosine similarity in embedding space. It is the primary quality baseline and the main recall floor \citep{karpukhin2020dpr}.
 
-\textbf{BM25 route.} The BM25 route performs global lexical retrieval. It supports exact-match and terminology-sensitive queries and provides a lexical alternative when dense similarity is insufficient.
+\textbf{BM25 route.} The BM25 route performs global lexical retrieval. It supports exact-match and terminology-sensitive queries and provides a lexical alternative when dense similarity is insufficient \citep{robertson2009bm25}.
 
 \textbf{Cluster-local route.} The cluster-local route performs dense retrieval within LinUCB-selected cluster arms. It allows the system to exploit local structure without searching the entire corpus as aggressively.
 
@@ -39,14 +39,14 @@ Figure~\ref{fig:system} summarizes this route-control architecture after the rou
 \subsection{Routing Arm Construction}
 \label{sec:04-method:routing-arm-construction}
 
-Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans. This is a deliberate experimental choice. LinUCB requires a fixed number of arms, fixed arms improve reproducibility across seeds and scales, and KMeans is fast enough for large-scale LoTTE experiments. The same arm count is used across LoTTE technology/search scales to keep the LinUCB state space comparable, even though larger corpora therefore contain more chunks per arm. We use 32 routing arms as the main reproducible operating point. A sensitivity study over $K \in \{8,16,32,64,128\}$ shows that full multi-route fused quality is stable across this range, while retrieval-stage gated routing is more sensitive because smaller $K$ changes route granularity and larger $K$ spreads feedback across more arms. We therefore treat 32 as an engineering choice, not a manifold-derived optimum.
+Corpus chunk embeddings are clustered with KMeans or MiniBatchKMeans \citep{macqueen1967kmeans,sculley2010minibatch}. This is a deliberate experimental choice. LinUCB requires a fixed number of arms, fixed arms improve reproducibility across seeds and scales, and KMeans is fast enough for large-scale LoTTE experiments. The same arm count is used across LoTTE technology/search scales to keep the LinUCB state space comparable, even though larger corpora therefore contain more chunks per arm. We use 32 routing arms as the main reproducible operating point. A sensitivity study over $K \in \{8,16,32,64,128\}$ shows that full multi-route fused quality is stable across this range, while retrieval-stage gated routing is more sensitive because smaller $K$ changes route granularity and larger $K$ spreads feedback across more arms. We therefore treat 32 as an engineering choice, not a manifold-derived optimum.
 
 The paper does not claim that KMeans is the best clustering algorithm for retrieval. HDBSCAN, graph clusters, or learned routing structures may be better in some deployments, but dynamic arm counts complicate the current LinUCB setup. Here, each cluster arm represents a local region of the retrieval surface. The cluster route searches inside selected arms, while dense and BM25 routes can rescue cases where the cluster route misses relevant evidence.
 
 \subsection{LinUCB Route Policy}
 \label{sec:04-method:linucb-route-policy}
 
-For each query $q_t$, IntentRoute computes a controller context vector $x_t \in \mathbb{R}^{p}$ by applying a corpus-fitted PCA projection to the query embedding and then L2-normalizing the projected vector. For each arm $a \in \mathcal{A}$, LinUCB maintains a linear value model:
+For each query $q_t$, IntentRoute computes a controller context vector $x_t \in \mathbb{R}^{p}$ by applying a corpus-fitted PCA projection to the query embedding and then L2-normalizing the projected vector \citep{jolliffe2016pca}. For each arm $a \in \mathcal{A}$, LinUCB maintains a linear value model \citep{li2010linucb}:
 
 \[
 \begin{aligned}

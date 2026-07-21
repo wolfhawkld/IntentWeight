@@ -4,8 +4,11 @@ Updated: 2026-07-05
 
 This document evaluates how to enrich the code-generated figures without
 changing the current manuscript claim or turning a diagnostic projection into
-visual proof of a manifold. It is a design proposal only; no main-paper figure
-should be replaced until the author approves the display set.
+visual proof of a manifold.
+
+Implementation status: the Figure 3 evidence stack was completed in Task77;
+the Figure 2 paired Pareto-style arrow map was approved and completed in
+Task80.1. The 3D and supplementary enrichment proposals remain deferred.
 
 ## 1. Current Figure Roles
 
@@ -313,10 +316,8 @@ manifold argument.
 
 ## 9. Recommended Priority
 
-1. **Redesign Figure 2 as a paired 2D Pareto arrow map.** Highest immediate
-   communication gain with no new experiment.
-2. **Redesign Figure 3 as a three-panel geometry-to-control evidence stack.**
-   Highest value for defending the central geometry-guided claim.
+1. **Completed:** Figure 2 uses a paired 2D Pareto-style arrow map.
+2. **Completed:** Figure 3 uses a three-panel geometry-to-control evidence stack.
 3. **Add the multi-judge forest/heatmap as a supplement.** Strong practical
    readability gain.
 4. **Add split-sensitivity and risk-coverage supplemental figures.** Useful for

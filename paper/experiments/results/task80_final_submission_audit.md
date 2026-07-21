@@ -16,8 +16,8 @@ Checks: 20/20 passed.
 | `paper_evidence_audit` | PASS | {"figure_data_files": 2, "main_tables": 5, "status": "PASS", "supplementary_numeric_values": 392} |
 | `task79_local_gate` | PASS | {"failed": 0, "passed": 14, "status": "PASS_COMPLETE"} |
 | `display_surface` | PASS | {"abstract_words_cas_validator_contract": 245, "cross_dataset_display_rows": 15, "dataset_domain_settings": 9, "domain_areas": 8, "main_figures": 3, "main_tables": 5, "supplement_tables": 23} |
-| `pdf_acl_complete_evidence` | PASS | pages=34; type3=0 |
-| `pdf_cas_anonymous_manuscript` | PASS | pages=26; type3=0 |
+| `pdf_acl_complete_evidence` | PASS | pages=35; type3=0 |
+| `pdf_cas_anonymous_manuscript` | PASS | pages=27; type3=0 |
 | `pdf_cas_supplement` | PASS | pages=13; type3=0 |
 | `pdf_cas_title_page` | PASS | pages=1; type3=0 |
 | `current_status_files_present` | PASS | [] |

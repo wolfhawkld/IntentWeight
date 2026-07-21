@@ -66,7 +66,12 @@ Query-level paired bootstrap intervals and McNemar-style win/loss counts show
 that token savings are more consistent than strict quality non-inferiority.
 The conservative confidence-only policy remains a stable 4.7-5.3% saving
 baseline; complete seed and policy details are reported in Supplementary Sections S1 and S7.
-Figure 2 visualizes the quality-cost frontier.
+Figure 2 places each reported IntentRoute point and its matched dense-adaptive
+truncation point in the same quality-context plane. Every arrow moves upward
+and left: IntentRoute gives up part of dense truncation's more aggressive token
+saving while recovering query-level Hit@10. The hollow technology/search 400k
+pair remains diagnostic because its primary calibration split was ineligible.
+The map visualizes a bounded trade-off, not universal Pareto dominance.
 
 ## 5.2 Matched-Backbone Robustness
 

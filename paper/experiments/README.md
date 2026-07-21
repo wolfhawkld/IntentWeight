@@ -1776,6 +1776,22 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     evidence surface、生成稿、ACL/CAS PDF、匿名性和历史状态文件完成统一对账，
     最终控制审计 20/20 通过。剩余工作仅见
     `task80_remaining_work_checklist.md`。
+46. Figure 2 paired trade-off redesign：Task80.1 已完成，详见
+    `paper/experiments/task80_1_figure2_pareto_redesign_summary.md`。原有六行
+    实验数据未变；图形改为 Dense adaptive truncation 到 IntentRoute 的配对箭头，
+    在同一坐标系展示 final evidence-context token saving 与 Hit@10 delta，并保留
+    technology/search 400k 空心诊断点及非普遍 Pareto dominance 边界。
+47. citation and Figure 3 layout revision：Task80.2 已完成，详见
+    `paper/experiments/task80_2_citation_and_figure3_layout_summary.md`。CAS 正文和
+    supplementary 的首次多作者引用改为紧凑 `et al.` 形式；Figure 3 的 Panel A/B
+    图例移出数据区，Panel C 使用末端直标。原始 CSV、实验数值、表格加粗、公式对齐
+    和 caption 位置均未改变。
+48. citation provenance audit：Task80.3 已完成，详见
+    `paper/experiments/task80_3_citation_provenance_audit_summary.md`。Introduction、
+    Method 与 Experimental Setup 已在外部数据集、算法、encoder、baseline 和统计
+    方法首次出现处补充原始或规范来源；BibTeX 从 32 项扩展到 50 项，当前引用键与
+    条目为 `50/50`，无未引用条目或未解析引用。Results、Discussion 与 Conclusion
+    仍以本研究 artifact 为依据，没有为追求章节分布而机械增加引用。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38

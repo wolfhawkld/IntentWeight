@@ -38,7 +38,7 @@ FIGURES = [
     ),
     (
         "Figure 2",
-        "Token-quality frontier across LoTTE scale",
+        "Paired quality-context trade-offs across LoTTE scales",
         DRAFT / "figures" / "figure2_token_quality_frontier.svg",
         DRAFT / "figures" / "figure2_token_quality_frontier_data.csv",
     ),

@@ -591,41 +591,102 @@ def generate_token_quality_figure(rows: list[TokenRow]) -> None:
     )
 
     parts = svg_header(1120, 520)
-    parts.append(text(40, 42, "Figure 2. Calibrated token-quality frontier by corpus chunk count", "title"))
-    parts.append(text(40, 64, "IntentRoute saves final LLM evidence-context tokens while avoiding dense-truncation Hit@10 loss.", "subtitle"))
+    parts.append(text(40, 42, "Figure 2. Paired quality-context trade-offs across corpus scales", "title"))
+    parts.append(text(40, 64, "Arrows connect matched Dense truncation and IntentRoute operating points; 400k* is diagnostic.", "subtitle"))
 
-    x0, y0, width, height = 80, 118, 420, 290
-    x_min, x_max = draw_chunk_axes(parts, rows, x0, y0, width, height, -4.0, 3.0, [-4.0, -2.0, 0.0, 2.0], "Hit@10 delta vs dense (pp)")
-    policy_points = chart_points_by_chunks(rows, [row.policy_hit_delta_pp for row in rows], x0, y0, width, height, x_min, x_max, -4.0, 3.0)
-    dense_points = chart_points_by_chunks(rows, [row.dense_adaptive_hit_delta_pp for row in rows], x0, y0, width, height, x_min, x_max, -4.0, 3.0)
-    zero_y = y0 + height - ((0.0 - -4.0) / 7.0) * height
-    parts.append(line(x0, zero_y, x0 + width, zero_y, "#b8c2cc", 1.2))
-    grouped_polylines(parts, rows, policy_points, "#2f855a")
-    grouped_polylines(parts, rows, dense_points, "#1f5f8b")
-    for point in policy_points:
-        parts.append(circle(*point, "#2f855a"))
-    for point in dense_points:
-        parts.append(circle(*point, "#1f5f8b"))
-    parts.append(f'<rect x="260" y="92" width="12" height="12" fill="#2f855a" />')
-    parts.append(text(278, 103, "IntentRoute budget", "legend"))
-    parts.append(f'<rect x="410" y="92" width="12" height="12" fill="#1f5f8b" />')
-    parts.append(text(428, 103, "Dense adaptive truncation", "legend"))
-    parts.append(text(80, 444, "solid=technology/search; dashed=science/search", "tick"))
+    x0, y0, width, height = 100.0, 132.0, 920.0, 278.0
+    x_min, x_max = -1.0, 24.5
+    y_min, y_max = -4.5, 3.0
 
-    x1, y1, w1, h1 = 630, 118, 400, 290
-    x_min, x_max = draw_chunk_axes(parts, rows, x1, y1, w1, h1, 0.0, 24.0, [0.0, 8.0, 16.0, 24.0], "Final context token saving (%)")
-    saving_points = chart_points_by_chunks(rows, [row.policy_saving_pct for row in rows], x1, y1, w1, h1, x_min, x_max, 0.0, 24.0)
-    dense_saving_points = chart_points_by_chunks(rows, [row.dense_adaptive_saving_pct for row in rows], x1, y1, w1, h1, x_min, x_max, 0.0, 24.0)
-    grouped_polylines(parts, rows, saving_points, "#2f855a")
-    grouped_polylines(parts, rows, dense_saving_points, "#1f5f8b")
-    for row, (x, y) in zip(rows, saving_points):
-        parts.append(circle(x, y, "#2f855a"))
-        parts.append(text(x, y - 12, f"{row.policy_saving_pct:.1f}%", "tick", "middle"))
-    for row, (x, y) in zip(rows, dense_saving_points):
-        parts.append(circle(x, y, "#1f5f8b"))
-        parts.append(text(x, y + 18, f"{row.dense_adaptive_saving_pct:.1f}%", "tick", "middle"))
+    def plot_xy(saving: float, hit_delta: float) -> tuple[float, float]:
+        x = x0 + ((saving - x_min) / (x_max - x_min)) * width
+        y = y0 + height - ((hit_delta - y_min) / (y_max - y_min)) * height
+        return x, y
 
-    parts.append(text(80, 468, "Caption boundary: dense truncation saves more tokens but loses Hit@10; IntentRoute targets the safer frontier.", "subtitle"))
+    def point_marker(
+        x: float,
+        y: float,
+        color: str,
+        domain: str,
+        *,
+        hollow: bool = False,
+    ) -> str:
+        fill = "#ffffff" if hollow else color
+        if domain == "science/search":
+            return (
+                f'<path d="M{x:.1f},{y - 7:.1f} L{x + 7:.1f},{y:.1f} '
+                f'L{x:.1f},{y + 7:.1f} L{x - 7:.1f},{y:.1f} Z" '
+                f'fill="{fill}" stroke="{color}" stroke-width="2" />'
+            )
+        return (
+            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="6.5" fill="{fill}" '
+            f'stroke="{color}" stroke-width="2" />'
+        )
+
+    parts.append(line(x0, y0, x0, y0 + height, "#9aa5b1", 1.2))
+    parts.append(line(x0, y0 + height, x0 + width, y0 + height, "#9aa5b1", 1.2))
+    for tick_value in (0.0, 5.0, 10.0, 15.0, 20.0):
+        x, _ = plot_xy(tick_value, y_min)
+        parts.append(line(x, y0, x, y0 + height, "#edf0f2", 1.0))
+        parts.append(text(x, y0 + height + 23, f"{tick_value:.0f}", "tick", "middle"))
+    for tick_value in (-4.0, -2.0, 0.0, 2.0):
+        _, y = plot_xy(x_min, tick_value)
+        color = "#9aa5b1" if tick_value == 0.0 else "#edf0f2"
+        width_value = 1.6 if tick_value == 0.0 else 1.0
+        parts.append(line(x0, y, x0 + width, y, color, width_value))
+        parts.append(text(x0 - 12, y + 5, f"{tick_value:+.0f}", "tick", "end"))
+    parts.append(text(x0 + width / 2, 458, "Final evidence-context token saving vs Dense top-10 (%)", "label", "middle"))
+    parts.append(
+        '<text x="30" y="275" class="label" text-anchor="middle" '
+        'transform="rotate(-90 30 275)">Hit@10 delta vs Dense top-10 (pp)</text>'
+    )
+
+    label_offsets = {
+        ("technology/search", "100k"): (-10.0, 21.0),
+        ("technology/search", "200k"): (0.0, -15.0),
+        ("technology/search", "400k"): (0.0, -15.0),
+        ("technology/search", "638k"): (-9.0, -15.0),
+        ("science/search", "20k/q200"): (-9.0, -16.0),
+        ("science/search", "100k"): (10.0, 22.0),
+    }
+    for row in rows:
+        dense_x, dense_y = plot_xy(row.dense_adaptive_saving_pct, row.dense_adaptive_hit_delta_pp)
+        policy_x, policy_y = plot_xy(row.policy_saving_pct, row.policy_hit_delta_pp)
+        dx, dy = policy_x - dense_x, policy_y - dense_y
+        length = math.hypot(dx, dy)
+        ux, uy = dx / length, dy / length
+        diagnostic = row.domain == "technology/search" and row.scale == "400k"
+        dash = ' stroke-dasharray="7 5"' if diagnostic else ""
+        parts.append(
+            f'<line x1="{dense_x + ux * 9:.1f}" y1="{dense_y + uy * 9:.1f}" '
+            f'x2="{policy_x - ux * 10:.1f}" y2="{policy_y - uy * 10:.1f}" '
+            f'stroke="#7b8794" stroke-width="2"{dash} marker-end="url(#arrow)" />'
+        )
+        parts.append(point_marker(dense_x, dense_y, "#1f5f8b", row.domain, hollow=diagnostic))
+        parts.append(point_marker(policy_x, policy_y, "#2f855a", row.domain, hollow=diagnostic))
+        offset_x, offset_y = label_offsets[(row.domain, row.scale)]
+        label = f"{row.scale}*" if diagnostic else row.scale
+        anchor = "end" if offset_x < 0 else ("start" if offset_x > 0 else "middle")
+        parts.append(text(policy_x + offset_x, policy_y + offset_y, label, "tick", anchor))
+
+    dense_ref_x, dense_ref_y = plot_xy(0.0, 0.0)
+    parts.append(line(dense_ref_x - 6, dense_ref_y, dense_ref_x + 6, dense_ref_y, "#323f4b", 2.0))
+    parts.append(line(dense_ref_x, dense_ref_y - 6, dense_ref_x, dense_ref_y + 6, "#323f4b", 2.0))
+    parts.append(text(dense_ref_x + 10, dense_ref_y - 9, "Dense top-10 reference", "tick"))
+
+    legend_y = 104.0
+    parts.append(point_marker(185, legend_y, "#2f855a", "technology/search"))
+    parts.append(text(199, legend_y + 5, "IntentRoute", "legend"))
+    parts.append(point_marker(342, legend_y, "#1f5f8b", "technology/search"))
+    parts.append(text(356, legend_y + 5, "Dense adaptive truncation", "legend"))
+    parts.append(point_marker(590, legend_y, "#52606d", "technology/search"))
+    parts.append(text(604, legend_y + 5, "technology/search", "legend"))
+    parts.append(point_marker(775, legend_y, "#52606d", "science/search"))
+    parts.append(text(789, legend_y + 5, "science/search", "legend"))
+    parts.append(point_marker(945, legend_y, "#52606d", "technology/search", hollow=True))
+    parts.append(text(959, legend_y + 5, "diagnostic", "legend"))
+
+    parts.append(text(100, 492, "Arrow direction: left gives up some saving; up recovers query-level Hit. No arrow denotes universal dominance.", "subtitle"))
     parts.append("</svg>")
     (FIGURES / "figure2_token_quality_frontier.svg").write_text("\n".join(parts) + "\n", encoding="utf-8")
 
@@ -949,9 +1010,9 @@ deterministic vector data figures.
 
 - `figure1_system_diagram.svg`: method/system diagram.
 - `figure1_system_diagram.mmd`: Mermaid source for the system diagram.
-- `figure2_token_quality_frontier.svg`: LoTTE technology/search and
-  science/search Hit@10 and final context-token frontier plotted by corpus
-  chunk count.
+- `figure2_token_quality_frontier.svg`: paired Pareto-style quality-context map
+  connecting Dense adaptive truncation to IntentRoute for each displayed LoTTE
+  domain/scale point.
 - `figure2_token_quality_frontier_data.csv`: source data for Figure 2.
 - `figure3_geometry_to_control.svg`: three-panel main-paper geometry-to-control
   figure covering scale diagnostics, random-route attribution, and arm

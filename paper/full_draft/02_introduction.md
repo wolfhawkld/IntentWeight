@@ -1,7 +1,8 @@
 # 1. Introduction
 
 Knowledge-augmented agents condition language-model responses on external
-evidence, commonly supplied by retrieval-augmented generation (RAG). The broader
+evidence, commonly supplied by retrieval-augmented generation (RAG)
+[@lewis2020rag]. The broader
 control problem is deciding which structured domain knowledge enters a limited
 context. Missing evidence is difficult for the generator to recover, whereas
 excess evidence increases latency, context cost, and distracting noise.
@@ -9,7 +10,8 @@ Practical systems must therefore decide which route to trust and how much
 evidence is safe.
 
 Dense retrieval is a strong baseline because it recovers semantically related
-passages despite surface-form mismatch. As a fixed route, however, it does not
+passages despite surface-form mismatch [@karpukhin2020dpr]. As a fixed route,
+however, it does not
 decide when lexical matching or local cluster structure is informative, when
 global dense retrieval should rescue a route, or when the final context can be
 compacted. These decisions matter in large, terminology-heavy vertical corpora
@@ -42,7 +44,8 @@ The design separates route construction, confidence estimation, and final
 context control: geometry supplies a local route prior, LinUCB feedback adapts
 route confidence over repeated interactions, Dense/BM25 protect recall, and
 calibration chooses final-budget parameters. Late rerankers and sentence or
-prompt compressors remain composable downstream components.
+prompt compressors remain composable downstream components
+[@hwang2024dslr; @pan2024llmlingua2].
 
 We likewise separate source candidates, global-dense invocation rate, and final
 retrieved context tokens. The efficiency claim uses only the last: candidate

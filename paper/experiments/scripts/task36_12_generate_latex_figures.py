@@ -11,6 +11,7 @@ from pathlib import Path
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/intentroute-matplotlib")
 
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 
@@ -140,41 +141,92 @@ def system_diagram() -> None:
 
 def token_quality() -> None:
     rows = read_csv("figure2_token_quality_frontier_data.csv")
-    x_values = [row_chunks(row) for row in rows]
     policy_hit_delta = [float(row["policy_hit_delta_pp"]) for row in rows]
     dense_hit_delta = [float(row["dense_adaptive_hit_delta_pp"]) for row in rows]
     policy_saving = [float(row["policy_saving_pct"]) for row in rows]
     dense_saving = [float(row["dense_adaptive_saving_pct"]) for row in rows]
 
-    fig, axes = plt.subplots(1, 2, figsize=(FULL_WIDTH_INCH, 76.0 * MM_TO_INCH))
-    for domain, indices in domain_groups(rows).items():
-        linestyle = "-" if domain == "technology/search" else "--"
-        xs = [x_values[idx] for idx in indices]
-        axes[0].plot(xs, [policy_hit_delta[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentRoute {domain_name(domain)}")
-        axes[0].plot(xs, [dense_hit_delta[idx] for idx in indices], marker="x", linestyle=linestyle, label=f"Dense trunc. {domain_name(domain)}")
-    axes[0].axhline(0.0, color="#52606d", linestyle="--", linewidth=1)
-    axes[0].set_ylabel("Hit@10 delta vs dense (pp)")
-    set_chunk_axis(axes[0])
-    axes[0].grid(alpha=0.3)
+    fig, ax = plt.subplots(figsize=(FULL_WIDTH_INCH, 76.0 * MM_TO_INCH))
+    method_colors = {"policy": "#2f855a", "dense": "#1f5f8b"}
+    domain_markers = {"technology/search": "o", "science/search": "D"}
+    label_offsets = {
+        ("technology/search", "100k"): (-4, 7),
+        ("technology/search", "200k"): (0, 7),
+        ("technology/search", "400k"): (0, 7),
+        ("technology/search", "638k"): (-4, 7),
+        ("science/search", "20k/q200"): (-4, 8),
+        ("science/search", "100k"): (5, -13),
+    }
+    for idx, row in enumerate(rows):
+        domain = row.get("domain", "technology/search")
+        marker = domain_markers[domain]
+        diagnostic = domain == "technology/search" and row["scale"] == "400k"
+        ax.add_patch(
+            FancyArrowPatch(
+                (dense_saving[idx], dense_hit_delta[idx]),
+                (policy_saving[idx], policy_hit_delta[idx]),
+                arrowstyle="-|>",
+                mutation_scale=10,
+                linewidth=1.1,
+                linestyle="--" if diagnostic else "-",
+                color="#7b8794",
+                shrinkA=5,
+                shrinkB=5,
+                zorder=2,
+            )
+        )
+        for saving, hit_delta, color in (
+            (dense_saving[idx], dense_hit_delta[idx], method_colors["dense"]),
+            (policy_saving[idx], policy_hit_delta[idx], method_colors["policy"]),
+        ):
+            ax.scatter(
+                [saving],
+                [hit_delta],
+                marker=marker,
+                s=42,
+                facecolors="white" if diagnostic else color,
+                edgecolors=color,
+                linewidths=1.2,
+                zorder=3,
+            )
+        label = f"{row['scale']}*" if diagnostic else row["scale"]
+        ax.annotate(
+            label,
+            (policy_saving[idx], policy_hit_delta[idx]),
+            xytext=label_offsets[(domain, row["scale"])],
+            textcoords="offset points",
+            ha="center",
+            va="center",
+            fontsize=7,
+        )
 
-    for domain, indices in domain_groups(rows).items():
-        linestyle = "-" if domain == "technology/search" else "--"
-        xs = [x_values[idx] for idx in indices]
-        axes[1].plot(xs, [policy_saving[idx] for idx in indices], marker="o", linestyle=linestyle, label=f"IntentRoute {domain_name(domain)}")
-        axes[1].plot(xs, [dense_saving[idx] for idx in indices], marker="x", linestyle=linestyle, label=f"Dense trunc. {domain_name(domain)}")
-    axes[1].set_ylabel("Final context token saving (%)")
-    set_chunk_axis(axes[1])
-    axes[1].grid(alpha=0.3)
-    handles, labels = axes[0].get_legend_handles_labels()
+    ax.scatter([0], [0], marker="P", s=34, color="#323f4b", zorder=3)
+    ax.annotate("Dense top-10 reference", (0, 0), xytext=(6, 7), textcoords="offset points", fontsize=7)
+    ax.axhline(0.0, color="#7b8794", linestyle="--", linewidth=1.0)
+    ax.set_xlim(-1.0, 24.5)
+    ax.set_ylim(-4.5, 3.0)
+    ax.set_xticks([0, 5, 10, 15, 20])
+    ax.set_yticks([-4, -2, 0, 2])
+    ax.set_xlabel("Final evidence-context token saving vs Dense top-10 (%)")
+    ax.set_ylabel("Hit@10 delta vs Dense top-10 (pp)")
+    ax.grid(alpha=0.25)
+    ax.set_axisbelow(True)
+
+    handles = [
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=method_colors["policy"], markeredgecolor=method_colors["policy"], label="IntentRoute"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=method_colors["dense"], markeredgecolor=method_colors["dense"], label="Dense adaptive truncation"),
+        Line2D([0], [0], marker="o", color="#52606d", linestyle="none", label="technology/search"),
+        Line2D([0], [0], marker="D", color="#52606d", linestyle="none", label="science/search"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor="white", markeredgecolor="#52606d", label="diagnostic"),
+    ]
     fig.legend(
-        handles,
-        labels,
+        handles=handles,
         loc="upper center",
         bbox_to_anchor=(0.5, 0.995),
-        ncol=4,
+        ncol=5,
         frameon=False,
     )
-    fig.subplots_adjust(left=0.075, right=0.985, bottom=0.18, top=0.80, wspace=0.28)
+    fig.subplots_adjust(left=0.09, right=0.985, bottom=0.19, top=0.82)
     save(fig, "figure2_token_quality_frontier.pdf")
 
 
@@ -231,15 +283,22 @@ def geometry_to_control() -> None:
     axes[0].set_xscale("log")
     axes[0].set_ylim(0.55, 0.95)
     axes[0].set_xticks([20000, 100000, 400000], ["20k", "100k", "400k"])
-    axes[0].set_xlabel("Corpus chunks (log)")
+    axes[0].set_xlabel("Corpus chunks (log)\nsolid: technology; dashed: science")
     axes[0].set_ylabel("Diagnostic value")
     axes[0].set_title("A  Cross-scale geometry")
-    domain_handles = [
-        plt.Line2D([0], [0], color="#52606d", linestyle="-", label="technology"),
-        plt.Line2D([0], [0], color="#52606d", linestyle="--", label="science"),
-    ]
     metric_handles, metric_labels = axes[0].get_legend_handles_labels()
-    axes[0].legend(metric_handles + domain_handles, metric_labels + ["technology", "science"], loc="lower left", fontsize=7.0, frameon=False)
+    axes[0].legend(
+        metric_handles,
+        metric_labels,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.31),
+        fontsize=7.0,
+        frameon=False,
+        ncol=1,
+        borderaxespad=0.0,
+        labelspacing=0.25,
+        handlelength=1.7,
+    )
     axes[0].grid(alpha=0.25)
 
     labels = ["Static\ngeometry", "Uniform\nrandom"]
@@ -258,7 +317,16 @@ def geometry_to_control() -> None:
     axes[1].set_xticks(x_values, labels)
     axes[1].set_ylabel("Mean metric")
     axes[1].set_title("B  Geometry vs random")
-    axes[1].legend(loc="lower left", fontsize=7.0, frameon=False)
+    axes[1].legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.31),
+        fontsize=7.0,
+        frameon=False,
+        ncol=1,
+        borderaxespad=0.0,
+        labelspacing=0.25,
+        handlelength=1.7,
+    )
     axes[1].grid(axis="y", alpha=0.25)
 
     arm_counts = [int(row["arm_count"]) for row in arm_rows]
@@ -269,6 +337,7 @@ def geometry_to_control() -> None:
     axes[2].plot(arm_counts, dense_rate, color="#1f5f8b", marker="s", label="Gated Dense rate")
     axes[2].set_xscale("log", base=2)
     axes[2].set_xticks(arm_counts, [str(value) for value in arm_counts])
+    axes[2].set_xlim(7.0, 145.0)
     axes[2].set_ylim(0.0, 1.05)
     axes[2].set_xlabel("Number of arms K")
     axes[2].set_ylabel("Route metric / rate")
@@ -279,12 +348,39 @@ def geometry_to_control() -> None:
     hit_axis.set_ylim(-6.0, 0.5)
     hit_axis.set_ylabel("Gated Hit delta (pp)", color="#b42318")
     hit_axis.tick_params(axis="y", colors="#b42318")
-    handles, labels = axes[2].get_legend_handles_labels()
-    hit_handles, hit_labels = hit_axis.get_legend_handles_labels()
-    axes[2].legend(handles + hit_handles, labels + hit_labels, loc="lower right", fontsize=7.0, frameon=False)
+    axes[2].annotate(
+        "Static reward",
+        (arm_counts[-1], reward[-1]),
+        xytext=(-5, -8),
+        textcoords="offset points",
+        color="#2f855a",
+        fontsize=7.0,
+        ha="right",
+        va="center",
+    )
+    axes[2].annotate(
+        "Dense rate",
+        (arm_counts[-1], dense_rate[-1]),
+        xytext=(-5, -8),
+        textcoords="offset points",
+        color="#1f5f8b",
+        fontsize=7.0,
+        ha="right",
+        va="center",
+    )
+    hit_axis.annotate(
+        "Hit delta",
+        (arm_counts[-1], hit_delta[-1]),
+        xytext=(-5, 0),
+        textcoords="offset points",
+        color="#b42318",
+        fontsize=7.0,
+        ha="right",
+        va="center",
+    )
     axes[2].grid(alpha=0.25)
 
-    fig.subplots_adjust(left=0.062, right=0.952, bottom=0.18, top=0.90, wspace=0.38)
+    fig.subplots_adjust(left=0.062, right=0.94, bottom=0.32, top=0.90, wspace=0.44)
     save(fig, "figure3_geometry_to_control.pdf")
 
 

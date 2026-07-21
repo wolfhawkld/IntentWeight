@@ -55,8 +55,10 @@ separately calibrated context budgeting, and trust-weighted feedback.
 
 ### Figure 2: Calibrated Token-Quality Frontier
 
-Shows hit delta and final context-token saving across LoTTE scales. The caption
-states that dense truncation compresses more aggressively but loses hit rate.
+Uses a paired Pareto-style arrow map with final context-token saving on the
+x-axis and Hit@10 delta on the y-axis. Each arrow connects matched dense
+adaptive truncation to IntentRoute for one domain/scale. Marker shape encodes
+domain, and the hollow 400k technology pair remains explicitly diagnostic.
 
 ### Figure 3: From Local Geometry to Route-Control Behavior
 
