@@ -1,6 +1,10 @@
 # Journal Submission Prep
 
-Updated: 2026-07-05
+Updated: 2026-07-21 (Task80 reconciliation)
+
+Current repository-controlled status is generated in
+`paper/experiments/task80_authoritative_submission_state.md`. Older Task50,
+Task66, and Task67 reports in this directory are historical checkpoints.
 
 This directory tracks the journal-oriented submission package for the current
 IntentRoute manuscript.
@@ -38,11 +42,12 @@ IR contribution beyond the current engineering frontier.
   `paper/journal_submission/latex/`, following the current IP&M template link.
 - The anonymous manuscript uses CAS `doubleblind`, and the non-anonymous title
   page is a separate file.
-- The abstract is 218 words, within the 250-word IP&M limit.
+- The abstract is 245 words under the CAS validator contract, within the
+  250-word IP&M limit.
 - Two final-size deterministic vector data figures, one non-final author-owned
   Figure 1 placeholder, editable LaTeX tables, bibliography sources,
   highlights, keywords, and a source-hash manifest are included.
-- The 24-page main manuscript and 12-page supplementary-material document are
+- The 26-page main manuscript and 13-page supplementary-material document are
   compiled and validated separately.
 - Author identity, affiliation, address, acknowledgements, and declarations are
   intentionally left as placeholders in this directory.
@@ -91,6 +96,8 @@ recomputes all values in the five main tables from tracked result files.
 3. Replace placeholder data/code availability text with release URLs.
 4. Decide whether to post a preprint before or after journal review.
 5. Recheck the current IP&M upload fields immediately before submission.
+6. Complete the independent scientific and English/layout review and freeze
+   the submitted commit and checksums.
 
 ## Official Format Basis
 

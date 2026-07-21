@@ -198,9 +198,18 @@ def run(args: argparse.Namespace) -> int:
         for judge in ("glm-5.2", "minimax-m3")
     }
     new_external_complete = all(count == 600 for count in new_external_coverage.values())
+    all_three_judges_complete = all(judgment_counts.get(judge, 0) == 1200 for judge in JUDGES)
+    legacy_missing_count = sum(
+        (query_id, method, judge) not in judgment_keys
+        for query_id, method in answer_keys
+        if method in REFERENCE_METHODS
+        for judge in JUDGES
+    )
     payload = {
         "status": (
-            "COMPLETE_TASK79_NEW_ENDPOINT_JUDGING_WITH_RECORDED_LEGACY_MISSINGNESS"
+            "COMPLETE_ALL_THREE_JUDGE_COVERAGE"
+            if all_three_judges_complete
+            else "COMPLETE_TASK79_NEW_ENDPOINT_JUDGING_WITH_RECORDED_LEGACY_MISSINGNESS"
             if deepseek_complete and new_external_complete
             else "LOCAL_DEEPSEEK_COMPLETE_EXTERNAL_JUDGES_PENDING"
             if deepseek_complete
@@ -213,6 +222,8 @@ def run(args: argparse.Namespace) -> int:
         "valid_judgments_by_model": dict(sorted(judgment_counts.items())),
         "new_external_coverage": new_external_coverage,
         "new_external_complete": new_external_complete,
+        "all_three_judges_complete": all_three_judges_complete,
+        "legacy_missing_count": legacy_missing_count,
         "provider": {
             "answer_and_local_judge": "DeepSeek OpenAI-compatible API",
             "base_url": "https://api.deepseek.com",
@@ -280,7 +291,14 @@ def run(args: argparse.Namespace) -> int:
         f"- Failure attempts retained: `{len(failures)}`; recovered keys: `{len(recovered)}`",
         "",
         "The 600 Sentence-MMR answers are reused. Only the 600 LLMLingua-2 answers are newly generated.",
-        "Both new LLMLingua-2 endpoints have complete three-judge coverage. Seven historical MiniMax Sentence-MMR judgments remain missing and are not imputed.",
+        (
+            "Both new LLMLingua-2 endpoints and both reused Sentence-MMR endpoints have complete three-judge coverage."
+            if legacy_missing_count == 0
+            else (
+                "Both new LLMLingua-2 endpoints have complete three-judge coverage. "
+                f"Historical Sentence-MMR judgments still missing: {legacy_missing_count}; none are imputed."
+            )
+        ),
         "Credentials and API keys are not recorded.",
         "",
     ]

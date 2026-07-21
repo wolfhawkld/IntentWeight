@@ -1,0 +1,110 @@
+{
+  "answer_evaluation": {
+    "sent_mmr_complete_pair_count": 300,
+    "sent_mmr_majority_faithfulness_delta_pp": 3.6666666666666665,
+    "sent_mmr_majority_faithfulness_mcnemar_p": 0.052238985896110535,
+    "task63_answers": 2100,
+    "task63_expected_judgments": 6300,
+    "task63_remaining_minimax_missing": 28,
+    "task63_shared_three_judge_keys": 2072,
+    "task63_valid_judgments": 6272,
+    "task79_answers": 1200,
+    "task79_expected_judgments": 3600,
+    "task79_missing_judgments": 0,
+    "task79_primary_context_saving_ci_percent": [
+      4.316238884348039,
+      9.027501850314668
+    ],
+    "task79_primary_context_saving_percent": 6.686679055288197,
+    "task79_primary_majority_correctness_ci_pp": [
+      -3.0,
+      4.333333333333334
+    ],
+    "task79_primary_majority_correctness_delta_pp": 0.6666666666666667,
+    "task79_valid_judgments": 3600
+  },
+  "authority": {
+    "generated_from_current_worktree": true,
+    "manual_submission_fields_excluded": true,
+    "scope": "repository-controlled scientific and submission state through Task80"
+  },
+  "claim_boundary": {
+    "chain": "local geometric structure -> adaptive route selection -> feedback correction -> quality-efficiency trade-off",
+    "cost": "final evidence-context input tokens; not end-to-end serving cost",
+    "dense": "strong baseline, recall floor, and fallback; not universally replaced",
+    "feedback": "controlled repeated-interaction and conditional recovery evidence; not production RLHF",
+    "geometry": "design hypothesis and route diagnostic; not a manifold theorem or compression oracle"
+  },
+  "compiled_packages": {
+    "acl_complete_evidence": {
+      "pages": 34,
+      "path": "paper/latex/main.pdf",
+      "sha256": "bfd42ed6589811d74f6afe621ff7bd96f97a5d9dd86678fa667d8c084b881030",
+      "type3_fonts": []
+    },
+    "cas_anonymous_manuscript": {
+      "pages": 26,
+      "path": "paper/journal_submission/latex/anonymous_manuscript.pdf",
+      "sha256": "7ee45e3b76f97e66558ffec9026b6a9581ef24631246057060aa9a3c3b83baa1",
+      "type3_fonts": []
+    },
+    "cas_supplement": {
+      "pages": 13,
+      "path": "paper/journal_submission/latex/supplementary_material.pdf",
+      "sha256": "b741b838d023992ee406b11799ab5634ab4a394b9d33dd327948afb5f13124a4",
+      "type3_fonts": []
+    },
+    "cas_title_page": {
+      "pages": 1,
+      "path": "paper/journal_submission/latex/title_page.pdf",
+      "sha256": "f3e87314cc85c4af92f547723adda6455eee37f3b03f0d6bf5aa94b4066e042b",
+      "type3_fonts": []
+    }
+  },
+  "evidence_surface": {
+    "abstract_words_cas_validator_contract": 245,
+    "canonical_main_text_words_whitespace_count": 12070,
+    "cross_dataset_display_rows": 15,
+    "dataset_domain_settings": 9,
+    "domain_areas": 8,
+    "main_figures": 3,
+    "main_tables": 5,
+    "supplement_tables": 23
+  },
+  "remaining_author_or_release_work": [
+    "replace Figure 1 placeholder with author-produced editable vector artwork",
+    "complete author identities, affiliations, ORCIDs, CRediT roles, and declarations",
+    "audit redistribution licenses and prepare a blinded/public reproducibility package",
+    "obtain independent scientific and English/layout review, then freeze the submission"
+  ],
+  "source_sha256": {
+    "task43_audit": "5bfcea68a89a1ec87ad15a4f1bfbc3b56160a4b12699bf032ef5e0425086c988",
+    "task51_audit": "1a10762f9bc33aa072748849de2c3ac31dc1b1c0846522fc6c58c301d5d575eb",
+    "task65_analysis": "6f2530ea38de4c01f3524ac92b68bdad684ab2ae8e2a0de907000b092222e5c7",
+    "task67_audit": "3e9a7546efca98bb1e2207c0f6b7428a846f0480dbe166f56e37353d2d7d0380",
+    "task79_analysis": "8fbd4a993e2cdeb8b100eee7b668f148b6fc5848bb39fef0895f53722d759234",
+    "task79_gate": "b288261ace18089e9c4cf70fc882d408061bd76e814a09485d72e3c9130864b5"
+  },
+  "status": "TASK80_COMPLETE_REPOSITORY_STATE_RECONCILED",
+  "validation": {
+    "task43": {
+      "checks": 128,
+      "failed": 0,
+      "passed": 128
+    },
+    "task51": {
+      "PASS": 921
+    },
+    "task67": {
+      "figure_data_files": 2,
+      "main_tables": 5,
+      "status": "PASS",
+      "supplementary_numeric_values": 392
+    },
+    "task79_gate": {
+      "failed": 0,
+      "passed": 14,
+      "status": "PASS_COMPLETE"
+    }
+  }
+}

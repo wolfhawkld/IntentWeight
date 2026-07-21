@@ -1,6 +1,11 @@
 # IntentRoute Full Draft
 
-Updated: 2026-07-16
+Updated: 2026-07-21
+
+Current repository-controlled counts and remaining submission work are
+authoritative in `../experiments/task80_authoritative_submission_state.md` and
+`../experiments/task80_remaining_work_checklist.md`. Task-specific summaries
+remain evidence and provenance records, not current submission dashboards.
 
 This directory contains the first complete paper draft assembled after the
 paper evidence package, pre-writing validation work, and review-defense
@@ -110,11 +115,12 @@ roles must remain visible but must not be pooled as equivalent replications.
 Task65 reduced the main Results display from eight tables and five figures to
 five tables and three figures. Detailed cross-domain, recovery, compressor,
 reranker, and control results remain in the separately compiled supplement.
-After Task74, the complete ACL-style working PDF is 37 pages including
-references and the evidence appendix, with zero critical LaTeX warnings. The
-IP&M package separates the evidence appendix into a 15-page supplement. Task76
-reduces the anonymous main manuscript from 26 to 25 pages by removing 10.53% of
-repeated main-text wording without deleting evidence.
+The current complete ACL-style working PDF is 34 pages including references and
+the evidence appendix, with zero critical LaTeX warnings. The IP&M package
+separates the evidence appendix into a 13-page supplement and retains a 26-page
+anonymous main manuscript. The earlier editorial compression pass removed
+10.53% of repeated main-text wording without deleting evidence; later evidence
+integration accounts for the current page count.
 
 ## Journal Submission Pass
 

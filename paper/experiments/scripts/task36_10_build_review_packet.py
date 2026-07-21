@@ -117,7 +117,12 @@ def figure_index() -> str:
 def submission_checklist() -> str:
     return """# Submission Review Checklist
 
-Updated: 2026-07-05
+Updated: 2026-07-21
+
+This is an independent-review rubric, not a live completion tracker. Current
+repository-controlled status and remaining submission work are authoritative in
+`../experiments/task80_authoritative_submission_state.md` and
+`../experiments/task80_remaining_work_checklist.md`.
 
 ## Claim Boundary
 
@@ -174,11 +179,16 @@ Updated: 2026-07-05
 def packet_readme() -> str:
     return """# IntentRoute Review Packet
 
-Updated: 2026-07-05
+Updated: 2026-07-21
 
 This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent
 academic review before LaTeX venue migration.
+
+This packet is a generated review surface, not the authoritative project-status
+record. Use `../experiments/task80_authoritative_submission_state.md` and
+`../experiments/task80_remaining_work_checklist.md` for current counts and
+remaining work.
 
 ## Review Entry Points
 
@@ -281,7 +291,7 @@ def main() -> None:
     supplement_word_count = len(re.findall(r"\b[\w-]+\b", supplement))
     report = f"""# Review Packet Validation Report
 
-Updated: 2026-07-05
+Updated: 2026-07-21
 
 ## Source Draft Audit
 

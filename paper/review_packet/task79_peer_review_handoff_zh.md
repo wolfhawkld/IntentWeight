@@ -1,8 +1,12 @@
 # IntentRoute 截至 Task79 的同行审阅交接说明
 
-状态：Task79 已完成，Task80 尚未开始全局状态对账  
-审阅基线提交：`a84818a`  
-日期：2026-07-20
+> **Historical Task79 review checkpoint:** 当前状态与剩余任务请以
+> `../experiments/task80_authoritative_submission_state.md` 和
+> `../experiments/task80_remaining_work_checklist.md` 为准。
+
+状态：Task79 已完成，Task80 尚未开始全局状态对账
+审阅基线：`pre_validation` 分支，Task79 complete-recovery revision
+日期：2026-07-21
 
 ## 1. 文档目的
 
@@ -201,13 +205,13 @@ controller，而不是声称它独占 context compression 能力。
 ### 7.1 Sentence-MMR 与 matched-backbone evaluation
 
 主下游实验固定 300 queries、7 methods，共生成 2,100 answers；DeepSeek、GLM-5.2
-和 MiniMax-M3 提供 6,265 条有效判断。三 Judge 共有 2,065 个完整 query-method keys；
-35 条 MiniMax provider-filtered judgments 不插补。
+和 MiniMax-M3 提供 6,272 条有效判断。三 Judge 共有 2,072 个完整 query-method keys；
+同协议恢复重试后仍有 28 条 MiniMax provider-filtered judgments 不插补。
 
 匹配比较中的 context-saving 置信区间均为正，但 correctness 的 individual-judge
 和 majority intervals 全部跨零。BGE majority faithfulness 下降 `4.15pp`
 （95% CI `[-6.92,-1.73]`，`p=0.0018`），Sentence-MMR composition 上升
-`4.07pp`（95% CI `[+0.68,+7.46]`，`p=0.0290`）。这说明 correctness robustness
+`3.67pp`（95% CI `[+0.33,+7.00]`，`p=0.0522`）。这说明 correctness robustness
 不能替代 faithfulness 分析。
 
 ### 7.2 Task79：官方 LLMLingua-2 matched-compressor test
@@ -236,8 +240,8 @@ IntentRoute 较短上下文关系在官方 learned compressor 下仍然存在，
 correctness degradation。它不支持严格 non-inferiority、显著答案提升、
 geometry-to-compression causality 或 universal compressor generalization。
 
-三 Judge 对两个新 endpoint 均为 `600/600` 完整覆盖。历史 Sentence-MMR endpoint
-仍有 7 条 MiniMax 判断缺失，保持 missingness，不做插补；这不影响 Task79 主比较。
+三 Judge 对四个 endpoint 均为 `1,200/1,200` 完整覆盖。此前缺失的 7 条
+Sentence-MMR MiniMax 判断已由完全相同的 Judge 协议恢复，失败尝试继续保留为 provenance。
 
 ## 8. 统计与协议保护
 

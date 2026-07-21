@@ -1,6 +1,11 @@
 # Submission Review Checklist
 
-Updated: 2026-07-05
+Updated: 2026-07-21
+
+This is an independent-review rubric, not a live completion tracker. Current
+repository-controlled status and remaining submission work are authoritative in
+`../experiments/task80_authoritative_submission_state.md` and
+`../experiments/task80_remaining_work_checklist.md`.
 
 ## Claim Boundary
 

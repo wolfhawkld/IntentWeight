@@ -10,6 +10,12 @@ Before using any task summary in the paper draft, check
 main evidence, supporting evidence, boundary/negative evidence, historical or
 superseded, and internal handoff/backlog only.
 
+Current repository-controlled counts and remaining submission work are
+authoritative in `paper/experiments/task80_authoritative_submission_state.md`
+and `paper/experiments/task80_remaining_work_checklist.md`. The numbered
+history below is retained for provenance and should not be used as a live
+submission dashboard.
+
 In particular, historical candidate-cost summaries before the final context
 token correction must not be cited as evidence of lower LLM context-token cost.
 
@@ -1717,12 +1723,13 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
 38. multi-judge downstream robustness：Task65.7 已完成，详见
     `paper/experiments/task65_7_multi_judge_analysis_summary.md`。该项复用
     Task63 固定的 2,100 个 answers，不重新生成答案；DeepSeek/GLM-5.2
-    各完成 2,100 条判断，MiniMax-M3 完成 2,065 条，35 条因 provider-side
-    content filtering 缺失且不插补。三 judge 共同 2,065 条上的 correctness
-    raw agreement 为 89.88%-92.15%，Cohen's kappa 为 0.503-0.653。所有
+    各完成 2,100 条判断，MiniMax-M3 完成 2,072 条；原缺失项经同协议重试后
+    仍有 28 条因 provider-side content filtering 缺失且不插补。三 judge 共同
+    2,072 条上的 correctness raw agreement 为 89.86%-92.18%，Cohen's kappa
+    为 0.504-0.656。所有
     individual-judge 和 majority correctness comparisons 均不显著，但
-    majority-vote faithfulness 对 BGE 为显著负向、对 SentMMR composition
-    为显著正向，因此只支持 bounded correctness robustness，不支持 uniform
+    majority-vote faithfulness 对 BGE 为显著负向；SentMMR composition 的
+    正向点估计未达到 `p<0.05`。因此只支持 bounded correctness robustness，不支持 uniform
     faithfulness preservation 或 strict answer-level non-inferiority。
 39. Elsevier/IP&M submission conversion：Task66 已完成，详见
     `paper/journal_submission/task66_elsevier_ipm_conversion_summary.md`。当前
@@ -1757,8 +1764,18 @@ Task33 最初记录正式扩写论文前建议补齐的风险缓解项；当前�
     `paper/experiments/task69_3_science_200k_checkpoint_summary.md` 和
     `paper/experiments/task69_3_science_400k_checkpoint_summary.md`。400k OOF
     Hit@10 delta 为 `-0.67pp`、final-context saving 为 `3.15%`、strict NI 为
-    `0/3`，仅支持一个保守的规模边界结论；native full 与新增 LoTTE domains
-    尚未启动。
+    `0/3`，仅支持一个保守的规模边界结论；在该 checkpoint 时尚未启动的
+    新增 LoTTE domains 已由后续第 44 项完成。
+44. LoTTE domain expansion and submission integration：Tasks73-78 已完成。
+    recreation/search 与 writing/search 增加了预先指定的 100k 跨域证据；随后
+    完成论文整合、文本压缩、Occam display revision、跨设备复现与 GPU
+    revalidation。它们保留异质 frontier 和负向边界，不形成 pooled effect。
+45. learned-compressor evaluation and final reconciliation：Tasks79-80 已完成。
+    official LLMLingua-2 matched-compressor 实验在 300 个 frozen queries 上完成
+    1,200 个 endpoint-answer records 与 3,600/3,600 judgments；Task80 对当前
+    evidence surface、生成稿、ACL/CAS PDF、匿名性和历史状态文件完成统一对账，
+    最终控制审计 20/20 通过。剩余工作仅见
+    `task80_remaining_work_checklist.md`。
 
 最低完成集 1-4 已完成；第 5 项强加分项、第 6 项稳定性补强项、第 7 项写作前
 一致性审计、第 8 项 review 防御修订、第 9 项 Task37 优化、第 10 项 Task38
@@ -1804,4 +1821,4 @@ science full 属于 post-Task69 的假设驱动扩展，不是当前任务缺失
 ---
 
 *创建时间: 2026-04-21*
-*更新时间: 2026-07-06*
+*更新时间: 2026-07-21*

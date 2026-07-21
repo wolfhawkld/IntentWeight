@@ -100,7 +100,7 @@ IntentRoute 不替代 dense retrieval，而是在 dense recall floor 上做 adap
 
 9. **Multi-judge downstream robustness**
    固定 2,100 个 generated answers 由 DeepSeek、GLM-5.2 和 MiniMax-M3
-   独立评估。共同 2,065 条上 correctness agreement 较高，所有 matched
+   独立评估。共同 2,072 条上 correctness agreement 较高，所有 matched
    correctness differences 均未达到显著，但 stricter judges 给出负向 BGE/E5
    point estimates，且 majority-vote BGE faithfulness 显著下降。因此正文可写
    bounded correctness robustness，不能写 uniform faithfulness preservation、

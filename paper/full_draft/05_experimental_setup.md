@@ -333,10 +333,10 @@ from each retrieved context. The fixed answers are independently judged by
 `deepseek-v4-flash`, `glm-5.2`, and `minimax-m3` for correctness,
 faithfulness, relevance, and citation support against reference evidence.
 
-The run contains 2,100 generated answers and 6,265 schema-valid judgments:
-2,100 each from DeepSeek and GLM-5.2 and 2,065 from MiniMax-M3. Thirty-five
-MiniMax-M3 inputs are rejected by provider-side content filtering and are not
-imputed. Cross-judge agreement uses the 2,065 query-method keys valid for all
+The run contains 2,100 generated answers and 6,272 schema-valid judgments:
+2,100 each from DeepSeek and GLM-5.2 and 2,072 from MiniMax-M3. Twenty-eight
+MiniMax-M3 inputs remain unavailable after provider-side content filtering and
+are not imputed. Cross-judge agreement uses the 2,072 query-method keys valid for all
 three judges. Correctness and faithfulness differences use paired query-level
 bootstrap intervals and exact McNemar tests within each judge and for the
 three-judge majority. Raw ordinal scores are not pooled across judges. The

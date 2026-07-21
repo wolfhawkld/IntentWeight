@@ -911,11 +911,11 @@
         },
         {
           "path": "paper/experiments/results/task63_downstream_llm_evaluation/judgments.jsonl",
-          "exact_records": 6265,
+          "exact_records": 6272,
           "required_fields": ["query_id", "method_label", "judge_model", "judge_json"],
           "non_null_fields": ["query_id", "method_label", "judge_model", "judge_json"],
           "key_fields": ["query_id", "method_label", "judge_model"],
-          "exact_unique_keys": 6265
+          "exact_unique_keys": 6272
         },
         {
           "path": "paper/experiments/results/task63_downstream_llm_evaluation/judgment_failures.jsonl",
@@ -1128,7 +1128,7 @@
         },
         {
           "path": "paper/experiments/results/task65_7_multi_judge_analysis.missingness.csv",
-          "exact_rows": 35,
+          "exact_rows": 28,
           "required_columns": ["query_id", "method_label", "judge_model", "failure_attempts", "failure_codes"],
           "numeric_columns": ["failure_attempts"]
         },

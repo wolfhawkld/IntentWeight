@@ -13,7 +13,7 @@ After training route state on disjoint history folds and freezing it, learned fu
 \subsection{Limited Generation Evaluation}
 \label{sec:08-limitations:limited-generation-evaluation}
 
-Across 300 frozen-test queries, seven methods, 2,100 answers, and 6,265 valid three-judge ratings, matched BGE, E5, and SentMMR comparisons save context without a statistically detectable correctness change. However, one model generates all answers, DeepSeek is also a judge, no human ratings are available, and only one LoTTE domain is covered. MiniMax-M3 content filtering rejects 35 judgments, which cross-judge analyses exclude rather than impute. Calibration differs across judges, and majority faithfulness falls for BGE but rises for SentMMR. The evidence supports bounded correctness robustness, not strict non-inferiority, uniform faithfulness, answer superiority, or user satisfaction.
+Across 300 frozen-test queries, seven methods, 2,100 answers, and 6,272 valid three-judge ratings, matched BGE, E5, and SentMMR comparisons save context without a statistically detectable correctness change. However, one model generates all answers, DeepSeek is also a judge, no human ratings are available, and only one LoTTE domain is covered. MiniMax-M3 content filtering leaves 28 judgments unavailable, which cross-judge analyses exclude rather than impute. Calibration differs across judges, and majority faithfulness falls for BGE but rises for SentMMR. The evidence supports bounded correctness robustness, not strict non-inferiority, uniform faithfulness, answer superiority, or user satisfaction.
 
 \subsection{Dense Baseline, Evidence Completeness, and Domain Calibration}
 \label{sec:08-limitations:dense-baseline-evidence-completeness-and-domain-calibration}

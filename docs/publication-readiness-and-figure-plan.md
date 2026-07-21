@@ -1,5 +1,10 @@
 # Publication Readiness and Figure/Table Improvement Plan
 
+> **Historical checkpoint:** This document preserves the state at its stated
+> date. Do not use its counts or remaining-work list as current status; use
+> `paper/experiments/task80_authoritative_submission_state.md` and
+> `paper/experiments/task80_remaining_work_checklist.md`.
+
 Date: 2026-06-16
 
 > **Naming note**: This checkpoint predates the paper-facing rename from

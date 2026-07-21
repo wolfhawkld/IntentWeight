@@ -151,7 +151,7 @@ A cross-encoder reranker improves dense full-top-10 support from $\mathrm{Hit@10
 \subsection{Downstream Answer-Level Evaluation}
 \label{sec:06-results:downstream-answer-level-evaluation}
 
-The primary frozen downstream evaluation contains 300 queries, seven methods, 2,100 generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are not imputed. The matched LLMLingua-2 extension adds 600 generated answers and complete three-judge coverage for both new endpoints; seven missing historical MiniMax Sentence-MMR judgments are retained as provider missingness rather than imputed. Table~\ref{tab:5} reports the matched correctness and context-token results.
+The primary frozen downstream evaluation contains 300 queries, seven methods, 2,100 generated answers, and 6,272 valid judgments from DeepSeek, GLM-5.2, and MiniMax-M3. Cross-judge results use the 2,072 query-method keys valid for all three judges; 28 MiniMax-M3 judgments remain unavailable after provider-side filtering and are not imputed. The matched LLMLingua-2 extension adds 600 generated answers and complete three-judge coverage for both new endpoints and the two reused Sentence-MMR endpoints. Table~\ref{tab:5} reports the matched correctness and context-token results.
 
 \begin{table*}[tbp]
 \centering
@@ -164,7 +164,7 @@ Comparison & DeepSeek $\Delta$ & GLM $\Delta$ & MiniMax $\Delta$ & Majority $\De
 \midrule
 BGE IntentRoute vs BGE dense & +0.00 pp & -3.00 pp & -2.42 pp & -3.46 pp [-6.92, 0.00] & 6.27\% [4.22\%, 8.26\%] \\
 E5 IntentRoute vs E5 dense & +0.33 pp & -1.33 pp & -2.77 pp & -2.08 pp [-5.88, +1.73] & 11.97\% [9.78\%, 14.17\%] \\
-IntentRoute + MMR vs Dense + MMR & +2.33 pp & +0.33 pp & +1.36 pp & +0.34 pp [-3.39, +4.07] & 6.75\% [4.40\%, 9.11\%] \\
+IntentRoute + MMR vs Dense + MMR & +2.33 pp & +0.33 pp & +1.33 pp & +0.33 pp [-3.33, +4.00] & 6.65\% [4.19\%, 8.97\%] \\
 IntentRoute + LLMLingua-2 vs Dense + LLMLingua-2 & +3.00 pp & +0.67 pp & +0.00 pp & +0.67 pp [-3.00, +4.33] & 6.69\% [4.32\%, 9.03\%] \\
 \bottomrule
 \end{tabularx}
@@ -172,4 +172,4 @@ IntentRoute + LLMLingua-2 vs Dense + LLMLingua-2 & +3.00 pp & +0.67 pp & +0.00 p
 
 All context-saving intervals are positive. Every individual-judge and majority-vote correctness interval includes zero, and all correctness McNemar tests are non-significant. Absolute judge calibration differs: pairwise raw agreement is 89.88-92.15\% for correctness, with Cohen's $\kappa$ of 0.503-0.653. This supports lower context without a statistically detectable correctness difference, but not strict non-inferiority or significant answer-quality improvement.
 
-Faithfulness is not uniformly preserved. The three-judge majority estimates a -4.15 pp BGE faithfulness change (95\% CI [-6.92, -1.73], $p=0.0018$) and a +4.07 pp change for the SentMMR composition (95\% CI [+0.68, +7.46], $p=0.0290$); E5 remains non-significant. Supplementary Section S6 reports judge coverage, agreement, full method-level results, and the mixed faithfulness boundary.
+Faithfulness is not uniformly preserved. The three-judge majority estimates a -4.15 pp BGE faithfulness change (95\% CI [-6.92, -1.73], $p=0.0018$) and a +3.67 pp change for the SentMMR composition (95\% CI [+0.33, +7.00], $p=0.0522$); E5 remains non-significant. Supplementary Section S6 reports judge coverage, agreement, full method-level results, and the mixed faithfulness boundary.

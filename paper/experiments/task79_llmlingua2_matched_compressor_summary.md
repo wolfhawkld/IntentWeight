@@ -1,8 +1,8 @@
 # Task79 Official LLMLingua-2 Matched-Compressor Summary
 
-Status: complete with full three-judge coverage for both new LLMLingua-2 endpoints
+Status: complete with full three-judge coverage for all four evaluated endpoints
 
-Date: 2026-07-18
+Date: 2026-07-21
 
 ## Protocol
 
@@ -57,9 +57,9 @@ All 600 new answers are valid JSON. DeepSeek, GLM-5.2, and MiniMax-M3 each
 provide 600/600 judgments for the two new LLMLingua-2 endpoints. Resumable
 technical retries recovered outputs whose reasoning exhausted the initial
 completion cap; failed attempts remain in the failure log and are not
-interpreted as negative judgments. Seven historical MiniMax-M3 Sentence-MMR
-judgments remain missing from Task65 and are not imputed, but the Task79 primary
-comparison has 300 complete query pairs for every judge.
+interpreted as negative judgments. A protocol-identical retry recovered the
+seven previously missing MiniMax-M3 Sentence-MMR judgments. Task79 therefore
+has 300 complete query pairs for every judge and all four endpoints.
 
 | Judge | Correctness delta | 95% CI | Faithfulness delta | Context-token saving |
 |---|---:|---:|---:|---:|
@@ -103,20 +103,19 @@ footprint.
   LLMLingua-2 does not validate route geometry.
 - The finding is one-domain, one-generator, automated-judge evidence. It is not
   a human evaluation or a universal compressor result.
-- Seven historical MiniMax-M3 judgments remain missing only for reused
-  Sentence-MMR endpoints; primary new-endpoint coverage is complete.
+- All reused and new endpoints have complete three-judge coverage. Historical
+  failed attempts remain available as retry provenance.
 
 ## Validation
 
-- Task79 local gate: 14/14 checks pass; status
-  `PASS_COMPLETE_WITH_RECORDED_PROVIDER_MISSINGNESS`.
+- Task79 local gate: 14/14 checks pass; status `PASS_COMPLETE`.
 - Core regression tests: 139 pytest cases plus two standalone download-script
   tests, 141/141 pass.
 - `.venv` and `.venv-rocm` both pass `pip check`.
 - All Task79 scripts compile, the staging path is idempotent, and no API key or
   `.env` content appears in Task79 artifacts.
-- Both new endpoints have 600/600 GLM-5.2 and 600/600 MiniMax-M3 judgments;
-  credentials are absent from all tracked artifacts.
+- All four endpoints have 1,200/1,200 judgments from each judge; credentials
+  are absent from all tracked artifacts.
 
 ## Artifacts
 

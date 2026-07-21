@@ -1,8 +1,13 @@
 # Task79 and Post-Task78 Submission Completion Plan
 
-Status: Task79 complete; Task80 evidence integration in progress
+Status: Tasks79-80 complete; Tasks81-83 remain
 
-Date: 2026-07-17
+Date: 2026-07-21
+
+> **Completed planning record.** Current counts and remaining work are
+> authoritative in `task80_authoritative_submission_state.md` and
+> `task80_remaining_work_checklist.md`. The baseline below records the state at
+> plan creation and must not be used as the current submission dashboard.
 
 ## Current Baseline
 
@@ -182,7 +187,7 @@ submission assets, release hygiene, and independent review.
 
 ## Completion Definition
 
-The project is submission-ready only when Tasks80-83 are complete and Task79 is
-either completed or closed with a documented preflight/decision outcome. The
-current manuscript remains scientifically usable while Task79 is pending; no
-central claim depends on a favorable LLMLingua-2 result.
+Tasks79-80 are complete. The project is submission-ready only when Tasks81-83
+are complete. The LLMLingua-2 result has been integrated as bounded
+compressor-complementarity evidence; no central claim depends on a favorable
+answer-quality difference.

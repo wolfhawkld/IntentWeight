@@ -1,10 +1,15 @@
 # IntentRoute Review Packet
 
-Updated: 2026-07-05
+Updated: 2026-07-21
 
 This directory is the venue-neutral review handoff for the IntentRoute paper.
 It is generated from `paper/full_draft/` and should be used for independent
 academic review before LaTeX venue migration.
+
+This packet is a generated review surface, not the authoritative project-status
+record. Use `../experiments/task80_authoritative_submission_state.md` and
+`../experiments/task80_remaining_work_checklist.md` for current counts and
+remaining work.
 
 ## Review Entry Points
 

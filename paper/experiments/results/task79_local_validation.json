@@ -66,8 +66,8 @@
     },
     {
       "detail": {
-        "unique": 3593,
-        "valid": 3593
+        "unique": 3600,
+        "valid": 3600
       },
       "name": "judgment_keys_unique",
       "passed": true
@@ -76,13 +76,13 @@
       "detail": {
         "deepseek-v4-flash": 1200,
         "glm-5.2": 1200,
-        "minimax-m3": 1193
+        "minimax-m3": 1200
       },
       "name": "deepseek_complete",
       "passed": true
     },
     {
-      "detail": "COMPLETE_TASK79_NEW_ENDPOINT_JUDGING_WITH_RECORDED_LEGACY_MISSINGNESS",
+      "detail": "COMPLETE_ALL_THREE_JUDGE_COVERAGE",
       "name": "execution_manifest_matches",
       "passed": true
     },
@@ -96,7 +96,7 @@
     },
     {
       "detail": {
-        "analysis_status": "COMPLETE_PRIMARY_THREE_JUDGE_WITH_RECORDED_LEGACY_MISSINGNESS",
+        "analysis_status": "COMPLETE_THREE_JUDGE_ANALYSIS",
         "external_pending": 0,
         "new_external_coverage": {
           "glm-5.2": 600,
@@ -122,5 +122,5 @@
     "minimax-m3": 600
   },
   "passed": 14,
-  "status": "PASS_COMPLETE_WITH_RECORDED_PROVIDER_MISSINGNESS"
+  "status": "PASS_COMPLETE"
 }

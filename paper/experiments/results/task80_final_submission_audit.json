@@ -1,0 +1,110 @@
+{
+  "checks": [
+    {
+      "detail": "TASK80_COMPLETE_REPOSITORY_STATE_RECONCILED",
+      "name": "authoritative_state_final",
+      "status": "PASS"
+    },
+    {
+      "detail": "3600/3600; missing=0",
+      "name": "task79_judgment_coverage",
+      "status": "PASS"
+    },
+    {
+      "detail": "6272/6300; missing=28",
+      "name": "task63_missingness_disclosed",
+      "status": "PASS"
+    },
+    {
+      "detail": "{\"PASS\": 921}",
+      "name": "experiment_artifact_audit",
+      "status": "PASS"
+    },
+    {
+      "detail": "{\"checks\": 128, \"failed\": 0, \"passed\": 128}",
+      "name": "display_source_audit",
+      "status": "PASS"
+    },
+    {
+      "detail": "{\"figure_data_files\": 2, \"main_tables\": 5, \"status\": \"PASS\", \"supplementary_numeric_values\": 392}",
+      "name": "paper_evidence_audit",
+      "status": "PASS"
+    },
+    {
+      "detail": "{\"failed\": 0, \"passed\": 14, \"status\": \"PASS_COMPLETE\"}",
+      "name": "task79_local_gate",
+      "status": "PASS"
+    },
+    {
+      "detail": "{\"abstract_words_cas_validator_contract\": 245, \"cross_dataset_display_rows\": 15, \"dataset_domain_settings\": 9, \"domain_areas\": 8, \"main_figures\": 3, \"main_tables\": 5, \"supplement_tables\": 23}",
+      "name": "display_surface",
+      "status": "PASS"
+    },
+    {
+      "detail": "pages=34; type3=0",
+      "name": "pdf_acl_complete_evidence",
+      "status": "PASS"
+    },
+    {
+      "detail": "pages=26; type3=0",
+      "name": "pdf_cas_anonymous_manuscript",
+      "status": "PASS"
+    },
+    {
+      "detail": "pages=13; type3=0",
+      "name": "pdf_cas_supplement",
+      "status": "PASS"
+    },
+    {
+      "detail": "pages=1; type3=0",
+      "name": "pdf_cas_title_page",
+      "status": "PASS"
+    },
+    {
+      "detail": "[]",
+      "name": "current_status_files_present",
+      "status": "PASS"
+    },
+    {
+      "detail": "[]",
+      "name": "current_status_has_no_stale_facts",
+      "status": "PASS"
+    },
+    {
+      "detail": "[]",
+      "name": "historical_status_files_present",
+      "status": "PASS"
+    },
+    {
+      "detail": "[]",
+      "name": "historical_status_files_marked",
+      "status": "PASS"
+    },
+    {
+      "detail": "generated review packet points to Task80 authority",
+      "name": "review_packet_status_scope",
+      "status": "PASS"
+    },
+    {
+      "detail": "[]",
+      "name": "paper_has_no_task_labels",
+      "status": "PASS"
+    },
+    {
+      "detail": "[]",
+      "name": "anonymous_sources_have_no_identity_hits",
+      "status": "PASS"
+    },
+    {
+      "detail": "[]",
+      "name": "paper_control_files_have_no_api_keys",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "summary": {
+    "failed": 0,
+    "passed": 20,
+    "total": 20
+  }
+}

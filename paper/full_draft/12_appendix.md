@@ -140,8 +140,8 @@ independent model-family evidence beyond the matched table.
 The formal downstream evaluation uses 300 deterministic queries from the
 frozen LoTTE technology/search 100k test split. Seven methods produce 2,100
 answers with `deepseek-v4-flash`. The fixed answers receive 2,100 DeepSeek,
-2,100 GLM-5.2, and 2,065 MiniMax-M3 schema-valid judgments. Cross-judge
-statistics use the 2,065 query-method keys shared by all judges.
+2,100 GLM-5.2, and 2,072 MiniMax-M3 schema-valid judgments. Cross-judge
+statistics use the 2,072 query-method keys shared by all judges.
 Tables~\ref{tab:s5}, \ref{tab:s6}, \ref{tab:s7}, \ref{tab:s8},
 and~\ref{tab:s9} report method results, paired tests, judge coverage,
 agreement, and majority-vote comparisons.
@@ -176,26 +176,26 @@ the original DeepSeek judge.
 |---|---:|---:|---:|---:|---:|---:|---:|
 | DeepSeek | 2,100 | 100.00% | 4.672 | 91.33% | 4.782 | 93.10% | 89.57% |
 | GLM-5.2 | 2,100 | 100.00% | 4.550 | 88.24% | 4.734 | 92.81% | 92.14% |
-| MiniMax-M3 | 2,065 | 98.33% | 4.293 | 85.71% | 4.633 | 95.45% | 94.48% |
+| MiniMax-M3 | 2,072 | 98.67% | 4.292 | 85.67% | 4.632 | 95.42% | 94.45% |
 
-MiniMax-M3 rejects 35 query-method inputs spanning 18 queries through
+MiniMax-M3 leaves 28 query-method inputs spanning 17 queries unavailable after
 provider-side content filtering. These values are not imputed. Absolute score
 calibration differs across judges, so raw ordinal scores are not pooled.
 
-**Supplementary Table S8. Pairwise agreement on 2,065 shared judgments.**
+**Supplementary Table S8. Pairwise agreement on 2,072 shared judgments.**
 
 | Field | Judge pair | Raw agreement | Cohen's $\kappa$ |
 |---|---|---:|---:|
-| Correct | DS / GLM | 91.04% | 0.508 |
-| Correct | DS / MM | 89.88% | 0.503 |
-| Correct | GLM / MM | 92.15% | 0.653 |
-| Faithful | DS / GLM | 91.72% | 0.364 |
-| Faithful | DS / MM | 93.27% | 0.374 |
-| Faithful | GLM / MM | 93.41% | 0.405 |
+| Correct | DS / GLM | 91.02% | 0.509 |
+| Correct | DS / MM | 89.86% | 0.504 |
+| Correct | GLM / MM | 92.18% | 0.656 |
+| Faithful | DS / GLM | 91.70% | 0.362 |
+| Faithful | DS / MM | 93.29% | 0.379 |
+| Faithful | GLM / MM | 93.39% | 0.403 |
 
 Here DS denotes DeepSeek and MM denotes MiniMax-M3. Three-judge unanimity is
-86.54% for correctness and 89.20% for faithfulness.
-The corresponding majority-positive rates are 88.96% and 95.35%. High raw
+86.53% for correctness and 89.19% for faithfulness.
+The corresponding majority-positive rates are 88.90% and 95.32%. High raw
 faithfulness agreement coexists with lower $\kappa$ because positive judgments
 are highly prevalent.
 
@@ -205,12 +205,13 @@ are highly prevalent.
 |---|---:|---:|---:|---:|---:|---:|
 | BGE IntentRoute vs dense | 289 | -3.46 pp [-6.92, 0.00] | 0.0755 | -4.15 pp [-6.92, -1.73] | 0.0018 | 6.27% [4.22%, 8.26%] |
 | E5 IntentRoute vs dense | 289 | -2.08 pp [-5.88, +1.73] | 0.3616 | -0.69 pp [-3.81, +2.42] | 0.8238 | 11.97% [9.78%, 14.17%] |
-| IntentRoute+MMR vs Dense+MMR | 295 | +0.34 pp [-3.39, +4.07] | 1.0000 | +4.07 pp [+0.68, +7.46] | 0.0290 | 6.75% [4.40%, 9.11%] |
+| IntentRoute+MMR vs Dense+MMR | 300 | +0.33 pp [-3.33, +4.00] | 1.0000 | +3.67 pp [+0.33, +7.00] | 0.0522 | 6.65% [4.19%, 8.97%] |
 
 No individual judge or majority-vote comparison finds a significant
 correctness difference. This supports a bounded correctness-robustness claim,
 not strict non-inferiority. Faithfulness is mixed: the BGE majority result is
-negative, while the SentMMR composition is positive. The evaluation remains
+significantly negative, while the positive SentMMR point estimate is not
+significant at the 0.05 level. The evaluation remains
 LLM-as-judge evidence rather than human evaluation. The under-specified
 `insufficient_context_appropriate` field is retained in raw artifacts but
 excluded from headline analysis.

@@ -1,5 +1,10 @@
 # IntentRoute 发稿前综合审计
 
+> **Historical checkpoint:** This document preserves the state at its stated
+> date. Do not use its counts or remaining-work list as current status; use
+> `paper/experiments/task80_authoritative_submission_state.md` and
+> `paper/experiments/task80_remaining_work_checklist.md`.
+
 审计日期：2026-07-16
 目标期刊：Information Processing & Management（IP&M）
 审计范围：当前主稿、Task70-Task74 证据边界、外部审阅闭环、CAS 投稿包、图表、人工交付项与 IP&M 当前投稿要求。

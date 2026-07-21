@@ -1,11 +1,11 @@
 # Task79 LLMLingua-2 Multi-Judge Analysis
 
-Status: **COMPLETE_PRIMARY_THREE_JUDGE_WITH_RECORDED_LEGACY_MISSINGNESS**
+Status: **COMPLETE_THREE_JUDGE_ANALYSIS**
 
 - Answers: `1200/1200`
-- Valid judgments: `3593/3600`
-- Missing judgments (not imputed): `7`
-- Logged failure attempts: `454`; recovered keys: `433`
+- Valid judgments: `3600/3600`
+- Missing judgments (not imputed): `0`
+- Logged failure attempts: `456`; recovered keys: `440`
 - Compressor peak allocated VRAM: `2.526 GiB`
 
 ## Context Endpoints

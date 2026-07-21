@@ -1000,10 +1000,10 @@ from each retrieved context. The fixed answers are independently judged by
 `deepseek-v4-flash`, `glm-5.2`, and `minimax-m3` for correctness,
 faithfulness, relevance, and citation support against reference evidence.
 
-The run contains 2,100 generated answers and 6,265 schema-valid judgments:
-2,100 each from DeepSeek and GLM-5.2 and 2,065 from MiniMax-M3. Thirty-five
-MiniMax-M3 inputs are rejected by provider-side content filtering and are not
-imputed. Cross-judge agreement uses the 2,065 query-method keys valid for all
+The run contains 2,100 generated answers and 6,272 schema-valid judgments:
+2,100 each from DeepSeek and GLM-5.2 and 2,072 from MiniMax-M3. Twenty-eight
+MiniMax-M3 inputs remain unavailable after provider-side content filtering and
+are not imputed. Cross-judge agreement uses the 2,072 query-method keys valid for all
 three judges. Correctness and faithfulness differences use paired query-level
 bootstrap intervals and exact McNemar tests within each judge and for the
 three-judge majority. Raw ordinal scores are not pooled across judges. The
@@ -1230,8 +1230,13 @@ $\mathrm{Hit@10}=0.8705$ while saving 11.4-13.1% selected-sentence tokens.
 When the same compressor is applied to both source pools,
 IntentRoute+Sentence-MMR reaches 10.1-21.2% total saving because it starts from
 a smaller evidence pool. This matched control shows that downstream compression
-is complementary rather than unique to IntentRoute; an official LLMLingua-2
-comparison remains untested.
+is complementary rather than unique to IntentRoute. The official LLMLingua-2
+follow-up applies the same learned compressor to both frozen source pools. On
+300 queries, IntentRoute+LLMLingua-2 uses 1,175.0 mean context tokens versus
+1,259.2 for Dense+LLMLingua-2, a paired 6.69% saving (95% CI [4.32%, 9.03%]).
+The three-judge majority correctness change is +0.67 pp (95% CI [-3.00,
++4.33], $p=0.8642$), so the result supports compressor complementarity without
+strict non-inferiority or significant quality improvement.
 
 A cross-encoder reranker improves dense full-top-10 support from
 $\mathrm{Hit@10}=0.8705$ to 0.8777 and evidence recall from 0.7081 to 0.7332,
@@ -1242,11 +1247,13 @@ reranker tables.
 
 ## 5.7 Downstream Answer-Level Evaluation
 
-The frozen downstream evaluation contains 300 queries, seven methods, 2,100
-generated answers, and 6,265 valid judgments from DeepSeek, GLM-5.2, and
-MiniMax-M3. Cross-judge results use the 2,065 query-method keys valid for all
-three judges; 35 MiniMax-M3 judgments rejected by provider-side filtering are
-not imputed.
+The primary frozen downstream evaluation contains 300 queries, seven methods, 2,100
+generated answers, and 6,272 valid judgments from DeepSeek, GLM-5.2, and
+MiniMax-M3. Cross-judge results use the 2,072 query-method keys valid for all
+three judges; 28 MiniMax-M3 judgments remain unavailable after provider-side
+filtering and are not imputed. The matched LLMLingua-2 extension adds 600
+generated answers and complete three-judge coverage for both new endpoints and
+the two reused Sentence-MMR endpoints.
 Table~\ref{tab:5} reports the matched correctness and context-token results.
 
 **Table 5. Matched downstream answer-quality and context-token comparisons.**
@@ -1255,7 +1262,8 @@ Table~\ref{tab:5} reports the matched correctness and context-token results.
 |---|---:|---:|---:|---:|---:|
 | BGE IntentRoute vs BGE dense | +0.00 pp | -3.00 pp | -2.42 pp | -3.46 pp [-6.92, 0.00] | 6.27% [4.22%, 8.26%] |
 | E5 IntentRoute vs E5 dense | +0.33 pp | -1.33 pp | -2.77 pp | -2.08 pp [-5.88, +1.73] | 11.97% [9.78%, 14.17%] |
-| IntentRoute+MMR vs Dense+MMR | +2.33 pp | +0.33 pp | +1.36 pp | +0.34 pp [-3.39, +4.07] | 6.75% [4.40%, 9.11%] |
+| IntentRoute+MMR vs Dense+MMR | +2.33 pp | +0.33 pp | +1.33 pp | +0.33 pp [-3.33, +4.00] | 6.65% [4.19%, 8.97%] |
+| IntentRoute + LLMLingua-2 vs Dense + LLMLingua-2 | +3.00 pp | +0.67 pp | +0.00 pp | +0.67 pp [-3.00, +4.33] | 6.69% [4.32%, 9.03%] |
 
 All context-saving intervals are positive. Every individual-judge and
 majority-vote correctness interval includes zero, and all correctness McNemar
@@ -1267,8 +1275,8 @@ answer-quality improvement.
 
 Faithfulness is not uniformly preserved. The three-judge majority estimates a
 -4.15 pp BGE faithfulness change (95% CI [-6.92, -1.73], $p=0.0018$) and a
-+4.07 pp change for the SentMMR composition (95% CI [+0.68, +7.46],
-$p=0.0290$); E5 remains non-significant. Supplementary Section S6 reports judge coverage,
++3.67 pp change for the SentMMR composition (95% CI [+0.33, +7.00],
+$p=0.0522$); E5 remains non-significant. Supplementary Section S6 reports judge coverage,
 agreement, full method-level results, and the mixed faithfulness boundary.
 
 ---
@@ -1466,12 +1474,12 @@ universal first-pass gain.
 
 ## 7.2 Limited Generation Evaluation
 
-Across 300 frozen-test queries, seven methods, 2,100 answers, and 6,265 valid
+Across 300 frozen-test queries, seven methods, 2,100 answers, and 6,272 valid
 three-judge ratings, matched BGE, E5, and SentMMR comparisons save context
 without a statistically detectable correctness change. However, one model
 generates all answers, DeepSeek is also a judge, no human ratings are available,
-and only one LoTTE domain is covered. MiniMax-M3 content filtering rejects 35
-judgments, which cross-judge analyses exclude rather than impute. Calibration
+and only one LoTTE domain is covered. MiniMax-M3 content filtering leaves 28
+judgments unavailable, which cross-judge analyses exclude rather than impute. Calibration
 differs across judges, and majority faithfulness falls for BGE but rises for
 SentMMR. The evidence supports bounded correctness robustness, not strict
 non-inferiority, uniform faithfulness, answer superiority, or user satisfaction.
@@ -1538,8 +1546,11 @@ Matched MiniLM, BGE-base, and E5-base backbones and a cross-encoder support
 robustness within LoTTE, but exclude domain-specific, late-interaction, and
 proprietary encoders. Only BGE has an above-dense quality-first point; E5
 supplies a near-dense saving point. Sentence-MMR is the shared downstream
-compressor; the official open-source LLMLingua-2 compressor has not been run,
-so the paper does not claim parity with learned token-level prompt compression.
+compressor, and the official LLMLingua-2 follow-up supports the same
+Dense-versus-IntentRoute direction on one frozen 300-query setting. Its
+three-judge correctness intervals cross zero, so it is compressor-complementarity
+evidence rather than strict non-inferiority, human validation, or broad parity
+with learned token-level prompt compression.
 
 Of nine settings, only LoTTE technology/search receives the complete
 multi-scale, matched-baseline, calibration/test, and generation protocol.
@@ -1559,7 +1570,8 @@ Future work should evaluate:
 - real user feedback with trust scoring and delayed-feedback handling;
 - multi-model and human-rated answer-quality and citation-faithfulness studies;
 - stronger dense encoders, rerankers, and late-interaction retrieval models;
-- matched Dense/IntentRoute evaluation with official LLMLingua-2 compression;
+- additional domains, generators, and human raters for learned-compressor
+  evaluation;
 - graph or density-based dynamic clustering under bandit-compatible arm
   management;
 - repeated evaluations on additional vertical-domain corpora;
@@ -1606,8 +1618,10 @@ route metrics over random routing but does not directly predict compression
 safety. Controlled feedback updates route state and can repair some same-query
 tail failures, yet it does not beat matched static or cold full routing on the
 formal frozen unseen-query audit. Sentence-MMR remains an effective shared
-downstream compressor, while cross-encoder reranking can improve
-evidence support but may increase context length. Route control, rescue,
+downstream compressor; the official LLMLingua-2 matched test retains a 6.69%
+IntentRoute context advantage without a detected majority-vote correctness
+difference. Cross-encoder reranking can improve evidence support but may
+increase context length. Route control, rescue,
 reranking, compression, and final-budget calibration are therefore composable
 system functions.
 

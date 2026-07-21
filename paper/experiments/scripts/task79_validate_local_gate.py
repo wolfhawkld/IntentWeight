@@ -201,6 +201,7 @@ def run(args: argparse.Namespace) -> int:
         for judge in ("glm-5.2", "minimax-m3")
     }
     external_pending = 1200 - sum(new_external_coverage.values())
+    overall_missing = int(analysis_payload.get("missing_judgment_count", 0))
     check(
         "external_gap_explicit",
         analysis_payload["status"]
@@ -231,7 +232,9 @@ def run(args: argparse.Namespace) -> int:
         "FAIL"
         if failed
         else (
-            "PASS_COMPLETE_WITH_RECORDED_PROVIDER_MISSINGNESS"
+            "PASS_COMPLETE"
+            if external_pending == 0 and overall_missing == 0
+            else "PASS_COMPLETE_WITH_RECORDED_PROVIDER_MISSINGNESS"
             if external_pending == 0
             else "PASS_LOCAL_GATE_EXTERNAL_JUDGES_PENDING"
         )

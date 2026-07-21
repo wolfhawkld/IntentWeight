@@ -1,6 +1,6 @@
 # Task79 Local Validation
 
-Status: **PASS_COMPLETE_WITH_RECORDED_PROVIDER_MISSINGNESS**
+Status: **PASS_COMPLETE**
 
 - Checks passed: `14/14`
 - New external judgments pending: `0/1200`
@@ -15,9 +15,9 @@ Status: **PASS_COMPLETE_WITH_RECORDED_PROVIDER_MISSINGNESS**
 | formal_compression_complete | yes | `{"rows": 600, "status": "COMPLETE"}` |
 | compression_structure | yes | `{"empty_outputs": 0, "order_failures": 0}` |
 | fixed_sample_and_answers | yes | `{"answers": 1200, "counts": {"dense_llmlingua2_matched_sent_mmr": 300, "dense_sent_mmr_r0.85_l0.70": 300, "intentroute_llmlingua2_matched_sent_mmr_seed19": 300, "intentweight_sent_mmr_r0.85_l0.70_seed19": 300}, "sample_rows": 300}` |
-| judgment_keys_unique | yes | `{"unique": 3593, "valid": 3593}` |
-| deepseek_complete | yes | `{"deepseek-v4-flash": 1200, "glm-5.2": 1200, "minimax-m3": 1193}` |
-| execution_manifest_matches | yes | `"COMPLETE_TASK79_NEW_ENDPOINT_JUDGING_WITH_RECORDED_LEGACY_MISSINGNESS"` |
+| judgment_keys_unique | yes | `{"unique": 3600, "valid": 3600}` |
+| deepseek_complete | yes | `{"deepseek-v4-flash": 1200, "glm-5.2": 1200, "minimax-m3": 1200}` |
+| execution_manifest_matches | yes | `"COMPLETE_ALL_THREE_JUDGE_COVERAGE"` |
 | external_handoff_complete | yes | `{"expected_responses": 1200, "requests": 600}` |
-| external_gap_explicit | yes | `{"analysis_status": "COMPLETE_PRIMARY_THREE_JUDGE_WITH_RECORDED_LEGACY_MISSINGNESS", "external_pending": 0, "new_external_coverage": {"glm-5.2": 600, "minimax-m3": 600}}` |
+| external_gap_explicit | yes | `{"analysis_status": "COMPLETE_THREE_JUDGE_ANALYSIS", "external_pending": 0, "new_external_coverage": {"glm-5.2": 600, "minimax-m3": 600}}` |
 | rocm_environment_lock | yes | `{"actual_lock": "059c40cce6bdf037bf81f3d83d2ec5be8eaec796dc891aa67ee82b3a2bfdc316", "recorded_lock": "059c40cce6bdf037bf81f3d83d2ec5be8eaec796dc891aa67ee82b3a2bfdc316"}` |

@@ -1,6 +1,11 @@
 # Task Paper-Use Status
 
-Updated: 2026-07-16
+Updated: 2026-07-21 (Task80 reconciliation)
+
+This evidence-use registry is current through the Task79 recovery revision.
+Submission-state counts and remaining work are authoritative only in
+`task80_authoritative_submission_state.md` and
+`task80_remaining_work_checklist.md`.
 
 This file marks which internal task summaries should be used when writing the
 paper. It prevents historical or superseded experiment notes from being
@@ -35,6 +40,7 @@ accidentally promoted into paper-facing claims.
 | `task70_formal_frozen_policy_summary.md` | Boundary evidence | Formal frozen unseen-query results for technology/search 100k and science/search 100k, including paired inference and the feedback-transfer boundary. | Use to bound feedback to repeated-query adaptation/hard-case recovery; do not claim a first-pass learned-feedback advantage on unseen queries. |
 | `task73_lotte_domain_expansion_summary.md` | Main/supporting external-validity evidence | Predeclared recreation/search and writing/search 100k common-protocol study. Report writing's `+0.12pp`/`10.09%` useful frontier and recreation's `-0.76pp`/`5.42%` boundary together with strict NI (`2/3` and `0/3`), trust-weighted Dense fallback, and the reversed lexicality premise. Do not pool domains or attribute compression directly to geometry. |
 | `task79_llmlingua2_matched_compressor_summary.md` | Main/supporting learned-compressor evidence | Official LLMLingua-2 matched-compressor test on 300 frozen queries. IntentRoute saves 6.69% context tokens versus Dense under the same compressor; three-judge majority correctness changes by +0.67pp with a confidence interval crossing zero. Use as bounded compressor-complementarity evidence, not strict non-inferiority or geometry-to-compression causality. |
+| `task79_legacy_judgment_recovery_summary.md` | Supporting protocol-completion evidence | Protocol-identical recovery of the seven Sentence-MMR MiniMax judgments used by Task79. Use the refreshed 300-pair Sentence-MMR statistics and retain the revised non-significant faithfulness result; Task63 still records 28 unrelated provider-filtered judgments as missing. |
 
 ## Supporting Evidence
 
@@ -73,7 +79,7 @@ accidentally promoted into paper-facing claims.
 | `task65_4_matched_frontier_summary.md` | Main/supporting calibration evidence | Independent Dense and IntentRoute action selection on a common fine grid; supports a nonzero conservative IntentRoute point under the pre-specified zero-drop calibration rule without claiming strict NI or Pareto dominance. |
 | `task65_5_calibration_split_sensitivity_summary.md` | Supporting/boundary calibration evidence | Twenty overlapping query partitions per scale strengthen 200k/638k stability while exposing moderate 100k and mixed 400k split sensitivity. |
 | `task65_6_cross_scale_cross_fitted_calibration_summary.md` | Supporting/cross-fitted calibration evidence | Five disjoint canonical-query folds under an identical four-scale protocol close the 400k follow-up with 14.50% mean saving and no mean Hit change, while retaining policy instability and 0/3 strict NI. |
-| `task65_7_multi_judge_analysis_summary.md` | Supporting/multi-judge answer evidence | Reuses the fixed 2,100 answers with DeepSeek, GLM-5.2, and MiniMax-M3 judges; use for shared-key agreement, judge-specific paired correctness, mixed faithfulness effects, and the explicit 35-judgment content-filtering gap. |
+| `task65_7_multi_judge_analysis_summary.md` | Supporting/multi-judge answer evidence | Reuses the fixed 2,100 answers with DeepSeek, GLM-5.2, and MiniMax-M3 judges; use for shared-key agreement, judge-specific paired correctness, mixed faithfulness effects, and the explicit 28-judgment content-filtering gap after protocol-identical recovery retries. |
 | `task36_1_geometry_formula_definitions.md` | Supporting writing revision | Paper-facing geometry diagnostic formulas; no new experiment. |
 | `task36_2_secondary_dataset_evidence.md` | Supporting writing revision | Integrates PubMedQA, Banking77, eManual, and CUAD as supporting/boundary evidence; no new experiment. |
 | `task36_3_related_work_citation_framework.md` | Supporting writing revision | Adds a paper-facing related-work structure, provisional citation keys, and reference seed list; no new experiment. |

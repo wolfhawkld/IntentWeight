@@ -1522,6 +1522,13 @@ def execute_llm(records: Sequence[Mapping[str, Any]], output_dir: Path, args: ar
 
 def run(args: argparse.Namespace) -> int:
     load_env_file(args.env_file)
+    if args.provider_config:
+        import yaml
+
+        config = yaml.safe_load(args.provider_config.read_text(encoding="utf-8")) or {}
+        provider = (config.get("providers") or {}).get(args.provider_name) or {}
+        args.api_key = args.api_key or provider.get("api_key")
+        args.base_url = args.base_url or provider.get("base_url")
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1625,6 +1632,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--judge-model", default=None)
     parser.add_argument("--judge-models", default=None, help="Comma-separated judge models. Defaults to --judge-model or --model.")
     parser.add_argument("--base-url", default=None)
+    parser.add_argument("--provider-config", type=Path, default=None)
+    parser.add_argument("--provider-name", default="volcengine-agent-plan")
     parser.add_argument("--azure-deployment", default=None)
     parser.add_argument("--azure-endpoint", default=None)
     parser.add_argument("--azure-api-version", default="2025-04-01-preview")

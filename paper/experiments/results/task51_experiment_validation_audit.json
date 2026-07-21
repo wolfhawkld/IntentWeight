@@ -7013,7 +7013,7 @@
     },
     {
       "category": "dimension",
-      "detail": "records=6265",
+      "detail": "records=6272",
       "experiment": "task63_downstream_llm_evaluation",
       "item": "jsonl_records",
       "role": "downstream_semantic_validation",
@@ -7031,7 +7031,7 @@
     },
     {
       "category": "dimension",
-      "detail": "unique_keys=6265, duplicate_records=0",
+      "detail": "unique_keys=6272, duplicate_records=0",
       "experiment": "task63_downstream_llm_evaluation",
       "item": "jsonl_keys",
       "role": "downstream_semantic_validation",
@@ -8192,7 +8192,7 @@
     },
     {
       "category": "dimension",
-      "detail": "rows=35",
+      "detail": "rows=28",
       "experiment": "task65_7_multi_judge_analysis",
       "item": "artifact_csv_rows",
       "role": "multi_judge_robustness",
@@ -8210,7 +8210,7 @@
     },
     {
       "category": "statistics",
-      "detail": "columns=1, rows=35",
+      "detail": "columns=1, rows=28",
       "experiment": "task65_7_multi_judge_analysis",
       "item": "artifact_csv_numeric",
       "role": "multi_judge_robustness",
