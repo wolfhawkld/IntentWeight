@@ -1,6 +1,6 @@
 # Figure 1 Design Blueprint
 
-Updated: 2026-07-05
+Updated: 2026-07-26
 
 This document is a production concept for the author-created IntentRoute system
 diagram. It complements `figure1_author_spec.md`: the author specification is
@@ -20,6 +20,15 @@ The figure should look like a systems/controller diagram, not a neural-network
 architecture and not a causal graph claiming that geometry directly produces
 token savings.
 
+The final composition must also make two implementation boundaries explicit:
+
+- the original query branches into the global Dense, lexical BM25, and
+  controller paths; the PCA-projected context is used only by LinUCB and is not
+  an input to Dense or BM25;
+- simulated feedback is derived from an observed evidence outcome and updates
+  the LinUCB arm state for later queries only; it is not a same-query loop from
+  the generator.
+
 ## 2. Recommended Composition: Three Horizontal Lanes
 
 Use a left-to-right online pipeline with two thinner supporting lanes. This is
@@ -34,20 +43,20 @@ adaptation while preserving one obvious reading direction.
 └─────────────────────────────────────────────────────────────────────────────│────┘
                                                                               │
 ┌──────────────────────────── ONLINE DATA PLANE ───────────────────────────────│────┐
-│ Query -> PCA controller context -> ┬-> Global dense: semantic recall floor -┐│    │
-│                                 ├-> BM25: lexical anchors ------------------┼┤    │
-│                                 └-> LinUCB selects arms -> Cluster-local ---┤│    │
-│                                      │                                      ││    │
-│                         Confidence + centroid mismatch                       ││    │
-│                         -> route gate / dense fallback -------------------->││    │
-│                                                                            v v    │
-│                         Weighted rank fusion -> Final-context budget -> LLM       │
+│         ┌-> Global dense: semantic recall floor ----------------------------┐│    │
+│ Query ->├-> BM25: lexical anchors -----------------------------------------┼┤    │
+│         └-> PCA context -> LinUCB selects arms -> Cluster-local dense ------┤│    │
+│                              │                                               ││    │
+│                  Confidence + centroid mismatch                              ││    │
+│                  -> route gate / dense fallback ---------------------------->│    │
+│                                                                              v    │
+│            Weighted fusion -> Ranked R_t -> Final-context budget -> C_t -> LLM    │
 └───────────────────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────── FEEDBACK / ADAPTATION ────────────────────────────────┐
-│ Current-query outcome -> controlled simulated feedback -> trust weight τ         │
-│                    -> evidence reward -> update LinUCB for later queries ─────┐   │
-│                                                                                └───┘
+│ Evidence outcome -> simulated trust-weighted feedback -> LinUCB arm state         │
+│                                       -- updates later queries only (t+1) ------┐ │
+│                                                                                └─┘
 └───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -64,19 +73,26 @@ left-to-right reading path and should use the strongest contrast.
 Recommended node sequence:
 
 1. **Query + session context**
-2. **PCA query controller context**
-3. Three aligned route cards:
+2. Three aligned query branches:
    - **Global dense** — `semantic recall floor`
    - **BM25** — `lexical anchors`
-   - **Cluster-local dense** — `search selected arms`
+   - **PCA query context -> LinUCB arm policy -> Cluster-local dense** —
+     `select arms, then search selected arms`
+3. **Confidence + centroid mismatch** — `route gate / dense fallback`
 4. **Weighted rank fusion** — `dense + BM25 + local`
-5. **Calibrated final-context budget** — `frozen (r,m) policy`
-6. **Budgeted evidence context**
-7. **LLM / downstream generator**
+5. **Ranked evidence** — a short visual stack labeled `R_t`
+6. **Calibrated final-context budget** — `frozen (r,m) policy`
+7. **Budgeted evidence context** — a shorter stack labeled `C_t`
+8. **LLM / downstream generator**
 
 Dense and BM25 should enter rank fusion directly. The cluster-local card should
 be preceded by the LinUCB selector or receive a clear control arrow from it.
 This prevents the visual impression that LinUCB is itself a fourth retriever.
+
+The query must split before the PCA node. Use the original query embedding for
+the global Dense branch, the query text for BM25, and the corpus-fitted
+PCA-projected context only for LinUCB. Do not place a generic `feature builder`
+or PCA node upstream of all three routes.
 
 ### 3.2 Offline/control plane: geometry and calibration
 
@@ -128,6 +144,11 @@ ranking, not at the generator, and not directly at the budget controller. A
 small clock/next-query glyph can reinforce the prequential order without adding
 another explanatory paragraph.
 
+The feedback chain should originate from an evidence-outcome node associated
+with retrieval evaluation, not from the LLM response box. This matches the
+tested simulated-feedback protocol and avoids implying that real users or an
+answer-level reward were observed in the reported experiments.
+
 Optional, only if space remains: add a small side note beside feedback,
 `optional safer retry / later-query fallback`. Keep this subordinate so it does
 not look like the primary first-pass path.
@@ -140,7 +161,7 @@ copy is recommended.
 | Node | Title | Subtitle |
 | --- | --- | --- |
 | Input | Query + session context | current request |
-| Features | PCA query context | controller representation |
+| Controller features | PCA query context | LinUCB representation only |
 | Dense | Global dense | semantic recall floor |
 | Lexical | BM25 | lexical anchors |
 | Geometry | Fixed local arms | KMeans, K=32 |
@@ -235,11 +256,17 @@ architecture.
 ## 9. What Not to Draw
 
 - Do not connect route confidence directly to token ratio or context length.
+- Do not route the global Dense or BM25 branches through the PCA controller
+  context.
 - Do not merge LinUCB and cluster-local dense search into one ambiguous box.
 - Do not show dense as an optional weak baseline outside the system boundary.
 - Do not route feedback into the same query's ranking.
+- Do not originate the tested feedback path from the LLM response.
 - Do not label simulated feedback simply as `user feedback` without a
   qualifier.
+- Do not use `compact if safe`; the frozen policy controls the reported budget,
+  and route confidence is not a validated per-query compression-safety
+  predictor.
 - Do not show geometry as a single global manifold proven by the method.
 - Do not place experimental results, percentages, or ablation values in this
   architecture figure.
@@ -288,3 +315,75 @@ Before export, ask five people-independent questions:
 5. Does the dashed feedback path clearly update later queries only?
 
 If any answer is no, simplify the arrows before adding more labels.
+
+## 13. GPT-Image-2 Concept Mockup
+
+The raster concept mockup generated on 2026-07-26 is:
+
+`figure1_concept_gpt_image2.png`
+
+It is a composition, hierarchy, and palette reference only. It is not a
+submission asset and must not replace the author-created editable vector source.
+The final artwork should correct any generated typography, spacing, arrow
+alignment, or semantic ambiguity while preserving the architecture defined in
+this blueprint and the acceptance contract in `figure1_author_spec.md`.
+
+The mockup usefully demonstrates three visual devices that may be retained in
+the manual vector version:
+
+1. a compact cluster-cell motif for geometry-defined local arms;
+2. a `RECALL FLOOR` badge on the global Dense route;
+3. visibly longer and shorter evidence stacks before and after budgeting.
+
+## 14. Reproducible Concept Prompt
+
+The following prompt produced the 2026-07-26 concept mockup with the Codex
+built-in `image_gen` tool backed by `gpt-image-2`.
+
+```text
+Use case: infographic-diagram
+Asset type: visual concept mockup for a peer-reviewed journal's Figure 1 system architecture
+Primary request: Create a clean, publication-style, ultra-wide scientific systems diagram for "IntentRoute", showing a geometry-guided and feedback-adaptive evidence-selection controller. This is a visual concept only, not final submitted artwork.
+Scene/backdrop: pure white page, no title inside the artwork, three clearly separated horizontal lanes with very pale lane backgrounds.
+Style/medium: flat vector-like editorial infographic, crisp geometric shapes, restrained professional academic design, no gradients, no shadows, no 3D, no neural-network decoration.
+Composition/framing: ultra-wide landscape approximately 2.1:1. Main reading direction left to right. Top lane is thin and labeled exactly "OFFLINE SETUP & CALIBRATION". Middle lane is largest and labeled exactly "ONLINE EVIDENCE SELECTION". Bottom lane is thin and labeled exactly "PREQUENTIAL FEEDBACK". Use orthogonal connectors, generous whitespace, aligned boxes, and absolutely no crossing arrows.
+
+Top lane:
+On the left, show the exact sequence "Corpus chunks" -> "Embeddings + PCA + KMeans" -> "Geometry-defined local arms (K=32)". Inside the local-arms box, include a small abstract 2D cluster motif with four point clusters, with two clusters subtly highlighted.
+On the right, independently show "Calibration queries" -> "FROZEN budget policy (r,m)", with a small lock badge. A purple dotted configuration arrow must descend only from this frozen policy to the "Final-context budget" box in the middle lane.
+
+Middle lane:
+At far left show "Query q_t". Split it into three parallel retrieval branches.
+Top branch: blue box "Global dense", subtitle exactly "semantic recall floor", plus a small shield-like RECALL FLOOR badge.
+Middle branch: blue box "BM25", subtitle exactly "lexical anchors".
+Bottom branch: small amber box "PCA context x_t" -> amber box "LinUCB arm policy", subtitle exactly "select local arms" -> amber box "Cluster-local dense", subtitle exactly "search selected arms".
+The geometry-defined local arms in the top lane send a thin amber control arrow to both "LinUCB arm policy" and "Cluster-local dense".
+Below or immediately beside LinUCB, place a compact amber controller box "Confidence + centroid mismatch", subtitle exactly "gate route use; keep dense fallback". Send a thin amber control arrow from this box to "Route gate / dense fallback".
+All three retrieval outputs flow into "Route gate / dense fallback", then into a green box "Weighted rank fusion".
+After fusion, depict a vertical ranked stack of ten small document cards labeled "Ranked evidence R_t".
+Then show a purple box "Final-context budget", subtitle exactly "ordered subset under frozen (r,m)".
+After it, depict a visibly shorter stack of document cards labeled "Budgeted evidence C_t".
+At far right show a small neutral gray box "LLM / downstream agent", subtitle exactly "evidence-grounded response".
+Do not draw any arrow from route confidence to the final-context budget.
+
+Bottom lane:
+Show "Evidence outcome" -> "Simulated trust-weighted feedback" -> "LinUCB arm state theta_(t+1)".
+Use a muted red dashed return path labeled exactly "updates later queries only" that returns to the LinUCB controller. Make it visually clear that feedback does not alter the current query. Do not originate feedback from the LLM output.
+
+Arrow grammar:
+Solid dark filled arrows = online evidence flow.
+Thin amber open arrows = controller signals.
+Purple dotted arrows = frozen offline configuration.
+Muted red dashed arrows = later-query feedback update.
+
+Color palette:
+Blue strokes #2F6B9A, pale blue fill #EAF2F8 for query and global recall.
+Amber strokes #A66A16, pale amber fill #FFF4E5 for geometry and LinUCB.
+Green strokes #287A6A, pale green fill #EAF7F3 for fusion and evidence flow.
+Purple strokes #6657A5, pale purple fill #F1EEFA for calibrated budget.
+Muted red #A33D3D with pale red #FCEBEC for feedback.
+Neutral gray #667085 and #F7F8FA for lane containers and downstream generator.
+
+Typography: one clean sans-serif family, dark charcoal titles, small gray subtitles, high legibility, consistent capitalization.
+Constraints: no percentages, no experimental scores, no embedding model names, no LLMLingua, no Sentence-MMR, no 3D manifold surface, no long footer, no figure number, no watermark. The architecture must make four boundaries immediately clear: Dense and BM25 remain global routes; LinUCB selects cluster-local arms; route confidence controls gating and fallback; final context budgeting is independently calibrated after fusion.
+```
